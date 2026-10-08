@@ -1,0 +1,26 @@
+{
+  "name": "@relaylens/probe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RelayLens 账单级实测探针系统",
+  "type": "module",
+  "scripts": {
+    "probe": "tsx cli.ts",
+    "once": "tsx cli.ts once",
+    "once:health": "tsx cli.ts once --task=health",
+    "once:price": "tsx cli.ts once --task=price",
+    "rebuild": "tsx cli.ts rebuild",
+    "schedule": "tsx cli.ts schedule",
+    "wp:sync": "tsx src/wp-sync.ts",
+    "wp:pull-map": "tsx src/wp-sync.ts --pull-map"
+  },
+  "dependencies": {
+    "node-cron": "^3.0.3",
+    "yaml": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.4.0"
+  }
+}

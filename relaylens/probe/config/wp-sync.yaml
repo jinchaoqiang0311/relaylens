@@ -1,0 +1,22 @@
+# RelayLens → WordPress(aipaihangbang-relay 插件)回灌配置
+# 仅 src/wp-sync.ts 使用;探针主流程(cli.ts/scheduler.ts)不读本文件。
+#
+# 首次使用:
+#   1) 在 WP 后台「测评设置」生成一个 Worker Credential,拿到明文 token
+#   2) 设置环境变量(不要把 token 写进本文件):
+#        Windows:  setx RELAYLENS_WP_TOKEN "wkr_..."   (重开终端生效)
+#        Linux/Mac: export RELAYLENS_WP_TOKEN="wkr_..."
+#   3) 执行 npx tsx src/wp-sync.ts --pull-map,按 wp-station-map.json 的建议补全下方 map
+#   4) 先 npx tsx src/wp-sync.ts --dry-run 检查,再正式 npx tsx src/wp-sync.ts
+
+# WP REST 基址(到 /aipaihangbang/v1 为止)
+wp_api_base: "https://aipaihangbang.cn/wp-json/aipaihangbang/v1"
+
+# Worker Token 环境变量名
+token_env: "RELAYLENS_WP_TOKEN"
+
+# 探针站点名(config/sites.yaml 的 name) → WP 后台 relay_station 文章 ID
+# 留空的站点仍会尝试按域名自动匹配;仍匹配不上的不会被自动创建,只进 WP 待绑定列表。
+map: {}
+  # aixoras: 123
+  # aicost: 124

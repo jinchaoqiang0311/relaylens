@@ -1,0 +1,24 @@
+# CPS 推广位配置(上线前填写,含 aff 参数的链接与佣金率属敏感商业信息,建议 gitignore 或走部署注入)
+# 规则(与 method.html 中立性声明一致):
+#   - 推广关系不改变实测指标与排序;未通过实测的站点永不进入推荐位
+#   - 所有推广卡必须显示「含推广链接」标识
+#   - enabled: false 时前端显示「合作洽谈中」,不展示假优惠码
+#   - rate(佣金率)与 until(活动截止)只参与推荐位排序计算,不下发到前端
+#     —— 排序结果以 recommendations 有序数组形式输出,费率本身保密
+promo:
+  aixoras:
+    enabled: false
+    url: ""            # 例:https://aixoras.com/sign-up?aff=XXXX
+    coupon: ""         # 例:RLSAVE15
+    couponDesc: ""     # 例:首充 85 折,有效期至 10-15
+    rate: ""           # 佣金率,例:0.15(仅参与排序,不外泄)
+    until: ""          # 活动截止日,例:2026-10-15(过期自动掉出推荐位)
+    note: ""           # 分成/结算说明,仅内部可见
+  aicost:
+    enabled: false
+    url: ""
+    coupon: ""
+    couponDesc: ""
+    rate: ""
+    until: ""
+    note: ""

@@ -1,0 +1,303 @@
+# RelayLens 在册站点配置(v0.2 · 首批真实站点)
+# 健康检查均用公开/免key端点;价格采集见 src/parsers/
+# enabled: false 的站点会被所有任务跳过
+
+sites:
+  # ---------- 真实中转站(new-api 系,首批 2 家) ----------
+  - name: "aixoras"
+    base_url: "https://aixoras.com"           # /v1/models 带 key 200;/api/pricing 公开
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "AIXORAS_API_KEY"
+    directions: ["text", "image"]             # 声明-检测-验证:生图分组存在,故含 image;待站方认领后确认
+    declared_groups:                          # 回填自价格快照(2026-09-30),待站方认领后确认;声明决定检测矩阵
+        - { name: "特价Claude", models: ["claude-opus-4-6", "claude-opus-5", "claude-opus-5-5", "claude-sonnet-4-6", "claude-sonnet-5", "claude-opus-4-7-thinking", "claude-opus-4-7", "claude-opus-4-8"], tier: special, billing: "unknown" }
+        - { name: "Codex", models: ["gpt-5.5", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-6-astra"], tier: primary, billing: "unknown" }
+        - { name: "Claude-Max-外接", models: ["claude-opus-4-6-max", "claude-opus-4-7-max", "claude-sonnet-5-5"], tier: primary, billing: "unknown" }
+        - { name: "GLM智谱", models: ["glm-5.3", "glm-5.3-flash", "glm-5.2"], tier: primary, billing: "unknown" }
+        - { name: "Gemini 优质", models: ["gemini-3.1-pro", "gemini-3.1-pro-preview"], tier: primary, billing: "unknown" }
+        - { name: "Gemini 生图", models: ["gemini-3.1-flash-image", "gemini-3.1-flash-image-preview"], tier: primary, billing: "unknown" }
+        - { name: "Deepseek", models: ["deepseek-v4-flash", "deepseek-v4-pro", "deepseek-v4.1-flash"], tier: primary, billing: "unknown" }
+        - { name: "GPT 优质", models: ["gpt-5.6-luna"], tier: primary, billing: "unknown" }
+        - { name: "Grok", models: ["grok-4.5", "grok-4.6", "grok-4.7"], tier: primary, billing: "unknown" }
+    commerce:                                 # 商业信息无法探测,只能声明/人工核实;source 标明这条信息从哪来
+      pay_methods: ["微信", "支付宝"]
+      min_top_up: "¥5"
+      recharge_ratio: "¥1 = 1 美元额度"        # 公示价的记账单位是美元额度
+      ratio_cny_per_usd: 1                     # 数值口径:到手价 = 标价(美元数字) × 本值
+      source: "manual"                         # manual=运营方人工核实(未经站方书面确认),declared=站方入驻声明
+      verified: "2026-10-02"
+    notes: "真实中转站;/api/pricing 公开,含分组倍率"
+
+  - name: "aicost"
+    base_url: "https://www.aicost.me"         # /v1/models 带 key 200;定价需登录,走手动导出
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "aicost"                          # 手动导入模式:store/manual-imports/aicost-pricing-*.json
+    key_env: "AICOST_API_KEY"
+    directions: ["text"]                      # 声明-检测-验证:回填自价格快照,待站方认领后确认
+    declared_groups:
+        - { name: "claude-kiro渠道", models: ["claude-opus-5", "claude-opus-4-6", "claude-opus-4-7", "claude-opus-4-8", "claude-sonnet-4-6", "claude-sonnet-4-5-20250929", "claude-fable-5", "claude-opus-5-5", "claude-opus-4-5-20251101"], tier: primary, billing: "unknown" }
+        - { name: "gpt-plus号池", models: ["gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", "gpt-6-astra"], tier: primary, billing: "unknown" }
+        - { name: "正价kiro/满血", models: ["claude-opus-5.5"], tier: primary, billing: "unknown" }
+        - { name: "cursor-claude", models: ["claude-fable-5-1"], tier: primary, billing: "unknown" }
+        - { name: "gemini-语言模型", models: ["gemini-3.1-pro-preview", "gemini-3.1-flash-lite"], tier: primary, billing: "unknown" }
+        - { name: "depsek", models: ["deepseek-v4.1-flash", "deepseek-v4.1-flash-hc"], tier: primary, billing: "unknown" }
+        - { name: "grok语言", models: ["grok-4.5", "grok-4.6", "grok-4.7"], tier: primary, billing: "unknown" }
+        - { name: "gpt-pro号池", models: ["gpt-6-sol"], tier: primary, billing: "unknown" }
+    commerce:
+      pay_methods: ["卡密"]                    # 无品牌 logo 的支付方式,前端降级为文字芯片
+      min_top_up: "¥2"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "真实中转站;定价页 requireAuth,数据来自浏览器 Console 手动导出"
+
+  # ---------- 官方/聚合平台(参照系) ----------
+  - name: "openrouter"
+    base_url: "https://openrouter.ai/api/v1"   # /models 免鉴权 200,定价内嵌于响应
+    enabled: true
+    tags: ["overseas", "aggregator"]
+    parser: "openrouter"                        # 定价从 models API 直接读取
+    notes: "海外聚合平台,460+ 模型,models 端点含完整 pricing 字段"
+
+  - name: "deepseek-official"
+    base_url: "https://api.deepseek.com"        # /v1/models 401(需key),健康检查走 401=服务存活
+    enabled: true
+    tags: ["official", "cn"]
+    parser: "deepseek"                          # 定价从 api-docs.deepseek.com 定价页解析
+    notes: "DeepSeek 官方;峰谷定价+缓存命中/未命中四象限"
+
+  - name: "zhipu-bigmodel"
+    base_url: "https://open.bigmodel.cn/api/paas/v4"  # 智谱官方 OpenAI 兼容端点
+    enabled: true
+    tags: ["official", "cn"]
+    parser: "zhipu"                             # 定价从 open.bigmodel.cn/pricing 页解析
+    notes: "智谱 BigModel 官方;GLM 系,Flash 档免费"
+
+  # ---------- 2026-10-02 批量入册(来自用户提供的站方测试 key,已逐把验活) ----------
+  # 判定依据:GET /v1/models 带 key 返 200 JSON;价格接口单独记录
+  - name: "wolfai"
+    base_url: "https://wolfai.top"                # /v1/models 200(84 模型);/api/pricing 公开 JSON
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_WOLFAI_TOP_API_KEY"
+    directions: []                                # 站方未声明,不猜
+    commerce:
+      min_top_up: "¥4"
+      recharge_ratio: "¥2 = 1 美元额度"
+      ratio_cny_per_usd: 2
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;价格接口公开,可直接进比价"
+
+  - name: "api75"
+    base_url: "https://www.75api.com"             # 裸域 75api.com DNS 不存在,必须带 www
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_75API_COM_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥10"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;/api/pricing 公开 JSON(model_ratio 完整)"
+
+  - name: "memecode"
+    base_url: "https://memecode.de"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_MEMECODE_DE_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥10"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;/api/pricing 公开 JSON"
+
+  - name: "thinkai"
+    base_url: "https://www.thinkai.tv"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_THINKAI_TV_API_KEY"
+    directions: []
+    commerce:
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+      # 起充金额未提供
+    notes: "2026-10-02 入册;该 key 只见 1 个模型(grok-4.5),分组覆盖窄"
+
+  - name: "boxying"
+    base_url: "https://www.boxying.com"           # 裸域 301 → www
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_BOXYING_COM_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥1"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;/api/pricing 公开 JSON"
+
+  - name: "chatfire"
+    base_url: "https://api.chatfire.site"
+    enabled: true
+    tags: ["relay", "multi-modal"]
+    parser: "newapi"
+    key_env: "RL_API_CHATFIRE_SITE_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥34"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;/v1/models 102 个,含 qwen-image / wan 等图像与视频模型(图视频验真首个候选);/api/pricing 404 → 报价需另行取得"
+
+  - name: "uuapi"
+    base_url: "https://uuapi.io"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_UUAPI_IO_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥0"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;/api/pricing 404,报价未公开"
+
+  - name: "fluxionai"
+    base_url: "https://fluxionai.space"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_FLUXIONAI_SPACE_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥0"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;/api/pricing 404。⚠ 与演示数据里同名虚构站重名,演示站已改名避让"
+
+  - name: "jiuqingyun"
+    base_url: "https://ai.jiuqingyunapi.top"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_AI_JIUQINGYUNAPI_TOP_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥10"
+      recharge_ratio: "¥1 = 10 美元额度"
+      ratio_cny_per_usd: 0.1        # 买 1 美元额度只要 ¥0.1
+      source: "manual"
+      verified: "2026-10-02"
+      # 站方原话(用户 2026-10-02 确认未抄错):1¥=10$。原因在其模型倍率比同行高一个数量级 ——
+      # 比例与倍率是同一笔价格的两种写法,不能据此判"便宜到可疑"。该站 /api/pricing 需登录,
+      # 拿不到倍率明细,所以到手价暂时算不出来;等价格表到手后用**最终到手价**与同行和官方锚对比,而不是看比例。
+    notes: "2026-10-02 入册;/api/pricing 需登录(401)"
+
+  - name: "toonflow"
+    base_url: "https://api.toonflow.net"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "newapi"
+    key_env: "RL_API_TOONFLOW_NET_API_KEY"
+    directions: []
+    commerce:
+      pay_methods: ["仅人民币"]
+      min_top_up: "¥10"
+      source: "manual"
+      verified: "2026-10-02"
+    notes: "2026-10-02 入册;该 key 只见 1 个模型(deepseek-v4.1-flash),价格接口返回 HTML 非 JSON"
+
+  # ---------- 给了 key 但账户不具备测试条件:key 保留,先不启用,不编数据 ----------
+  - name: "ebondai"
+    base_url: "https://ebondai.com"
+    enabled: false                                # /v1/models 带 key 返 403 INSUFFICIENT_BALANCE
+    tags: ["relay", "blocked"]
+    parser: "newapi"
+    key_env: "RL_EBONDAI_COM_API_KEY"
+    notes: "站点在营业,但测试账户余额为 0 → 需站方按约定充值测试额度后再开"
+
+  - name: "hahacode"
+    base_url: "https://hahacode.com"
+    enabled: false                                # 403 INSUFFICIENT_BALANCE
+    tags: ["relay", "blocked"]
+    parser: "newapi"
+    key_env: "RL_HAHACODE_COM_API_KEY"
+    notes: "站点在营业,测试账户余额为 0"
+
+  - name: "totkn"
+    base_url: "https://totkn.com"
+    enabled: false                                # 403 INSUFFICIENT_BALANCE
+    tags: ["relay", "blocked"]
+    parser: "newapi"
+    key_env: "RL_TOTKN_COM_API_KEY"
+    notes: "站点在营业,测试账户余额为 0"
+
+  - name: "ricktoken"
+    base_url: "https://ricktoken.top"
+    enabled: false                                # 403 GROUP_DISABLED
+    tags: ["relay", "blocked"]
+    parser: "newapi"
+    key_env: "RL_RICKTOKEN_TOP_API_KEY"
+    notes: "站方返回「API Key 所属分组已停用」→ 需站方开通分组;⚠ 与演示数据里同名虚构站重名,演示站已改名避让"
+
+  # ---------- 占位站点(保留用于回归测试) ----------
+  - name: "placeholder-gamma"
+    base_url: "https://invalid.relaylens.invalid"
+    enabled: true
+    tags: ["placeholder"]
+    notes: "占位站点,失联场景回归用,默认关闭"
+
+# 标准测试模型组合(P2 付费对账时启用)
+models:
+  flagship: ["claude-opus-5", "gpt-5.6-sol"]
+  standard: ["claude-sonnet-5", "gpt-5.5", "deepseek-v4"]
+  budget:   ["gemini-3.1-flash", "glm-5.2"]
+
+# 任务节拍(与 method.html 宣称一致)
+# 2026-10-02:健康检查从每 5 分钟降为每 5 小时(用户决定,降低运行开销)。
+# 连带口径:①宕机最长 5 小时后才被发现,「24H 可用率」柱已改为「近 72 小时 · 每 6 小时一格」;
+# ②新站攒够 ≥12 次样本从"1 小时内"变成"约 3 天",入榜速度变慢 —— 这是采样密度的直接代价,不是 bug。
+schedules:
+  health: "0 */5 * * *"
+  price:  "0 */6 * * *"
+  billing: "30 */6 * * *"
+
+# 评分权重(与 web/method.html 同源)
+score_weights:
+  all:
+    billing_honesty: 0.30
+    stability: 0.25
+    model_integrity: 0.25
+    price: 0.20
+
+thresholds:
+  dev_warn: 1
+  dev_black: 3
+  price_surge_week: 15
+  fp_pass: 85
+  fp_suspect: 70
+  min_batches: 12
