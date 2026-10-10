@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>运营看板 · RelayLens 内部只读</title>
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+:root{
+  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#eef1f6;--card:#fff;
+  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;--r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:14px}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 18px}
+.num{font-variant-numeric:tabular-nums}
+code{font-family:"Cascadia Mono",Consolas,monospace;font-size:12.5px}
+
+/* 内部标识条:一眼区分「这不是给用户看的页面」 */
+.internal{background:#101828;color:#fff;font-size:12.5px;padding:8px 0;letter-spacing:.02em}
+.internal .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.internal b{color:#ffd666}
+.internal .pill{background:rgba(255,255,255,.14);padding:2px 9px;border-radius:20px;font-size:11.5px}
+
+header.top{background:var(--card);border-bottom:1px solid var(--line);padding:16px 0}
+header.top .wrap{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:20px;font-weight:800}
+h1 small{font-size:12px;font-weight:600;color:var(--faint);margin-left:8px}
+.meta{font-size:12.5px;color:var(--sub);text-align:right}
+.meta span{display:inline-block;margin-left:12px}
+
+section{margin:18px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.card>h2{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.card>.cap{font-size:12.5px;color:var(--sub);margin-bottom:12px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.kpi .l{font-size:11.5px;color:var(--faint);letter-spacing:.04em}
+.kpi .v{font-size:23px;font-weight:800;margin-top:2px}
+.kpi.is-ok .v{color:var(--ok)}.kpi.is-warn .v{color:var(--warn)}.kpi.is-bad .v{color:var(--bad)}
+.kpi .s{font-size:11.5px;color:var(--sub);margin-top:2px}
+
+/* 队列 */
+.q{display:flex;flex-direction:column;gap:8px}
+.qrow{display:grid;grid-template-columns:60px 96px 1fr;gap:10px;align-items:start;border:1px solid var(--line);border-left-width:4px;border-radius:9px;padding:9px 12px;background:#fcfdff}
+.qrow.critical{border-left-color:var(--bad)}.qrow.critical .tag{color:var(--bad)}
+.qrow.warn{border-left-color:var(--warn)}.qrow.warn .tag{color:var(--warn)}
+.qrow.info{border-left-color:var(--faint)}.qrow.info .tag{color:var(--faint)}
+.qrow .tag{font-size:11.5px;font-weight:800;letter-spacing:.03em;padding-top:1px}
+.qrow .site{font-size:12.5px;font-weight:700;color:var(--brand-deep);background:var(--brand-soft);border-radius:6px;padding:1px 7px;text-align:center}
+.qrow .msg{font-size:13.5px}
+.qrow .act{font-size:12px;color:var(--sub);margin-top:3px}
+.qrow .ev{font-size:11px;color:var(--faint);font-family:Consolas,monospace}
+.qempty{color:var(--ok);font-size:13.5px;padding:8px 2px}
+
+/* 矩阵表 */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11.5px;color:var(--faint);font-weight:700;letter-spacing:.04em;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid #f1f3f7;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.name{font-weight:800;white-space:nowrap}
+.cell{display:inline-block;min-width:74px;padding:3px 7px;border-radius:7px;font-size:11.5px;line-height:1.4}
+.cell.fresh{background:var(--ok-soft);color:var(--ok)}
+.cell.aging{background:var(--gold-soft);color:var(--gold)}
+.cell.stale{background:var(--warn-soft);color:var(--warn)}
+.cell.dead{background:var(--bad-soft);color:var(--bad)}
+.cell.na{background:#f2f4f7;color:var(--faint)}
+.cell b{display:block;font-size:13px;font-variant-numeric:tabular-nums}
+
+/* 覆盖率条 */
+.cov{display:flex;gap:6px;flex-wrap:wrap}
+.covbar{border:1px solid var(--line);border-radius:9px;padding:7px 9px;min-width:112px}
+.covbar .cn{font-size:11.5px;color:var(--sub)}
+.covbar .cv{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.covbar.met{background:var(--ok-soft);border-color:#b7e2c9}
+.covbar.miss{background:var(--warn-soft);border-color:#f5d0a9}
+.covbar .ratio{font-size:11px;color:var(--sub);font-weight:600}
+
+/* 分数 */
+.scores{display:flex;gap:6px;flex-wrap:wrap}
+.sc{border:1px solid var(--line);border-radius:8px;padding:5px 10px;min-width:70px;text-align:center;background:#fcfdff}
+.sc .sl{font-size:11px;color:var(--faint)}
+.sc .sv{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.sc.hi .sv{color:var(--ok)}.sc.mid .sv{color:var(--warn)}.sc.lo .sv{color:var(--bad)}
+.sc.null{background:#f7f8fa}
+.sc.null .sv{color:var(--faint);font-size:14px;padding-top:3px}
+
+/* 审计流 */
+.log{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.lrow{background:var(--card);padding:9px 12px;display:grid;grid-template-columns:52px 122px 1fr;gap:10px}
+.lrow .seq{font-size:11px;color:var(--faint);font-family:Consolas,monospace;padding-top:2px}
+.lrow .when{font-size:11.5px;color:var(--sub);padding-top:2px}
+.lrow .who{font-size:11px;font-weight:700;border-radius:5px;padding:1px 6px;display:inline-block;margin-bottom:2px}
+.lrow .who.human{background:var(--gold-soft);color:var(--gold)}
+.lrow .who.probe{background:var(--brand-soft);color:var(--brand-deep)}
+.lrow .who.system,.lrow .who.unknown{background:#f2f4f7;color:var(--sub)}
+.lrow .what{font-size:13px;font-weight:700}
+.lrow .what code{background:#f4f6fa;padding:1px 5px;border-radius:4px;font-size:12px}
+.lrow .why{font-size:12.5px;color:var(--sub);margin-top:2px}
+.lrow .diff{font-size:11.5px;color:var(--faint);margin-top:2px;font-family:Consolas,monospace}
+
+.note{font-size:12px;color:var(--sub);background:#f7f8fa;border:1px dashed var(--line);border-radius:9px;padding:9px 12px;margin-top:10px}
+.err{background:var(--bad-soft);border:1px solid #f4b7b1;color:var(--bad);border-radius:var(--r);padding:18px}
+.err h3{font-size:15px;margin-bottom:6px}
+.err code{display:block;background:#fff;border:1px solid #f4b7b1;border-radius:7px;padding:8px 10px;margin-top:8px;color:var(--ink)}
+.sk{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;color:var(--faint);font-size:13px}
+
+footer{border-top:1px solid var(--line);background:var(--card);padding:14px 0;margin-top:24px;font-size:12px;color:var(--sub)}
+footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+@media(max-width:760px){
+  .qrow{grid-template-columns:56px 1fr}
+  .qrow .site{justify-self:start}
+  .lrow{grid-template-columns:1fr;gap:2px}
+  .meta{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="internal">
+  <div class="wrap">
+    <span>🔒 <b>内部运营看板</b> · 只读</span>
+    <span class="pill">robots: noindex</span>
+    <span class="pill">不进 sitemap</span>
+    <span class="pill">无编辑能力</span>
+    <span style="color:#c8cdd6">本页不面向用户;所有人工改动走配置文件 + CLI,并自动记入审计链。</span>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <h1>RelayLens 运营看板<small>批次健康 · 覆盖率 · 待复核 · 审计</small></h1>
+    <div class="meta" id="head-meta">
+      <span>数据加载中…</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="kpis" id="kpis"><div class="sk">加载中…</div></div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>🔔 待复核队列 <span class="cap" style="display:inline">— 按紧急度排序,附建议动作与证据批次</span></h2>
+    <div class="cap">规则与阈值全部来自 <code>shared/weights.json</code>,页面不写死数字;看板只提示,不自动改分、不自动下架。</div>
+    <div class="q" id="queue"><div class="sk">加载中…</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>🗓 批次新鲜度矩阵</h2>
+    <div class="cap">每格 = 该站该探针最近一次执行。「对账」与「指纹」历史上与付费轮次共用批次表,按 summary 标记区分显示。</div>
+    <div style="overflow-x:auto"><table id="matrix"><thead></thead><tbody></tbody></table></div>
+    <div class="note">🟢 &lt;6h · 🟡 6–16h · 🟠 16–72h · 🔴 &gt;72h(探活节拍已降为每 5 小时一轮,色阶按约 1/3/14 个采样周期划分;超 72h 时对外「近 72 小时可用率」无数据支撑,须补测或标注「无近期实测」)</div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>📏 指标覆盖率 <span class="cap" style="display:inline">— 样本数 / 出分门槛</span></h2>
+    <div class="cap">未达门槛的桶不计入评分(权重按比例重归一化),所以「有站点没分」通常是数据不足而非我们偏心。这一栏就是回答「为什么它没分」。</div>
+    <div id="coverage"><div class="sk">加载中…</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>🎯 场景得分快照</h2>
+    <div class="cap">与前端榜单同源(同一 <code>data/sites.json</code> 计算),此处仅用于核对同步结果。<b>null 一律显示「无分」并附覆盖率,不臆造。</b></div>
+    <div id="scores"><div class="sk">加载中…</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>🧷 审计链 <span class="cap" style="display:inline">— 哈希链式追加,改一条即断链</span></h2>
+    <div class="cap" id="chain-cap">校验中…</div>
+    <div class="log" id="audit"><div class="sk">加载中…</div></div>
+    <div class="note">本地重放校验:<code>tsx cli.ts audit verify</code> · 手工登记:<code>tsx cli.ts audit add --action=… --target=… --reason=…</code> · 对外摘要:<code>data/audit.json</code></div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>RelayLens 内部看板 · 只读 · 数据源 <code>data/ops.json</code></span>
+    <span id="foot-gen"></span>
+  </div>
+</footer>
+
+<script>
+/* ============ 只读渲染:无任何写操作、无表单、无 fetch POST ============ */
+var DATA=null, AUDIT=null;
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function el(id){return document.getElementById(id)}
+
+/* 未测/缺数据的统一呈现:宁可显式说没有,不显示 0 或假值 */
+function dash(v,unit){return v==null?'<span class="cell na">—</span>':'<span class="num">'+esc(v)+(unit||"")+"</span>"}
+
+function agoH(iso){
+  if(!iso) return Infinity;
+  return (Date.now()-new Date(iso).getTime())/3600000;
+}
+function freshCell(hit){
+  if(!hit) return '<span class="cell na"><b>未测</b>无记录</span>';
+  var h=agoH(hit.at);
+  var cls = h<6?"fresh":h<24?"aging":h<48?"stale":"dead";
+  var txt = h<1?Math.round(h*60)+"分":h<48?h.toFixed(1)+"h":Math.round(h/24)+"天";
+  return '<span class="cell '+cls+'"><b>'+esc(txt)+"前</b>"+esc(hit.id.replace(/^RL-RC-/,""))+"</span>";
+}
+function relTime(iso){
+  if(!iso) return "—";
+  var h=agoH(iso);
+  if(h<1) return Math.round(h*60)+" 分钟前";
+  if(h<48) return h.toFixed(1)+" 小时前";
+  return Math.round(h/24)+" 天前";
+}
+
+/* ============ 头部 + KPI ============ */
+function renderHead(){
+  var m=DATA.meta,g=DATA.integrity,c=DATA.counts;
+  el("head-meta").innerHTML=
+    '<span>生成 <b class="num">'+esc(m.generatedAt.slice(0,16).replace("T"," "))+"</b>("+esc(relTime(m.generatedAt))+")</span>"+
+    "<span>权重 <b>"+esc(m.weightsVersion)+"</b></span>"+
+    "<span>看板数据层 <b>"+esc(m.dataLayer)+"</b></span>";
+  var chainCls=g.chainOk?"is-ok":"is-bad";
+  var cards=[
+    {l:"在册实测站",v:c.sites,s:esc(DATA.sites.map(function(x){return x.name}).join(" · "))},
+    {l:"审计链条",v:g.chainOk?"完整":"断裂",s:esc(g.total)+" 条 · 链头 "+esc((g.headHash||"").slice(0,10)),cls:chainCls},
+    {l:"紧急待办",v:c.critical,s:c.critical?"需立即处理":"无",cls:c.critical?"is-bad":"is-ok"},
+    {l:"观察项",v:c.warn,s:"超时/存疑/手工参数",cls:c.warn?"is-warn":"is-ok"},
+    {l:"说明项",v:c.info,s:"覆盖率缺口等",cls:""}
+  ];
+  el("kpis").innerHTML=cards.map(function(k){
+    return '<div class="kpi '+(k.cls||"")+'"><div class="l">'+esc(k.l)+'</div><div class="v num">'+esc(k.v)+'</div><div class="s">'+k.s+"</div></div>";
+  }).join("");
+  el("foot-gen").textContent="本页由 `tsx cli.ts ops` 生成,不自动刷新;最近生成 "+m.generatedAt.slice(0,19).replace("T"," ")+"Z";
+}
+
+/* ============ 待复核队列 ============ */
+var LVL={critical:"紧急",warn:"观察",info:"说明"};
+function renderQueue(){
+  var q=DATA.queue;
+  if(!q.length){el("queue").innerHTML='<div class="qempty">✓ 队列已清空 —— 无紧急、无观察项。注意:清空不等于「全都测好了」,覆盖率缺口见下栏。</div>';return}
+  el("queue").innerHTML=q.map(function(f){
+    return '<div class="qrow '+esc(f.level)+'">'+
+      '<div class="tag">'+esc(LVL[f.level]||f.level)+"</div>"+
+      '<div class="site">'+esc(f.site)+"</div>"+
+      '<div><div class="msg">'+esc(f.msg)+"</div>"+
+      '<div class="act">→ '+esc(f.action)+(f.evidence?' <span class="ev">· 证据 '+esc(f.evidence)+"</span>":"")+"</div></div></div>";
+  }).join("");
+}
+
+/* ============ 新鲜度矩阵 ============ */
+var COLS=[["health","健康"],["price","价格"],["billing","付费轮次"],["reconcile","对账"],["fingerprint","指纹"],["perf","延迟"]];
+function renderMatrix(){
+  var t=el("matrix");
+  t.querySelector("thead").innerHTML="<tr><th>站点</th>"+COLS.map(function(c){return "<th>"+c[1]+"</th>"}).join("")+"<th>推广位</th><th>7d 可用率</th></tr>";
+  t.querySelector("tbody").innerHTML=DATA.sites.map(function(s){
+    return "<tr><td class='name'>"+esc(s.name)+"</td>"+
+      COLS.map(function(c){return "<td>"+freshCell(s.tasks[c[0]])+"</td>"}).join("")+
+      "<td>"+(s.promo.enabled?'<span class="cell fresh">已开启</span>':s.promo.configured?'<span class="cell na">已配置·未开启</span>':'<span class="cell na">洽谈中</span>')+"</td>"+
+      "<td>"+(s.metrics.avail7d==null?'<span class="cell stale"><b>未测</b>样本不足</span>':'<span class="num">'+esc(s.metrics.avail7d)+"%</span> <span class='ev'>"+esc(s.metrics.checks)+" 次</span>")+"</td></tr>";
+  }).join("");
+}
+
+/* ============ 覆盖率 ============ */
+function renderCoverage(){
+  el("coverage").innerHTML=DATA.sites.map(function(s){
+    return '<div style="margin-bottom:14px"><div style="font-weight:800;font-size:13px;margin-bottom:6px">'+esc(s.name)+'</div><div class="cov">'+
+      s.coverage.map(function(c){
+        return '<div class="covbar '+(c.ok?"met":"miss")+'"><div class="cn">'+esc(c.name)+"("+esc(c.bucket)+')&nbsp;<span class="ratio">'+esc(c.samples)+"/"+esc(c.need)+"</span></div>"+
+          '<div class="cv">'+(c.ok?"达标":"未达标")+"</div></div>";
+      }).join("")+"</div></div>";
+  }).join("");
+}
+
+/* ============ 分数快照 ============ */
+function renderScores(){
+  el("scores").innerHTML=DATA.sites.map(function(s){
+    var cells=DATA.scenes.map(function(sc){
+      /* 区分三种「没有数字」:未建模(该场景不参与计算)/ 数据不足不出分 / 真实得分 */
+      var has=Object.prototype.hasOwnProperty.call(s.scores,sc.key);
+      var v=s.scores[sc.key];
+      var cov=s.coveragePct[sc.key];
+      var cls=!has?"null":v==null?"null":v>=80?"hi":v>=60?"mid":"lo";
+      var val=!has?"未建模":(v==null?"无分":'<span class="num">'+esc(v)+"</span>");
+      var sub=!has?"不参与评分":("覆盖 "+esc(cov)+"%");
+      return '<div class="sc '+cls+'"><div class="sl">'+esc(sc.label)+(sc.separate?"*":"")+'</div><div class="sv">'+val+"</div>"+
+        '<div class="sl">'+sub+"</div></div>";
+    }).join("");
+    return '<div style="margin-bottom:14px"><div style="font-weight:800;font-size:13px;margin-bottom:6px">'+esc(s.name)+
+      (s.kind==="reference"?' <span style="font-weight:600;font-size:11px;color:var(--sub);background:#eef1f6;border-radius:5px;padding:1px 6px" title="官方直连/聚合平台:榜单衡量的是中转扣费诚实度,对它们没有语义 —— 全部格子标「未建模 · 不参与评分」,不是数据不足">参照系 · 不参与评分</span>':"")+
+      (s.scenesWithoutScore.length?' <span style="font-weight:400;font-size:12px;color:var(--warn)">· 无分场景:'+esc(s.scenesWithoutScore.join("、"))+"</span>":"")+
+      '</div><div class="scores">'+cells+"</div></div>";
+  }).join("")+'<div class="note">* 风险指数独立展示,不并入综合分(服务好≠值得充值)。</div>';
+}
+
+/* ============ 审计流 ============ */
+function actorCls(a){
+  var s=String(a||"");
+  if(s.indexOf("human:")===0) return "human";
+  if(s==="probe") return "probe";
+  if(s==="system") return "system";
+  return "unknown";
+}
+function actorName(a){
+  var s=String(a||"");
+  return s.indexOf("human:")===0?"人 · "+s.slice(6):s;
+}
+function fmtDiff(e){
+  function brief(v){
+    if(v==null) return "∅";
+    if(typeof v!=="object") return String(v);
+    var parts=[];
+    for(var k in v){var x=v[k];parts.push(k+"="+(x&&typeof x==="object"?JSON.stringify(x):String(x)))}
+    var s=parts.join(" ");
+    return s.length>150?s.slice(0,150)+"…":s;
+  }
+  if(e.before==null&&e.after==null) return "";
+  if(e.before==null) return "→ 新增:"+brief(e.after);
+  if(e.after==null) return "→ 移除";
+  return "→ "+brief(e.before)+" ⇒ "+brief(e.after);
+}
+function renderAudit(){
+  if(!AUDIT){el("audit").innerHTML='<div class="sk">未找到 data/audit.json,请先运行 `tsx cli.ts ops`</div>';return}
+  var c=AUDIT.chain;
+  el("chain-cap").innerHTML=(c.ok
+    ?'✓ 链校验通过 · 公开条目 '+esc(AUDIT.entries.length)+' / 全链 '+esc(c.total)+' 条'
+    :'✗ <b style="color:var(--bad)">链校验失败,已暂停对外发布</b> · '+esc(c.total)+" 条")+' · 链头 <code>'+esc(c.head)+"</code>";
+  el("audit").innerHTML=AUDIT.entries.slice(0,30).map(function(e){
+    return '<div class="lrow">'+
+      '<div class="seq">#'+esc(e.seq)+"</div>"+
+      '<div class="when">'+esc(e.at.slice(5,16).replace("T"," "))+"</div>"+
+      '<div><span class="who '+actorCls(e.actor)+'">'+esc(actorName(e.actor))+"</span>"+
+      '<div class="what"><code>'+esc(e.action)+"</code> → "+esc(e.target)+"</div>"+
+      '<div class="why">'+esc(e.reason)+"</div>"+
+      (fmtDiff(e)?'<div class="diff">'+esc(fmtDiff(e))+"</div>":"")+
+      "</div></div>";
+  }).join("");
+}
+
+/* ============ 启动 ============ */
+function fail(msg){
+  el("kpis").innerHTML='<div class="err"><h3>无法读取看板数据</h3><div>'+esc(msg)+'</div><code>cd probe && tsx cli.ts ops</code><div style="margin-top:8px;font-size:12px;color:var(--sub)">看板不做演示数据回退 —— 内部页面显示假数据比空白更危险。</div></div>';
+  el("queue").innerHTML="";el("coverage").innerHTML="";el("scores").innerHTML="";el("audit").innerHTML="";
+}
+function boot(){
+  fetch("data/ops.json").then(function(r){return r.ok?r.json():Promise.reject("ops.json HTTP "+r.status)})
+  .then(function(d){
+    DATA=d;renderHead();renderQueue();renderMatrix();renderCoverage();renderScores();
+    return fetch("data/audit.json").then(function(r){return r.ok?r.json():Promise.reject("audit.json")})
+      .catch(function(){AUDIT=null;renderAudit()});
+  })
+  .then(function(a){AUDIT=a;renderAudit()})
+  .catch(function(e){fail(String(e))});
+}
+boot();
+</script>
+</body>
+</html>

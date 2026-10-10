@@ -1,0 +1,10 @@
+# 运行时数据(不可变归档与产物,不入库)
+probe/store/raw/
+probe/store/dist/
+probe/store/*.sqlite
+probe/store/*.sqlite-shm
+probe/store/*.sqlite-wal
+# 密钥
+probe/config/secrets/
+*.env
+node_modules/

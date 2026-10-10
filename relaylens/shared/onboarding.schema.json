@@ -1,0 +1,68 @@
+{
+  "version": "1.0.0",
+  "purpose": "中转站声明-检测-验证体系的数据地基。站方声明(方向/分组/倍率)→ 探针按声明定制检测矩阵 → 实测与声明的差值即信任分。入驻表单(onboarding.html)产出符合本 schema 的 payload;审核通过后映射进 probe/config/sites.yaml,映射动作由审计链自动记录(site.add / site.enable)。",
+  "state_machine": {
+    "applied": "已提交申请(阶段一)",
+    "accepted": "我方受理,发放测试账号注册入口",
+    "awaiting_quota": "站方已注册账号,等待向我方指定账号充值测试额度(每月固定额度或不低于 ¥10,仅用于测试)",
+    "onboarded": "阶段二信息齐备(API 端点/key/倍率表),探针接入",
+    "probing": "检测中(累计 ≥1 个健康批次 + 首轮对账)",
+    "listed": "已收录进榜单",
+    "rejected": "驳回(附理由,记录审计链)",
+    "withdrawn": "站方撤回"
+  },
+  "transitions_allowed": {
+    "applied": ["accepted", "rejected"],
+    "accepted": ["awaiting_quota", "rejected"],
+    "awaiting_quota": ["onboarded", "rejected", "withdrawn"],
+    "onboarded": ["probing"],
+    "probing": ["listed", "rejected"],
+    "listed": ["withdrawn"]
+  },
+  "phase1": {
+    "site_name": { "type": "string", "required": true, "max": 40 },
+    "domain": { "type": "url", "required": true, "note": "主站域名,唯一;黑名单在册域名自动拒绝" },
+    "directions": { "type": "enum[]", "required": true, "values": ["text", "image", "video", "audio", "hybrid"], "note": "主攻方向决定检测矩阵:文本走七件套(对账/指纹/注入/假流式/TTFT/可用率/价格);生图走声明校验+pHash 验真;视频走时长声明+抽样验真。未声明方向标「未承诺,未检测」" },
+    "declared_groups": {
+      "type": "array",
+      "required": true,
+      "item": { "name": "string", "models": "string[]", "tier": "primary|special", "billing": "ratio|tiered|unknown" },
+      "note": "tier=primary(主力分组)进入主榜全量检测;tier=special(特价分组)进「特价榜」小样本侦察(可用率+指纹通过率),不进主分 —— 解决「特价便宜但不稳定拖累主评分」与「全分组检测成本过高」的矛盾"
+    },
+    "contact_email": { "type": "email", "required": true },
+    "contact_tg": { "type": "string", "required": false },
+    "accept_quota_rules": { "type": "bool", "required": true, "note": "额度规则:只向我方指定测试账号充值;每月固定额度或不低于 ¥10;仅用于测试,不用于生产。三条件缺一不受理" },
+    "commerce": {
+      "type": "object",
+      "required": false,
+      "note": "商业信息声明 —— 站方自己最清楚,不需要我们探测;榜单站名下方支付方式 logo 与详情页商业栏直接展示,并**按 source 标注来源**。入驻表单提交的一律 source=declared;运营方自行观察回填的必须写 source=manual + verified=日期,前端会显示「人工核实,未经站方书面确认」,不得冒充站方承诺",
+      "item": {
+        "pay_methods": "string[] (支付宝/微信/USDT/对公/卡密等;微信/支付宝/USDT 渲染品牌 logo,其余降级为文字芯片)",
+        "min_top_up": "string (最低充值金额,如 ¥10)",
+        "invoice": "string (发票政策:可开票类型/税率/时效;不开票写「不支持」)",
+        "refund": "string (退款政策:未消费余额可退/不可退/按比例)",
+        "recharge_ratio": "string (充值比例,如 1$=¥7.2 或 1:1)",
+        "source": "string (declared=站方声明 / manual=运营方人工核实;缺省按 declared)",
+        "verified": "string (YYYY-MM-DD,该信息核实或声明的时点)"
+      }
+    },
+    "notes": { "type": "string", "required": false, "max": 500 }
+  },
+  "phase2": {
+    "api_base_url": { "type": "url", "required": true, "note": "OpenAI 兼容端点" },
+    "test_accounts": { "type": "secret[]", "required": true, "item": { "group": "string", "key_ref": "string" }, "note": "**按分组各给一个测试 token**(group 对应阶段一 declared_groups 的 name)。原因:new-api 系一个 token 只绑一个分组,只给一个 key 就只能测一个分组,该站其他分数的口径就不成立。key 明文仅通过安全通道提交,写入 gitignored config/secrets/sites.env,永不入库、永不公开" },
+    "ratio_table": { "type": "file|text", "required": true, "note": "分组倍率表(管理后台导出或截图);阶梯计费需附 expr_b64" },
+    "invoice_info": { "type": "string", "required": false, "note": "开票/对公信息,企业场景评分用" },
+    "support_channel": { "type": "string", "required": false }
+  },
+  "claim": {
+    "prerequisite": "站点已在收录列表或已提交过自测报告",
+    "verification": { "method": "domain-token", "how": "我方生成随机 token,站方将其放置于 https://<域名>/relaylens-verify.txt(正文仅 token)或首页 <meta name=\"relaylens-verify\">,我方复核通过后绑定", "why": "域名所有权是防冒领的唯一硬门槛,邮箱验证太弱" },
+    "benefits": ["偏差结论申诉权(反证渠道)", "倍率/分组变更提交通道", "CPS 合作申请资格", "数据周报与告警推送"],
+    "fields": { "site_domain": "url*", "contact_email": "email*", "contact_tg": "string", "claim_reason": "string" }
+  },
+  "user_submission": {
+    "note": "用户自测数据的采信边界:结构性指标(注入/假流式)与网络无关,可采信为复核触发器;TTFT/可用率与网络路径相关,不进通用指标。用户自测永不直接改分 —— 用户数据是触发器,探针是裁决者",
+    "payload": { "site_domain": "url", "tool_version": "string", "checks": "object", "raw_usage": "object[]", "client_note": "string" }
+  }
+}

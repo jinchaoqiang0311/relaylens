@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>最低价 · RelayLens — 同一个模型，每家中转站每条渠道直接比</title>
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="description" content="RelayLens 最低价榜：按模型对比各中转站每条渠道的到手价（官方价格×倍率×充值比例），从低到高排序，折扣率对齐官方锚，附逐笔对账与实扣验证状态。">
+<style>
+:root{
+  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums}
+
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:18px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px}
+.logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav-links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:8px;white-space:nowrap;transition:.15s}
+.nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
+.nav-links a.active{background:var(--brand-soft);color:var(--brand);font-weight:700}
+
+.hero{padding:40px 0 8px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--brand);text-transform:uppercase;margin-bottom:10px}
+h1{font-size:29px;line-height:1.25;letter-spacing:-.01em}
+.sub{color:var(--sub);font-size:15px;margin-top:10px;max-width:760px}
+.upd{font-size:12.5px;color:var(--faint);margin-top:8px}
+.upd b{color:var(--sub)}
+
+/* 模型选择器:按厂商分组 */
+.grp-label{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--faint);margin:16px 0 6px;text-transform:uppercase}
+.model-chips{display:flex;flex-wrap:wrap;gap:8px}
+.mchip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 15px;font-size:13.5px;font-weight:600;color:var(--sub);cursor:pointer;transition:.15s;display:inline-flex;gap:7px;align-items:baseline}
+.mchip:hover{border-color:var(--brand);color:var(--brand)}
+.mchip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.mchip .n{font-size:11px;font-weight:700;opacity:.72}
+
+/* 官方价卡 */
+.info-cards{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 8px}
+.icard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-width:150px}
+.icard .k{font-size:11.5px;color:var(--faint)}
+.icard .v{font-size:17px;font-weight:800;margin-top:2px}
+.icard .v small{font-size:11.5px;font-weight:600;color:var(--faint)}
+
+/* 表 */
+.tbl-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+thead th{text-align:left;padding:11px 14px;border-bottom:1.5px solid var(--line);color:var(--faint);font-size:12px;font-weight:700;letter-spacing:.04em;white-space:nowrap;background:#fbfcfe}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable .arr{font-size:10px;margin-left:3px}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{cursor:pointer;transition:.12s}
+tbody tr:hover{background:#f9fbff}
+.rank{width:44px;font-weight:800}
+.medal{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+.m1{background:linear-gradient(135deg,#f6c34b,#d99a1b)}.m2{background:linear-gradient(135deg,#b8c2cc,#8b98a5)}.m3{background:linear-gradient(135deg,#d8a06a,#a96f3c)}
+.rnum{color:var(--faint);font-weight:700;padding-left:6px}
+.st-name{font-weight:700}
+.st-grp{display:block;font-size:11.5px;color:var(--faint)}
+.price{font-weight:800;font-size:15px;white-space:nowrap}
+.price.cur{font-size:11.5px;font-weight:600;color:var(--faint)}
+.assumed{color:var(--warn)}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;white-space:nowrap}
+.t-best{background:var(--ok-soft);color:var(--ok)}
+.t-nofx{background:var(--warn-soft);color:var(--warn)}
+.t-disc{background:var(--brand-soft);color:var(--brand-deep)}
+.t-above{background:var(--bad-soft);color:var(--bad)}
+.t-na{background:#eff1f5;color:var(--faint)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.d-ok{background:var(--ok)}.d-mid{background:#d0a441}.d-wait{background:var(--faint)}
+.probe-cell{font-size:12px;color:var(--sub);white-space:nowrap}
+.act{white-space:nowrap}
+.act a{font-size:12px;color:var(--brand);font-weight:600;margin-right:10px}
+.act a:hover{text-decoration:underline}
+/* 其他信息(站方商务条款,来自我们核过的 commerce 字段) */
+.biz{font-size:11.5px;color:var(--sub);max-width:190px}
+.bchip{display:inline-block;background:#f1f4f9;border:1px solid var(--line);border-radius:5px;padding:1px 6px;margin:1.5px 4px 1.5px 0;white-space:nowrap;font-size:11px}
+.bchip.src-d{background:var(--brand-soft);border-color:rgba(43,92,240,.2)}
+/* 渠道类型标签 */
+.ch-tag{display:inline-block;font-size:10px;font-weight:700;border-radius:4px;padding:0 5px;margin-left:6px;vertical-align:1px;white-space:nowrap;cursor:help}
+.ct-sp{background:var(--warn-soft);color:var(--warn)}
+.ct-pri{background:var(--brand-soft);color:var(--brand-deep)}
+.ct-pool{background:#f1f4f9;color:var(--sub)}
+.ct-key{background:var(--ok-soft);color:var(--ok)}
+/* 视图与排序切换 */
+.segbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:16px 0 6px;font-size:12.5px;color:var(--faint)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{border:none;background:transparent;font:inherit;font-weight:600;color:var(--sub);padding:5px 13px;cursor:pointer}
+.seg button.on{background:var(--brand);color:#fff}
+/* 其它模型比价交叉内链 */
+.cross{margin:18px 0 2px;font-size:13px;color:var(--sub);display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.cross .cl{font-weight:700;color:var(--ink);margin-right:2px}
+.cross a{border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 11px;font-size:12.5px;color:var(--sub);transition:.15s;white-space:nowrap}
+.cross a:hover{border-color:var(--brand);color:var(--brand)}
+.cross a b{color:var(--ok);font-weight:700}
+.empty{padding:60px 0;text-align:center;color:var(--faint);font-size:14px}
+
+.notes{margin:16px 0 40px;font-size:12.5px;color:var(--faint);line-height:1.9}
+.notes b{color:var(--sub)}
+.notes a{color:var(--brand)}
+
+/* 移动卡 */
+.m-cards{display:none}
+@media(max-width:880px){
+  .tbl-wrap{display:none}
+  .m-cards{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+  .mc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .mc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .mc-name{font-weight:800;font-size:15px}
+  .mc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:12.5px;color:var(--sub)}
+  .mc-grid b{display:block;font-size:14.5px;color:var(--ink)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ranking.html">全站榜单</a>
+      <a href="compare.html">模型比价</a>
+      <a href="cheapest.html" class="active">最低价</a>
+      <a href="tools.html">自测工具箱</a>
+      <a href="pitfalls.html">避坑指南</a>
+      <a href="blacklist.html" class="hot">⚠ 避雷黑名单</a>
+      <a href="method.html">方法论</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="eyebrow">CHEAPEST FIRST</div>
+    <h1>最低价 · 同一个模型，每家中转站每条渠道直接比</h1>
+    <p class="sub">按<b>到手价</b>从低到高排：到手价 = 官方价格 × 分组倍率 × 充值比例（每格悬浮可验算）。已按真实账单验证过的站带绿点；比例未声明的站只出示位价、排在换算价之后，不冒充到手价。</p>
+    <div class="upd" id="upd">数据加载中……</div>
+  </div>
+
+  <div id="selector"></div>
+
+  <div class="info-cards" id="infoCards"></div>
+
+  <div class="segbar">
+    <span>视图</span>
+    <span class="seg" id="segView"><button data-v="site" class="on">按站聚合</button><button data-v="chan">按渠道展开</button></span>
+    <span>排序</span>
+    <span class="seg" id="segSort"><button data-s="in" class="on">到手价</button><button data-s="disc">折扣率</button><button data-s="probe">探针状态</button></span>
+    <span style="flex:1"></span><span id="viewHint" style="font-size:11.5px"></span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="rank">排名</th>
+          <th>中转站 / 渠道</th>
+          <th class="sortable" data-k="in">输入到手价<span class="arr">↓</span></th>
+          <th class="sortable" data-k="out">输出到手价<span class="arr"></span></th>
+          <th>折扣率</th>
+          <th>其他信息</th>
+          <th>探针状态</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">暂无价格数据</div>
+  </div>
+  <div class="m-cards" id="mCards"></div>
+
+  <div class="cross" id="cross"></div>
+
+  <p class="notes"><b>口径说明：</b>折扣率 = 输入到手价 ÷ 官方参考输入价（OpenRouter，按参考汇率 ¥<span id="fx">7.1</span>/$ 折算，与你在站方页面看到的美元额度价不是一回事）。
+  标价一律用站方公示的额度价；人民币只出现在到手价里，比例未声明不给人民币价。<a href="method.html">完整方法论 →</a> · 逐指标对比见 <a href="compare.html">模型比价页 →</a></p>
+</main>
+
+<script>
+/* 数据源:与榜单/比价同一份探针档案 data/sites.json 的 compare.tabs(17 模型登记表驱动) */
+var SITE_META={};
+var state={model:null,sort:"in",dir:1,view:"site"};
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function fmt(v){if(v==null||!isFinite(v))return null;return v<0.01?v.toFixed(4):v<1?v.toFixed(3):v.toFixed(2)}
+
+function familyGroups(tabs){
+  var byF={};
+  tabs.forEach(function(t){ (byF[t.family]=byF[t.family]||[]).push(t); });
+  var order=["OpenAI","Anthropic","Google","xAI","DeepSeek","Moonshot","Zhipu"];
+  return order.filter(function(f){return byF[f]}).concat(Object.keys(byF).filter(function(f){return order.indexOf(f)<0})).map(function(f){return {fam:f,tabs:byF[f]}});
+}
+
+function renderSelector(){
+  var h="";
+  familyGroups(TABS).forEach(function(g){
+    h+='<div class="grp-label">'+esc(g.fam)+'</div><div class="model-chips">';
+    g.tabs.forEach(function(t){
+      h+='<button class="mchip'+(state.model===t.key?" on":"")+'" data-m="'+esc(t.key)+'">'+esc(t.name)+'<span class="n">'+t.rows.length+'家</span></button>';
+    });
+    h+='</div>';
+  });
+  var host=document.getElementById("selector");
+  host.innerHTML=h;
+  Array.prototype.forEach.call(host.querySelectorAll(".mchip"),function(b){
+    b.addEventListener("click",function(){
+      state.model=b.getAttribute("data-m");
+      try{history.replaceState(null,"","#model="+state.model)}catch(e){}
+      renderAll();
+    });
+  });
+}
+
+/* 按渠道展开:站方声明分组里所有在售该模型的渠道(价格=页面价×充值比例,未实测倍率) */
+function chanRows(tab){
+  var out=[];
+  tab.rows.forEach(function(r){
+    out.push(r);
+    var meta=SITE_META[r.site]||{};
+    var ratio=(r.ratio!=null?r.ratio:meta.ratio)||null;
+    ((meta.groups)||[]).forEach(function(g){
+      if(g.name===r.group)return;
+      var gm=(g.models||[]).filter(function(m){return canon(m.model)===tab.key && m.inP!=null})[0];
+      if(!gm)return;
+      out.push({site:r.site,group:g.name,groupKind:null,inP:gm.inP,outP:null,cacheP:null,ratio:ratio,
+        effIn:ratio!=null?Math.round(gm.inP*ratio*100)/100:null,effOut:null,effCr:null,
+        calib:"page",calibStatus:null,matchPct:r.matchPct,declTier:g.tier,chan:true});
+    });
+  });
+  return out;
+}
+function sortedRows(tab){
+  var rows=(state.view==="chan"?chanRows(tab):tab.rows).slice();
+  function effKey(r){
+    var eff = state.sort==="out" ? r.effOut : r.effIn;
+    if(eff==null){ var q=r[state.sort==="out"?"outP":"inP"]; return q==null?Infinity:q*9e8; }
+    return eff;
+  }
+  function discKey(r){
+    var o=tab.official||{};
+    if(r.effIn==null||o.in==null||o.in<=0)return Infinity;
+    return r.effIn/(o.in*FX);
+  }
+  function probeKey(r){ var m=SITE_META[r.site]||{}; return m.level==="billing"?0:(m.level==="passive"?1:2); }
+  if(state.sort==="probe"){
+    rows.sort(function(a,b){return (probeKey(a)-probeKey(b))||(effKey(a)-effKey(b))});
+  }else{
+    var kf=state.sort==="disc"?discKey:effKey;
+    rows.sort(function(a,b){return (kf(a)-kf(b))*state.dir});
+  }
+  return rows;
+}
+
+function renderInfo(tab){
+  var fx=FX;
+  var o=tab.official||{};
+  document.getElementById("infoCards").innerHTML=
+    '<div class="icard"><div class="k">官方参考 · 输入</div><div class="v">$'+fmt(o.in)+'<small>/M</small></div><div class="k" style="margin-top:2px">≈ ¥'+fmt(o.in!=null?o.in*fx:null)+' 折算</div></div>'+
+    '<div class="icard"><div class="k">官方参考 · 输出</div><div class="v">$'+fmt(o.out)+'<small>/M</small></div><div class="k" style="margin-top:2px">≈ ¥'+fmt(o.out!=null?o.out*fx:null)+' 折算</div></div>'+
+    (o.cr!=null?'<div class="icard"><div class="k">官方参考 · 缓存读</div><div class="v">$'+fmt(o.cr)+'<small>/M</small></div></div>':"")+
+    '<div class="icard"><div class="k">在售此模型的站</div><div class="v">'+tab.rows.length+' 家</div></div>';
+}
+
+/* 归一化模型名(与探针登记表同规则):vendor/、:batch、点→横、剥 preview 类后缀 */
+function canon(raw){var n=String(raw||"").toLowerCase();n=n.replace(/^[a-z0-9._-]+\//,"");n=n.replace(/:.*$/,"");n=n.replace(/\./g,"-");n=n.replace(/(?:-(?:preview|customtools|latest|image))+$/g,"");return n;}
+/* 渠道类型标签:tier 来自站方声明分组;号池/官方等来自渠道名自带信息;实测组=我们账单落点 */
+function chTags(site,g,groupKind){
+  var out=[];
+  var gs=(SITE_META[site]||{}).groups||[];
+  var decl=gs.filter(function(x){return x.name===g})[0];
+  if(decl){
+    if(decl.tier==="special")out.push('<span class="ch-tag ct-sp" title="站方声明的特价分组:通常有门槛(指定充值档/时段/限量),能不能用到你的 key 上以实充验证为准">特价组</span>');
+    else out.push('<span class="ch-tag ct-pri" title="站方声明的主力分组">主渠道</span>');
+  }
+  var nm=String(g||"");
+  if(/号池/.test(nm))out.push('<span class="ch-tag ct-pool" title="渠道名自带「号池」:共享账号池转发,质量取决于池内账号来源,无法从外部验证">号池</span>');
+  if(/官方|直连/.test(nm))out.push('<span class="ch-tag ct-pool" title="渠道名自带「官方」:站方宣称官方渠道,未做指纹终局验证">官方宣称</span>');
+  if(groupKind==="key")out.push('<span class="ch-tag ct-key" title="我们测试 key 的真实账单落在这个分组(实扣反推),它的主价即实测价">实测组</span>');
+  return out.join("");
+}
+function probeCell(site){
+  var m=SITE_META[site]||{};
+  if(m.level==="billing")return '<span class="dot d-ok"></span>账单级实测';
+  if(m.level==="passive")return '<span class="dot d-wait"></span>监测中';
+  return '<span class="dot d-mid"></span>—';
+}
+
+/* 其他信息:站方商务条款(来自人工核实/站方声明的 commerce),缺项不编;来源与核实日期在悬浮里 */
+function commerceCell(site){
+  var c=(SITE_META[site]||{}).commerce;
+  if(!c)return '<span class="bchip">商务条款未采集</span>';
+  var tips=[];
+  var chips=[];
+  if(c.minTopUp)chips.push('<span class="bchip">起充 '+esc(c.minTopUp)+'</span>');
+  if(c.ratio)chips.push('<span class="bchip src-d" title="充值比例:额度价×它才是你真正花的人民币">比例 '+esc(c.ratio)+'</span>');
+  if(c.pay)chips.push('<span class="bchip">'+esc(c.pay)+'</span>');
+  if(c.invoice)chips.push('<span class="bchip">开票 '+esc(c.invoice)+'</span>');
+  if(c.refund)chips.push('<span class="bchip">退款 '+esc(c.refund)+'</span>');
+  if(!chips.length)return '<span class="bchip">商务条款未采集</span>';
+  var src=c.src==="manual"?"人工核实":"站方声明";
+  return '<span title="'+esc(src+(c.at?" · "+c.at:""))+'">'+chips.join("")+'</span>';
+}
+function renderTable(tab){
+  var rows=sortedRows(tab);
+  var tb=document.getElementById("tbody");
+  var best=rows.filter(function(r){return r.effIn!=null&&!r.chan})[0];
+  var vh=document.getElementById("viewHint");
+  if(vh)vh.textContent=state.view==="chan"?"按渠道展开:含站方声明的在售渠道,价格为页面折算(未逐渠道实测)":"按站聚合:每站取其代表渠道(实测组优先)";
+  var o=tab.official||{};
+  if(!rows.length){tb.innerHTML="";document.getElementById("empty").style.display="block";document.getElementById("mCards").innerHTML="";return}
+  document.getElementById("empty").style.display="none";
+  tb.innerHTML=rows.map(function(r,i){
+    var disc=(r.effIn!=null&&o.in!=null&&o.in>0)?Math.round(r.effIn/(o.in*FX)*100):null;
+    var discTag=disc==null?'<span class="tag t-na">未折算</span>':(disc<=100?'<span class="tag t-disc">'+disc+"% 官价</span>":'<span class="tag t-above">'+disc+"% 官价</span>");
+    var inTip=r.baseIn!=null&&r.grpRatio!=null?("官方价格 $"+r.baseIn+" × 倍率 "+r.grpRatio+(r.ratio!=null?(" × 充值比例 ¥"+r.ratio+"/1$ = 到手 ¥"+fmt(r.effIn)):" = 额度价 $"+fmt(r.inP)+"(比例未声明,不折算)")):"站方额度价 $"+fmt(r.inP)+"/M";
+    var medal=i===0?'<span class="medal m1">1</span>':i===1?'<span class="medal m2">2</span>':i===2?'<span class="medal m3">3</span>':'<span class="rnum">'+(i+1)+'</span>';
+    var inV=r.effIn!=null?'<span class="price num">¥'+fmt(r.effIn)+'</span><span class="cur">/M</span>'
+      :'<span class="price num assumed">$'+fmt(r.inP)+'</span><span class="cur">/M · 未折算</span>';
+    var outV=r.effOut!=null?'<span class="price num">¥'+fmt(r.effOut)+'</span><span class="cur">/M</span>'
+      :'<span class="price num assumed">$'+fmt(r.outP)+/*续*/'</span><span class="cur">/M</span>';
+    return '<tr data-site="'+esc(r.site)+'">'+
+      '<td class="rank">'+medal+'</td>'+
+      '<td><span class="st-name">'+esc(r.site)+(best&&r===best?' <span class="tag t-best">最低价</span>':"")+'</span><span class="st-grp">渠道 '+esc(r.group||"—")+chTags(r.site,r.group,r.groupKind)+(r.calib==="measured"&&r.calibStatus==="match"?" · ✓ 实扣一致":r.calib==="measured"&&r.calibStatus==="mismatch"?" · ⚠ 标价≠实扣":"")+'</span></td>'+
+      '<td title="'+esc(inTip)+'">'+inV+'</td>'+
+      '<td>'+outV+'</td>'+
+      '<td>'+discTag+'</td>'+
+      '<td class="biz">'+commerceCell(r.site)+'</td>'+
+      '<td class="probe-cell">'+probeCell(r.site)+'</td>'+
+      '<td class="act"><a href="compare.html#model='+encodeURIComponent(STATE_KEY(tab))+'" data-stop="1">全指标 →</a><a href="#" data-origin="1" data-stop="1">官网 →</a></td>'+
+    '</tr>';
+  }).join("");
+  bindRows(tab);
+  /* 移动卡 */
+  document.getElementById("mCards").innerHTML=rows.map(function(r,i){
+    return '<div class="mc" data-site2="'+esc(r.site)+'"><div class="mc-top"><span class="mc-name">'+(i+1)+'. '+esc(r.site)+'</span><span class="probe-cell">'+probeCell(r.site)+'</span></div>'+
+      '<div class="mc-grid"><span>输入<b class="num">'+(r.effIn!=null?"¥"+fmt(r.effIn):"$"+fmt(r.inP)+"*")+'</b></span><span>输出<b class="num">'+(r.effOut!=null?"¥"+fmt(r.effOut):"$"+fmt(r.outP)+"*")+'</b></span><span>渠道 <b style="font-size:12px">'+esc(r.group||"—")+'</b></span></div></div>';
+  }).join("");
+}
+function STATE_KEY(tab){return tab.key}
+function bindRows(tab){
+  /* 官网链接:来自探针档案 origin(白名单域名来自我们自己的数据,非用户输入) */
+  Array.prototype.forEach.call(document.querySelectorAll("#tbody tr"),function(tr,idx){
+    tr.addEventListener("click",function(e){
+      if(e.target&&e.target.getAttribute&&e.target.getAttribute("data-stop")){
+        if(e.target.getAttribute("data-origin")==="1"){e.preventDefault();var o=(SITE_META[tr.getAttribute("data-site")]||{}).origin;if(o)window.open(o,"_blank","noopener");else e.preventDefault();return}
+        return; /* 普通 <a> 走默认导航 */
+      }
+      location.href="compare.html#model="+encodeURIComponent(tab.key);
+    });
+  });
+}
+
+function setDocTitle(tab){
+  var min=null;
+  tab.rows.forEach(function(r){if(r.effIn!=null&&(min===null||r.effIn<min))min=r.effIn;});
+  document.title=tab.name+" 中转站价格对比 · "+(min!=null?"最低到手 ¥"+fmt(min)+"/M":"价格待折算")+"（"+tab.rows.length+" 家）· RelayLens";
+}
+function renderCross(tab){
+  var el=document.getElementById("cross");
+  if(!el)return;
+  var others=TABS.filter(function(t){return t.key!==tab.key});
+  if(!others.length){el.innerHTML="";return}
+  el.innerHTML='<span class="cl">其它模型比价：</span>'+others.map(function(t){
+    var min=null;t.rows.forEach(function(r){if(r.effIn!=null&&(min===null||r.effIn<min))min=r.effIn;});
+    return '<a href="#model='+encodeURIComponent(t.key)+'">'+esc(t.name)+(min!=null?' <b>¥'+fmt(min)+'</b>':"")+'</a>';
+  }).join("");
+}
+function renderAll(){
+  var tab=TABS.filter(function(t){return t.key===state.model})[0]||TABS[0];
+  if(!tab)return;
+  state.model=tab.key;
+  renderSelector();renderInfo(tab);renderTable(tab);
+  setDocTitle(tab);renderCross(tab);
+  try{history.replaceState(null,"","#model="+tab.key)}catch(e){}
+}
+
+var TABS=[],FX=7.1;
+fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))}).then(function(j){
+  TABS=(j.compare&&j.compare.tabs)||[];
+  FX=(j.meta&&j.meta.fx&&j.meta.fx.usdCny)||7.1;
+  document.getElementById("fx").textContent=FX;
+  ((j.realSites)||[]).forEach(function(s){SITE_META[s.name]={level:s.level,origin:s.probe&&s.probe.origin,commerce:s.commerce||null,groups:s.groups||[]}});
+  var m=(location.hash.match(/#model=([^&]+)/)||location.search.match(/[?&]model=([^&]+)/)||[])[1];
+  state.model=m&&TABS.filter(function(t){return t.key===m||t.key===m.replace(/\./g,"-")||t.name.replace(/\s+/g,"").toLowerCase()===decodeURIComponent(m).replace(/\s+/g,"").toLowerCase()}).map(function(t){return t.key})[0]||null;
+  if(!TABS.length){document.getElementById("upd").textContent="";document.getElementById("tbody").innerHTML="";document.getElementById("empty").style.display="block";return}
+  var upd=document.getElementById("upd");
+  upd.innerHTML="数据更新于 <b>"+esc(String(j.meta&&j.meta.updated||"").replace("T"," ").slice(0,16))+" UTC</b> · 模型清单与榜单同源（17 个主力模型登记表）";
+  renderAll();
+}).catch(function(err){
+  if(typeof console!=="undefined"&&console.error)console.error("[cheapest] 数据加载失败:",err&&err.message||err);
+  document.getElementById("upd").textContent="榜单数据暂时取不到——刷新重试";
+});
+
+/* 表头排序(输入/输出到手价,升降切换)——对齐 apiranking 的折扣率升/降序 */
+Array.prototype.forEach.call(document.querySelectorAll("th.sortable"),function(th){
+  th.addEventListener("click",function(){
+    var k=th.getAttribute("data-k");
+    if(state.sort===k)state.dir*=-1;else{state.sort=k;state.dir=1}
+    Array.prototype.forEach.call(document.querySelectorAll("th.sortable .arr"),function(a){a.textContent=""});
+    th.querySelector(".arr").textContent=state.dir===1?"↓":"↑";
+    var tab=TABS.filter(function(t){return t.key===state.model})[0];
+    if(tab)renderTable(tab);
+  });
+});
+/* 视图/排序切换 */
+Array.prototype.forEach.call(document.querySelectorAll("#segView button"),function(b){
+  b.addEventListener("click",function(){
+    state.view=b.getAttribute("data-v");
+    Array.prototype.forEach.call(document.querySelectorAll("#segView button"),function(x){x.classList.remove("on")});
+    b.classList.add("on");
+    var tab=TABS.filter(function(t){return t.key===state.model})[0];if(tab)renderTable(tab);
+  });
+});
+Array.prototype.forEach.call(document.querySelectorAll("#segSort button"),function(b){
+  b.addEventListener("click",function(){
+    state.sort=b.getAttribute("data-s");state.dir=1;
+    Array.prototype.forEach.call(document.querySelectorAll("#segSort button"),function(x){x.classList.remove("on")});
+    b.classList.add("on");
+    var tab=TABS.filter(function(t){return t.key===state.model})[0];if(tab)renderTable(tab);
+  });
+});
+/* hash 变化时切模型(分享 #model= 链接) */
+window.addEventListener("hashchange",function(){
+  var m=(location.hash.match(/#model=([^&]+)/)||[])[1];
+  if(!m)return;
+  var t=TABS.filter(function(x){return x.key===m||x.key===m.replace(/\./g,"-")})[0];
+  if(t){state.model=t.key;renderAll()}
+});
+</script>
+</body>
+</html>

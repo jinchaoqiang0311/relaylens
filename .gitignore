@@ -1,0 +1,17 @@
+# 依赖与构建
+node_modules/
+dist-relay/
+
+# ⚠ 密钥绝不可入库
+relaylens/probe/config/secrets/
+*.env
+!.env.example
+
+# 系统杂项
+.DS_Store
+Thumbs.db
+*.log
+.trash/
+
+# 本地工具状态
+.codebuddy/
