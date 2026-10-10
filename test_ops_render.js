@@ -4,7 +4,7 @@
  * 重点防三类事故:①null 被渲染成 0 / undefined ②未测项被臆造 ③CPS 明文泄漏进页面
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 
 const OPS = JSON.parse(fs.readFileSync(DIR + "data/ops.json", "utf8"));
 const AUD = JSON.parse(fs.readFileSync(DIR + "data/audit.json", "utf8"));
@@ -121,7 +121,7 @@ const H = id => captured[id] || "";
 
   // 7) 隐私红线:CPS 明文与密钥绝不进渲染结果或公开 JSON
   const promoRaw = fs.existsSync(DIR + "data/../config/promo.yaml") ? "" : (() => {
-    try { return fs.readFileSync("C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens/probe/config/promo.yaml", "utf8"); } catch { return ""; }
+    try { return fs.readFileSync(__dirname+"/relaylens/probe/config/promo.yaml", "utf8"); } catch { return ""; }
   })();
   const urls = [...promoRaw.matchAll(/url:\s*"?([^"\s]+)"?/g)].map(m => m[1]).filter(u => u.startsWith("http"));
   const leaks = urls.filter(u => all.includes(u) || JSON.stringify(AUD).includes(u));

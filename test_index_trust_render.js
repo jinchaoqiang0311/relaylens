@@ -5,7 +5,7 @@
  *            ③取不到数据时保持「—」占位,绝不回退到假数
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const SITES = JSON.parse(fs.readFileSync(DIR + "data/sites.json", "utf8"));
 const html = fs.readFileSync(DIR + "index.html", "utf8");
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).join("\n");

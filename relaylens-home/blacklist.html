@@ -144,6 +144,24 @@ footer a:hover{color:#fff}
 footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 举报表单弹窗(GitHub Issue 通道,无后端) */
+.modal-mask{position:fixed;inset:0;background:rgba(10,16,32,.55);z-index:120;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-mask[hidden]{display:none}
+.modal{background:var(--card);border-radius:16px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:26px 28px;box-shadow:0 18px 60px rgba(10,16,32,.35)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.modal-head h3{font-size:18px;font-weight:800}
+.modal-x{background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:var(--faint);padding:4px 8px;border-radius:8px}
+.modal-x:hover{background:var(--line)}
+.rf-note{font-size:12.5px;color:var(--sub);background:var(--warn-soft);border-radius:9px;padding:10px 13px;margin-bottom:16px;line-height:1.7}
+.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:640px){.rf-grid{grid-template-columns:1fr}}
+.modal label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px}
+.modal label b{color:var(--bad)}
+.modal input,.modal select,.modal textarea{font:inherit;font-size:13.5px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%;box-sizing:border-box}
+.modal textarea{resize:vertical}
+.rf-err{background:var(--bad-soft);color:var(--bad);font-size:12.5px;padding:8px 12px;border-radius:8px;margin-bottom:12px}
+.rf-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
 </style>
 </head>
 <body>
@@ -300,9 +318,9 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
         <div style="font-size:34px">📢</div>
         <div style="flex:1;min-width:240px">
           <h3 style="color:#fff;font-size:17px;margin-bottom:6px">你被坑过?提交举报,补全证据链</h3>
-          <p style="font-size:13px;opacity:.8">充值未到账、跑路失联、扣费异常——带上面板流水截图和充值记录提交。核实后计入档案库受损统计,你的经历能帮下一个人避开这个坑。</p>
+          <p style="font-size:13px;opacity:.8">充值未到账、跑路失联、扣费异常——带上面板流水截图和充值记录提交。举报以 GitHub Issue 公开提交、公开核实,核实后计入档案库受损统计;你的经历能帮下一个人避开这个坑。</p>
         </div>
-        <button class="btn btn-red" onclick="toast('举报表单即将上线,暂请通过页脚联系方式提交')">提交举报</button>
+        <button class="btn btn-red" onclick="openReport()">提交举报</button>
       </div>
     </div>
   </section>
@@ -321,7 +339,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
       </div>
       <div>
         <h4>关于</h4>
-        <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">联系方式</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+        <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="https://github.com/jinchaoqiang0311/relaylens/issues" target="_blank" rel="noopener">联系方式(Issue)</a><a href="#">隐私政策</a><a href="#">服务条款</a>
       </div>
     </div>
     <div class="fine">
@@ -330,6 +348,35 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
     </div>
   </div>
 </footer>
+
+<!-- 举报表单弹窗:提交到 GitHub Issue(公开可追踪,无需后端) -->
+<div class="modal-mask" id="reportMask" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rfTitle">
+    <div class="modal-head">
+      <h3 id="rfTitle">📢 提交举报</h3>
+      <button class="modal-x" id="rfClose" type="button" aria-label="关闭">×</button>
+    </div>
+    <p class="rf-note">举报通过 <b>GitHub Issue</b> 公开提交与跟踪——与本站「证据公开」原则一致,也便于站方回应。请勿在内容中包含 API Key、密码等敏感信息;流水截图、充值记录等附件在 Issue 页面补充上传。</p>
+    <div class="rf-grid">
+      <label>站点名称 / 域名 <b>*</b><input id="rfSite" placeholder="如:ExampleAI(example.com)"></label>
+      <label>事件类型
+        <select id="rfType">
+          <option>充值未到账</option><option>跑路失联</option><option>扣费异常</option>
+          <option>模型掉包</option><option>虚假宣传</option><option>站方申诉</option><option>其他</option>
+        </select>
+      </label>
+      <label>发生时间<input type="date" id="rfDate"></label>
+      <label>涉及金额(元,选填)<input id="rfAmount" type="number" min="0" step="0.01" placeholder="如 199.00"></label>
+    </div>
+    <label>事件描述 <b>*</b><textarea id="rfDesc" rows="5" placeholder="时间线、充值/扣费记录、与站方沟通经过……越具体越有力"></textarea></label>
+    <label>联系方式(选填,仅用于核实)<input id="rfContact" placeholder="邮箱或微信"></label>
+    <div class="rf-err" id="rfErr" hidden></div>
+    <div class="rf-actions">
+      <button class="btn btn-ghost" id="rfCancel" type="button">取消</button>
+      <button class="btn btn-red" id="rfSubmit" type="button">前往 GitHub 提交 →</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast">已记录</div>
 
@@ -432,9 +479,9 @@ function render(){
      '<div class="arch-foot">'+
        '<span class="note">档案永久保留 · 每次更新记录在案</span>'+
        '<div class="ops">'+
-         (a.state==="review"?'<button class="btn btn-ghost btn-sm" onclick="toast(\'申诉与复检流程见下方规则区\')">站方申诉入口</button>':"")+
+         (a.state==="review"?'<button class="btn btn-ghost btn-sm" onclick="openReport(\''+a.name+'\',\'站方申诉\')">站方申诉入口</button>':"")+
          '<button class="btn btn-ghost btn-sm" onclick="toast(\'原始证据包下载 · Pro 功能\')">证据包 ⬇</button>'+
-         '<button class="btn btn-ghost btn-sm" onclick="toast(\'举报表单即将上线\')">补充举报</button>'+
+         '<button class="btn btn-ghost btn-sm" onclick="openReport(\''+a.name+'\')">补充举报</button>'+
        '</div>'+
      '</div>';
     box.appendChild(d);
@@ -449,6 +496,55 @@ document.querySelectorAll("[data-f]").forEach(function(c){
   });
 });
 render();
+
+/* ============ 举报表单:GitHub Issue 通道(无后端,公开可追踪) ============ */
+var RL_ISSUE_URL="https://github.com/jinchaoqiang0311/relaylens/issues/new";
+function openReport(site,type){
+  document.getElementById("reportMask").hidden=false;
+  document.body.style.overflow="hidden";
+  if(site)document.getElementById("rfSite").value=site;
+  if(type){
+    document.getElementById("rfType").value=type;
+    document.getElementById("rfTitle").textContent=(type==="站方申诉"?"🛡️ 站方申诉":"📢 提交举报");
+  }
+  document.getElementById("rfErr").hidden=true;
+}
+function closeReport(){
+  document.getElementById("reportMask").hidden=true;
+  document.body.style.overflow="";
+}
+document.getElementById("rfClose").addEventListener("click",closeReport);
+document.getElementById("rfCancel").addEventListener("click",closeReport);
+document.getElementById("reportMask").addEventListener("click",function(e){if(e.target===this)closeReport()});
+function rfErr(msg){var el=document.getElementById("rfErr");if(msg){el.textContent=msg;el.hidden=false}else{el.hidden=true}}
+document.getElementById("rfSubmit").addEventListener("click",function(){
+  var site=document.getElementById("rfSite").value.trim();
+  var type=document.getElementById("rfType").value;
+  var date=document.getElementById("rfDate").value;
+  var amount=document.getElementById("rfAmount").value.trim();
+  var desc=document.getElementById("rfDesc").value.trim();
+  var contact=document.getElementById("rfContact").value.trim();
+  if(!site){rfErr("请填写站点名称或域名");return}
+  if(desc.length<20){rfErr("事件描述至少 20 字——太简略无法核实,请补充时间线与依据");return}
+  rfErr("");
+  var L=[];
+  L.push("- **站点**: "+site);
+  L.push("- **类型**: "+type);
+  if(date)L.push("- **发生时间**: "+date);
+  if(amount)L.push("- **涉及金额**: ¥"+amount);
+  if(contact)L.push("- **联系方式**: "+contact);
+  L.push("");
+  L.push("**事件描述**");
+  L.push(desc);
+  L.push("");
+  L.push("---");
+  L.push("_经 blacklist.html 举报表单提交。附件(流水截图/充值记录)请在本 Issue 补充上传;内容公开可见,请勿包含 Key/密码。_");
+  var title="["+type+"] "+site+(date?" ("+date+")":"");
+  var url=RL_ISSUE_URL+"?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(L.join("\n"));
+  window.open(url,"_blank","noopener");
+  closeReport();
+  toast("已打开 GitHub 提交页,补充附件后发送即可");
+});
 </script>
 </body>
 </html>

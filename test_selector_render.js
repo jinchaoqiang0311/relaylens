@@ -6,7 +6,7 @@
  *   ③ 不越界声称(没有能力基准数据,就不说"哪个模型更强")
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const SITES = JSON.parse(fs.readFileSync(DIR + "data/sites.json", "utf8"));
 const html = fs.readFileSync(DIR + "selector.html", "utf8");
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).join("\n");

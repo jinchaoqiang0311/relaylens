@@ -6,7 +6,7 @@
  *           ④取不到数据时保持示例页签(带「示例」角标),不冒充实测
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const SITES = JSON.parse(fs.readFileSync(DIR + "data/sites.json", "utf8"));
 const CMP = SITES.compare;
 const html = fs.readFileSync(DIR + "compare.html", "utf8");

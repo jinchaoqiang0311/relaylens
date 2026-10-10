@@ -6,7 +6,7 @@
  *   ③数据层必须带 fx,且 payload 里不能再有 USD/M 单位。
  */
 const fs = require("fs");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const DECISION = ["index.html", "ranking.html", "compare.html", "detail.html", "selector.html",
   "tools.html", "reports.html", "blacklist.html", "onboarding.html", "claim.html", "404.html", "ops.html"];
 const TECH = ["method.html", "api.html"];

@@ -6,7 +6,7 @@
  * 另测:③compare ?model= 深链与首页模型入口的源码契约。
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const src = fs.readFileSync(DIR + "pitfalls.html", "utf8");
 const DATA = JSON.parse(fs.readFileSync(DIR + "data/sites.json", "utf8"));
 

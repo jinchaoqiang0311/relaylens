@@ -4,8 +4,8 @@
  * 校验逻辑必须真的拦截(空表单/坏邮箱/未勾额度规则都要 fail,不能带病提交)。
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
-const SCHEMA = JSON.parse(fs.readFileSync("C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens/shared/onboarding.schema.json", "utf8"));
+const DIR = __dirname+"/relaylens-home/";
+const SCHEMA = JSON.parse(fs.readFileSync(__dirname+"/relaylens/shared/onboarding.schema.json", "utf8"));
 
 function runPage(file, formValues, submitId) {
   const html = fs.readFileSync(DIR + file, "utf8");

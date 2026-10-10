@@ -4,7 +4,7 @@
  * 对它做行为断言(域名/宣传语/绝不含 Key),对绘制与接线做源码断言。
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const src = fs.readFileSync(DIR + "tools.html", "utf8");
 const script = src.match(/<script>([\s\S]*)<\/script>/)[1];
 

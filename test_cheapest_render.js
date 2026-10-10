@@ -5,7 +5,7 @@
  * 再加我们的口径不变式:未折算永远排后、折扣率=effIn/(官价×汇率)、三因子悬浮可验算、深链模型定位。
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const src = fs.readFileSync(DIR + "cheapest.html", "utf8");
 const DATA = JSON.parse(fs.readFileSync(DIR + "data/sites.json", "utf8"));
 

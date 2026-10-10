@@ -43,9 +43,11 @@ git add -A
 git -c user.name='relaylens' -c user.email='relaylens@local' commit -q -m ("publish dist-relay " + (Get-Date -Format 'yyyy-MM-dd HH:mm'))
 
 # 3) push (git writes progress to stderr; do NOT let PS 5.1 turn that into a terminating error)
+# gh-pages 每次由 dist-relay 全量重建、历史不连续,必须 force;该分支是纯构建产物,force 是安全的。
+# ⚠ 此做法仅限 gh-pages,严禁对 master/main 使用。
 if (-not (git remote)) { git remote add origin $remote }
 $ErrorActionPreference = 'Continue'
-$pushOut = cmd /c "git push origin gh-pages 2>&1"
+$pushOut = cmd /c "git push --force origin gh-pages 2>&1"
 $pushOk = ($LASTEXITCODE -eq 0)
 $ErrorActionPreference = 'Stop'
 $pushOut | Select-Object -Last 4 | ForEach-Object { $_.ToString() }

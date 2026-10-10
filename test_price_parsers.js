@@ -5,7 +5,7 @@
  * ③ 数据契约:sites.json 中 tiered 站的价格与「表达式系数×组倍率×充值比例」自洽(用户实锤口径 5×0.1×1=0.5)
  */
 const fs = require("fs"), path = require("path"), { spawnSync } = require("child_process");
-const ROOT = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw";
+const ROOT = __dirname+"";
 const PROBE = path.join(ROOT, "relaylens/probe");
 const srcNew = fs.readFileSync(path.join(PROBE, "src/parsers/newapi.ts"), "utf8");
 const srcAi = fs.readFileSync(path.join(PROBE, "src/parsers/aicost.ts"), "utf8");

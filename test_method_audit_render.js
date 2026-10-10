@@ -3,7 +3,7 @@
  * 两态都测:①有 audit.json 时如实渲染 ②取不到时给空态而非编造记录
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const AUD = JSON.parse(fs.readFileSync(DIR + "data/audit.json", "utf8"));
 const html = fs.readFileSync(DIR + "method.html", "utf8");
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).join("\n");

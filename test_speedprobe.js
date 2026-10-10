@@ -5,7 +5,7 @@
  *   #3 runId 作废  #4/#5 不得把非实时数字谎称实时
  */
 const fs = require("fs"), vm = require("vm");
-const DIR = "C:/Users/Administrator/.qwenworkcn/workspace/mugbtmedrrtj5xkw/relaylens-home/";
+const DIR = __dirname+"/relaylens-home/";
 const src = fs.readFileSync(DIR + "assets/speedprobe.js", "utf8");
 
 let pass = 0, fail = 0;
