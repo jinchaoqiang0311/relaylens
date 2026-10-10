@@ -70,6 +70,10 @@ export interface FrontendSite {
   dev: number | null; avail: number | null; ttft: number | null;
   /** 首字延迟原始毫秒数:48ms 这种值用秒显示会变成"0 秒",页面必须拿毫秒自己排版 */
   ttftMs?: number | null;
+  /** 推理档模型 TTFT(task=perf_reasoning,不入 PF):分模型锚点校准的数据面,
+   *  展示用途——推理首 token 含思考调度,与普通档混在一个锚点里会互相污染(method.html 待办) */
+  ttftReasoningMs?: number | null;
+  ttftReasoningModel?: string | null;
   cache: number | null; inject: number | null; timeout: number | null; stream: number | null;
   fp: "pass" | "suspect" | "fail" | "pending";
   price: string | null;
@@ -331,6 +335,17 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
   const status: "g" | "y" | "r" =
     (h.lastCheckAt && latestSummary(site, "%") === null) ? "r" :
     h.avail7d === null ? "r" : h.avail7d >= 95 ? "g" : h.avail7d >= 80 ? "y" : "r";
+  /** 推理档 TTFT(独立 task,与主 PF 样本物理隔离):锚点校准素材 + 页面透明展示 */
+  const perfR = getDb().prepare(`SELECT summary FROM batches WHERE site=? AND task='perf_reasoning' ORDER BY started_at DESC LIMIT 1`)
+    .get(site) as { summary: string } | undefined;
+  let ttftReasoningMs: number | null = null, ttftReasoningModel: string | null = null;
+  if (perfR?.summary) {
+    try {
+      const pr = JSON.parse(perfR.summary) as { medianTtftMs?: number | null; model?: string | null };
+      ttftReasoningMs = pr.medianTtftMs ?? null;
+      ttftReasoningModel = pr.model ?? null;
+    } catch { /* 损坏批次按未测处理 */ }
+  }
   return {
     name: site, real: true, dataLayer: "p2", status,
     /** billing = 做过账单级逐笔对账(可称"实测");passive = 只有免成本的健康与价格监测(只能称"监测中") */
@@ -339,6 +354,7 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
     dev: m.BH.match,
     avail: h.avail7d, ttft: m.PF.ttftMs !== null ? Math.round(m.PF.ttftMs / 100) / 10 : null,
     ttftMs: m.PF.ttftMs,
+    ttftReasoningMs, ttftReasoningModel,
     cache: null,                                     // 缓存命中率来自对账日志另算,暂 null
     inject: opts.inject ?? null,
     injectSplit: m.injectSplit ?? null,
