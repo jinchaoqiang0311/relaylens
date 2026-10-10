@@ -61,7 +61,7 @@ node test_compare_render.js                        # 逐个跑 13 套件,发布�
 ### 运维红线
 11. **调度器是长驻进程=代码快照**：改了 parsers/models/weights 后必须杀掉重启 `schedule`，再全量重采——否则旧代码会用旧名单覆盖新数据（2026-10-03 实际发生：17 模型锚点被打回 9 个）；
 12. 单站重跑任务**必须基于全部在册站点重建 dist**，禁止只发布单站产物；
-13. 发布走 QW Pages（工具 publish dist-relay，category=static，name=relaylens-relay）；**域名可能漂移**，每次发布后校验返回域名并告知用户（当前 weaph8e3.qwenwork.host，V21）；
+13. 发布走 GitHub Pages：`node build-relay.js` → `powershell -File publish-ghpages.ps1`（把 dist-relay 推到 gh-pages 分支，脚本自带结构守卫+密钥扫描+ops.html 泄漏检查）；仓库 https://github.com/jinchaoqiang0311/relaylens ，站点 https://jinchaoqiang0311.github.io/relaylens/ ；**禁止把整个仓库当站点发布**（ops.html 等内部页绝不能上线）；旧 QW Pages 通道（千问办公）已弃用，域名 weaph8e3.qwenwork.host 不再更新；
 14. secrets 三不：不进 git、不进发布目录、不在聊天回显（最多前 6 字符）；构建脚本 build-relay.js 有内容扫描，别绕过；
 15. 发布前 13 套件全绿 + 新页面跑对应渲染测试；HTML 结构守卫（未闭合引号/td 配平/格数=列数）不许删——一个漏引号曾让全站表格错位。
 

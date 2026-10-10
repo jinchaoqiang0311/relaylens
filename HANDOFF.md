@@ -4,11 +4,12 @@
 
 | 项 | 值 |
 |---|---|
-| 预览域名（当前权威） | **https://weaph8e3.qwenwork.host/** （V10，含全部最新功能） |
-| 旧域名 | https://rzr65e8d.qwenwork.host/ （V22 计数，停在倒数第二版，仍在线） |
-| 域名说明 | QW Pages 发布不保证域名固定，以每次 publish 返回值为准并告知用户 |
+| 预览域名（当前权威） | **https://jinchaoqiang0311.github.io/relaylens/** （GitHub Pages，gh-pages 分支，2026-10-10 起） |
+| 旧域名 | https://weaph8e3.qwenwork.host/ （QW Pages 已弃用，停留在线，不再更新；其 ranking.html 曾带尾部残留乱码，勿参考） |
+| 发布方式 | `node build-relay.js` → `powershell -File publish-ghpages.ps1`（见 AGENTS.md 红线 13） |
+| 代码仓库 | https://github.com/jinchaoqiang0311/relaylens （master=源码，gh-pages=发布产物） |
 | 最终目标域名 | aipaihangbang.cn/relay/（WordPress 部署未做，dist-relay/DEPLOY.md 有说明） |
-| 最后构建内容 | compare 多渠道价+measuredGroup 修复、cheapest 标签/视图/排序、17 模型换代、三因子价格口径 |
+| 最后构建内容 | ranking.html 尾部残留乱码修复（两个副本+dist 全修复）、新增 .codebuddy 五智能体与 wechat-gateway 网关 |
 
 ## 数据状态
 
