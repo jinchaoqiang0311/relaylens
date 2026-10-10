@@ -68,6 +68,14 @@ export async function pickReasoningModel(site: SiteConfig, exclude: string): Pro
   return hit[0] ?? null;
 }
 
+/** 时段桶(按本地时区小时):9:00–17:59 = work(忙),其余 = off(闲)。
+ *  双窗口采样(工作日 10:30 = work 桶;每天 22:30 = off 桶)落哪个桶由此判定;
+ *  PF 悲观值口径(2026-10-10.1)依赖此函数,与 assemble 的分桶统计必须一致。 */
+export function timeBucket(iso: string): "work" | "off" {
+  const h = new Date(iso).getHours();
+  return h >= 9 && h < 18 ? "work" : "off";
+}
+
 export interface PerfSample {
   seq: number; ok: boolean;
   ttftMs: number | null; totalMs: number | null;

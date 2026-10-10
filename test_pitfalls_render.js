@@ -57,7 +57,11 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   check("掉包案例:note 存在才提网关拦截", (failSite && failSite.fpDetail.note) ? /网关|拦截/.test(els["case-swap"].innerHTML) : !/内容审计/.test(els["case-swap"].innerHTML));
 
   if (mixed) check("流式案例=伪流占比在、站名不在", els["case-stream"].innerHTML.includes(mixed.stream + "%") && !els["case-stream"].innerHTML.includes(mixed.name), mixed.stream + "% 已匿名");
-  check("流式案例含缓冲实测首字区间(文字性表述)", /26~54|数十秒/.test(els["case-stream"].innerHTML));
+  // 数据驱动:存在混合/伪流站时案例须含缓冲等待区间;没有时须如实显示"暂无"
+  const mixedArr = R.filter(s => typeof s.stream === "number" && s.stream > 0 && s.stream < 100);
+  const fakeArr = R.filter(s => s.stream === 100);
+  if (mixedArr.length || fakeArr.length) check("流式案例含缓冲实测首字区间(文字性表述)", /26~54|数十秒/.test(els["case-stream"].innerHTML));
+  else check("无伪流站时如实显示暂无", /没发现憋整段/.test(els["case-stream"].innerHTML));
 
   if (topInj) check("注入案例=注入数值在、站名不在", els["case-inject"].innerHTML.includes(String(topInj.inject)) && !els["case-inject"].innerHTML.includes(topInj.name), "+" + topInj.inject + " 已匿名");
 

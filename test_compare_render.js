@@ -128,7 +128,9 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
 
   // ===== 富信息行新增维度 =====
   check("富行:注入主值带单位与缓存占比副注", /\+4858/.test(all)&&/tok\/请求 · 缓存占\d+%/.test(all));
-  check("富行:流式真伪徽章(假流式带百分比)", /🔇 假流式 100%/.test(all));
+  // 流式真伪徽章:数据驱动断言 —— 有假流式站(≥99%)必须带百分比,没有就不许出该徽章(诚实渲染)
+  const anyFake = (SITES.realSites||[]).some(s => s.stream != null && s.stream >= 99);
+  check("富行:流式真伪徽章(数据驱动)", anyFake ? /🔇 假流式 \d+%/.test(all) : !/🔇 假流式 \d+%/.test(all));
   check("富行:对账匹配率与逐笔笔数", /100%/.test(all)&&/逐笔 \d+ 笔/.test(all));
   check("富行:容差口径直接印在行内", /容差 max\(2 quota, 1%\)/.test(all));
   check("富行:官方价折扣百分比", /≈ 官方价 \d+%/.test(all));

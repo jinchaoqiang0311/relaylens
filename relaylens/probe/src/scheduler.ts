@@ -129,4 +129,38 @@ export function startScheduler(cfg: ProbeConfig) {
   cron.schedule(cfg.schedules.health, () => { void runRound(cfg, "health"); });
   cron.schedule(cfg.schedules.price, () => { void runRound(cfg, "price"); });
   // P2:cron.schedule(cfg.schedules.billing, () => runRound(cfg, "billing", pickRotating(2)));
+  // perf 双窗口(2026-10-10.1 口径,用户已拍板):忙时/闲时各一轮,PF 取两桶较差值。
+  // 有余额的站才产生实际费用(厘级/天);未配置窗口时不启用(兼容旧配置)。
+  if (cfg.schedules.perf_work && cfg.schedules.perf_off) {
+    cron.schedule(cfg.schedules.perf_work, () => { void runPerfRound(cfg); });
+    cron.schedule(cfg.schedules.perf_off, () => { void runPerfRound(cfg); });
+    console.log("⏱️ perf 双窗口已启用:" + cfg.schedules.perf_work + "(忙) / " + cfg.schedules.perf_off + "(闲)");
+  }
+}
+
+/** perf 轮:全站主模型 8 次 + 推理档加测(与 cli perf 同一套探针;单站失败不传染) */
+async function runPerfRound(cfg: ProbeConfig): Promise<void> {
+  const { runPerf, persistPerf, pickModel, pickReasoningModel } = await import("./probes/perf.js");
+  const targets = enabledSites(cfg).filter(s => !!s.key_env);
+  console.log(`▸ perf round 开始 · ${targets.length} 站 · ${new Date().toLocaleTimeString()}`);
+  let done = 0;
+  for (const site of targets) {
+    try {
+      const model = await pickModel(site);
+      if (!model) { console.log(`  ✗ [perf] ${site.name} — 拿不到模型清单`); continue; }
+      const res = await runPerf(site, model, { iters: 8 });
+      persistPerf(res);
+      done++;
+      console.log(`  ✓ [perf] ${site.name} (${res.batchId}) 中位 ${res.medianTtftMs ?? "—"}ms · 成功 ${res.successRate ?? "—"}%`);
+      const rmodel = await pickReasoningModel(site, model);
+      if (rmodel) {
+        const rres = await runPerf(site, rmodel, { iters: 6, category: "reasoning" });
+        persistPerf(rres);
+      }
+    } catch (e) {
+      logEvent(site.name, "task_failed", { task: "perf", err: (e as Error).message });
+      console.log(`  ✗ [perf] ${site.name} — ${(e as Error).message}`);
+    }
+  }
+  console.log(`▸ perf round 完成 · ${done}/${targets.length} 站`);
 }

@@ -377,7 +377,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
   <div class="method">
     <span style="font-size:20px">📐</span>
     <div style="flex:1;min-width:260px">
-      <b>指标口径:</b>扣费偏差 = |面板实扣 − 理论应扣| ÷ 理论应扣,取近 7 天批次均值;缓存命中 = 10 轮标准测试的命中占比;首字延迟(技术口径 TTFT)取晚高峰 20:00–23:00 中位数;模型指纹 = 与官方直连响应相似度(≥85% 通过)。原始数据与复现脚本 <a href="method.html#repro" style="color:var(--brand);font-weight:600">开源可查 →</a>
+      <b>指标口径:</b>扣费偏差 = |面板实扣 − 理论应扣| ÷ 理论应扣,取近 7 天批次均值;缓存命中 = 10 轮标准测试的命中占比;首字延迟(技术口径 TTFT)按忙/闲双窗口(工作日 10:30 / 每日 22:30)采样,近 7 天分桶取中位数,评分用较差桶(悲观值);模型指纹 = 与官方直连响应相似度(≥85% 通过)。原始数据与复现脚本 <a href="method.html#repro" style="color:var(--brand);font-weight:600">开源可查 →</a>
     </div>
     <a class="btn btn-ghost btn-sm" href="api.html" id="exportBtn">⬇ 导出 JSON(API)</a>
   </div>
@@ -507,6 +507,15 @@ function ttftTxt(s){
   var ms=(s.ttftMs!=null)?s.ttftMs:(s.ttft!=null?s.ttft*1000:null);
   if(ms==null)return "未测";
   return ms<1000?Math.round(ms)+' 毫秒':(ms/1000).toFixed(1)+' 秒';
+}
+/* 双窗口分桶值(2026-10-10.1):忙=工作日白天窗口,闲=夜间窗口;单桶缺样本时如实标注 partial */
+function fmtSec(ms){return ms==null?null:(ms<1000?Math.round(ms)+'ms':(ms/1000).toFixed(1)+'s')}
+function ttftDual(s){
+  var w=fmtSec(s.ttftWorkMs),o=fmtSec(s.ttftOffMs);
+  if(w==null&&o==null)return null;
+  if(o==null)return '忙 '+w+' · 闲未测';
+  if(w==null)return '忙未测 · 闲 '+o;
+  return '忙 '+w+' · 闲 '+o;
 }
 function cellCls(v,fn){if(v===null||v===undefined)return"mute";try{return fn(v)||""}catch(e){return""}}
 /**
@@ -739,7 +748,8 @@ function render(){
         '<div class="rc-big '+cellCls(s.avail,function(v){return v>=99?"ok":v>=97?"warn":"bad"})+'">'+(s.avail==null?"未测":s.avail+"%")+'</div>'+
         slaSpark(s.slaSeries)+'</div></td>'+
       '<td class="rich"><div class="rc">'+
-        '<div class="rc-big '+cellCls(s.ttft,function(v){return v<=2?"ok":v<=3?"warn":"bad"})+'">'+ttftTxt(s)+'</div>'+
+        '<div class="rc-big '+cellCls(s.ttft,function(v){return v<=2?"ok":v<=3?"warn":"bad"})+'" title="PF 取忙/闲两时段中位数的较差值(悲观值口径):分数代表最坏常用时段的承诺">'+ttftTxt(s)+'</div>'+
+        (ttftDual(s)?'<div class="rc-s">'+ttftDual(s)+(s.ttftPartialBucket?'(仅'+(s.ttftPartialBucket==="work"?"忙":"闲")+'时样本)':'')+'</div>':'')+
         '<div class="rc-s">'+(s.perf&&s.perf.p95!=null?'P95 '+(s.perf.p95/1000).toFixed(1)+'s':'P95 未测')+(s.perf&&s.perf.successRate!=null?' · 成功 '+s.perf.successRate+'%':'')+'</div>'+
         '<div>'+cell(s.stream,function(v){return v===0?'<span class="rc-chip ok" title="内容逐字送出,Cursor/Claude Code 可边生成边看">⚡ 真流式</span>':v>=99?'<span class="rc-chip bad" title="伪流式率 '+v+'%:整段生成完才一次性下发,逐字输出失效">🔇 假流式 '+v+'%</span>':'<span class="rc-chip warn" title="部分请求被缓冲后一次性下发">◐ 混合 '+v+'%</span>'})+'</div>'+
         '<div class="rc-s" style="margin-top:-2px">你的网络可以到「操作 · 测速直达」自行复现这两项</div>'+   /* 按钮本体在操作列,这里只留指路 */
@@ -971,6 +981,8 @@ function applyRealData(payload){
     /** 只有做过账单级对账的站才配「实测」;新入册的只有免费监测,标「监测中」 */
     s.level=r.level||"passive"; s.passive=(r.level||"passive")!=="billing";
     s.dev=r.dev; s.avail=r.avail; s.ttft=r.ttft; s.ttftMs=r.ttftMs==null?null:r.ttftMs; s.fp=r.fp;
+    s.ttftWorkMs=r.ttftWorkMs==null?null:r.ttftWorkMs; s.ttftOffMs=r.ttftOffMs==null?null:r.ttftOffMs;
+    s.ttftPartialBucket=r.ttftPartialBucket||null;
     s.inject=r.inject; s.stream=r.stream; s.timeout=r.timeout;
     s.cache=r.cache;                          // 探针未产出 → null(不臆造)
     s.measuredGroup=r.measuredGroup||null;    // 分数只代表这一个分组

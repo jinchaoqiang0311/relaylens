@@ -29,7 +29,11 @@ export interface SiteMetrics {
   BH: { match: number | null; consistency: number | null; entries: number };
   MA: { similarity: number | null; baseline: string | null };
   ST: { avail: number | null; timeoutPct: number | null; checks: number; spanMinutes: number };
-  PF: { ttftMs: number | null; samples: number };
+  PF: {
+    ttftMs: number | null; samples: number;
+    /** 双窗口分桶(2026-10-10.1 口径):忙/闲桶各自中位数与单桶缺样本标注 */
+    workMs?: number | null; offMs?: number | null; partialBucket?: "work" | "off" | null;
+  };
   /** SR 流式真实性:伪流式率(%),null=未测 */
   SR: { bufferedRate: number | null; samples: number };
   /** 每模型:站点价(USD/M)与官方锚定价,及注入开销 */

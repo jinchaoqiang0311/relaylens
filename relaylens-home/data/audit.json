@@ -1,16 +1,32 @@
 {
   "meta": {
-    "generatedAt": "2026-10-04T02:39:07.221Z",
+    "generatedAt": "2026-10-10T12:49:07.604Z",
     "weightsVersion": "2026-10-02.2",
     "policy": "哈希链式追加日志:每条记录包含前一条的哈希,任意改写或删除都会使链校验失败。",
     "verify": "本地校验:tsx cli.ts audit verify(探针仓库开源,任何人可重放)"
   },
   "chain": {
     "ok": true,
-    "total": 111,
-    "head": "38419a3a5fa892b98543f2481012de813c33775704757688aa33ba48b51db3c4"
+    "total": 112,
+    "head": "b390df3cf122e24e3742be666467d7d7738ea3bd86971c1268d4ab8e17ea2f26"
   },
   "entries": [
+    {
+      "seq": 112,
+      "at": "2026-10-10T12:49:07.377Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "426a700a9607578137dee72311c4f6d9675685c4a01fafb275edf9f382b2e628"
+      },
+      "after": {
+        "hash": "6030073530ba6cbc182ab7e8a7cd296100b39a4851b85aafd8e203105bb312a8",
+        "note": "12 实测站 + 3 参照系 · 权重 2026-10-02.2"
+      },
+      "reason": "前端数据发生变化并重新发布:12 实测站 + 3 参照系 · 权重 2026-10-02.2",
+      "hash": "b390df3cf122e24e"
+    },
     {
       "seq": 111,
       "at": "2026-10-04T02:39:06.862Z",

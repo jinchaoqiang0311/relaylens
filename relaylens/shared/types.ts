@@ -24,7 +24,7 @@ export interface SiteConfig {
 export interface ProbeConfig {
   sites: SiteConfig[];
   models: { flagship: string[]; standard: string[]; budget: string[] };
-  schedules: { health: string; price: string; billing: string };
+  schedules: { health: string; price: string; billing: string; perf_work?: string; perf_off?: string };
   score_weights: Record<string, Record<string, number>>;
   thresholds: {
     dev_warn: number;

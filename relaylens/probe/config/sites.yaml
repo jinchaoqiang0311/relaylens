@@ -285,6 +285,9 @@ schedules:
   health: "0 */5 * * *"
   price:  "0 */6 * * *"
   billing: "30 */6 * * *"
+  # perf 双窗口(2026-10-10.1 口径):忙时/闲时各一轮,PF 取两桶较差值;有余额的站才产生费用(厘级/天)
+  perf_work: "30 10 * * 1-5"
+  perf_off:  "30 22 * * *"
 
 # 评分权重(与 web/method.html 同源)
 score_weights:

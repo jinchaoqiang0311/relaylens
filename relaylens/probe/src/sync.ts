@@ -74,6 +74,10 @@ export interface FrontendSite {
    *  展示用途——推理首 token 含思考调度,与普通档混在一个锚点里会互相污染(method.html 待办) */
   ttftReasoningMs?: number | null;
   ttftReasoningModel?: string | null;
+  /** 双窗口分桶(2026-10-10.1):忙/闲桶各自中位数;ttftPartialBucket 非空=只有该桶有样本 */
+  ttftWorkMs?: number | null;
+  ttftOffMs?: number | null;
+  ttftPartialBucket?: "work" | "off" | null;
   cache: number | null; inject: number | null; timeout: number | null; stream: number | null;
   fp: "pass" | "suspect" | "fail" | "pending";
   price: string | null;
@@ -354,6 +358,8 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
     dev: m.BH.match,
     avail: h.avail7d, ttft: m.PF.ttftMs !== null ? Math.round(m.PF.ttftMs / 100) / 10 : null,
     ttftMs: m.PF.ttftMs,
+    ttftWorkMs: m.PF.workMs ?? null, ttftOffMs: m.PF.offMs ?? null,
+    ttftPartialBucket: m.PF.partialBucket ?? null,
     ttftReasoningMs, ttftReasoningModel,
     cache: null,                                     // 缓存命中率来自对账日志另算,暂 null
     inject: opts.inject ?? null,
