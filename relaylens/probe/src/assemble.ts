@@ -92,7 +92,7 @@ export function assembleMetrics(site: string, opts: { inject?: number } = {}): S
   const perfRounds = d.prepare(`
     SELECT r.ttft_ms, b.started_at FROM rounds r JOIN batches b ON b.id=r.batch_id
     WHERE b.site=? AND b.task='perf' AND r.ttft_ms>0 AND r.ttft_ms<30000
-      AND b.started_at >= datetime('now','-7 days')`).all(site, site) as Array<{ ttft_ms: number; started_at: string }>;
+      AND b.started_at >= datetime('now','-7 days')`).all(site) as Array<{ ttft_ms: number; started_at: string }>;
   const buckets: Record<"work" | "off", number[]> = { work: [], off: [] };
   for (const r of perfRounds) buckets[timeBucket(r.started_at)].push(r.ttft_ms);
   const bucketMedian = (xs: number[]): number | null =>

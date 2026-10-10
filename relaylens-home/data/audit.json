@@ -1,16 +1,47 @@
 {
   "meta": {
-    "generatedAt": "2026-10-10T12:49:07.604Z",
-    "weightsVersion": "2026-10-02.2",
+    "generatedAt": "2026-10-10T13:28:19.858Z",
+    "weightsVersion": "2026-10-10.1",
     "policy": "哈希链式追加日志:每条记录包含前一条的哈希,任意改写或删除都会使链校验失败。",
     "verify": "本地校验:tsx cli.ts audit verify(探针仓库开源,任何人可重放)"
   },
   "chain": {
     "ok": true,
-    "total": 112,
-    "head": "b390df3cf122e24e3742be666467d7d7738ea3bd86971c1268d4ab8e17ea2f26"
+    "total": 116,
+    "head": "59378ad214a36bb95a45c5a50517ee5f6ad20e17a44fb69b16a2e7b86efcf849"
   },
   "entries": [
+    {
+      "seq": 116,
+      "at": "2026-10-10T13:28:19.598Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "6030073530ba6cbc182ab7e8a7cd296100b39a4851b85aafd8e203105bb312a8"
+      },
+      "after": {
+        "hash": "ac3ea090f9b4ecf264c74637194e2cf2b092ff7198eb7a91f12b407335f1d5a8",
+        "note": "12 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:12 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "59378ad214a36bb9"
+    },
+    {
+      "seq": 114,
+      "at": "2026-10-10T13:25:46.516Z",
+      "actor": "probe",
+      "action": "weights.bump",
+      "target": "shared/weights.json",
+      "before": {
+        "version": "2026-10-02.2"
+      },
+      "after": {
+        "version": "2026-10-10.1"
+      },
+      "reason": "评分权重升版 2026-10-02.2 → 2026-10-10.1:全部历史评分口径变化,旧批次数据需重算才能同榜比较",
+      "hash": "46b3c27c95ce2162"
+    },
     {
       "seq": 112,
       "at": "2026-10-10T12:49:07.377Z",

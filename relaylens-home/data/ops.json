@@ -1,18 +1,18 @@
 {
   "meta": {
-    "generatedAt": "2026-10-10T12:49:07.600Z",
-    "weightsVersion": "2026-10-02.2",
+    "generatedAt": "2026-10-10T13:28:19.854Z",
+    "weightsVersion": "2026-10-10.1",
     "dataLayer": "internal-readonly",
     "note": "本文件仅描述运营状态,不含任何编辑能力。人工改动全部记录在 audit 链中。"
   },
   "integrity": {
     "chainOk": true,
-    "total": 112,
+    "total": 116,
     "brokenAt": null,
     "why": null,
-    "headHash": "b390df3cf122e24e3742be666467d7d7738ea3bd86971c1268d4ab8e17ea2f26",
-    "rawHeadHash": "b390df3cf122e24e3742be666467d7d7738ea3bd86971c1268d4ab8e17ea2f26",
-    "rawCount": 112,
+    "headHash": "59378ad214a36bb95a45c5a50517ee5f6ad20e17a44fb69b16a2e7b86efcf849",
+    "rawHeadHash": "59378ad214a36bb95a45c5a50517ee5f6ad20e17a44fb69b16a2e7b86efcf849",
+    "rawCount": 116,
     "rawDrift": 0
   },
   "thresholds": {
@@ -25,7 +25,7 @@
     "coverage_floor": 0.6,
     "rules": "置信度 = min(1, 样本达标比) × 指标覆盖率;覆盖率<0.6 → 评分置 null(数据不足);0.6-0.8 → 展示但挂低置信标。稳定性额外要求样本时间跨度 ≥45 分钟,防止短时猛采刷满次数却不代表真实分布。",
     "scoreFloorPct": 60,
-    "weightsFile": "2198b3cff814"
+    "weightsFile": "a71a2b48b938"
   },
   "scenes": [
     {
@@ -104,9 +104,9 @@
         {
           "bucket": "PF",
           "name": "性能",
-          "samples": 5,
+          "samples": 13,
           "need": 6,
-          "ok": false
+          "ok": true
         },
         {
           "bucket": "SR",
@@ -124,27 +124,24 @@
         }
       ],
       "scores": {
-        "all": 79,
-        "code": 70,
-        "office": null,
-        "ecom": 54,
-        "drama": 67,
+        "all": 74,
+        "code": 56,
+        "office": 39,
+        "ecom": 47,
+        "drama": 54,
         "image": 58,
-        "biz": null
+        "biz": 58
       },
       "coveragePct": {
-        "all": 70,
-        "code": 60,
-        "office": 55,
-        "ecom": 65,
-        "drama": 65,
+        "all": 75,
+        "code": 75,
+        "office": 75,
+        "ecom": 75,
+        "drama": 80,
         "image": 85,
-        "biz": 50
+        "biz": 70
       },
-      "scenesWithoutScore": [
-        "办公",
-        "企业"
-      ],
+      "scenesWithoutScore": [],
       "metrics": {
         "avail7d": 100,
         "checks": 6,
@@ -1635,7 +1632,7 @@
         {
           "bucket": "PF",
           "name": "性能",
-          "samples": 8,
+          "samples": 16,
           "need": 6,
           "ok": true
         },
@@ -10697,7 +10694,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "aixoras",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-065",
       "action": "等下一轮或手动补跑"
     },
@@ -10713,7 +10710,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "aicost",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-067",
       "action": "等下一轮或手动补跑"
     },
@@ -10721,7 +10718,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "wolfai",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-075",
       "action": "等下一轮或手动补跑"
     },
@@ -10737,7 +10734,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "api75",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-077",
       "action": "等下一轮或手动补跑"
     },
@@ -10753,7 +10750,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "memecode",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-079",
       "action": "等下一轮或手动补跑"
     },
@@ -10769,7 +10766,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "thinkai",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-081",
       "action": "等下一轮或手动补跑"
     },
@@ -10793,7 +10790,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "boxying",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-083",
       "action": "等下一轮或手动补跑"
     },
@@ -10809,7 +10806,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "chatfire",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-085",
       "action": "等下一轮或手动补跑"
     },
@@ -10825,7 +10822,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "uuapi",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-087",
       "action": "等下一轮或手动补跑"
     },
@@ -10841,7 +10838,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "fluxionai",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-089",
       "action": "等下一轮或手动补跑"
     },
@@ -10857,7 +10854,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "jiuqingyun",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-091",
       "action": "等下一轮或手动补跑"
     },
@@ -10873,7 +10870,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "toonflow",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-093",
       "action": "等下一轮或手动补跑"
     },
@@ -10889,7 +10886,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "openrouter",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-069",
       "action": "等下一轮或手动补跑"
     },
@@ -10897,7 +10894,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "deepseek-official",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-071",
       "action": "等下一轮或手动补跑"
     },
@@ -10905,7 +10902,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "zhipu-bigmodel",
-      "msg": "健康检查 29.8 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 30.5 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261009-073",
       "action": "等下一轮或手动补跑"
     },
@@ -10916,14 +10913,6 @@
       "msg": "稳定性(ST)样本 6/12 未达门槛,该桶不计入评分(重归一化)",
       "evidence": null,
       "action": "补采:aixoras 的 ST 样本"
-    },
-    {
-      "level": "info",
-      "code": "cov_PF",
-      "site": "aixoras",
-      "msg": "性能(PF)样本 5/6 未达门槛,该桶不计入评分(重归一化)",
-      "evidence": null,
-      "action": "补采:aixoras 的 PF 样本"
     },
     {
       "level": "info",
@@ -11466,6 +11455,6 @@
     "sites": 15,
     "critical": 2,
     "warn": 27,
-    "info": 69
+    "info": 68
   }
 }
