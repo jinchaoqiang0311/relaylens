@@ -12,3 +12,6 @@ relaylens/probe/config/secrets/
 Thumbs.db
 *.log
 .trash/
+
+# 本地工具状态
+.codebuddy/
