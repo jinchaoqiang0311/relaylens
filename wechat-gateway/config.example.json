@@ -1,0 +1,15 @@
+{
+  "port": 8787,
+  "token": "企业微信后台「接收消息」页配置的 Token",
+  "encodingAesKey": "43位EncodingAESKey",
+  "corpId": "我的企业→企业信息→企业ID",
+  "agentId": 1000002,
+  "corpSecret": "自建应用的Secret(只用于主动推送;留空则只能被动应答)",
+  "allowedUsers": ["你的企业微信userid(我的企业→通讯录→成员详情→账号)"],
+  "codebuddy": {
+    "enabled": false,
+    "cmd": "codebuddy",
+    "args": ["-p"],
+    "timeoutMin": 10
+  }
+}
