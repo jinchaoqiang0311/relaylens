@@ -1,0 +1,13 @@
+name = "relaylens-api"
+main = "src/worker.js"
+compatibility_date = "2026-10-01"
+
+# D1 database: run `wrangler d1 create relaylens` first, paste database_id below
+[[d1_databases]]
+binding = "DB"
+database_name = "relaylens"
+database_id = "TODO-fill-after-wrangler-d1-create"
+
+# free endpoints fetch static data from GitHub Pages (same source as site pages)
+[vars]
+SITE_ORIGIN = "https://jinchaoqiang0311.github.io/relaylens"

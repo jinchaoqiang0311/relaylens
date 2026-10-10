@@ -32,6 +32,9 @@ function loadConfig() {
     corpSecret: "",
     /** 允许使用指令的企业微信成员 userid 白名单;为空数组时拒绝所有指令 */
     allowedUsers: [],
+    /** 探针告警推送密钥(/push 端点 X-Push-Token);留空=端点整体关闭。
+     *  与探针侧 RL_WECOM_PUSH_TOKEN 配同一个值(config/secrets/sites.env)。 */
+    pushToken: "",
     /** status/site/meta 指令只读此文件,不触发任何采集 */
     sitesJson: path.join(REPO_ROOT, "relaylens-home", "data", "sites.json"),
     /** 本地探针 CLI(task 指令入口);cwd 指向 probe 目录 */
@@ -54,6 +57,7 @@ function loadConfig() {
     WECOM_CORPID: "corpId",
     WECOM_CORPSECRET: "corpSecret",
     WECOM_AGENTID: "agentId",
+    WECOM_PUSH_TOKEN: "pushToken",
   };
   for (const [k, v] of Object.entries(envMap)) {
     if (env[k]) cfg[v] = v === "agentId" ? Number(env[k]) : env[k];

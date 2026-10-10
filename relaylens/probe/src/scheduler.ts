@@ -103,6 +103,24 @@ export async function runRound(cfg: ProbeConfig, task: TaskName, sites?: SiteCon
   // rebuild 始终基于全部在册站点(单站重跑不得覆盖其他站点的 dist 数据)
   rebuild(enabledSites(cfg).map(s => s.name));
   console.log(`▸ ${task} round 完成,dist 已重建`);
+  // 健康轮收尾:刷新 ops.json 并把新增 critical 告警推送到企微(未配置网关时安静跳过)
+  if (task === "health") await pushOpsAlerts(cfg);
+}
+
+/** ops 告警推送:失败只打日志,绝不影响调度循环 */
+async function pushOpsAlerts(cfg: ProbeConfig): Promise<void> {
+  try {
+    const { syncOps } = await import("./ops.js");
+    const { referenceSiteNames } = await import("./sync.js");
+    const { pushCriticalAlerts } = await import("./push.js");
+    const targets = enabledSites(cfg).filter(s => !!s.key_env).map(s => s.name);
+    const refs = enabledSites(cfg).filter(s => !s.key_env && referenceSiteNames().includes(s.name)).map(s => s.name);
+    const { opsFile } = syncOps({ sites: targets, reference: refs });
+    const r = await pushCriticalAlerts(opsFile);
+    if (r.pushed) console.log(`  📲 已推送 ${r.pushed} 条紧急告警到企微`);
+  } catch (e) {
+    console.log(`  (ops 告警推送跳过:${(e as Error).message})`);
+  }
 }
 
 /** 常驻调度 */

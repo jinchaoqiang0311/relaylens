@@ -455,7 +455,7 @@ console.log(<span class="s">`数据来源: RelayLens ${version} · 更新于 ${u
       <h3 style="font-size:19px;margin-bottom:8px">数据开放是立场,不是营销</h3>
       <p style="font-size:13.5px;opacity:.8;max-width:560px;margin:0 auto 18px">榜单可以复现、口径可以审计、原始证据可以下载——这是我们与"黑盒测评站"的根本区别。欢迎把我们的数据拆开来挑战。</p>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-primary" style="background:#fff;color:var(--brand-deep)" onclick="toast('API 开放注册即将上线,Pro 含 7 天免费试用')">获取 API Key →</button>
+        <button class="btn btn-primary" style="background:#fff;color:var(--brand-deep)" onclick="openRegister()">获取 API Key →</button>
         <a class="btn btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)" href="method.html#repro">复现指南 →</a>
       </div>
     </div>
@@ -485,8 +485,49 @@ console.log(<span class="s">`数据来源: RelayLens ${version} · 更新于 ${u
   </div>
 </footer>
 
+<!-- API Key 注册弹窗:POST /api/register,明文 key 仅显示一次 -->
+<div class="modal-mask" id="regMask" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="regTitle">
+    <div class="modal-head">
+      <h3 id="regTitle">🔑 获取 API Key</h3>
+      <button class="modal-x" id="regClose" type="button" aria-label="关闭">×</button>
+    </div>
+    <div id="regForm">
+      <p class="reg-note">免费层:公开端点 + 60 次/分钟。<b>注册即含 7 天 Pro 全功能试用</b>(600 次/分钟、历史批次、原始对账流水)。<b>Key 明文仅显示一次</b>,关闭后无法找回;请勿泄露。</p>
+      <label>邮箱(选填,用于重要变更通知)<input id="regEmail" type="email" placeholder="you@example.com"></label>
+      <div class="reg-err" id="regErr" hidden></div>
+      <div class="reg-actions">
+        <button class="btn btn-ghost" id="regCancel" type="button">取消</button>
+        <button class="btn btn-primary" id="regGo" type="button">发放 Key</button>
+      </div>
+    </div>
+    <div id="regDone" hidden>
+      <p class="reg-note">✅ 发放成功。Pro 试用至 <b id="regTrial"></b>。请立即复制保存:</p>
+      <pre id="regKey" style="background:#0c1633;color:#7ef0b0;padding:14px;border-radius:10px;font-size:13.5px;user-select:all"></pre>
+      <div class="reg-actions"><button class="btn btn-primary" id="regCopy" type="button">复制 Key</button></div>
+    </div>
+  </div>
+</div>
+<style>
+.modal-mask{position:fixed;inset:0;background:rgba(12,22,51,.55);z-index:120;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-mask[hidden]{display:none}
+.modal{background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:26px 28px;box-shadow:0 18px 60px rgba(12,22,51,.35)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.modal-head h3{font-size:18px;font-weight:800}
+.modal-x{background:none;border:none;font-size:24px;cursor:pointer;color:var(--faint);padding:4px 8px;border-radius:8px}
+.modal-x:hover{background:#f2f4f8}
+.reg-note{font-size:13px;color:var(--sub);background:var(--brand-soft);border-radius:9px;padding:11px 13px;margin-bottom:14px;line-height:1.7}
+.modal label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;margin-bottom:12px}
+.modal input{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:9px}
+.reg-err{background:var(--bad-soft);color:var(--bad);font-size:12.5px;padding:8px 12px;border-radius:8px;margin-bottom:12px}
+.reg-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+</style>
+
 <div class="toast" id="toast">已复制</div>
 <script>
+/* API 服务地址:Worker 部署后回填(api-worker/README.md 部署步骤 6)。
+   保持占位时按钮会如实提示「服务尚未上线」,绝不假装可用。 */
+var RL_API_BASE="";
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
 function copyCode(btn){
@@ -497,6 +538,40 @@ function copyCode(btn){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){toast("请手动选择复制")})}
   else{toast("请手动选择复制")}
 }
+
+/* ===== API Key 注册(POST {RL_API_BASE}/register) ===== */
+function openRegister(){
+  if(!RL_API_BASE){toast("注册服务尚未上线——部署 api-worker 后回填 RL_API_BASE 即启用");return}
+  document.getElementById("regMask").hidden=false;
+  document.getElementById("regForm").hidden=false;
+  document.getElementById("regDone").hidden=true;
+  document.getElementById("regErr").hidden=true;
+  document.body.style.overflow="hidden";
+}
+function closeRegister(){document.getElementById("regMask").hidden=true;document.body.style.overflow=""}
+document.getElementById("regClose").addEventListener("click",closeRegister);
+document.getElementById("regCancel").addEventListener("click",closeRegister);
+document.getElementById("regMask").addEventListener("click",function(e){if(e.target===this)closeRegister()});
+document.getElementById("regGo").addEventListener("click",async function(){
+  var btn=this,email=document.getElementById("regEmail").value.trim();
+  btn.disabled=true;btn.textContent="发放中…";
+  try{
+    var r=await fetch(RL_API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(email?{email:email}:{})});
+    var j=await r.json();
+    if(!r.ok){document.getElementById("regErr").textContent=j.error==="rate_limited_register"?"尝试过于频繁,请稍后再试":"发放失败("+r.status+")";document.getElementById("regErr").hidden=false;return}
+    document.getElementById("regForm").hidden=true;
+    document.getElementById("regDone").hidden=false;
+    document.getElementById("regTrial").textContent=(j.pro_trial_until||"").slice(0,10);
+    document.getElementById("regKey").textContent=j.key;
+  }catch(e){
+    document.getElementById("regErr").textContent="网络错误,请稍后再试";document.getElementById("regErr").hidden=false;
+  }finally{btn.disabled=false;btn.textContent="发放 Key"}
+});
+document.getElementById("regCopy").addEventListener("click",function(){
+  var k=document.getElementById("regKey").textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(k).then(function(){toast("Key 已复制")},function(){toast("请手动选择复制")});
+  else toast("请手动选择复制");
+});
 </script>
 </body>
 </html>

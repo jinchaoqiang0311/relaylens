@@ -50,6 +50,31 @@ const server = http.createServer((req, res) => {
     res.end("ok");
     return;
   }
+  // 探针告警推送入口:共享密钥鉴权(config.pushToken / 环境变量 WECOM_PUSH_TOKEN),
+  // 未配置 pushToken 时端点整体关闭(404),绝不无鉴权开放。
+  if (u.pathname === "/push" && req.method === "POST") {
+    let body = "";
+    req.on("data", (c) => (body += c));
+    req.on("end", async () => {
+      try {
+        if (!cfg.pushToken || req.headers["x-push-token"] !== cfg.pushToken) {
+          res.statusCode = cfg.pushToken ? 403 : 404;
+          res.end();
+          return;
+        }
+        const j = JSON.parse(body || "{}");
+        const text = String(j.text || "").slice(0, 1800);
+        if (!text) { res.statusCode = 400; res.end(); return; }
+        res.end("");
+        for (const uid of cfg.allowedUsers) await notify(uid, text);
+        log(`告警推送:${text.slice(0, 40).replace(/\n/g, " ")}… → ${cfg.allowedUsers.length} 人`);
+      } catch (e) {
+        log(`push 处理失败: ${e.message}`);
+        try { res.end(""); } catch { /* 连接可能已断开 */ }
+      }
+    });
+    return;
+  }
   if (u.pathname !== "/wecom/callback") {
     res.statusCode = 404;
     res.end();
