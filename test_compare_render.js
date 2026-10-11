@@ -230,7 +230,7 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   await new Promise(r => setImmediate(r)); await new Promise(r => setImmediate(r));
   // 失败态:页签是静态 HTML(不会被 JS 重写,captured 为空),从源码断言
   const tabsB = B.captured["modelTabs"] || "";
-  const staticTabs = html.match(/<div class="model-tabs"[\s\S]*?<\/div>/) || [""];
+  const staticTabs = html.match(/<div class="fam-flat"[\s\S]*?<\/div>/) || [""];
   check("静态降级保持 7 个示例页签(带角标)", (staticTabs[0].match(/chip-demo/g) || []).length === 7, String((staticTabs[0].match(/chip-demo/g) || []).length));
   check("降级时未重建页签(无实测混入)", !/chip-real/.test(tabsB) && !/chip-real/.test(staticTabs[0]));
   const rowsB = gatherRows(B);
