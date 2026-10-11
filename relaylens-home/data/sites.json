@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updated": "2026-10-10T13:28:19.442Z",
+    "updated": "2026-10-11T06:19:01.511Z",
     "weightsVersion": "2026-10-10.1",
     "license": "CC-BY-4.0",
     "source": "relaylens-probe",
@@ -15,15 +15,15 @@
       "sitesRegistered": 16,
       "sitesPaidMeasured": 2,
       "sitesMonitored": 10,
-      "priceLineItems": 210,
+      "priceLineItems": 207,
       "distinctModels": 84,
       "reconcileVerified": 138,
       "reconcileMismatched": 0,
       "reconcileAmountUsd": 1.382,
       "reconcileAmountCny": 9.81,
       "maxSingleRequestTokens": 405338,
-      "batchesToday": 13,
-      "healthChecksTotal": 2841,
+      "batchesToday": 32,
+      "healthChecksTotal": 2889,
       "since": "2026-09-29",
       "referenceCount": 3
     }
@@ -138,14 +138,6 @@
                 "inP": 1.75,
                 "outP": 10.5,
                 "cacheP": 0.18,
-                "head": false
-              },
-              {
-                "group": "GPT-cyber",
-                "grpRatio": 1.2,
-                "inP": 6,
-                "outP": 36,
-                "cacheP": 0.6,
                 "head": false
               },
               {
@@ -682,11 +674,11 @@
             "outP": 50,
             "cacheP": 1,
             "special": {
-              "group": "Codex",
-              "ratio": 0.25,
-              "inP": 2.5,
-              "outP": 12.5,
-              "effIn": 5
+              "group": "Mini",
+              "ratio": 0.15,
+              "inP": 1.5,
+              "outP": 7.5,
+              "effIn": 3
             },
             "channels": [
               {
@@ -696,6 +688,14 @@
                 "outP": 50,
                 "cacheP": 1,
                 "head": true
+              },
+              {
+                "group": "Mini",
+                "grpRatio": 0.15,
+                "inP": 1.5,
+                "outP": 7.5,
+                "cacheP": 0.15,
+                "head": false
               },
               {
                 "group": "Codex",
@@ -837,14 +837,6 @@
                 "inP": 5,
                 "outP": 25,
                 "cacheP": 0.5,
-                "head": false
-              },
-              {
-                "group": "test",
-                "grpRatio": 1,
-                "inP": 10,
-                "outP": 50,
-                "cacheP": 1,
                 "head": false
               }
             ],
@@ -1640,7 +1632,7 @@
           },
           {
             "site": "memecode",
-            "group": "Claudecode-Max备用",
+            "group": "Claudecode-Max",
             "groupKind": "median",
             "inP": 5.2,
             "outP": 26,
@@ -1654,7 +1646,7 @@
             },
             "channels": [
               {
-                "group": "Claudecode-Max备用",
+                "group": "Claudecode-Max",
                 "grpRatio": 1.3,
                 "inP": 5.2,
                 "outP": 26,
@@ -1678,7 +1670,7 @@
                 "head": false
               },
               {
-                "group": "Claudecode-Max",
+                "group": "Claudecode-Max备用",
                 "grpRatio": 1.3,
                 "inP": 5.2,
                 "outP": 26,
@@ -1899,11 +1891,11 @@
             "outP": 12,
             "cacheP": 0.2,
             "special": {
-              "group": "Mini",
-              "ratio": 0.15,
-              "inP": 0.3,
-              "outP": 1.8,
-              "effIn": 0.6
+              "group": "Codex",
+              "ratio": 0.25,
+              "inP": 0.5,
+              "outP": 3,
+              "effIn": 1
             },
             "channels": [
               {
@@ -1913,14 +1905,6 @@
                 "outP": 12,
                 "cacheP": 0.2,
                 "head": true
-              },
-              {
-                "group": "Mini",
-                "grpRatio": 0.15,
-                "inP": 0.3,
-                "outP": 1.8,
-                "cacheP": 0.03,
-                "head": false
               },
               {
                 "group": "Codex",
@@ -3398,7 +3382,7 @@
           },
           {
             "site": "memecode",
-            "group": "Claudecode-Max",
+            "group": "Claudecode-Max备用",
             "groupKind": "median",
             "inP": 2.6,
             "outP": 13,
@@ -3406,7 +3390,7 @@
             "special": null,
             "channels": [
               {
-                "group": "Claudecode-Max",
+                "group": "Claudecode-Max备用",
                 "grpRatio": 1.3,
                 "inP": 2.6,
                 "outP": 13,
@@ -3414,11 +3398,19 @@
                 "head": true
               },
               {
-                "group": "Claudecode-Max备用",
+                "group": "Claudecode-Max",
                 "grpRatio": 1.3,
                 "inP": 2.6,
                 "outP": 13,
                 "cacheP": 0.26,
+                "head": false
+              },
+              {
+                "group": "Claudecode-Max纯享",
+                "grpRatio": 1.6,
+                "inP": 3.2,
+                "outP": 16,
+                "cacheP": 0.32,
                 "head": false
               }
             ],
@@ -3866,9 +3858,9 @@
         "name": "DeepSeek V4 Pro",
         "family": "DeepSeek",
         "official": {
-          "in": 0.95526,
-          "out": 1.91052,
-          "cr": 0.079605
+          "in": 0.2088,
+          "out": 0.4176,
+          "cr": 0.0174
         },
         "rows": [
           {
@@ -4016,40 +4008,26 @@
         "rows": [
           {
             "site": "aixoras",
-            "group": "测试专用",
+            "group": "GLM智谱",
             "groupKind": "median",
-            "inP": 8,
-            "outP": 28,
-            "cacheP": 2,
-            "special": {
-              "group": "GLM智谱",
-              "ratio": 0.7,
-              "inP": 5.6,
-              "outP": 19.6,
-              "effIn": 5.6
-            },
+            "inP": 5.6,
+            "outP": 19.6,
+            "cacheP": 1.4,
+            "special": null,
             "channels": [
-              {
-                "group": "测试专用",
-                "grpRatio": 1,
-                "inP": 8,
-                "outP": 28,
-                "cacheP": 2,
-                "head": true
-              },
               {
                 "group": "GLM智谱",
                 "grpRatio": 0.7,
                 "inP": 5.6,
                 "outP": 19.6,
                 "cacheP": 1.4,
-                "head": false
+                "head": true
               }
             ],
             "baseIn": 8,
             "baseOut": 28,
             "baseCr": 2,
-            "grpRatio": 1,
+            "grpRatio": 0.7,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -4059,9 +4037,9 @@
             "cacheShare": 94.4,
             "inject": 4858,
             "ratio": 1,
-            "effIn": 8,
-            "effOut": 28,
-            "effCr": 2,
+            "effIn": 5.6,
+            "effOut": 19.6,
+            "effCr": 1.4,
             "src": "USD"
           },
           {
@@ -4428,47 +4406,33 @@
         "name": "Kimi K3",
         "family": "Moonshot",
         "official": {
-          "in": 0.5,
+          "in": 0.8,
           "out": 12,
-          "cr": 0.33
+          "cr": 0.55
         },
         "rows": [
           {
             "site": "aixoras",
-            "group": "测试专用",
+            "group": "KIMI",
             "groupKind": "median",
-            "inP": 20,
-            "outP": 100,
-            "cacheP": 2,
-            "special": {
-              "group": "KIMI",
-              "ratio": 0.7,
-              "inP": 14,
-              "outP": 70,
-              "effIn": 14
-            },
+            "inP": 14,
+            "outP": 70,
+            "cacheP": 1.4,
+            "special": null,
             "channels": [
-              {
-                "group": "测试专用",
-                "grpRatio": 1,
-                "inP": 20,
-                "outP": 100,
-                "cacheP": 2,
-                "head": true
-              },
               {
                 "group": "KIMI",
                 "grpRatio": 0.7,
                 "inP": 14,
                 "outP": 70,
                 "cacheP": 1.4,
-                "head": false
+                "head": true
               }
             ],
             "baseIn": 20,
             "baseOut": 100,
             "baseCr": 2,
-            "grpRatio": 1,
+            "grpRatio": 0.7,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -4478,9 +4442,9 @@
             "cacheShare": 94.4,
             "inject": 4858,
             "ratio": 1,
-            "effIn": 20,
-            "effOut": 100,
-            "effCr": 2,
+            "effIn": 14,
+            "effOut": 70,
+            "effCr": 1.4,
             "src": "USD"
           },
           {
@@ -4591,11 +4555,11 @@
       },
       "dev": 100,
       "avail": 100,
-      "ttft": 14.8,
-      "ttftMs": 14778,
-      "ttftWorkMs": 3157,
-      "ttftOffMs": 14778,
-      "ttftPartialBucket": null,
+      "ttft": 12.8,
+      "ttftMs": 12834,
+      "ttftWorkMs": null,
+      "ttftOffMs": 12834,
+      "ttftPartialBucket": "off",
       "ttftReasoningMs": null,
       "ttftReasoningModel": null,
       "cache": null,
@@ -4604,7 +4568,7 @@
         "fresh_share": 0.20948950185261425,
         "cached_share": 0.7905104981473857
       },
-      "timeout": 37.5,
+      "timeout": 25,
       "stream": 0,
       "fp": "pass",
       "price": "¥0.4/M",
@@ -4620,13 +4584,13 @@
       "priceCalib": "page",
       "priceCalibFactor": null,
       "models": [
-        "deepseek",
-        "gpt",
-        "claude",
-        "kimi",
         "grok",
+        "kimi",
+        "gpt",
+        "deepseek",
         "gemini",
-        "glm"
+        "glm",
+        "claude"
       ],
       "audit": {
         "matchPct": 100,
@@ -4759,13 +4723,13 @@
           "models": [
             {
               "model": "glm-5.3",
-              "inP": 8,
+              "inP": 5.6,
               "offIn": 0.039,
-              "ratioPct": 20513
+              "ratioPct": 14359
             },
             {
               "model": "glm-5.3-flash",
-              "inP": 0.15,
+              "inP": 0.105,
               "offIn": null,
               "ratioPct": null
             },
@@ -4826,8 +4790,8 @@
             {
               "model": "deepseek-v4-pro",
               "inP": 3.15,
-              "offIn": 0.95526,
-              "ratioPct": 330
+              "offIn": 0.2088,
+              "ratioPct": 1509
             },
             {
               "model": "deepseek-v4.1-flash",
@@ -4843,7 +4807,7 @@
           "models": [
             {
               "model": "gpt-5.6-luna",
-              "inP": 0.44,
+              "inP": 0.12,
               "offIn": null,
               "ratioPct": null
             }
@@ -4888,13 +4852,13 @@
         "origin": "https://aixoras.com",
         "endpoint": "https://aixoras.com/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-001",
-          "probedAt": "2026-10-10T12:29:52.947Z",
+          "batchId": "RL-RC-20261010-027",
+          "probedAt": "2026-10-10T14:30:01.533Z",
           "model": "gpt-5.5",
-          "medianTtftMs": 14778,
-          "p95TtftMs": 18561,
-          "successRate": 62.5,
-          "timeoutRate": 37.5,
+          "medianTtftMs": 12396,
+          "p95TtftMs": 23156,
+          "successRate": 75,
+          "timeoutRate": 25,
           "bufferedRate": 0,
           "streamVerdict": "stream",
           "streamCheck": {
@@ -4911,10 +4875,10 @@
             {
               "seq": 1,
               "ok": true,
-              "ttftMs": 12834,
-              "totalMs": 12834,
-              "inTok": 16,
-              "outTok": 24,
+              "ttftMs": 12396,
+              "totalMs": 12396,
+              "inTok": 4394,
+              "outTok": 5,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -4922,30 +4886,42 @@
             },
             {
               "seq": 2,
-              "ok": false,
-              "ttftMs": null,
-              "totalMs": null,
-              "inTok": null,
-              "outTok": null,
-              "buffered": null,
-              "httpStatus": null,
-              "error": "This operation was aborted",
-              "failureType": "timeout"
+              "ok": true,
+              "ttftMs": 8914,
+              "totalMs": 8914,
+              "inTok": 4394,
+              "outTok": 5,
+              "buffered": false,
+              "httpStatus": 200,
+              "error": null,
+              "failureType": null
             },
             {
               "seq": 3,
               "ok": true,
-              "ttftMs": 18222,
-              "totalMs": 18222,
-              "inTok": 16,
-              "outTok": 49,
-              "buffered": true,
+              "ttftMs": 11928,
+              "totalMs": 11928,
+              "inTok": 4394,
+              "outTok": 5,
+              "buffered": false,
               "httpStatus": 200,
               "error": null,
               "failureType": null
             },
             {
               "seq": 4,
+              "ok": true,
+              "ttftMs": 11468,
+              "totalMs": 11468,
+              "inTok": 12121,
+              "outTok": 14,
+              "buffered": false,
+              "httpStatus": 200,
+              "error": null,
+              "failureType": null
+            },
+            {
+              "seq": 5,
               "ok": false,
               "ttftMs": null,
               "totalMs": null,
@@ -4955,18 +4931,6 @@
               "httpStatus": null,
               "error": "This operation was aborted",
               "failureType": "timeout"
-            },
-            {
-              "seq": 5,
-              "ok": true,
-              "ttftMs": 18561,
-              "totalMs": 18561,
-              "inTok": 16,
-              "outTok": 46,
-              "buffered": true,
-              "httpStatus": 200,
-              "error": null,
-              "failureType": null
             },
             {
               "seq": 6,
@@ -4983,10 +4947,10 @@
             {
               "seq": 7,
               "ok": true,
-              "ttftMs": 10268,
-              "totalMs": 10268,
-              "inTok": 12116,
-              "outTok": 14,
+              "ttftMs": 13315,
+              "totalMs": 13315,
+              "inTok": 4394,
+              "outTok": 5,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -4995,11 +4959,11 @@
             {
               "seq": 8,
               "ok": true,
-              "ttftMs": 14778,
-              "totalMs": 14778,
-              "inTok": 16,
-              "outTok": 52,
-              "buffered": true,
+              "ttftMs": 23156,
+              "totalMs": 23156,
+              "inTok": 12,
+              "outTok": 5,
+              "buffered": false,
               "httpStatus": 200,
               "error": null,
               "failureType": null
@@ -5008,21 +4972,6 @@
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -5065,15 +5014,30 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
       "perf": {
-        "p95": 18561,
-        "successRate": 62.5,
-        "timeoutRate": 37.5,
-        "bufferedRate": 60,
+        "p95": 23156,
+        "successRate": 75,
+        "timeoutRate": 25,
+        "bufferedRate": 0,
         "streamVerdict": "stream",
         "streamCheck": {
           "prompt": "3 次取样·措辞各异(逐次 prompt 见 trials)",
@@ -5086,7 +5050,7 @@
         },
         "iters": 8,
         "model": "gpt-5.5",
-        "at": "2026-10-10T12:29:52.947Z"
+        "at": "2026-10-10T14:30:01.533Z"
       },
       "fpDetail": {
         "similarity": 88.8,
@@ -5096,7 +5060,7 @@
         "at": "2026-10-02T09:57:43.808Z",
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": "微信 / 支付宝",
         "ratio": "¥1 = 1 美元额度",
@@ -5154,11 +5118,11 @@
       },
       "dev": 100,
       "avail": 100,
-      "ttft": 12.1,
-      "ttftMs": 12050,
-      "ttftWorkMs": 2571,
-      "ttftOffMs": 12050,
-      "ttftPartialBucket": null,
+      "ttft": 11.9,
+      "ttftMs": 11889,
+      "ttftWorkMs": null,
+      "ttftOffMs": 11889,
+      "ttftPartialBucket": "off",
       "ttftReasoningMs": null,
       "ttftReasoningModel": null,
       "cache": null,
@@ -5404,11 +5368,11 @@
         "origin": "https://www.aicost.me",
         "endpoint": "https://www.aicost.me/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-003",
-          "probedAt": "2026-10-10T12:33:23.815Z",
+          "batchId": "RL-RC-20261010-029",
+          "probedAt": "2026-10-10T14:34:36.002Z",
           "model": "gpt-5.5",
-          "medianTtftMs": 12050,
-          "p95TtftMs": 21481,
+          "medianTtftMs": 11733,
+          "p95TtftMs": 23525,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -5427,8 +5391,8 @@
             {
               "seq": 1,
               "ok": true,
-              "ttftMs": 12468,
-              "totalMs": 12468,
+              "ttftMs": 23525,
+              "totalMs": 23526,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5439,8 +5403,8 @@
             {
               "seq": 2,
               "ok": true,
-              "ttftMs": 12017,
-              "totalMs": 12017,
+              "ttftMs": 10252,
+              "totalMs": 10252,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5451,8 +5415,8 @@
             {
               "seq": 3,
               "ok": true,
-              "ttftMs": 12050,
-              "totalMs": 12051,
+              "ttftMs": 10620,
+              "totalMs": 10620,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5463,8 +5427,8 @@
             {
               "seq": 4,
               "ok": true,
-              "ttftMs": 21481,
-              "totalMs": 21481,
+              "ttftMs": 12034,
+              "totalMs": 12034,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5475,8 +5439,8 @@
             {
               "seq": 5,
               "ok": true,
-              "ttftMs": 7730,
-              "totalMs": 7731,
+              "ttftMs": 11535,
+              "totalMs": 11536,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5487,8 +5451,8 @@
             {
               "seq": 6,
               "ok": true,
-              "ttftMs": 8638,
-              "totalMs": 8638,
+              "ttftMs": 11889,
+              "totalMs": 11889,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5499,8 +5463,8 @@
             {
               "seq": 7,
               "ok": true,
-              "ttftMs": 17417,
-              "totalMs": 17417,
+              "ttftMs": 11733,
+              "totalMs": 11733,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5511,8 +5475,8 @@
             {
               "seq": 8,
               "ok": true,
-              "ttftMs": 7536,
-              "totalMs": 7537,
+              "ttftMs": 10736,
+              "totalMs": 10736,
               "inTok": 4392,
               "outTok": 5,
               "buffered": false,
@@ -5524,21 +5488,6 @@
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -5581,12 +5530,27 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
       "perf": {
-        "p95": 21481,
+        "p95": 23525,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -5602,7 +5566,7 @@
         },
         "iters": 8,
         "model": "gpt-5.5",
-        "at": "2026-10-10T12:33:23.815Z"
+        "at": "2026-10-10T14:34:36.002Z"
       },
       "fpDetail": {
         "similarity": 91.2,
@@ -5612,7 +5576,7 @@
         "at": "2026-10-02T10:00:38.640Z",
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": "卡密",
         "ratio": "¥1 = 1 美元额度",
@@ -5696,13 +5660,13 @@
       "priceCalib": "page",
       "priceCalibFactor": null,
       "models": [
+        "gemini",
         "gpt",
+        "deepseek",
+        "grok",
         "glm",
         "kimi",
-        "gemini",
-        "claude",
-        "grok",
-        "deepseek"
+        "claude"
       ],
       "audit": {
         "matchPct": null,
@@ -5722,8 +5686,8 @@
         "origin": "https://wolfai.top",
         "endpoint": "https://wolfai.top/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-005",
-          "probedAt": "2026-10-10T12:36:32.527Z",
+          "batchId": "RL-RC-20261010-031",
+          "probedAt": "2026-10-10T14:38:10.529Z",
           "model": "deepseek-flash",
           "medianTtftMs": null,
           "p95TtftMs": null,
@@ -5738,7 +5702,7 @@
             "bufferedTrials": 0,
             "bufferedPct": null,
             "verdict": "unknown",
-            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236509507443758268d9d6bktsoucu)\""
+            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438250373575308268d9d6JmSduE1Z)\""
           },
           "iters": 8,
           "rounds": [
@@ -5751,7 +5715,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236356867772308268d9d6xSnVswm8)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438138129105208268d9d6wQSqmKGd)\"",
               "failureType": "http_error"
             },
             {
@@ -5763,7 +5727,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236367846509728268d9d6Enhgn0eY)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438149198449258268d9d6cXuNd7US)\"",
               "failureType": "http_error"
             },
             {
@@ -5775,7 +5739,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236378777123798268d9d6INZIctvQ)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438160277054188268d9d6iUbkSuKk)\"",
               "failureType": "http_error"
             },
             {
@@ -5787,7 +5751,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236389698344718268d9d6uZzzSWHu)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438171267055668268d9d6bdsHknuU)\"",
               "failureType": "http_error"
             },
             {
@@ -5799,7 +5763,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236418431320628268d9d6GkslREqD)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438182318776088268d9d6moal056F)\"",
               "failureType": "http_error"
             },
             {
@@ -5811,7 +5775,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236429655740318268d9d6xNwANUv5)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438193358917558268d9d6UiCgjbq3)\"",
               "failureType": "http_error"
             },
             {
@@ -5823,7 +5787,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236440569692248268d9d6WaXf1x1S)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438206432597998268d9d6wa2VkGV7)\"",
               "failureType": "http_error"
             },
             {
@@ -5835,28 +5799,13 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236451500016078268d9d6zakfRAOi)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438217457205608268d9d6BxXtBgpP)\"",
               "failureType": "http_error"
             }
           ]
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -5899,6 +5848,21 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
@@ -5916,11 +5880,11 @@
           "bufferedTrials": 0,
           "bufferedPct": null,
           "verdict": "unknown",
-          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101236509507443758268d9d6bktsoucu)\""
+          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.003536 (request id: 202610101438250373575308268d9d6JmSduE1Z)\""
         },
         "iters": 8,
         "model": "deepseek-flash",
-        "at": "2026-10-10T12:36:32.527Z"
+        "at": "2026-10-10T14:38:10.529Z"
       },
       "fpDetail": {
         "similarity": 84.5,
@@ -5930,7 +5894,7 @@
         "at": "2026-10-02T10:59:26.334Z",
         "note": "其后 2 轮复检 0 有效样本(多为余额不足),此数为最近一次有效测量"
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥2 = 1 美元额度",
@@ -6035,8 +5999,8 @@
         "origin": "https://www.75api.com",
         "endpoint": "https://www.75api.com/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-009",
-          "probedAt": "2026-10-10T12:36:56.550Z",
+          "batchId": "RL-RC-20261010-035",
+          "probedAt": "2026-10-10T14:38:29.571Z",
           "model": "deepseek-v4.1-flash",
           "medianTtftMs": null,
           "p95TtftMs": null,
@@ -6051,7 +6015,7 @@
             "bufferedTrials": 0,
             "bufferedPct": null,
             "verdict": "unknown",
-            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237117665093698268d9d6ASU9zGDk)\","
+            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 20261010143845162636118268d9d6tAkSouSC)\",\""
           },
           "iters": 8,
           "rounds": [
@@ -6064,7 +6028,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101236597680443148268d9d6j5haDdNj)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438329139990958268d9d6MbDf3EcN)\",",
               "failureType": "http_error"
             },
             {
@@ -6076,7 +6040,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237009761661378268d9d63kn36gWn)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438341283008178268d9d6IHMFKWu0)\",",
               "failureType": "http_error"
             },
             {
@@ -6088,7 +6052,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237021750035028268d9d6VpFy9k7z)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438353405302768268d9d6jGshp6Yl)\",",
               "failureType": "http_error"
             },
             {
@@ -6100,7 +6064,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237033757071258268d9d6YK413yqp)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438365438097298268d9d6W5QWo1KD)\",",
               "failureType": "http_error"
             },
             {
@@ -6112,7 +6076,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237045729468548268d9d6BjykTVsc)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438377580965648268d9d6j9DeVg0U)\",",
               "failureType": "http_error"
             },
             {
@@ -6124,7 +6088,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237057645405948268d9d6VyIYn3Gq)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438389714758448268d9d6FpGsC8QJ)\",",
               "failureType": "http_error"
             },
             {
@@ -6136,7 +6100,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237069651035438268d9d6l4FI8lzq)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438401725338058268d9d63GezwIDn)\",",
               "failureType": "http_error"
             },
             {
@@ -6148,28 +6112,13 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237081654392118268d9d6qDsx5m9s)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101438413999373668268d9d6ACcAcRyo)\",",
               "failureType": "http_error"
             }
           ]
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -6212,6 +6161,21 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
@@ -6229,11 +6193,11 @@
           "bufferedTrials": 0,
           "bufferedPct": null,
           "verdict": "unknown",
-          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101237117665093698268d9d6ASU9zGDk)\","
+          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 20261010143845162636118268d9d6tAkSouSC)\",\""
         },
         "iters": 8,
         "model": "deepseek-v4.1-flash",
-        "at": "2026-10-10T12:36:56.550Z"
+        "at": "2026-10-10T14:38:29.571Z"
       },
       "fpDetail": {
         "similarity": null,
@@ -6243,7 +6207,7 @@
         "at": null,
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 1 美元额度",
@@ -6302,9 +6266,9 @@
       "dev": null,
       "avail": 100,
       "ttft": 12.5,
-      "ttftMs": 12513,
+      "ttftMs": 12455,
       "ttftWorkMs": null,
-      "ttftOffMs": 12513,
+      "ttftOffMs": 12455,
       "ttftPartialBucket": "off",
       "ttftReasoningMs": null,
       "ttftReasoningModel": null,
@@ -6327,10 +6291,10 @@
       "priceCalib": "page",
       "priceCalibFactor": null,
       "models": [
-        "gpt",
-        "grok",
         "glm",
-        "claude"
+        "gpt",
+        "claude",
+        "grok"
       ],
       "audit": {
         "matchPct": null,
@@ -6350,11 +6314,11 @@
         "origin": "https://memecode.de",
         "endpoint": "https://memecode.de/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-011",
-          "probedAt": "2026-10-10T12:37:11.046Z",
+          "batchId": "RL-RC-20261010-037",
+          "probedAt": "2026-10-10T14:38:44.577Z",
           "model": "gpt-5.5",
-          "medianTtftMs": 12513,
-          "p95TtftMs": 22548,
+          "medianTtftMs": 12455,
+          "p95TtftMs": 25607,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -6373,8 +6337,8 @@
             {
               "seq": 1,
               "ok": true,
-              "ttftMs": 7974,
-              "totalMs": 7974,
+              "ttftMs": 12455,
+              "totalMs": 12455,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6385,8 +6349,8 @@
             {
               "seq": 2,
               "ok": true,
-              "ttftMs": 22548,
-              "totalMs": 22548,
+              "ttftMs": 11017,
+              "totalMs": 11017,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6397,8 +6361,8 @@
             {
               "seq": 3,
               "ok": true,
-              "ttftMs": 10014,
-              "totalMs": 10014,
+              "ttftMs": 25607,
+              "totalMs": 25615,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6409,8 +6373,8 @@
             {
               "seq": 4,
               "ok": true,
-              "ttftMs": 12513,
-              "totalMs": 12516,
+              "ttftMs": 12657,
+              "totalMs": 12657,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6421,8 +6385,8 @@
             {
               "seq": 5,
               "ok": true,
-              "ttftMs": 19870,
-              "totalMs": 19870,
+              "ttftMs": 11680,
+              "totalMs": 11682,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6433,8 +6397,8 @@
             {
               "seq": 6,
               "ok": true,
-              "ttftMs": 9927,
-              "totalMs": 9927,
+              "ttftMs": 12094,
+              "totalMs": 12096,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6445,8 +6409,8 @@
             {
               "seq": 7,
               "ok": true,
-              "ttftMs": 16678,
-              "totalMs": 16678,
+              "ttftMs": 21059,
+              "totalMs": 21059,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6457,8 +6421,8 @@
             {
               "seq": 8,
               "ok": true,
-              "ttftMs": 11775,
-              "totalMs": 11777,
+              "ttftMs": 10629,
+              "totalMs": 10630,
               "inTok": 4394,
               "outTok": 5,
               "buffered": false,
@@ -6470,21 +6434,6 @@
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -6527,12 +6476,27 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
       "perf": {
-        "p95": 22548,
+        "p95": 25607,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -6548,7 +6512,7 @@
         },
         "iters": 8,
         "model": "gpt-5.5",
-        "at": "2026-10-10T12:37:11.046Z"
+        "at": "2026-10-10T14:38:44.577Z"
       },
       "fpDetail": {
         "similarity": null,
@@ -6558,7 +6522,7 @@
         "at": null,
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 1 美元额度",
@@ -6643,8 +6607,8 @@
       "priceCalibFactor": null,
       "models": [
         "gpt",
-        "deepseek",
-        "claude"
+        "claude",
+        "deepseek"
       ],
       "audit": {
         "matchPct": null,
@@ -6664,8 +6628,8 @@
         "origin": "https://www.thinkai.tv",
         "endpoint": "https://www.thinkai.tv/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-013",
-          "probedAt": "2026-10-10T12:40:31.168Z",
+          "batchId": "RL-RC-20261010-039",
+          "probedAt": "2026-10-10T14:42:11.903Z",
           "model": "grok-4.5",
           "medianTtftMs": null,
           "p95TtftMs": null,
@@ -6680,7 +6644,7 @@
             "bufferedTrials": 0,
             "bufferedPct": null,
             "verdict": "unknown",
-            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240452410093598268d9d6dmSEdL84)\","
+            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442260352374138268d9d6w7iZkgtp)\","
           },
           "iters": 8,
           "rounds": [
@@ -6693,7 +6657,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240344823990458268d9d64RkP1WeW)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442153242276598268d9d6lWBRA5p1)\",",
               "failureType": "http_error"
             },
             {
@@ -6705,7 +6669,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240355669476868268d9d6YmBNqLJ7)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442163893098918268d9d6Llq0GMUt)\",",
               "failureType": "http_error"
             },
             {
@@ -6717,7 +6681,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240366343254478268d9d6nCxpsTd0)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442174627961668268d9d6tCxWkRwQ)\",",
               "failureType": "http_error"
             },
             {
@@ -6729,7 +6693,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240377138526998268d9d6C2xbYVHA)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442185373780198268d9d66H8VFQDe)\",",
               "failureType": "http_error"
             },
             {
@@ -6741,7 +6705,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240387906241348268d9d6PZRugebV)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442196004417928268d9d6qBIdccAk)\",",
               "failureType": "http_error"
             },
             {
@@ -6753,7 +6717,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240398686501028268d9d6ZhVsFfKD)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442206742445288268d9d6Iaezhmam)\",",
               "failureType": "http_error"
             },
             {
@@ -6765,7 +6729,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240409482405228268d9d6D8Hp4v2a)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442217366511918268d9d6SzB3nBW8)\",",
               "failureType": "http_error"
             },
             {
@@ -6777,28 +6741,13 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240420239207408268d9d65lsse7EE)\",",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442228122396838268d9d6dtD3t7Q7)\",",
               "failureType": "http_error"
             }
           ]
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -6841,6 +6790,21 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
@@ -6858,11 +6822,11 @@
           "bufferedTrials": 0,
           "bufferedPct": null,
           "verdict": "unknown",
-          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101240452410093598268d9d6dmSEdL84)\","
+          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄0.000000 (request id: 202610101442260352374138268d9d6w7iZkgtp)\","
         },
         "iters": 8,
         "model": "grok-4.5",
-        "at": "2026-10-10T12:40:31.168Z"
+        "at": "2026-10-10T14:42:11.903Z"
       },
       "fpDetail": {
         "similarity": null,
@@ -6872,7 +6836,7 @@
         "at": null,
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 1 美元额度",
@@ -6930,10 +6894,10 @@
       },
       "dev": null,
       "avail": 100,
-      "ttft": 10.6,
-      "ttftMs": 10601,
+      "ttft": 11.4,
+      "ttftMs": 11383,
       "ttftWorkMs": null,
-      "ttftOffMs": 10601,
+      "ttftOffMs": 11383,
       "ttftPartialBucket": "off",
       "ttftReasoningMs": null,
       "ttftReasoningModel": null,
@@ -6977,11 +6941,11 @@
         "origin": "https://www.boxying.com",
         "endpoint": "https://www.boxying.com/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-015",
-          "probedAt": "2026-10-10T12:40:43.053Z",
+          "batchId": "RL-RC-20261010-041",
+          "probedAt": "2026-10-10T14:42:23.622Z",
           "model": "gpt-5.6-sol",
-          "medianTtftMs": 10601,
-          "p95TtftMs": 22183,
+          "medianTtftMs": 11780,
+          "p95TtftMs": 12793,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -7000,8 +6964,8 @@
             {
               "seq": 1,
               "ok": true,
-              "ttftMs": 11533,
-              "totalMs": 11593,
+              "ttftMs": 12723,
+              "totalMs": 13276,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7012,8 +6976,8 @@
             {
               "seq": 2,
               "ok": true,
-              "ttftMs": 10156,
-              "totalMs": 10183,
+              "ttftMs": 12793,
+              "totalMs": 13527,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7024,8 +6988,8 @@
             {
               "seq": 3,
               "ok": true,
-              "ttftMs": 10502,
-              "totalMs": 10647,
+              "ttftMs": 11932,
+              "totalMs": 11963,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7036,8 +7000,8 @@
             {
               "seq": 4,
               "ok": true,
-              "ttftMs": 4900,
-              "totalMs": 4950,
+              "ttftMs": 10792,
+              "totalMs": 10818,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7048,8 +7012,8 @@
             {
               "seq": 5,
               "ok": true,
-              "ttftMs": 22183,
-              "totalMs": 22453,
+              "ttftMs": 9037,
+              "totalMs": 9153,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7060,8 +7024,8 @@
             {
               "seq": 6,
               "ok": true,
-              "ttftMs": 12520,
-              "totalMs": 12577,
+              "ttftMs": 11780,
+              "totalMs": 11822,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7072,8 +7036,8 @@
             {
               "seq": 7,
               "ok": true,
-              "ttftMs": 8603,
-              "totalMs": 8626,
+              "ttftMs": 8782,
+              "totalMs": 8794,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7084,8 +7048,8 @@
             {
               "seq": 8,
               "ok": true,
-              "ttftMs": 10601,
-              "totalMs": 10638,
+              "ttftMs": 11383,
+              "totalMs": 11422,
               "inTok": 109,
               "outTok": 5,
               "buffered": false,
@@ -7097,21 +7061,6 @@
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -7154,12 +7103,27 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
       "perf": {
-        "p95": 22183,
+        "p95": 12793,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -7175,7 +7139,7 @@
         },
         "iters": 8,
         "model": "gpt-5.6-sol",
-        "at": "2026-10-10T12:40:43.053Z"
+        "at": "2026-10-10T14:42:23.622Z"
       },
       "fpDetail": {
         "similarity": 91.6,
@@ -7185,7 +7149,7 @@
         "at": "2026-10-02T10:11:30.733Z",
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 1 美元额度",
@@ -7284,8 +7248,8 @@
         "origin": "https://api.chatfire.site",
         "endpoint": "https://api.chatfire.site/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-017",
-          "probedAt": "2026-10-10T12:43:21.404Z",
+          "batchId": "RL-RC-20261010-043",
+          "probedAt": "2026-10-10T14:45:26.998Z",
           "model": "deepseek-v4-flash",
           "medianTtftMs": null,
           "p95TtftMs": null,
@@ -7405,21 +7369,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
-        {
           "h": "10-08 12:00",
           "pct": 100,
           "n": 2
@@ -7461,6 +7410,21 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
@@ -7482,7 +7446,7 @@
         },
         "iters": 8,
         "model": "deepseek-v4-flash",
-        "at": "2026-10-10T12:43:21.404Z"
+        "at": "2026-10-10T14:45:26.998Z"
       },
       "fpDetail": {
         "similarity": null,
@@ -7492,7 +7456,7 @@
         "at": null,
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 1 美元额度",
@@ -7548,10 +7512,10 @@
       },
       "dev": null,
       "avail": 100,
-      "ttft": 7.1,
-      "ttftMs": 7119,
+      "ttft": 8.8,
+      "ttftMs": 8763,
       "ttftWorkMs": null,
-      "ttftOffMs": 7119,
+      "ttftOffMs": 8763,
       "ttftPartialBucket": "off",
       "ttftReasoningMs": null,
       "ttftReasoningModel": null,
@@ -7589,11 +7553,11 @@
         "origin": "https://uuapi.io",
         "endpoint": "https://uuapi.io/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-019",
-          "probedAt": "2026-10-10T12:43:34.437Z",
+          "batchId": "RL-RC-20261010-045",
+          "probedAt": "2026-10-10T14:45:38.744Z",
           "model": "gpt-5.6",
-          "medianTtftMs": 7119,
-          "p95TtftMs": 11016,
+          "medianTtftMs": 9238,
+          "p95TtftMs": 20716,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -7612,8 +7576,8 @@
             {
               "seq": 1,
               "ok": true,
-              "ttftMs": 5379,
-              "totalMs": 5444,
+              "ttftMs": 12512,
+              "totalMs": 12512,
               "inTok": 12,
               "outTok": 5,
               "buffered": false,
@@ -7624,10 +7588,10 @@
             {
               "seq": 2,
               "ok": true,
-              "ttftMs": 8675,
-              "totalMs": 8675,
+              "ttftMs": 8763,
+              "totalMs": 8763,
               "inTok": 12,
-              "outTok": 5,
+              "outTok": 22,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7636,8 +7600,8 @@
             {
               "seq": 3,
               "ok": true,
-              "ttftMs": 6702,
-              "totalMs": 6702,
+              "ttftMs": 20716,
+              "totalMs": 20718,
               "inTok": 12,
               "outTok": 5,
               "buffered": false,
@@ -7648,8 +7612,8 @@
             {
               "seq": 4,
               "ok": true,
-              "ttftMs": 7107,
-              "totalMs": 7141,
+              "ttftMs": 9238,
+              "totalMs": 9248,
               "inTok": 12,
               "outTok": 5,
               "buffered": false,
@@ -7660,10 +7624,10 @@
             {
               "seq": 5,
               "ok": true,
-              "ttftMs": 9439,
-              "totalMs": 9439,
+              "ttftMs": 8770,
+              "totalMs": 8770,
               "inTok": 12,
-              "outTok": 21,
+              "outTok": 5,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7672,8 +7636,8 @@
             {
               "seq": 6,
               "ok": true,
-              "ttftMs": 7119,
-              "totalMs": 7145,
+              "ttftMs": 6674,
+              "totalMs": 6674,
               "inTok": 12,
               "outTok": 5,
               "buffered": false,
@@ -7684,8 +7648,8 @@
             {
               "seq": 7,
               "ok": true,
-              "ttftMs": 7013,
-              "totalMs": 7420,
+              "ttftMs": 11092,
+              "totalMs": 11092,
               "inTok": 12,
               "outTok": 5,
               "buffered": false,
@@ -7696,8 +7660,8 @@
             {
               "seq": 8,
               "ok": true,
-              "ttftMs": 11016,
-              "totalMs": 11071,
+              "ttftMs": 7732,
+              "totalMs": 8102,
               "inTok": 12,
               "outTok": 5,
               "buffered": false,
@@ -7709,21 +7673,6 @@
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -7766,12 +7715,27 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
       "perf": {
-        "p95": 11016,
+        "p95": 20716,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -7787,7 +7751,7 @@
         },
         "iters": 8,
         "model": "gpt-5.6",
-        "at": "2026-10-10T12:43:34.437Z"
+        "at": "2026-10-10T14:45:38.744Z"
       },
       "fpDetail": {
         "similarity": 88.3,
@@ -7797,7 +7761,7 @@
         "at": "2026-10-02T10:19:03.590Z",
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 1 美元额度",
@@ -7853,10 +7817,10 @@
       },
       "dev": null,
       "avail": 100,
-      "ttft": 2.1,
-      "ttftMs": 2121,
+      "ttft": 2.4,
+      "ttftMs": 2430,
       "ttftWorkMs": null,
-      "ttftOffMs": 2121,
+      "ttftOffMs": 2430,
       "ttftPartialBucket": "off",
       "ttftReasoningMs": null,
       "ttftReasoningModel": null,
@@ -7894,11 +7858,11 @@
         "origin": "https://fluxionai.space",
         "endpoint": "https://fluxionai.space/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-021",
-          "probedAt": "2026-10-10T12:46:23.737Z",
+          "batchId": "RL-RC-20261010-047",
+          "probedAt": "2026-10-10T14:49:00.584Z",
           "model": "gpt-5.6-sol",
-          "medianTtftMs": 2121,
-          "p95TtftMs": 2430,
+          "medianTtftMs": 2957,
+          "p95TtftMs": 3120,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -7917,10 +7881,10 @@
             {
               "seq": 1,
               "ok": true,
-              "ttftMs": 1804,
-              "totalMs": 1912,
-              "inTok": 15,
-              "outTok": 20,
+              "ttftMs": 2957,
+              "totalMs": 2974,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7929,10 +7893,10 @@
             {
               "seq": 2,
               "ok": true,
-              "ttftMs": 1741,
-              "totalMs": 1785,
-              "inTok": 15,
-              "outTok": 20,
+              "ttftMs": 3012,
+              "totalMs": 3021,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7941,10 +7905,10 @@
             {
               "seq": 3,
               "ok": true,
-              "ttftMs": 2430,
-              "totalMs": 2431,
-              "inTok": 15,
-              "outTok": 24,
+              "ttftMs": 2949,
+              "totalMs": 2949,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7953,10 +7917,10 @@
             {
               "seq": 4,
               "ok": true,
-              "ttftMs": 1947,
-              "totalMs": 2068,
-              "inTok": 15,
-              "outTok": 20,
+              "ttftMs": 2930,
+              "totalMs": 2930,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7965,10 +7929,10 @@
             {
               "seq": 5,
               "ok": true,
-              "ttftMs": 2121,
-              "totalMs": 2181,
-              "inTok": 15,
-              "outTok": 20,
+              "ttftMs": 3120,
+              "totalMs": 3405,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7977,10 +7941,10 @@
             {
               "seq": 6,
               "ok": true,
-              "ttftMs": 1965,
-              "totalMs": 2042,
-              "inTok": 15,
-              "outTok": 20,
+              "ttftMs": 2986,
+              "totalMs": 3067,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -7989,10 +7953,10 @@
             {
               "seq": 7,
               "ok": true,
-              "ttftMs": 2187,
-              "totalMs": 2221,
-              "inTok": 15,
-              "outTok": 24,
+              "ttftMs": 2822,
+              "totalMs": 2822,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -8001,10 +7965,10 @@
             {
               "seq": 8,
               "ok": true,
-              "ttftMs": 2196,
-              "totalMs": 2247,
-              "inTok": 15,
-              "outTok": 20,
+              "ttftMs": 2387,
+              "totalMs": 2387,
+              "inTok": 5496,
+              "outTok": 6,
               "buffered": false,
               "httpStatus": 200,
               "error": null,
@@ -8014,21 +7978,6 @@
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -8071,12 +8020,27 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
       "perf": {
-        "p95": 2430,
+        "p95": 3120,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -8092,7 +8056,7 @@
         },
         "iters": 8,
         "model": "gpt-5.6-sol",
-        "at": "2026-10-10T12:46:23.737Z"
+        "at": "2026-10-10T14:49:00.584Z"
       },
       "fpDetail": {
         "similarity": 31.9,
@@ -8102,7 +8066,7 @@
         "at": "2026-10-02T15:58:24.320Z",
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 1 美元额度",
@@ -8199,8 +8163,8 @@
         "origin": "https://ai.jiuqingyunapi.top",
         "endpoint": "https://ai.jiuqingyunapi.top/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-023",
-          "probedAt": "2026-10-10T12:47:55.909Z",
+          "batchId": "RL-RC-20261010-049",
+          "probedAt": "2026-10-10T14:49:59.484Z",
           "model": "gpt-5.5",
           "medianTtftMs": null,
           "p95TtftMs": null,
@@ -8215,7 +8179,7 @@
             "bufferedTrials": 0,
             "bufferedPct": null,
             "verdict": "unknown",
-            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248144661969578268d9d6iNAysc8h)\""
+            "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450174795995488268d9d6DpOVvvZw)\""
           },
           "iters": 8,
           "rounds": [
@@ -8228,7 +8192,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101247594187895938268d9d6rUKwNH12)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450031432769658268d9d6s0uDLCL5)\"",
               "failureType": "http_error"
             },
             {
@@ -8240,7 +8204,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248008380160518268d9d64Kp51aEe)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450045853904628268d9d6w1lYBjw9)\"",
               "failureType": "http_error"
             },
             {
@@ -8252,7 +8216,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248022444391528268d9d6DePNG8Fy)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450060148333408268d9d6KYhgUEMu)\"",
               "failureType": "http_error"
             },
             {
@@ -8264,7 +8228,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248036461014418268d9d6w6Hy0IvW)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450074512996538268d9d6IuoLS2TE)\"",
               "failureType": "http_error"
             },
             {
@@ -8276,7 +8240,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248052972548248268d9d6Gl9mUt8T)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450088847635988268d9d603EHkIWH)\"",
               "failureType": "http_error"
             },
             {
@@ -8288,7 +8252,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248067123931538268d9d6ZhVmDYE1)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450103137227818268d9d6wxMwoFhW)\"",
               "failureType": "http_error"
             },
             {
@@ -8300,7 +8264,7 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248081197731098268d9d62V2O4TJs)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450117501036338268d9d6z1pO6wjp)\"",
               "failureType": "http_error"
             },
             {
@@ -8312,28 +8276,13 @@
               "outTok": null,
               "buffered": null,
               "httpStatus": 403,
-              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248095337005598268d9d6Jh2PIDby)\"",
+              "error": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450131792912198268d9d6qk1nx1Ip)\"",
               "failureType": "http_error"
             }
           ]
         }
       },
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -8376,6 +8325,21 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
@@ -8393,11 +8357,11 @@
           "bufferedTrials": 0,
           "bufferedPct": null,
           "verdict": "unknown",
-          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101248144661969578268d9d6iNAysc8h)\""
+          "lastError": "HTTP 403 {\"error\":{\"message\":\"用户额度不足, 剩余额度: ＄-0.002972 (request id: 202610101450174795995488268d9d6DpOVvvZw)\""
         },
         "iters": 8,
         "model": "gpt-5.5",
-        "at": "2026-10-10T12:47:55.909Z"
+        "at": "2026-10-10T14:49:59.484Z"
       },
       "fpDetail": {
         "similarity": null,
@@ -8407,7 +8371,7 @@
         "at": null,
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": null,
         "ratio": "¥1 = 10 美元额度",
@@ -8504,8 +8468,8 @@
         "origin": "https://api.toonflow.net",
         "endpoint": "https://api.toonflow.net/v1/chat/completions",
         "archived": {
-          "batchId": "RL-RC-20261010-025",
-          "probedAt": "2026-10-10T12:48:12.169Z",
+          "batchId": "RL-RC-20261010-051",
+          "probedAt": "2026-10-10T14:50:15.081Z",
           "model": "deepseek-v4.1-flash",
           "medianTtftMs": null,
           "p95TtftMs": null,
@@ -8625,21 +8589,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
-        {
           "h": "10-08 12:00",
           "pct": 100,
           "n": 2
@@ -8681,6 +8630,21 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
@@ -8702,7 +8666,7 @@
         },
         "iters": 8,
         "model": "deepseek-v4.1-flash",
-        "at": "2026-10-10T12:48:12.169Z"
+        "at": "2026-10-10T14:50:15.081Z"
       },
       "fpDetail": {
         "similarity": null,
@@ -8712,7 +8676,7 @@
         "at": null,
         "note": null
       },
-      "checks": 6,
+      "checks": 9,
       "commerce": {
         "pay": "仅人民币",
         "ratio": null,
@@ -8733,25 +8697,10 @@
       "domain": "openrouter.ai",
       "avail": 100,
       "availKind": "reachable",
-      "checks": 6,
+      "checks": 9,
       "authGateChecks": null,
       "timeout": null,
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -8794,19 +8743,34 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
-      "probeLatencyMs": 505,
+      "probeLatencyMs": 1646,
       "probeHttpStatus": 200,
-      "modelCount": 469,
-      "probeNote": "可达率口径:近 7 日 6 次免鉴权探活返回 2xx 计为可达",
+      "modelCount": 458,
+      "probeNote": "可达率口径:近 7 日 9 次免鉴权探活返回 2xx 计为可达",
       "price": "$0.039/M",
       "priceV": 0.039,
       "priceModel": "z-ai/glm-5.3",
       "priceSrc": "USD",
-      "priceAt": "2026-10-09T10:00:01.094Z",
+      "priceAt": "2026-10-11T04:00:02.052Z",
       "modelsPriced": 17,
       "na": {
         "score": "不参与排名:榜单衡量的是中转站的扣费诚实度,官方与聚合平台不在这层",
@@ -8828,25 +8792,10 @@
       "domain": "api.deepseek.com",
       "avail": 100,
       "availKind": "reachable",
-      "checks": 6,
-      "authGateChecks": 6,
+      "checks": 9,
+      "authGateChecks": 9,
       "timeout": null,
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -8889,19 +8838,34 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
       ],
-      "probeLatencyMs": 90,
+      "probeLatencyMs": 103,
       "probeHttpStatus": 401,
       "modelCount": null,
-      "probeNote": "可达率口径:近 7 日 6 次免鉴权探活中 6 次返回 401/403 鉴权门 —— 我们按「DNS/TLS/路由全通」计为可达,不代表可直接调用,也不与中转榜的「可用率」横向比较",
+      "probeNote": "可达率口径:近 7 日 9 次免鉴权探活中 9 次返回 401/403 鉴权门 —— 我们按「DNS/TLS/路由全通」计为可达,不代表可直接调用,也不与中转榜的「可用率」横向比较",
       "price": "$0.3/M",
       "priceV": 0.3,
       "priceModel": "deepseek-flash",
       "priceSrc": "USD",
-      "priceAt": "2026-10-09T10:00:02.068Z",
+      "priceAt": "2026-10-11T04:00:02.841Z",
       "modelsPriced": 2,
       "na": {
         "score": "不参与排名:榜单衡量的是中转站的扣费诚实度,官方与聚合平台不在这层",
@@ -8923,25 +8887,10 @@
       "domain": "open.bigmodel.cn",
       "avail": 100,
       "availKind": "reachable",
-      "checks": 6,
-      "authGateChecks": 6,
+      "checks": 9,
+      "authGateChecks": 9,
       "timeout": null,
       "slaSeries": [
-        {
-          "h": "10-07 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-08 06:00",
-          "pct": 100,
-          "n": 1
-        },
         {
           "h": "10-08 12:00",
           "pct": 100,
@@ -8984,6 +8933,21 @@
         },
         {
           "h": "10-10 12:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-10 18:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 00:00",
+          "pct": 100,
+          "n": 1
+        },
+        {
+          "h": "10-11 06:00",
           "pct": null,
           "n": 0
         }
@@ -8991,12 +8955,12 @@
       "probeLatencyMs": 88,
       "probeHttpStatus": 401,
       "modelCount": null,
-      "probeNote": "可达率口径:近 7 日 6 次免鉴权探活中 6 次返回 401/403 鉴权门 —— 我们按「DNS/TLS/路由全通」计为可达,不代表可直接调用,也不与中转榜的「可用率」横向比较",
+      "probeNote": "可达率口径:近 7 日 9 次免鉴权探活中 9 次返回 401/403 鉴权门 —— 我们按「DNS/TLS/路由全通」计为可达,不代表可直接调用,也不与中转榜的「可用率」横向比较",
       "price": "¥0.8/M",
       "priceV": 0.8,
       "priceModel": "glm-5.2-air",
       "priceSrc": "CNY",
-      "priceAt": "2026-10-09T10:00:02.302Z",
+      "priceAt": "2026-10-11T04:00:03.168Z",
       "modelsPriced": 5,
       "na": {
         "score": "不参与排名:榜单衡量的是中转站的扣费诚实度,官方与聚合平台不在这层",
@@ -9077,10 +9041,10 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
-        "ttft": 14778,
-        "ttftSamples": 13,
-        "timeoutRate": 37.5,
+        "checks": 9,
+        "ttft": 12834,
+        "ttftSamples": 11,
+        "timeoutRate": 25,
         "bufferedRate": 0,
         "fingerprint": {
           "similarity": 88.8,
@@ -9163,8 +9127,8 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
-        "ttft": 12050,
+        "checks": 9,
+        "ttft": 11889,
         "ttftSamples": 16,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -9243,7 +9207,7 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
+        "checks": 9,
         "ttft": null,
         "ttftSamples": 0,
         "timeoutRate": 0,
@@ -9319,7 +9283,7 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
+        "checks": 9,
         "ttft": null,
         "ttftSamples": 0,
         "timeoutRate": 0,
@@ -9395,9 +9359,9 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
-        "ttft": 12513,
-        "ttftSamples": 8,
+        "checks": 9,
+        "ttft": 12455,
+        "ttftSamples": 16,
         "timeoutRate": 0,
         "bufferedRate": 0,
         "fingerprint": {
@@ -9471,7 +9435,7 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
+        "checks": 9,
         "ttft": null,
         "ttftSamples": 0,
         "timeoutRate": 0,
@@ -9543,9 +9507,9 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
-        "ttft": 10601,
-        "ttftSamples": 8,
+        "checks": 9,
+        "ttft": 11383,
+        "ttftSamples": 16,
         "timeoutRate": 0,
         "bufferedRate": 0,
         "fingerprint": {
@@ -9619,7 +9583,7 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
+        "checks": 9,
         "ttft": null,
         "ttftSamples": 0,
         "timeoutRate": 0,
@@ -9695,9 +9659,9 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
-        "ttft": 7119,
-        "ttftSamples": 8,
+        "checks": 9,
+        "ttft": 8763,
+        "ttftSamples": 16,
         "timeoutRate": 0,
         "bufferedRate": 0,
         "fingerprint": {
@@ -9771,9 +9735,9 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
-        "ttft": 2121,
-        "ttftSamples": 8,
+        "checks": 9,
+        "ttft": 2430,
+        "ttftSamples": 16,
         "timeoutRate": 0,
         "bufferedRate": 0,
         "fingerprint": {
@@ -9847,7 +9811,7 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
+        "checks": 9,
         "ttft": null,
         "ttftSamples": 0,
         "timeoutRate": 0,
@@ -9923,7 +9887,7 @@
       },
       "metrics": {
         "avail7d": 100,
-        "checks": 6,
+        "checks": 9,
         "ttft": null,
         "ttftSamples": 0,
         "timeoutRate": 0,

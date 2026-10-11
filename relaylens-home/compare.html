@@ -190,6 +190,17 @@ section.block{margin-top:44px}
 .mx-detail-table{width:100%;border-collapse:collapse;font-size:12.5px}
 .mx-detail-table th,.mx-detail-table td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
 .mx-qchip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-right:4px;background:#f2f4f7;color:var(--sub)}
+
+/* ===== 模型族抽屉(站点实测明细) ===== */
+.fam-bar{position:relative;margin-bottom:12px}
+.fam-trigger{font:inherit;font-size:13.5px;font-weight:700;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:var(--card);cursor:pointer;color:var(--ink)}
+.fam-trigger:hover{border-color:var(--brand);color:var(--brand)}
+.fam-caret{font-size:11px;color:var(--faint)}
+.fam-drawer{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:560px;max-width:92vw;max-height:62vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 48px rgba(12,22,51,.16);padding:14px 16px}
+.fam-group{margin-bottom:10px}
+.fam-head{font-size:12px;font-weight:800;color:var(--brand-deep);letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.fam-n{font-size:10px;background:var(--brand-soft);border-radius:5px;padding:1px 6px;color:var(--brand)}
+.fam-models{display:flex;gap:8px;flex-wrap:wrap}
 /* ===== 富信息行(与榜单同构):一格内堆「主值 / 副注 / 徽章」,用行高换信息量 ===== */
 .rk-no{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-variant-numeric:tabular-nums;font-size:20px;font-weight:800;color:var(--faint);line-height:1}
 .rk-no.top{color:#8a6400}
@@ -333,14 +344,19 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 <div class="wrap" id="siteView" style="display:none">
 
   <!-- 模型Tab(静态为示例数据;探针数据到达后由 JS 重建,实测页签前置) -->
-  <div class="model-tabs" id="modelTabs">
-    <a class="on" data-model="opus5">Claude Opus 5<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="sonnet5">Claude Sonnet 5<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gpt56sol">GPT-5.6 Sol<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gpt55">GPT-5.5<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gem31p">Gemini 3.1 Pro<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gem31fl">Gemini 3.1 Flash<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="dsv4">DeepSeek V4<span class="tab-chip chip-demo">示例</span></a>
+  <div class="fam-bar">
+    <button class="fam-trigger" id="famTrigger" type="button">📂 按模型族选择 <b id="famCur"></b> <span class="fam-caret">▾</span></button>
+    <div class="fam-drawer" id="famDrawer" style="display:none">
+      <div class="model-tabs" id="modelTabs">
+        <a class="on" data-model="opus5">Claude Opus 5<span class="tab-chip chip-demo">示例</span></a>
+        <a data-model="sonnet5">Claude Sonnet 5<span class="tab-chip chip-demo">示例</span></a>
+        <a data-model="gpt56sol">GPT-5.6 Sol<span class="tab-chip chip-demo">示例</span></a>
+        <a data-model="gpt55">GPT-5.5<span class="tab-chip chip-demo">示例</span></a>
+        <a data-model="gem31p">Gemini 3.1 Pro<span class="tab-chip chip-demo">示例</span></a>
+        <a data-model="gem31fl">Gemini 3.1 Flash<span class="tab-chip chip-demo">示例</span></a>
+        <a data-model="dsv4">DeepSeek V4<span class="tab-chip chip-demo">示例</span></a>
+      </div>
+    </div>
   </div>
   <div class="model-meta" id="modelMeta"></div>
   <p class="tab-legend" id="tabLegend">页签分为两类:<b>实测</b>=探针真实报价(带官方锚与逐笔对账实测)· <b>示例</b>=演示数据(等接入更多站点后替换)。两类页签价格已统一为 ¥/百万 tokens</p>
@@ -613,13 +629,27 @@ function applyCompare(c,payload){
 var DEMO_HIDE=[];
 function buildTabs(){
   var mt=document.getElementById("modelTabs");
-  var html="";
+  /* 按模型族分组(抽屉):gpt-5.6 Sol 与 gpt-6 Astra 同属 OpenAI/GPT 族 —— 平铺一排放不下,抽屉里按族折叠 */
+  var fams={},order=[];
   REAL_TABS.forEach(function(t){
-    html+='<a data-model="'+esc(t.key)+'">'+esc(t.name)+'<span class="tab-chip chip-real">实测</span></a>';
+    var f=t.family||"其他";
+    if(!fams[f]){fams[f]=[];order.push(f);}
+    fams[f].push({k:t.key,name:t.name,real:true});
   });
   Object.keys(MODELS).forEach(function(k){
-    if(MODELS[k].real||DEMO_HIDE.indexOf(k)>=0)return;
-    html+='<a data-model="'+esc(k)+'">'+esc(MODELS[k].name)+'<span class="tab-chip chip-demo">示例</span></a>';
+    var m=MODELS[k];
+    if(m.real||DEMO_HIDE.indexOf(k)>=0)return;
+    var f=m.family||"其他";
+    if(!fams[f]){fams[f]=[];order.push(f);}
+    fams[f].push({k:k,name:m.name,real:false});
+  });
+  var html="";
+  order.forEach(function(f){
+    html+='<div class="fam-group"><div class="fam-head">'+esc(f)+'<span class="fam-n">'+fams[f].length+'</span></div><div class="fam-models">';
+    fams[f].forEach(function(t){
+      html+='<a data-model="'+esc(t.k)+'">'+esc(t.name)+(t.real?'<span class="tab-chip chip-real">实测</span>':'<span class="tab-chip chip-demo">示例</span>')+'</a>';
+    });
+    html+='</div></div>';
   });
   mt.innerHTML=html;
   bindTabs();
@@ -628,6 +658,8 @@ function setTabOn(key){
   document.querySelectorAll("#modelTabs a").forEach(function(x){x.classList.remove("on")});
   var a=document.querySelector('#modelTabs a[data-model="'+key+'"]');
   if(a)a.classList.add("on");
+  var cur=document.getElementById("famCur");
+  if(cur)cur.textContent=(MODELS[key]&&MODELS[key].name)||key;
 }
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
@@ -907,10 +939,18 @@ function bindSubSort(){
       render();});});
 }
 function bindTabs(){
+  /* 模型族抽屉:开合 + 选完自动收起 + 点外部关闭 */
+  var trig=document.getElementById("famTrigger"),drawer=document.getElementById("famDrawer");
+  if(trig&&drawer&&trig.getAttribute("data-bound")!=="1"){
+    trig.setAttribute("data-bound","1");
+    trig.addEventListener("click",function(e){e.stopPropagation();drawer.style.display=drawer.style.display==="none"?"block":"none"});
+    document.addEventListener("click",function(e){if(drawer.style.display!=="none"&&!drawer.contains(e.target)&&e.target!==trig)drawer.style.display="none"});
+  }
   document.querySelectorAll("#modelTabs a").forEach(function(a){
     a.addEventListener("click",function(){
       state.model=a.getAttribute("data-model");state.sort="score";state.dir=-1;
       setTabOn(state.model);
+      if(drawer)drawer.style.display="none";
       document.querySelectorAll("th.sortable").forEach(function(x){x.classList.remove("sorted");x.querySelector(".arr").textContent="↕"});
       document.querySelector('th[data-sk="score"]').classList.add("sorted");
       var _sh=document.querySelector("th[data-sk=\"score\"] .arr");if(_sh)_sh.textContent="▼";

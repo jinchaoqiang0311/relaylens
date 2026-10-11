@@ -1,16 +1,92 @@
 {
   "meta": {
-    "generatedAt": "2026-10-10T13:28:19.858Z",
+    "generatedAt": "2026-10-11T06:19:01.776Z",
     "weightsVersion": "2026-10-10.1",
     "policy": "哈希链式追加日志:每条记录包含前一条的哈希,任意改写或删除都会使链校验失败。",
     "verify": "本地校验:tsx cli.ts audit verify(探针仓库开源,任何人可重放)"
   },
   "chain": {
     "ok": true,
-    "total": 116,
-    "head": "59378ad214a36bb95a45c5a50517ee5f6ad20e17a44fb69b16a2e7b86efcf849"
+    "total": 122,
+    "head": "267d2b0fd5b1375d50459f77e9c0eecc84473e196737ad7428317d478d542d85"
   },
   "entries": [
+    {
+      "seq": 122,
+      "at": "2026-10-11T06:18:42.176Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "ac3ea090f9b4ecf264c74637194e2cf2b092ff7198eb7a91f12b407335f1d5a8"
+      },
+      "after": {
+        "hash": "623f8afc3fe1ee84539d2bf7faf2a5829415edeec613764246396585bebeea7a",
+        "note": "12 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:12 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "267d2b0fd5b1375d"
+    },
+    {
+      "seq": 120,
+      "at": "2026-10-11T06:18:41.509Z",
+      "actor": "probe",
+      "action": "site.commerce",
+      "target": "ricktoken",
+      "before": {
+        "commerce": null
+      },
+      "after": {
+        "commerce": "[null,\"¥1 = 1 美元额度\",null,null,null,\"运营方人工核实(2026-10-11)\",null]"
+      },
+      "reason": "站点 ricktoken 商业信息变更(榜单站名下方支付方式 logo 与详情页商业栏随之变化;来源标注决定它被读作「站方声明」还是「人工核实」)",
+      "hash": "6057461ad916a45c"
+    },
+    {
+      "seq": 119,
+      "at": "2026-10-11T06:18:41.504Z",
+      "actor": "probe",
+      "action": "site.commerce",
+      "target": "totkn",
+      "before": {
+        "commerce": null
+      },
+      "after": {
+        "commerce": "[null,\"¥1 = 1 美元额度\",null,null,null,\"运营方人工核实(2026-10-11)\",null]"
+      },
+      "reason": "站点 totkn 商业信息变更(榜单站名下方支付方式 logo 与详情页商业栏随之变化;来源标注决定它被读作「站方声明」还是「人工核实」)",
+      "hash": "5470e0e029b2b57c"
+    },
+    {
+      "seq": 118,
+      "at": "2026-10-11T06:18:41.499Z",
+      "actor": "probe",
+      "action": "site.commerce",
+      "target": "hahacode",
+      "before": {
+        "commerce": null
+      },
+      "after": {
+        "commerce": "[null,\"¥1 = 1 美元额度\",null,null,null,\"运营方人工核实(2026-10-11)\",null]"
+      },
+      "reason": "站点 hahacode 商业信息变更(榜单站名下方支付方式 logo 与详情页商业栏随之变化;来源标注决定它被读作「站方声明」还是「人工核实」)",
+      "hash": "8efb6bd084ad944e"
+    },
+    {
+      "seq": 117,
+      "at": "2026-10-11T06:18:41.485Z",
+      "actor": "probe",
+      "action": "site.commerce",
+      "target": "ebondai",
+      "before": {
+        "commerce": null
+      },
+      "after": {
+        "commerce": "[null,\"¥1 = 1 美元额度\",null,null,null,\"运营方人工核实(2026-10-11)\",null]"
+      },
+      "reason": "站点 ebondai 商业信息变更(榜单站名下方支付方式 logo 与详情页商业栏随之变化;来源标注决定它被读作「站方声明」还是「人工核实」)",
+      "hash": "9ac9cce074945264"
+    },
     {
       "seq": 116,
       "at": "2026-10-10T13:28:19.598Z",
