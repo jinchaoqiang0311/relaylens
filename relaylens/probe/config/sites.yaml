@@ -238,6 +238,13 @@ sites:
     tags: ["relay", "blocked"]
     parser: "newapi"
     key_env: "RL_EBONDAI_COM_API_KEY"
+
+    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
+    commerce:
+      source: "运营方人工核实(2026-10-11)"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+
     notes: "站点在营业,但测试账户余额为 0 → 需站方按约定充值测试额度后再开"
 
   - name: "hahacode"
@@ -246,6 +253,13 @@ sites:
     tags: ["relay", "blocked"]
     parser: "newapi"
     key_env: "RL_HAHACODE_COM_API_KEY"
+
+    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
+    commerce:
+      source: "运营方人工核实(2026-10-11)"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+
     notes: "站点在营业,测试账户余额为 0"
 
   - name: "totkn"
@@ -254,6 +268,13 @@ sites:
     tags: ["relay", "blocked"]
     parser: "newapi"
     key_env: "RL_TOTKN_COM_API_KEY"
+
+    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
+    commerce:
+      source: "运营方人工核实(2026-10-11)"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+
     notes: "站点在营业,测试账户余额为 0"
 
   - name: "ricktoken"
@@ -262,6 +283,13 @@ sites:
     tags: ["relay", "blocked"]
     parser: "newapi"
     key_env: "RL_RICKTOKEN_TOP_API_KEY"
+
+    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
+    commerce:
+      source: "运营方人工核实(2026-10-11)"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+
     notes: "站方返回「API Key 所属分组已停用」→ 需站方开通分组;⚠ 与演示数据里同名虚构站重名,演示站已改名避让"
 
   # ---------- 占位站点(保留用于回归测试) ----------
