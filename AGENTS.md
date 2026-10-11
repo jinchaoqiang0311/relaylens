@@ -21,7 +21,7 @@ relaylens/
 │   │   ├── sites.yaml     站点注册表(base_url/key_env/commerce声明/调度cron)
 │   │   └── secrets/sites.env  各站 sk key ⚠ 绝不入库/绝不进发布目录/绝不明文输出
 │   └── store/         relaylens.sqlite + raw/归档 + manual-imports/(aicost定价与流水)
-├── (上层) relaylens-home/   前端源码:15 个 HTML(榜单/比价/最低价/工具箱/避坑/方法论/申诉/收录/ops…)
+├── (上层) relaylens-home/   前端源码:14 个 HTML(榜单/比价/工具箱/避坑/方法论/申诉/收录/ops…;最低价页已于 2026-10-11 移除)
 │                             共享 assets/speedprobe.js(测速弹窗+自带key实测)
 ├── build-relay.js     构建:relaylens-home → dist-relay(注入canonical/OG/备案/统计/sitemap)
 ├── site.config.json   域名/备案/统计配置(base 指向最终域 aipaihangbang.cn/relay/)
