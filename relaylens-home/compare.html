@@ -202,7 +202,10 @@ section.block{margin-top:44px}
 .fam-models a{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;transition:.15s}
 .fam-models a:hover{border-color:var(--brand);color:var(--brand)}
 .fam-models a.on{background:var(--brand);border-color:var(--brand);color:#fff}
-.fam-models a[data-real="0"]{border-style:dashed;color:var(--faint);background:#fbfcfe}
+/* 示例模型:虚线灰系,与族标签(白底/蓝高亮)明显区别开 */
+.fam-models a[data-real="0"]{border:1px dashed #c3cbd9;background:#f2f4f7;color:#98a2b3}
+.fam-models a[data-real="0"]:hover{border-color:#98a2b3;background:#eef1f5;color:#667085}
+.fam-models a.on[data-real="0"]{background:#e4e9f0;border-color:#98a2b3;color:#475467}
 /* ===== 富信息行(与榜单同构):一格内堆「主值 / 副注 / 徽章」,用行高换信息量 ===== */
 .rk-no{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-variant-numeric:tabular-nums;font-size:20px;font-weight:800;color:var(--faint);line-height:1}
 .rk-no.top{color:#8a6400}
