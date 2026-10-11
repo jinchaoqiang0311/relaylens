@@ -107,8 +107,8 @@
 
     Array.prototype.forEach.call(table.querySelectorAll(".mx-model[data-mkey]"), function (td) {
       td.addEventListener("click", function () {
-        var m = MODELS.filter(function (x) { return x.key === td.dataset.mkey; })[0];
-        if (m) showDetail(m, stationOrder());
+        /* 点模型 → 单模型价格页(按站聚合/按渠道双视图) */
+        location.href = "price.html?model=" + encodeURIComponent(td.dataset.mkey);
       });
     });
   }
