@@ -23,7 +23,7 @@ const base0 = () => cfg.base.replace(/\/+$/, "");
 // 需要内部看板时,单独把 relaylens-home/ops.html + data/ops.json 传到后台目录或加 HTTP Basic Auth。
 const INTERNAL = ["ops.html", "data/ops.json"];
 // 404:进包(供 nginx error_page 指向),但 noindex、不进 sitemap、不注入 canonical/og
-const NOINDEX_PAGES = ["404.html"];
+const NOINDEX_PAGES = ["404.html", "auth.html"];
 
 const pages = fs.readdirSync(SRC).filter(f => f.endsWith(".html") && !INTERNAL.includes(f));
 fs.rmSync(OUT, { recursive: true, force: true });

@@ -330,6 +330,16 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
   </div>
 </div>
 
+<section class="card" style="margin-top:28px" id="rlReviews">
+  <h2 style="font-size:17px;font-weight:800;margin-bottom:6px">💬 用户评价 <span style="font-size:12px;color:var(--faint);font-weight:600">(用户主观感受,与本站实测评分分开呈现,不参与综合分;先审后发)</span></h2>
+  <div id="rlReviewAvg" style="font-size:13px;color:var(--sub);margin-bottom:10px"></div>
+  <div id="rlReviewList" style="display:grid;gap:10px"><div style="font-size:13px;color:var(--faint)">加载中……</div></div>
+  <div style="margin-top:14px" id="rlReviewFormBox">
+    <button class="btn btn-primary btn-sm" id="rlReviewBtn">✍ 写评价</button>
+    <span style="font-size:12px;color:var(--faint)">需登录;一人一站一评,可更新</span>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <div class="ft-grid">
@@ -756,6 +766,56 @@ function copyCode(c){
   var f=function(){toast("优惠码 "+c+" 已复制")};
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(c).then(f,f)}else{f()}
 }
+</script>
+<script src="assets/auth.js"></script>
+<script>
+/* 用户评论区:公开读(先审后发的 published),登录写;与实测评分严格分离 */
+(function(){
+  if (typeof RL_API_BASE === "undefined") return;
+  var site = (typeof siteName !== "undefined") ? siteName : (typeof DEFAULT_SITE !== "undefined" ? DEFAULT_SITE : "");
+  function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+  function load(){
+    var box = document.getElementById("rlReviewList");
+    if (!RL_API_BASE) { box.innerHTML = '<div style="font-size:13px;color:var(--faint)">评论服务接入中</div>'; return; }
+    rlApi("GET", "/v1/reviews/" + encodeURIComponent(site)).then(function(r){ return r.json(); }).then(function(j){
+      document.getElementById("rlReviewAvg").textContent = j.count ? ("平均 ★ " + j.avg_stars + " · " + j.count + " 条已审核评价") : "暂无已审核评价";
+      box.innerHTML = j.reviews.length ? "" : '<div style="font-size:13px;color:var(--faint)">还没有评价,做第一个?</div>';
+      j.reviews.forEach(function(r){
+        var d = document.createElement("div");
+        d.style.cssText = "border:1px solid #eef1f5;border-radius:10px;padding:10px 12px";
+        d.innerHTML = '<div style="font-size:13px;font-weight:700">' + "★".repeat(r.stars) + "☆".repeat(5 - r.stars) +
+          ' <span style="font-weight:400;color:var(--faint)">' + escHtml(r.display) + " · " + String(r.created_at).slice(0,10) + "</span></div>" +
+          '<div style="font-size:13px;margin-top:4px">' + escHtml(r.text) + "</div>" +
+          (r.station_reply ? '<div style="font-size:12.5px;margin-top:6px;background:#f6f9ff;border-radius:8px;padding:6px 10px"><b>站方回应:</b>' + escHtml(r.station_reply) + "</div>" : "");
+        box.appendChild(d);
+      });
+    }).catch(function(){ box.innerHTML = '<div style="font-size:13px;color:var(--faint)">评论加载失败</div>'; });
+  }
+  var btn = document.getElementById("rlReviewBtn");
+  if (btn) btn.onclick = function(){
+    rlLogin(function(){
+      var box = document.getElementById("rlReviewFormBox");
+      box.innerHTML = '<textarea id="rlRevText" rows="4" placeholder="你的使用体验(至少 10 字):到手价与标价一致吗?稳定吗?客服响应如何?" style="width:100%;box-sizing:border-box;font:inherit;padding:10px;border:1px solid #d0d5dd;border-radius:9px"></textarea>' +
+        '<div style="display:flex;gap:6px;align-items:center;margin-top:8px">星级: <select id="rlRevStars">' +
+        [1,2,3,4,5].map(function(n){return '<option value="' + n + '">' + n + " 星</option>";}).join("") +
+        '</select><button class="btn btn-primary btn-sm" id="rlRevGo">提交(先审后发)</button></div>' +
+        '<div id="rlRevErr" style="display:none;color:#b42318;font-size:12.5px;margin-top:6px"></div>';
+      document.getElementById("rlRevGo").onclick = async function(){
+        var stars = Number(document.getElementById("rlRevStars").value);
+        var text = document.getElementById("rlRevText").value.trim();
+        var e = document.getElementById("rlRevErr");
+        try {
+          var r = await rlApi("POST", "/reviews", { site: site, stars: stars, text: text });
+          var j = await r.json();
+          if (!r.ok) { e.textContent = j.error === "text_too_short" ? "至少 10 字" : (j.error || r.status); e.style.display = "block"; return; }
+          _rlToast("已提交,审核通过后公开显示");
+          load();
+        } catch (e2) { e.textContent = "网络错误"; e.style.display = "block"; }
+      };
+    });
+  };
+  load();
+})();
 </script>
 <script src="assets/speedprobe.js"></script>
 </body>
