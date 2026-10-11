@@ -16,6 +16,6 @@ Thumbs.db
 # 本地工具状态
 .codebuddy/
 
-# SSH 私钥绝不可入库(2026-10-11 曾误提交一次,已从跟踪移除)
-deploy/aliyun_key
+# SSH 私钥绝不可入库(2026-10-11 曾误提交一次,已从跟踪移除并吊销)
+deploy/aliyun_key*
 deploy/*.pub
