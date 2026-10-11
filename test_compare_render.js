@@ -66,7 +66,7 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   const realTabs = (tabsHtml.match(/chip-real/g) || []).length;
   const demoTabs = (tabsHtml.match(/chip-demo/g) || []).length;
   /* 2026-10-11 族抽屉语义:抽屉按族列出(计数=该族实测模型数),页面平铺选中族(默认第一族) */
-  const drawerHtml = A.captured["famDrawer"] || "";
+  const drawerHtml = A.captured["famRow"] || "";
   const famOf = {};
   CMP.tabs.forEach(t => { const f = t.family || "其他"; famOf[f] = (famOf[f] || 0) + 1; });
   const famSum = Object.values(famOf).reduce((a, b) => a + b, 0);

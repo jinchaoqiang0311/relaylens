@@ -191,16 +191,14 @@ section.block{margin-top:44px}
 .mx-detail-table th,.mx-detail-table td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
 .mx-qchip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-right:4px;background:#f2f4f7;color:var(--sub)}
 
-/* ===== 模型族:名称抽屉 + 选中族平铺(2026-10-11) ===== */
-.fam-bar{position:relative;margin-bottom:12px}
-.fam-trigger{font:inherit;font-size:13.5px;font-weight:700;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:var(--card);cursor:pointer;color:var(--ink)}
-.fam-trigger:hover{border-color:var(--brand);color:var(--brand)}
-.fam-caret{font-size:11px;color:var(--faint)}
-.fam-drawer{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:300px;max-height:60vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 48px rgba(12,22,51,.16);padding:8px}
-.fam-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;color:var(--ink)}
-.fam-item:hover{background:var(--brand-soft);color:var(--brand)}
-.fam-n{font-size:10px;background:var(--brand-soft);border-radius:5px;padding:1px 6px;color:var(--brand)}
-.fam-models{display:flex;gap:8px;flex-wrap:wrap}
+/* ===== 模型族:族名称平铺一行 + 选中族模型平铺(2026-10-11) ===== */
+.fam-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.fam-chip{font:inherit;font-size:13px;font-weight:700;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);cursor:pointer;color:var(--sub)}
+.fam-chip:hover{border-color:var(--brand);color:var(--brand)}
+.fam-chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.fam-n{font-size:10px;background:var(--brand-soft);border-radius:5px;padding:1px 6px;color:var(--brand);margin-left:4px}
+.fam-chip.on .fam-n{background:rgba(255,255,255,.25);color:#fff}
+.fam-models{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 /* ===== 富信息行(与榜单同构):一格内堆「主值 / 副注 / 徽章」,用行高换信息量 ===== */
 .rk-no{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-variant-numeric:tabular-nums;font-size:20px;font-weight:800;color:var(--faint);line-height:1}
 .rk-no.top{color:#8a6400}
@@ -344,11 +342,8 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 <div class="wrap" id="siteView" style="display:none">
 
   <!-- 模型Tab(静态为示例数据;探针数据到达后由 JS 重建,实测页签前置) -->
-  <!-- 模型族抽屉选择 + 选中族平铺(2026-10-11:族名称进抽屉,模型章平铺页面) -->
-  <div class="fam-bar">
-    <button class="fam-trigger" id="famTrigger" type="button">📂 模型族: <b id="famCur">Anthropic</b> <span class="fam-caret">▾</span></button>
-    <div class="fam-drawer" id="famDrawer" style="display:none"></div>
-  </div>
+  <!-- 模型族:族名称平铺一行(点选切族),选中族模型平铺其下(2026-10-11) -->
+  <div class="fam-row" id="famRow"></div>
   <div class="fam-models" id="modelTabs">
     <a class="on" data-model="opus5">Claude Opus 5<span class="tab-chip chip-demo">示例</span></a>
     <a data-model="sonnet5">Claude Sonnet 5<span class="tab-chip chip-demo">示例</span></a>
@@ -629,7 +624,7 @@ function applyCompare(c,payload){
 var DEMO_HIDE=[];
 var FAM_INDEX={},FAM_ORDER=[],CUR_FAM=null; /* 族索引:族名称进抽屉,选中族的模型平铺页面 */
 function buildTabs(){
-  var drawer=document.getElementById("famDrawer"),mt=document.getElementById("modelTabs");
+  var mt=document.getElementById("modelTabs");
   FAM_INDEX={};FAM_ORDER=[];
   REAL_TABS.forEach(function(t){
     var f=t.family||"其他";
@@ -643,24 +638,22 @@ function buildTabs(){
     if(!FAM_INDEX[f]){FAM_INDEX[f]=[];FAM_ORDER.push(f);}
     FAM_INDEX[f].push({k:k,name:m.name,real:false});
   });
-  /* 抽屉:族名称清单 */
+  /* 族名称平铺一行(点选切族) */
+  if(!CUR_FAM||!FAM_INDEX[CUR_FAM])CUR_FAM=FAM_ORDER[0];
+  var fr=document.getElementById("famRow");
   var h="";
   FAM_ORDER.forEach(function(f){
-    h+='<div class="fam-item" data-fam="'+esc(f)+'">'+esc(f)+'<span class="fam-n">'+FAM_INDEX[f].length+'</span></div>';
+    h+='<button class="fam-chip'+(f===CUR_FAM?" on":"")+'" data-fam="'+esc(f)+'" type="button">'+esc(f)+'<span class="fam-n">'+FAM_INDEX[f].length+'</span></button>';
   });
-  drawer.innerHTML=h;
-  Array.prototype.forEach.call(drawer.querySelectorAll(".fam-item"),function(item){
-    item.onclick=function(){
+  fr.innerHTML=h;
+  Array.prototype.forEach.call(fr.querySelectorAll(".fam-chip"),function(chip){
+    chip.onclick=function(){
       CUR_FAM=this.getAttribute("data-fam");
-      var cur=document.getElementById("famCur");
-      if(cur)cur.textContent=CUR_FAM;
-      drawer.style.display="none";
+      Array.prototype.forEach.call(fr.querySelectorAll(".fam-chip"),function(c){c.classList.toggle("on",c.getAttribute("data-fam")===CUR_FAM)});
       renderFamModels();
     };
   });
   if(!CUR_FAM||!FAM_INDEX[CUR_FAM])CUR_FAM=FAM_ORDER[0];
-  var cur=document.getElementById("famCur");
-  if(cur)cur.textContent=CUR_FAM;
   renderFamModels();
   bindTabs();
 }
@@ -957,13 +950,6 @@ function bindSubSort(){
       render();});});
 }
 function bindTabs(){
-  /* 族抽屉开合(只绑一次,vm 桩用 get/setAttribute) */
-  var trig=document.getElementById("famTrigger"),drawer=document.getElementById("famDrawer");
-  if(trig&&drawer&&trig.getAttribute("data-bound")!=="1"){
-    trig.setAttribute("data-bound","1");
-    trig.addEventListener("click",function(e){e.stopPropagation();drawer.style.display=drawer.style.display==="none"?"block":"none"});
-    document.addEventListener("click",function(e){if(drawer.style.display!=="none"&&!drawer.contains(e.target)&&e.target!==trig)drawer.style.display="none"});
-  }
   document.querySelectorAll("#modelTabs a").forEach(function(a){
     a.addEventListener("click",function(){
       state.model=a.getAttribute("data-model");state.sort="score";state.dir=-1;
