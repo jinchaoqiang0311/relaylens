@@ -65,7 +65,17 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   const tabsHtml = A.captured["modelTabs"] || "";
   const realTabs = (tabsHtml.match(/chip-real/g) || []).length;
   const demoTabs = (tabsHtml.match(/chip-demo/g) || []).length;
-  check(`实测页签数 = ${CMP.tabs.length}`, realTabs === CMP.tabs.length, `${realTabs} vs ${CMP.tabs.length}`);
+  /* 2026-10-11 族抽屉语义:抽屉按族列出(计数=该族实测模型数),页面平铺选中族(默认第一族) */
+  const drawerHtml = A.captured["famDrawer"] || "";
+  const famOf = {};
+  CMP.tabs.forEach(t => { const f = t.family || "其他"; famOf[f] = (famOf[f] || 0) + 1; });
+  const famSum = Object.values(famOf).reduce((a, b) => a + b, 0);
+  check(`抽屉族覆盖合计 = ${famSum}(=实测模型总数)`, famSum === CMP.tabs.length, `${famSum} vs ${CMP.tabs.length}`);
+  Object.entries(famOf).forEach(([f]) => {
+    check(`抽屉含族「${f}」`, new RegExp('data-fam="' + f + '"').test(drawerHtml));
+  });
+  const firstFam = CMP.tabs[0].family || "其他";
+  check(`平铺页签 = 选中族「${firstFam}」实测数`, realTabs === famOf[firstFam], `${realTabs} vs ${famOf[firstFam]}`);
   /* 模型换代不变式:示例页签与实测页签显示名不得有任何交集(同名的必须被弃用),数量不写死 */
   const demoLabels = [...tabsHtml.matchAll(/<a data-model="([^"]+)">([^<]+)<span class="tab-chip chip-demo">/g)].map(m => m[2].replace(/\s+/g, "").toLowerCase());
   const realNames = CMP.tabs.map(t2 => t2.name.replace(/\s+/g, "").toLowerCase());
@@ -230,7 +240,7 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   await new Promise(r => setImmediate(r)); await new Promise(r => setImmediate(r));
   // 失败态:页签是静态 HTML(不会被 JS 重写,captured 为空),从源码断言
   const tabsB = B.captured["modelTabs"] || "";
-  const staticTabs = html.match(/<div class="fam-flat"[\s\S]*?<\/div>/) || [""];
+  const staticTabs = html.match(/<div class="fam-models" id="modelTabs"[\s\S]*?<\/div>/) || [""];
   check("静态降级保持 7 个示例页签(带角标)", (staticTabs[0].match(/chip-demo/g) || []).length === 7, String((staticTabs[0].match(/chip-demo/g) || []).length));
   check("降级时未重建页签(无实测混入)", !/chip-real/.test(tabsB) && !/chip-real/.test(staticTabs[0]));
   const rowsB = gatherRows(B);
