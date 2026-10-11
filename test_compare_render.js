@@ -126,6 +126,17 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   check("缓存计费诚实芯片仍在(原缓存价格列的信息没丢)", /tag-m tm-(g|y|r|n)/.test(all));
   check("实测行不再出现 1$=¥7.1 乘出来的假 ¥ 主价", !/¥(6\.39|12\.43|4\.97|53\.25|79\.88)/.test(all));
 
+  // ===== 矩阵比价视图(2026-10-11 升级) =====
+  check("矩阵视图:双视图切换按钮存在", /id="vBtnMatrix"/.test(html) && /id="vBtnSite"/.test(html));
+  check("矩阵视图:容器与表格存在", /id="matrixView"/.test(html) && /id="mxTable"/.test(html));
+  check("矩阵视图:搜索与到手价开关", /id="mxSearch"/.test(html) && /id="mxEff"/.test(html));
+  check("矩阵脚本:数据源为 compare.tabs + realSites.effRatio", /compare\.tabs/.test(fs.readFileSync(__dirname + "/relaylens-home/assets/compare-matrix.js", "utf8")) && /effRatio/.test(fs.readFileSync(__dirname + "/relaylens-home/assets/compare-matrix.js", "utf8")));
+  check("矩阵脚本:最低价高亮(悲观最佳标记)", /mx-best/.test(fs.readFileSync(__dirname + "/relaylens-home/assets/compare-matrix.js", "utf8")));
+  check("矩阵脚本:未声明比例站如实标注", /比例未声明/.test(fs.readFileSync(__dirname + "/relaylens-home/assets/compare-matrix.js", "utf8")));
+  check("矩阵脚本:主脚本数据回调挂接 renderMatrix", /renderMatrix\(j\)/.test(html));
+  try { new Function(fs.readFileSync(__dirname + "/relaylens-home/assets/compare-matrix.js", "utf8")); check(true, "compare-matrix.js 语法合法"); }
+  catch (e) { check(false, "compare-matrix.js 语法错误: " + e.message); }
+
   // ===== 富信息行新增维度 =====
   check("富行:注入主值带单位与缓存占比副注", /\+4858/.test(all)&&/tok\/请求 · 缓存占\d+%/.test(all));
   // 流式真伪徽章:数据驱动断言 —— 有假流式站(≥99%)必须带百分比,没有就不许出该徽章(诚实渲染)

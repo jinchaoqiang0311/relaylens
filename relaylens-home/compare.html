@@ -173,6 +173,23 @@ section.block{margin-top:44px}
 .trap p{font-size:13px;color:var(--sub);margin-top:7px}
 .trap .ex{margin-top:10px;font-size:12px;background:var(--warn-soft);border-radius:7px;padding:7px 11px;color:#7a4f06}
 .trap .ex b{color:var(--warn)}
+
+/* ===== 矩阵比价视图(2026-10-11) ===== */
+.mx-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.mx-table th,.mx-table td{padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}
+.mx-table thead th{position:sticky;top:0;background:var(--card);z-index:3;font-weight:700;font-size:12px;color:var(--sub)}
+.mx-model{position:sticky;left:0;background:var(--card);z-index:2;min-width:225px;border-right:1px solid var(--line);cursor:pointer}
+.mx-model:hover{background:var(--brand-soft)}
+.mx-model .nm{font-weight:700;color:var(--ink)}
+.mx-model .fm{font-size:10.5px;color:var(--faint);font-weight:600}
+.mx-best{color:#067647;font-weight:800;background:var(--ok-soft)}
+.mx-spec{font-size:11px;color:var(--warn);font-weight:700}
+.mx-undec{color:var(--faint)}
+.mx-fam td{background:var(--brand-soft);font-weight:800;font-size:12px;color:var(--brand-deep)}
+.mx-chip{display:inline-block;font-size:10px;font-weight:800;border-radius:5px;padding:1px 6px;background:var(--brand-soft);color:var(--brand);cursor:pointer}
+.mx-detail-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.mx-detail-table th,.mx-detail-table td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
+.mx-qchip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-right:4px;background:#f2f4f7;color:var(--sub)}
 /* ===== 富信息行(与榜单同构):一格内堆「主值 / 副注 / 徽章」,用行高换信息量 ===== */
 .rk-no{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-variant-numeric:tabular-nums;font-size:20px;font-weight:800;color:var(--faint);line-height:1}
 .rk-no.top{color:#8a6400}
@@ -286,7 +303,34 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
   </div>
 </div>
 
-<div class="wrap">
+<div class="wrap" id="viewBar" style="margin-bottom:2px">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm" id="vBtnMatrix" type="button">📊 矩阵比价</button>
+    <button class="btn btn-ghost btn-sm" id="vBtnSite" type="button">🧪 站点实测明细</button>
+    <span style="font-size:12px;color:var(--faint)">矩阵=同模型各站横向比价;站点实测=逐站对账明细与成本计算器</span>
+  </div>
+</div>
+
+<div class="wrap" id="matrixView">
+  <!-- 矩阵比价(2026-10-11 升级:模型×站点,默认视图;交互对齐 relaybench,口径为本站三因子) -->
+  <section class="block" style="margin-top:10px">
+    <div class="blk-head">
+      <h2>📊 模型 × 站点 价格矩阵</h2>
+      <a class="more" href="method.html">三因子口径 →</a>
+    </div>
+    <div id="mxTools" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 10px">
+      <input id="mxSearch" placeholder="搜索模型名(如 opus / gemini)…" style="font:inherit;font-size:13px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;min-width:230px">
+      <label class="chk" style="margin:0"><input type="checkbox" id="mxEff"> 到手价视图(仅声明充值比例的站,¥/M)</label>
+      <span id="mxCount" style="font-size:12px;color:var(--faint)"></span>
+    </div>
+    <div style="overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:12px;background:var(--card)">
+      <table id="mxTable" class="mx-table"></table>
+    </div>
+    <div id="mxDetail" style="display:none;margin-top:14px"></div>
+  </section>
+</div>
+
+<div class="wrap" id="siteView" style="display:none">
 
   <!-- 模型Tab(静态为示例数据;探针数据到达后由 JS 重建,实测页签前置) -->
   <div class="model-tabs" id="modelTabs">
@@ -930,9 +974,10 @@ function renderSpecial(payload){
 
 /* 探针真实报价接入:失败则保持示例页签(已有「示例」角标,不冒充实测) */
 fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))})
-  .then(function(j){applyCompare(j.compare,j);renderSpecial(j)})
+  .then(function(j){applyCompare(j.compare,j);renderSpecial(j);if(window.renderMatrix)window.renderMatrix(j);})
   .catch(function(){/* 静默保持示例数据,页签角标已说明其性质 */});
 </script>
+<script src="assets/compare-matrix.js"></script>
 <script src="assets/speedprobe.js"></script>
 </body>
 </html>
