@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>404 · 页面不存在 · RelayLens</title>
+<meta name="description" content="页面不存在。回到 RelayLens 实测榜单、模型比价或工具箱。">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+:root{
+  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+  --bad:#b42318;--bad-soft:#fdecea;--r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px;width:100%}
+
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:56px 0}
+.err-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:48px 40px;text-align:center;box-shadow:0 14px 40px rgba(16,24,40,.06)}
+.code{font-size:88px;font-weight:800;line-height:1;background:linear-gradient(135deg,var(--brand),var(--brand-deep));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
+h1{font-size:21px;margin:18px 0 8px}
+.lead{font-size:14px;color:var(--sub);max-width:460px;margin:0 auto 26px}
+.lead b{color:var(--ink)}
+.btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:11px 22px;border-radius:10px;cursor:pointer;border:none;transition:.15s}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-deep)}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+
+.entries{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;text-align:left}
+.entry{border:1px solid var(--line);border-radius:12px;padding:14px 16px;transition:.15s}
+.entry:hover{border-color:var(--brand);background:var(--brand-soft)}
+.entry .t{font-weight:700;font-size:14px;display:flex;gap:8px;align-items:center}
+.entry .d{font-size:12px;color:var(--sub);margin-top:3px}
+.hint{margin-top:26px;font-size:12.5px;color:var(--faint)}
+.hint code{background:#f2f4f7;border-radius:5px;padding:1px 6px;font-family:Consolas,monospace}
+
+footer{border-top:1px solid var(--line);background:var(--card);padding:16px 0;font-size:12px;color:var(--faint);text-align:center}
+@media(max-width:560px){.err-card{padding:34px 22px}.code{font-size:64px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="wrap">
+    <div class="err-card">
+      <div class="code">404</div>
+      <h1>这一页不在我们的实测记录里</h1>
+      <p class="lead">地址可能改版前遗留、拼写有误,或该站点已下架归档。<b>如果你是从某篇文章的旧链接点进来的</b>,下面的入口能最快把你送回正轨。</p>
+      <div class="btns">
+        <a class="btn btn-primary" href="index.html">← 返回首页</a>
+        <a class="btn btn-ghost" href="ranking.html">查看实测榜单</a>
+      </div>
+      <div class="entries">
+        <a class="entry" href="ranking.html"><div class="t">📊 全站榜单</div><div class="d">八场景分榜 · 实测与示例分标</div></a>
+        <a class="entry" href="compare.html"><div class="t">💰 模型比价</div><div class="d">真实报价 × 官方锚,双站实测</div></a>
+        <a class="entry" href="tools.html"><div class="t">🧰 工具箱</div><div class="d">成本计算器 · 配置生成器</div></a>
+        <a class="entry" href="blacklist.html"><div class="t">⚠️ 黑名单档案库</div><div class="d">跑路/掉包记录,投稿前先查</div></a>
+        <a class="entry" href="method.html"><div class="t">🔬 检测方法</div><div class="d">我们怎么得出每一个数字</div></a>
+        <a class="entry" href="reports.html"><div class="t">📄 实测报告</div><div class="d">号池注入、假流式等深度记录</div></a>
+      </div>
+      <p class="hint">确认链接没问题却仍然 404?那可能是我们的疏漏 —— 欢迎反馈,核实后会公开修正并记录在 <a href="method.html#audit" style="color:var(--brand)">审计日志</a>里。子目录部署下本页路径为 <code>/relay/404.html</code>。</p>
+    </div>
+  </div>
+</main>
+<footer>© 2026 RelayLens · 榜单只信账单,不信嘴  <div class="icp-line" style="text-align:center;padding-top:12px;font-size:12px;color:#5d6f92"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">冀ICP备2026033332号</a></div>
+</footer>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>

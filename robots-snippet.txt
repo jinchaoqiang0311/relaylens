@@ -1,0 +1,3 @@
+# 合并进主站根目录 robots.txt(注意 Sitemap 用绝对地址)
+Allow: /relay/
+Sitemap: https://aipaihangbang.cn/relay/sitemap.xml
