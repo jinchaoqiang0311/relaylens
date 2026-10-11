@@ -199,6 +199,10 @@ section.block{margin-top:44px}
 .fam-n{font-size:10px;background:var(--brand-soft);border-radius:5px;padding:1px 6px;color:var(--brand);margin-left:4px}
 .fam-chip.on .fam-n{background:rgba(255,255,255,.25);color:#fff}
 .fam-models{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.fam-models a{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;transition:.15s}
+.fam-models a:hover{border-color:var(--brand);color:var(--brand)}
+.fam-models a.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.fam-models a[data-real="0"]{border-style:dashed;color:var(--faint);background:#fbfcfe}
 /* ===== 富信息行(与榜单同构):一格内堆「主值 / 副注 / 徽章」,用行高换信息量 ===== */
 .rk-no{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-variant-numeric:tabular-nums;font-size:20px;font-weight:800;color:var(--faint);line-height:1}
 .rk-no.top{color:#8a6400}
@@ -345,16 +349,16 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
   <!-- 模型族:族名称平铺一行(点选切族),选中族模型平铺其下(2026-10-11) -->
   <div class="fam-row" id="famRow"></div>
   <div class="fam-models" id="modelTabs">
-    <a class="on" data-model="opus5">Claude Opus 5<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="sonnet5">Claude Sonnet 5<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gpt56sol">GPT-5.6 Sol<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gpt55">GPT-5.5<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gem31p">Gemini 3.1 Pro<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="gem31fl">Gemini 3.1 Flash<span class="tab-chip chip-demo">示例</span></a>
-    <a data-model="dsv4">DeepSeek V4<span class="tab-chip chip-demo">示例</span></a>
+    <a class="on" data-model="opus5" data-real="0" title="示例数据(非实测)">Claude Opus 5</a>
+    <a data-model="sonnet5" data-real="0" title="示例数据(非实测)">Claude Sonnet 5</a>
+    <a data-model="gpt56sol" data-real="0" title="示例数据(非实测)">GPT-5.6 Sol</a>
+    <a data-model="gpt55" data-real="0" title="示例数据(非实测)">GPT-5.5</a>
+    <a data-model="gem31p" data-real="0" title="示例数据(非实测)">Gemini 3.1 Pro</a>
+    <a data-model="gem31fl" data-real="0" title="示例数据(非实测)">Gemini 3.1 Flash</a>
+    <a data-model="dsv4" data-real="0" title="示例数据(非实测)">DeepSeek V4</a>
   </div>
   <div class="model-meta" id="modelMeta"></div>
-  <p class="tab-legend" id="tabLegend">页签分为两类:<b>实测</b>=探针真实报价(带官方锚与逐笔对账实测)· <b>示例</b>=演示数据(等接入更多站点后替换)。两类页签价格已统一为 ¥/百万 tokens</p>
+  <p class="tab-legend" id="tabLegend">模型按钮分两类:<b>实线边框</b>=探针真实报价(带官方锚与逐笔对账实测)· <b>虚线灰</b>=演示数据(等接入更多站点后替换,悬停可见提示)。两类页签价格已统一为 ¥/百万 tokens</p>
 
   <!-- 提示条 -->
   <div class="alert" id="modelAlert">
@@ -661,7 +665,8 @@ function renderFamModels(){
   var mt=document.getElementById("modelTabs");
   var html="";
   FAM_INDEX[CUR_FAM].forEach(function(t){
-    html+='<a data-model="'+esc(t.k)+'">'+esc(t.name)+(t.real?'<span class="tab-chip chip-real">实测</span>':'<span class="tab-chip chip-demo">示例</span>')+'</a>';
+    /* 实测/示例不再用文字章:实测=实线蓝边,示例=虚线灰(title 提示),样式见 .fam-models a */
+    html+='<a data-model="'+esc(t.k)+'" data-real="'+(t.real?"1":"0")+'"'+(t.real?"":' title="示例数据(非实测)"')+ '>'+esc(t.name)+'</a>';
   });
   mt.innerHTML=html;
   setTabOn(state.model||FAM_INDEX[CUR_FAM][0].k);

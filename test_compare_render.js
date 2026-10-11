@@ -63,8 +63,8 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   await new Promise(r => setImmediate(r)); await new Promise(r => setImmediate(r));
 
   const tabsHtml = A.captured["modelTabs"] || "";
-  const realTabs = (tabsHtml.match(/chip-real/g) || []).length;
-  const demoTabs = (tabsHtml.match(/chip-demo/g) || []).length;
+  const realTabs = (tabsHtml.match(/data-real="1"/g) || []).length;
+  const demoTabs = (tabsHtml.match(/data-real="0"/g) || []).length;
   /* 2026-10-11 族抽屉语义:抽屉按族列出(计数=该族实测模型数),页面平铺选中族(默认第一族) */
   const drawerHtml = A.captured["famRow"] || "";
   const famOf = {};
@@ -77,7 +77,7 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   const firstFam = CMP.tabs[0].family || "其他";
   check(`平铺页签 = 选中族「${firstFam}」实测数`, realTabs === famOf[firstFam], `${realTabs} vs ${famOf[firstFam]}`);
   /* 模型换代不变式:示例页签与实测页签显示名不得有任何交集(同名的必须被弃用),数量不写死 */
-  const demoLabels = [...tabsHtml.matchAll(/<a data-model="([^"]+)">([^<]+)<span class="tab-chip chip-demo">/g)].map(m => m[2].replace(/\s+/g, "").toLowerCase());
+  const demoLabels = [...tabsHtml.matchAll(/<a data-model="([^"]+)" data-real="0"[^>]*>([^<]+)<\/a>/g)].map(m => m[2].replace(/\s+/g, "").toLowerCase());
   const realNames = CMP.tabs.map(t2 => t2.name.replace(/\s+/g, "").toLowerCase());
   const colliding = demoLabels.filter(nm => realNames.includes(nm));
   check("示例页签与实测页签无同名残留(换代不变式)", colliding.length === 0, colliding.length ? colliding.join(",") : `示例 ${demoLabels.length} / 实测 ${realNames.length},零交集`);
@@ -241,8 +241,8 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   // 失败态:页签是静态 HTML(不会被 JS 重写,captured 为空),从源码断言
   const tabsB = B.captured["modelTabs"] || "";
   const staticTabs = html.match(/<div class="fam-models" id="modelTabs"[\s\S]*?<\/div>/) || [""];
-  check("静态降级保持 7 个示例页签(带角标)", (staticTabs[0].match(/chip-demo/g) || []).length === 7, String((staticTabs[0].match(/chip-demo/g) || []).length));
-  check("降级时未重建页签(无实测混入)", !/chip-real/.test(tabsB) && !/chip-real/.test(staticTabs[0]));
+  check("静态降级保持 7 个示例页签", (staticTabs[0].match(/data-real="0"/g) || []).length === 7, String((staticTabs[0].match(/data-real="0"/g) || []).length));
+  check("降级时未重建页签(无实测混入)", !/data-real="1"/.test(tabsB) && !/data-real="1"/.test(staticTabs[0]));
   const rowsB = gatherRows(B);
   check("示例行仍按 ¥ 渲染", /¥\d/.test(rowsB.join("")));
 
