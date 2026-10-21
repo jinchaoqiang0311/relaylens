@@ -1,0 +1,658 @@
+{
+ "models": [
+  {
+   "id": "ed238792-3f93-4a66-be29-eb867f73440d",
+   "name": "claude-fable-5-1",
+   "display_name": "Claude Fable 5.1",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 18,
+      "output_price_per_1m": 90,
+      "cache_creation_price_per_1m": 22.5,
+      "cache_read_price_per_1m": 0.45
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "36417db8-41d2-4103-901d-c65101893739",
+   "name": "claude-haiku-5-5",
+   "display_name": "Claude Haiku 5.5",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": 99999,
+      "input_price_per_1m": 0.18,
+      "output_price_per_1m": 0.9,
+      "cache_creation_price_per_1m": 0.225,
+      "cache_read_price_per_1m": 0.018
+     },
+     {
+      "up_to": null,
+      "input_price_per_1m": 0.9,
+      "output_price_per_1m": 4.5,
+      "cache_creation_price_per_1m": 1.125,
+      "cache_read_price_per_1m": 0.09
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "44a56332-6da3-4195-80a5-e7c1c70cf6ae",
+   "name": "claude-opus-5-5",
+   "display_name": "Claude Opus 5.5",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 7.2,
+      "output_price_per_1m": 36,
+      "cache_creation_price_per_1m": 9,
+      "cache_read_price_per_1m": 0.36
+     }
+    ],
+    "processing_tiers": {
+     "fast": {
+      "price_multiplier": 2
+     }
+    }
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "1cb5d925-e450-4f26-aa2f-149e0b6d2ad4",
+   "name": "claude-sonnet-5-5",
+   "display_name": "Claude Sonnet 5.5",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 3.6,
+      "output_price_per_1m": 18,
+      "cache_creation_price_per_1m": 4.5,
+      "cache_read_price_per_1m": 0.18
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "8e2d20cc-d03b-4d2b-bc7b-aa715d45997b",
+   "name": "codex-auto-review",
+   "display_name": "codex-auto-review",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0.45,
+      "output_price_per_1m": 1.8,
+      "cache_creation_price_per_1m": 0.6,
+      "cache_read_price_per_1m": 0.12,
+      "cache_ttl_pricing": [
+       {
+        "ttl_minutes": 60,
+        "cache_creation_price_per_1m": 4
+       }
+      ]
+     }
+    ]
+   },
+   "supported_capabilities": [
+    "cache_1h"
+   ],
+   "config": {
+    "streaming": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "d123eada-f073-42e5-8c6d-59b04580b5a3",
+   "name": "deepseek-v4.1-flash",
+   "display_name": "DeepSeek V4.1 Flash",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0.5,
+      "output_price_per_1m": 2,
+      "cache_read_price_per_1m": 0.01
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "9c40cf25-d4e3-4189-9884-5c76fdeb5541",
+   "name": "gemini-3.1-flash-image",
+   "display_name": "Nano Banana 2",
+   "is_active": true,
+   "default_price_per_request": 0.06,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0
+     }
+    ],
+    "image_output_price_default": 0.08
+   },
+   "supported_capabilities": [
+    "image_generation"
+   ],
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "264c55f9-cf23-4f6c-bd51-a342dbe84215",
+   "name": "gemini-3.5-flash-lite",
+   "display_name": "Gemini 3.5 Flash Lite",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0.3,
+      "output_price_per_1m": 2.5,
+      "cache_read_price_per_1m": 0.03
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "8f8c5907-c717-40c9-956c-46202d718314",
+   "name": "gemini-3.7-flash",
+   "display_name": "Gemini 3.7 Flash",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0.75,
+      "output_price_per_1m": 3.75,
+      "cache_read_price_per_1m": 0.075
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "a33afba8-971c-47f5-8817-24fe2e82c30b",
+   "name": "gemini-3.8-flash",
+   "display_name": "Gemini 3.8 Flash",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0.75,
+      "output_price_per_1m": 3.75,
+      "cache_read_price_per_1m": 0.075
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "fac8b302-2cd0-4174-b4bf-e4c6051c6218",
+   "name": "gemini-4-argon",
+   "display_name": "Gemini 4 Argon",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 2,
+      "output_price_per_1m": 10,
+      "cache_read_price_per_1m": 0.1
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "d0573a90-d98b-44cc-b6d7-3414914f85ed",
+   "name": "glm-5.3",
+   "display_name": "GLM-5.3",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 2,
+      "output_price_per_1m": 7,
+      "cache_creation_price_per_1m": 0,
+      "cache_read_price_per_1m": 0.5
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "7bd28ab4-5e50-4c30-9c26-75fbe95444dc",
+   "name": "glm-5.3-flash",
+   "display_name": "GLM-5.3-Flash",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0.4,
+      "output_price_per_1m": 1.4,
+      "cache_creation_price_per_1m": 0,
+      "cache_read_price_per_1m": 0.12
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "666c0125-1100-40fe-9920-06e90c44cc2f",
+   "name": "gpt-6.1-sol",
+   "display_name": "GPT-6.1 Sol",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": 271999,
+      "input_price_per_1m": 1,
+      "output_price_per_1m": 5,
+      "cache_creation_price_per_1m": 1.25,
+      "cache_read_price_per_1m": 0.05
+     },
+     {
+      "up_to": null,
+      "input_price_per_1m": 2,
+      "output_price_per_1m": 7.5,
+      "cache_creation_price_per_1m": 2.5,
+      "cache_read_price_per_1m": 0.1
+     }
+    ],
+    "processing_tiers": {
+     "priority": {
+      "price_multiplier": 2
+     },
+     "ultrafast": {
+      "tiers": [
+       {
+        "up_to": null,
+        "input_price_per_1m": 12,
+        "output_price_per_1m": 60,
+        "cache_creation_price_per_1m": 15,
+        "cache_read_price_per_1m": 0.6
+       }
+      ]
+     }
+    }
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "020a5191-dba3-4857-9a54-bdc648b16148",
+   "name": "gpt-6-astra",
+   "display_name": "gpt-6-astra",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": 271999,
+      "input_price_per_1m": 5,
+      "output_price_per_1m": 25,
+      "cache_creation_price_per_1m": 6.25,
+      "cache_read_price_per_1m": 0.5
+     },
+     {
+      "up_to": null,
+      "input_price_per_1m": 10,
+      "output_price_per_1m": 37.5,
+      "cache_creation_price_per_1m": 12.5,
+      "cache_read_price_per_1m": 1
+     }
+    ],
+    "processing_tiers": {
+     "priority": {
+      "price_multiplier": 2
+     },
+     "ultrafast": {
+      "tiers": [
+       {
+        "up_to": null,
+        "input_price_per_1m": 60,
+        "output_price_per_1m": 300,
+        "cache_creation_price_per_1m": 75,
+        "cache_read_price_per_1m": 6
+       }
+      ]
+     }
+    }
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "f04171f8-2616-4c3b-8128-8dfaf3ce7da8",
+   "name": "gpt-6-sol",
+   "display_name": "GPT-6 Sol",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": 271999,
+      "input_price_per_1m": 1,
+      "output_price_per_1m": 5,
+      "cache_creation_price_per_1m": 1.25,
+      "cache_read_price_per_1m": 0.1
+     },
+     {
+      "up_to": null,
+      "input_price_per_1m": 2,
+      "output_price_per_1m": 7.5,
+      "cache_creation_price_per_1m": 2.5,
+      "cache_read_price_per_1m": 0.2
+     }
+    ],
+    "processing_tiers": {
+     "priority": {
+      "price_multiplier": 2
+     }
+    }
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "5bdd2143-b019-401a-8015-2045df431e8f",
+   "name": "gpt-image-2",
+   "display_name": "gpt-image-2",
+   "is_active": true,
+   "default_price_per_request": 0.06,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "cache_creation_price_per_1m": 0,
+      "cache_read_price_per_1m": 0
+     }
+    ],
+    "image_output_price_default": 0
+   },
+   "supported_capabilities": [
+    "image_generation"
+   ],
+   "config": {
+    "streaming": true,
+    "vision": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "fe6f0e38-f26b-4453-b32d-69585b4b694b",
+   "name": "gpt-image-2.5",
+   "display_name": "gpt-image-2.5",
+   "is_active": true,
+   "default_price_per_request": 0.06,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "cache_creation_price_per_1m": 0,
+      "cache_read_price_per_1m": 0
+     }
+    ]
+   },
+   "supported_capabilities": [
+    "image_generation"
+   ],
+   "config": {
+    "streaming": true,
+    "image_generation": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "814189b1-2e00-4ee2-b108-53053be201c9",
+   "name": "gpt-image-2.5-flare",
+   "display_name": "gpt-image-2.5-flare",
+   "is_active": true,
+   "default_price_per_request": 0.06,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "cache_creation_price_per_1m": 0,
+      "cache_read_price_per_1m": 0
+     }
+    ],
+    "image_output_price_default": 0
+   },
+   "supported_capabilities": [
+    "image_generation"
+   ],
+   "config": {
+    "streaming": true,
+    "image_generation": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "d19141d8-7348-47d7-9ee4-0c6b9764f501",
+   "name": "gpt-image-2.5-sunburst",
+   "display_name": "gpt-image-2.5-sunburst",
+   "is_active": true,
+   "default_price_per_request": 0.06,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": null,
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "cache_creation_price_per_1m": 0,
+      "cache_read_price_per_1m": 0
+     }
+    ],
+    "image_output_price_default": 0
+   },
+   "supported_capabilities": [
+    "image_generation"
+   ],
+   "config": {
+    "streaming": true,
+    "image_generation": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "59d82e74-eb5a-482d-a651-3b32da5c3c9e",
+   "name": "grok-4.6",
+   "display_name": "Grok 4.6",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": 199999,
+      "input_price_per_1m": 0.6,
+      "output_price_per_1m": 1.8,
+      "cache_read_price_per_1m": 0.15
+     },
+     {
+      "up_to": null,
+      "input_price_per_1m": 1.2,
+      "output_price_per_1m": 3.6,
+      "cache_read_price_per_1m": 0.3
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  },
+  {
+   "id": "98597582-7a14-4b1d-a392-83431b6b4a03",
+   "name": "grok-4.7",
+   "display_name": "Grok 4.7",
+   "is_active": true,
+   "default_price_per_request": null,
+   "default_tiered_pricing": {
+    "tiers": [
+     {
+      "up_to": 199999,
+      "input_price_per_1m": 1,
+      "output_price_per_1m": 3,
+      "cache_read_price_per_1m": 0.25
+     },
+     {
+      "up_to": null,
+      "input_price_per_1m": 2,
+      "output_price_per_1m": 6,
+      "cache_read_price_per_1m": 0.5
+     }
+    ]
+   },
+   "supported_capabilities": null,
+   "config": {
+    "streaming": true,
+    "vision": true,
+    "function_calling": true,
+    "extended_thinking": true
+   },
+   "usage_count": 0
+  }
+ ],
+ "total": 22
+}

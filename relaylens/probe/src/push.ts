@@ -27,6 +27,27 @@ export function shouldPush(state: Record<string, string>, f: OpsFindingLike, now
   return now - last >= DEDUP_WINDOW_MS;
 }
 
+/** 低层文本推送:billing 轮摘要等自定义消息;未配置网关返回 false,失败吞掉只打日志 */
+export async function pushWeComText(text: string): Promise<boolean> {
+  const url = process.env.RL_WECOM_PUSH_URL;
+  const token = process.env.RL_WECOM_PUSH_TOKEN;
+  if (!url || !token) return false;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 10_000);
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Push-Token": token },
+      body: JSON.stringify({ text }),
+      signal: ctrl.signal,
+    });
+    return r.ok;
+  } catch (e) {
+    console.log(`  (企微推送失败,不影响任务:${(e as Error).message})`);
+    return false;
+  } finally { clearTimeout(timer); }
+}
+
 /** 读 ops.json 的 queue,推 critical;返回推送条数(skipped=true=未配置网关) */
 export async function pushCriticalAlerts(opsFile: string): Promise<{ pushed: number; skipped: boolean }> {
   const url = process.env.RL_WECOM_PUSH_URL;

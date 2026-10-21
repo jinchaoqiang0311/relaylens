@@ -50,9 +50,27 @@ header nav a:hover{color:#fff}
 .com-v{font-size:11.5px;color:var(--sub);line-height:1.7}
 .best-banner{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;display:inline-block;margin-bottom:10px}
 .spec-row{color:var(--warn);font-weight:700}
+/* 分组明细(按站聚合视图,2026-10-21) */
+.ch-cell{cursor:pointer;transition:background-color .15s ease-out}
+.ch-cell:hover{background:rgba(29,31,32,.04)}
+.ch-toggle{font-size:11.5px;color:var(--brand);cursor:pointer;margin-left:6px;white-space:nowrap}
+.ch-toggle:hover{color:var(--brand-deep)}
+.ch-box{background:var(--bg);border:1px solid var(--line-soft);border-radius:6px;padding:10px 12px}
+.ch-head{font-size:12px;color:var(--sub);margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+.ch-head b{color:var(--ink)}
+.ch-note{color:var(--faint);font-size:11px}
+.ch-table{width:100%;font-size:12.5px;border-collapse:collapse}
+.ch-table th{font-size:11px;color:var(--faint);font-weight:500;text-align:left;padding:5px 8px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.ch-table td{padding:6px 8px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums;color:var(--ink)}
+.ch-table tr:last-child td{border-bottom:none}
+.ch-tag{display:inline-block;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;color:var(--sub);margin-right:3px;white-space:nowrap}
+.ch-tag.head{border-color:var(--brand);color:var(--brand)}
+.ch-tag.low{border-color:var(--ok);color:var(--ok)}
+.ch-tag.warn{border-color:var(--warn);color:var(--warn)}
 .legend{font-size:12px;color:var(--faint);padding:10px 0 40px;line-height:1.8}
 footer{background:#0c1633;color:#94a3c4;padding:26px 0;font-size:12.5px;text-align:center}
 </style>
+  <link rel="stylesheet" href="assets/theme-relaypick.css">
 </head>
 <body>
 <header><div class="wrap">
@@ -105,12 +123,17 @@ function render(){
   var box=document.getElementById("tableBox");
   if(VIEW==="site"){
     var h='<table class="mx-table"><thead><tr><th>站点</th><th>主口径分组</th><th>倍率</th><th>输入 ¥/M</th><th>输出 ¥/M</th><th>缓存 ¥/M</th><th>特价组</th><th>商业信息</th><th></th></tr></thead><tbody>';
-    m.rows.forEach(function(r){
+    m.rows.forEach(function(r,ri){
       var ratio=(r.inP!=null&&m.official.in)?Math.round(r.inP/m.official.in*100)/100:null;
       var s=SITE_BY_NAME[r.site]||{};
       var eff=ratios[r.site],best=(eff!=null&&eff===min);
+      var chs=(r.channels&&r.channels.length)?r.channels:null;
       h+="<tr><td>"+'<a class="site-nm" href="'+siteUrl(r.site)+'">'+esc(r.site)+"</a></td>"+
-        "<td>"+esc(r.group||"—")+"</td>"+
+        (chs&&chs.length>1
+          ? '<td class="ch-cell" data-ch="chd'+ri+'" data-n="'+chs.length+'" title="点击展开该站在此模型下的全部分组与价格">'+
+              esc(r.group||"—")+
+              '<span class="ch-toggle">▾ 全部 '+chs.length+' 组</span></td>'
+          : "<td>"+esc(r.group||"—")+' <span style="color:var(--faint);font-size:11px">单分组</span></td>')+
         '<td><span class="ratio">'+(ratio==null?"—":ratio+"x")+"</span>"+ratioTag(ratio)+"</td>"+
         '<td><span class="price'+(best?" best":"")+'">'+(eff==null?"—":fmtY(eff))+'</span><div class="sub-v">标价 $'+(r.inP==null?"—":r.inP)+"/M</div></td>"+
         "<td>"+(r.outP==null||EFF[r.site]==null?"—":fmtY(Math.round(r.outP*EFF[r.site]*1000)/1000))+"</td>"+
@@ -118,12 +141,60 @@ function render(){
         "<td>"+(r.special?'<span class="spec-row">「'+esc(r.special.group)+"」"+(EFF[r.site]!=null?fmtY(Math.round(r.special.inP*EFF[r.site]*1000)/1000):"$"+r.special.inP)+"</span>":"—")+"</td>"+
         "<td>"+commerceLines(s)+"</td>"+
         '<td><a class="site-nm" href="'+siteUrl(r.site)+'">详情 →</a></td></tr>';
+      /* 2026-10-21:把该站在此模型下的全部分组摊开(分组名/组倍率/相对官方倍数/输入输出缓存到手价/标价) */
+      if(chs&&chs.length>1)h+=chGroupRows(m,r,chs,ri);
     });
     box.innerHTML=h+"</tbody></table>";
   }else{
     renderChannel(m,box,min);
   }
-  document.getElementById("pLegend").innerHTML="口径:单价 = 站方公示额度价 × 站方声明充值比例,各站按实际比例换算(wolfai ¥2=1$,jiuqingyun ¥1=10$,其余 ¥1=1$);倍率 = 相对官方锚的倍数;档位:倍率≤0.4 低价档、≥1.2 加价档。价格仅供参考,以中转站官网最新报价为准。";
+  /* 分组明细展开/收起:事件委托挂在容器上,只绑一次,重渲染(innerHTML 覆盖)也不丢;
+     可点区域是整个「主口径分组」单元格,不用精确点那行小字 */
+  if(!box._chBound){
+    box._chBound=true;
+    box.addEventListener("click",function(ev){
+      var el=ev.target;
+      while(el&&el!==box&&!(el.getAttribute&&el.getAttribute("data-ch")))el=el.parentNode;
+      if(!el||el===box)return;
+      var tr=document.getElementById(el.getAttribute("data-ch"));
+      if(!tr)return;
+      var opened=tr.style.display!=="none";
+      tr.style.display=opened?"none":"";
+      var hint=el.querySelector?el.querySelector(".ch-toggle"):null;
+      if(hint)hint.textContent=(opened?"▾ ":"▸ ")+"全部 "+el.getAttribute("data-n")+" 组";
+    });
+  }
+  document.getElementById("pLegend").innerHTML="口径:单价 = 站方公示额度价 × 站方声明充值比例,各站按实际比例换算(wolfai ¥2=1$,jiuqingyun ¥1=10$,其余 ¥1=1$);倍率 = 相对官方锚的倍数;档位:倍率≤0.4 低价档、≥1.2 加价档。主表为各站<span data-tip=\"默认组(无默认取中位组)即主口径;点分组名右侧「全部 N 组」可摊开该站在此模型下的全部分组与价格,含特价组。\">主口径</span>价,低价特价组不混入;价格仅供参考,以中转站官网最新报价为准。";
+}
+/* 分组明细行:某站在此模型下的全部价格分组(2026-10-21)
+   口径与主表一致 —— 单价 = 站方公示额度价 × 该站声明充值比例;组倍率与相对官方倍数分列,不混算 */
+function chGroupRows(m,r,chs,idx){
+  var s=EFF[r.site];
+  var priced=chs.filter(function(c){return c.inP!=null;});
+  var minIn=priced.length?Math.min.apply(null,priced.map(function(c){return c.inP;})):null;
+  var y=function(v){return (v==null||s==null)?null:Math.round(v*s*1000)/1000;};
+  var h='<tr class="ch-row" id="chd'+idx+'" style="display:none"><td colspan="9"><div class="ch-box">'+
+    '<div class="ch-head"><b>'+esc(r.site)+'</b> · 该模型全部 '+chs.length+' 个分组(按输入价升序)'+
+      '<span class="ch-note">到手价 = 分组标价 × 该站声明充值比例;组倍率 = 站方公示分组倍率;相对官方 = 该组输入价 ÷ 官方锚输入价</span></div>'+
+    '<table class="ch-table"><thead><tr><th>分组名</th><th>标记</th><th>组倍率</th><th>相对官方</th><th>输入 ¥/M</th><th>输出 ¥/M</th><th>缓存 ¥/M</th><th>标价 $/M</th></tr></thead><tbody>';
+  chs.slice().sort(function(a,b){return (a.inP==null?1e9:a.inP)-(b.inP==null?1e9:b.inP);}).forEach(function(ch){
+    var inP=(ch.inP!=null)?ch.inP:r.inP, outP=(ch.outP!=null)?ch.outP:r.outP;
+    var rel=(inP!=null&&m.official.in)?Math.round(inP/m.official.in*100)/100:null;
+    var tags=[];
+    if(ch.head)tags.push('<span class="ch-tag head">主口径</span>');
+    if(inP!=null&&inP===minIn)tags.push('<span class="ch-tag low">该站最低</span>');
+    if(ch.grpRatio!=null&&ch.grpRatio<=0.6)tags.push('<span class="ch-tag warn">低价组</span>');
+    h+="<tr>"+
+      "<td>"+esc(ch.group||"—")+"</td>"+
+      "<td>"+(tags.length?tags.join(" "):"—")+"</td>"+
+      '<td><span class="ratio">'+(ch.grpRatio==null?"—":ch.grpRatio+"x")+"</span></td>"+
+      "<td>"+(rel==null?"—":rel+"x")+"</td>"+
+      "<td>"+(y(inP)==null?"—":fmtY(y(inP)))+"</td>"+
+      "<td>"+(y(outP)==null?"—":fmtY(y(outP)))+"</td>"+
+      "<td>"+(y(ch.cacheP)==null?"—":fmtY(y(ch.cacheP)))+"</td>"+
+      "<td>"+(inP==null?"—":"$"+inP)+"</td></tr>";
+  });
+  return h+"</tbody></table></div></td></tr>";
 }
 function renderChannel(m,box,min){
   var chans=[];
@@ -165,17 +236,21 @@ function renderFamRow(){
 function renderModelRow(){
   var mr=document.getElementById("modelRow");
   mr.innerHTML=MODELS.filter(function(m){return(m.family||"其他")===CUR_FAM})
-    .map(function(m){return'<a class="'+(mCur&&m.key===mCur.key?"on":"")+'" href="price.html?model='+encodeURIComponent(m.key)+'">'+esc(m.name)+"</a>"}).join("");
+    .map(function(m){return'<a class="'+(mCur&&m.key===mCur.key?"on":"")+'" href="price.html?model='+encodeURIComponent(m.key)+'&view='+VIEW+'">'+esc(m.name)+"</a>"}).join("");
 }
 fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))}).then(function(j){
   SITES=j.realSites||[];EFF={};SITE_BY_NAME={};
   SITES.forEach(function(s){EFF[s.name]=s.effRatio;SITE_BY_NAME[s.name]=s;});
   MODELS=(j.compare&&j.compare.tabs)||[];
   var want=new URLSearchParams(location.search).get("model");
+  var wantView=new URLSearchParams(location.search).get("view");
+  if(wantView==="channel"||wantView==="site")VIEW=wantView;   /* 深链可指定默认视图(矩阵页点模型默认按渠道) */
   mCur=MODELS.filter(function(m){return m.key===want})[0]||MODELS[0]||null;
   if(!mCur){document.getElementById("tableBox").innerHTML='<div style="padding:30px;color:var(--faint)">暂无价格数据</div>';return;}
   CUR_FAM=mCur.family||"其他";
   renderFamRow();renderModelRow();render();
+  document.getElementById("vBtnSite").className=VIEW==="site"?"on":"";
+  document.getElementById("vBtnChannel").className=VIEW==="channel"?"on":"";
   document.getElementById("vBtnSite").onclick=function(){VIEW="site";this.className="on";document.getElementById("vBtnChannel").className="";render();};
   document.getElementById("vBtnChannel").onclick=function(){VIEW="channel";this.className="on";document.getElementById("vBtnSite").className="";render();};
 }).catch(function(e){document.getElementById("tableBox").innerHTML='<div style="padding:30px;color:var(--faint)">数据加载失败:'+e.message+"</div>";});

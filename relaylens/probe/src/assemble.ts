@@ -73,7 +73,7 @@ export function assembleMetrics(site: string, opts: { inject?: number } = {}): S
   let SR: SiteMetrics["SR"] = { bufferedRate: null, samples: 0 };
   if (perfRow?.summary) {
     try {
-      const p = JSON.parse(perfRow.summary) as { timeoutRate: number | null; bufferedRate: number | null; streamVerdict?: "stream" | "buffered" | "mixed" | "unknown" | null; streamCheck?: { bufferedPct?: number | null } | null; iters?: number };
+      const p = JSON.parse(perfRow.summary) as { timeoutRate: number | null; bufferedRate: number | null; streamVerdict?: "stream" | "buffered" | "mixed" | "unknown" | null; streamCheck?: { bufferedPct?: number | null; trials?: number } | null; iters?: number };
       timeoutPct = p.timeoutRate ?? null;
       // 流式真伪:优先取长输出专项(3 次)的结论;没有专项的老批次退回短循环 bufferedRate
       const verdictRate = p.streamVerdict === "stream" ? 0
@@ -81,7 +81,11 @@ export function assembleMetrics(site: string, opts: { inject?: number } = {}): S
           : p.streamVerdict === "mixed" ? (p.streamCheck?.bufferedPct ?? null)
             : null;
       const rate = verdictRate !== null ? verdictRate : (p.bufferedRate ?? null);
-      SR = { bufferedRate: rate, samples: rate !== null ? 1 : 0 };
+      /** 样本数:流式真伪专项每批跑 STREAM_CHECK_TRIALS(3) 次长输出请求,有结论即有 3 个真实样本
+       *  (此前恒记 1,而 score.ts 要求 ≥3 → SR 桶永远不计分,覆盖率被结构性压低,L2 永不可达);
+       *  退回短循环 bufferedRate 的老批次只有 1 个可判观测 —— 保持 1,宁保守不注水。 */
+      const scTrials = p.streamCheck && typeof p.streamCheck.trials === "number" ? p.streamCheck.trials : 0;
+      SR = { bufferedRate: rate, samples: verdictRate !== null && scTrials > 0 ? scTrials : (rate !== null ? 1 : 0) };
     } catch { /* */ }
   }
   const ST: SiteMetrics["ST"] = { avail: h.avail7d, timeoutPct, checks: h.checks, spanMinutes };

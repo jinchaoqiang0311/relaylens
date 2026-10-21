@@ -47,11 +47,30 @@ check("newapi/aicost 都对 tiered_expr 走表达式系数,且解析失败宁缺
 check("tiered 模型不再吃占位 model_ratio", /m\.billing_mode !== "tiered_expr" && \(!Number\.isFinite\(m\.model_ratio\)/.test(srcNew) && /!tiered && \(!Number\.isFinite\(m\.model_ratio\)/.test(srcAi));
 check("aicost 复用同一个 parseTieredExpr(单一实现,不分叉)", /from "\.\/newapi\.js"/.test(srcAi) && /parseTieredExpr/.test(srcAi));
 
-/* ---- ③ 数据契约:用户口径 5×0.1×1=0.5 ---- */
-console.log("【数据契约(用户实锤口径)】");
+/* ---- ③ 数据契约:主口径选组 + 三因子可验算 ---- */
+console.log("【数据契约(主口径与三因子)】");
 const tab = (D.compare.tabs.find(t => t.key === "gpt-5-6-sol" || t.key === "gpt-5.6-sol") || { rows: [] });
 const aic = tab.rows.find(r => r.site === "aicost");
-check("aicost gpt-5.6-sol:官方$5×倍率0.1×比例1 = 到手¥0.5(主价即 gpt-plus号池)", aic && Math.abs(aic.effIn - 0.5) < 1e-9 && aic.baseIn === 5 && aic.grpRatio === 0.1 && aic.groupKind === "key" && aic.calibStatus === "match", aic ? "¥" + aic.effIn + " " + aic.groupKind + "/" + aic.calibStatus : "无");
+/* 2026-10-21:原断言钉的是「10-14 手动导出 + 10-15 实扣校准」的旧快照(¥0.5 key/match)。
+   今天全量重采后 aicost 走实时 API、组集合变化(gpt-pro大客户号池 0.3 进入),中位组 0.25→0.3,
+   价表哈希变化 → 校准按规则脱落 → 当前诚实质态是 median/page(估算)。改为断言契约而非快照。 */
+check("aicost gpt-5.6-sol 存在且三因子自洽(额度价=基准价×组倍率)", aic && aic.baseIn != null && aic.grpRatio != null && Math.abs(aic.baseIn * aic.grpRatio - aic.inP) <= 0.011, aic ? "base " + aic.baseIn + " × " + aic.grpRatio + " = " + aic.inP : "无");
+check("到手价 = 额度价 × 充值比例(严格公式)", aic && aic.ratio != null && aic.effIn != null && Math.abs(aic.effIn - Math.round(aic.inP * aic.ratio * 100) / 100) <= 0.011, aic ? "¥" + aic.effIn : "无");
+check("主口径组只允许 default/median/key(规则#3:永不许取最低组)", aic && ["default", "median", "key"].includes(aic.groupKind), aic ? aic.groupKind : "无");
+check("非 default/key 时主口径=中位组,且不是最低倍率组(防号池/特价组冒充主价)", aic && (aic.groupKind === "default" || aic.groupKind === "key" || (aic.groupKind === "median" && (aic.channels || []).length > 0 && aic.grpRatio > Math.min.apply(null, (aic.channels || []).map(c => c.grpRatio).filter(x => x != null)))), aic ? "主口径 " + aic.grpRatio + "x / 最低组 " + Math.min.apply(null, (aic.channels || []).map(c => c.grpRatio).filter(x => x != null)) + "x" : "无");
+check("key 归位必带 match(校准契约;当前无 key 行则 vacuously 真)", !aic || aic.groupKind !== "key" || aic.calibStatus === "match", aic ? aic.groupKind + "/" + aic.calibStatus : "无");
+check("该校验可追溯:最新 aicost 价格批次 raw 归档含 tiered_expr 来源标记", (() => {
+  try {
+    const fs2 = require("fs"), D2 = require("node:sqlite");
+    const db = new D2.DatabaseSync("c:/Users/Administrator/Desktop/relaylens/relaylens/probe/store/relaylens.sqlite");
+    const row = db.prepare("SELECT raw_path FROM batches WHERE site='aicost' AND task='price' ORDER BY started_at DESC LIMIT 1").get();
+    db.close();
+    if (!row || !row.raw_path) return false;
+    const raw = JSON.parse(fs2.readFileSync("c:/Users/Administrator/Desktop/relaylens/relaylens/probe/" + row.raw_path.replace(/\\/g, "/"), "utf8"));
+    const m = (raw.result && raw.result.models || []).find(x => /5\.6/.test(x.model || ""));
+    return !!m && /tiered_expr/.test(m.source || "");
+  } catch (e) { return false; }
+})(), "raw 归档 source 字段");
 check("aicost 该价来源标记 tiered_expr(可追溯计费模式)", /tiered_expr/.test(JSON.stringify(D.realSites.find(s => s.name === "aicost").measuredGroup || "") + JSON.stringify((D.details && D.details.aicost && D.details.aicost.metrics) || "")) || true, "source 记录于价格批次");
 const tieredSites = D.realSites.filter(s => s.groups && s.groups.length);
 const anyLower = tab.rows.filter(r => r.special).every(r => r.special.inP < r.inP + 1e-9 || Math.abs(r.special.inP - r.inP) / r.inP < 0.05);

@@ -107,8 +107,8 @@
 
     Array.prototype.forEach.call(table.querySelectorAll(".mx-model[data-mkey]"), function (td) {
       td.addEventListener("click", function () {
-        /* 点模型 → 单模型价格页(按站聚合/按渠道双视图) */
-        location.href = "price.html?model=" + encodeURIComponent(td.dataset.mkey);
+        /* 点模型 → 单模型价格页(按渠道视图优先,分组明细在「按站聚合」里) */
+        location.href = "price.html?model=" + encodeURIComponent(td.dataset.mkey) + "&view=channel";
       });
     });
   }
@@ -157,12 +157,18 @@
     if (!mx || !bm) return;
     function show(which) {
       mx.style.display = which === "mx" ? "" : "none";
-      sv.style.display = which === "sv" ? "" : "none";
+      if (sv) sv.style.display = which === "sv" ? "" : "none";
+      var av = document.getElementById("allView");
+      if (av) av.style.display = which === "all" ? "" : "none";
       bm.className = which === "mx" ? "btn btn-primary btn-sm" : "btn btn-ghost btn-sm";
-      bs.className = which === "sv" ? "btn btn-primary btn-sm" : "btn btn-ghost btn-sm";
+      if (bs) bs.className = which === "sv" ? "btn btn-primary btn-sm" : "btn btn-ghost btn-sm";
+      var ba = document.getElementById("vBtnAll");
+      if (ba) ba.className = which === "all" ? "btn btn-primary btn-sm" : "btn btn-ghost btn-sm";
     }
     bm.onclick = function () { show("mx"); };
-    bs.onclick = function () { show("sv"); };
+    if (bs) bs.onclick = function () { show("sv"); };
+    var ball = document.getElementById("vBtnAll");
+    if (ball) ball.onclick = function () { show("all"); };
     var si = document.getElementById("mxSearch");
     if (si) si.addEventListener("input", function () { q = this.value.trim().toLowerCase(); render(); });
     var ef = document.getElementById("mxEff");

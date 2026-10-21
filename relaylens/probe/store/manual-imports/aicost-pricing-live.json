@@ -1,0 +1,1457 @@
+{
+  "auto_groups": [
+    "auto",
+    "claude-kiro渠道",
+    "gpt-image-2-主",
+    "gpt-image-2-备",
+    "1.5稳定批发",
+    "gpt-pro号池",
+    "gpt-plus号池",
+    "gemini-语言模型",
+    "nano-banana",
+    "seedance2.0批发"
+  ],
+  "data": [
+    {
+      "model_name": "grok-4.5",
+      "vendor_id": 6,
+      "quota_type": 0,
+      "model_ratio": 1,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 3,
+      "cache_ratio": 0.25,
+      "enable_groups": [
+        "grok语言"
+      ],
+      "supported_endpoint_types": [
+        "openai",
+        "openai-response"
+      ],
+      "pricing_version": "5a90f2b86c08bd983a9a2e6d66c255f4eaef9c4bc934386d2b6ae84ef0ff1f1f"
+    },
+    {
+      "model_name": "claude-haiku-4-5-20251001",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 0.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.25,
+      "enable_groups": [
+        "claude-kiro渠道"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gpt-6-astra",
+      "vendor_id": 1,
+      "quota_type": 0,
+      "model_ratio": 37.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 2,
+      "enable_groups": [
+        "gpt-plus号池",
+        "gpt-pro号池",
+        "gpt-pro大客户号池"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "billing_mode": "tiered_expr",
+      "billing_expr": "(len <= 272000 ? tier(\"base\", p * 10 + c * 50 + cr * 1 + cc * 12.5) : tier(\"long_context\", p * 20 + c * 75 + cr * 1.5 + cc * 25)) * (param(\"service_tier\") == \"priority\" ? 2 : 1)"
+    },
+    {
+      "model_name": "seedance2.5-hs-720p",
+      "description": "火山引擎限时折扣。按秒收费，seedance 2.5 30图10视频10音频参考时长4-30秒，     注意：人物图，人脸大一点，小脸容易变脸，类似于那种大头照，",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.77,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "seedance2.5-md-720p-2",
+      "description": "按次收费，固定输出 720p，支持 4–30 秒、最多 30 张图片、10 段视频和 10 段音频参考，支持原生人脸",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 4,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.0-fast-2",
+      "description": "9 图 / 3 视频 / 3 音频 /支持真人，按条计费",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 2.7,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0me"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-dj-480p",
+      "description": "低价渠道。按秒/元收费。支持30张图，10音频，不支持视频。",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0批发"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "gpt-image-2.5-flare",
+      "vendor_id": 1,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "gpt-image-2-主",
+        "gpt-image-2-备"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-900",
+      "description": "按次收费，不是dola  2.5 9图 ，支持30秒。9图，可以参考视频，不卡人脸，禁止涉黄",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 5.2,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦便宜900分组"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "claude-opus-5-5",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 2,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.125,
+      "create_cache_ratio": 1.5625,
+      "enable_groups": [
+        "claude-kiro渠道",
+        "claude-满血不降智",
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gpt-6-sol",
+      "vendor_id": 1,
+      "quota_type": 0,
+      "model_ratio": 37.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 2,
+      "enable_groups": [
+        "gpt-pro大客户号池",
+        "gpt-pro号池"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "billing_mode": "tiered_expr",
+      "billing_expr": "(len < 272000 ? tier(\"base\", p * 2 + c * 10 + cr * 0.2 + cc * 2.5) : tier(\"long_context\", p * 4 + c * 15 + cr * 0.4 + cc * 5)) * (param(\"service_tier\") == \"​priority\" ? 2 : 1)"
+    },
+    {
+      "model_name": "seedance2.0-std",
+      "description": "720p 只支持9图 2.0模型 内置的过真人",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 2.2,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦vid"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "grok-4.6",
+      "vendor_id": 6,
+      "quota_type": 0,
+      "model_ratio": 1,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 3,
+      "cache_ratio": 0.25,
+      "enable_groups": [
+        "grok语言"
+      ],
+      "supported_endpoint_types": [
+        "openai",
+        "openai-response"
+      ]
+    },
+    {
+      "model_name": "gemini-3-pro-image-preview",
+      "description": "支持1k/2k/4k，不管什么价格都支持",
+      "tags": "图片/生图",
+      "vendor_id": 7,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.12,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "nano-banana",
+        "nano-banana渠道2"
+      ],
+      "supported_endpoint_types": [
+        "gemini"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-v3-720p-101010",
+      "description": "质量很好 10图10音 4-30秒 1000秒之内 内置过人脸，过人脸概率可能比较低，尽量自行处理蒙眼睛打白条",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 3.3,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦高质量分组"
+      ],
+      "supported_endpoint_types": [
+        "openai-video"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "gemini-3-flash-preview",
+      "tags": "gemini,google",
+      "vendor_id": 7,
+      "quota_type": 0,
+      "model_ratio": 0.25,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 6,
+      "cache_ratio": 0.102,
+      "enable_groups": [
+        "gemini-语言模型"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "minimax-h3-768p-930-8-22",
+      "description": "纯正768p，0.75一次9图3音频0视频",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.8,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0批发"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-dj-720p",
+      "description": "低价渠道。按秒/元收费。支持30张图，10音频，不支持视频。",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 1.05,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0批发"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "seedance2.0-svip-900-720p",
+      "description": "900卡人脸，需要提示词30元。联系管理，也可以看飞书文档自己写，支持10秒和15秒，提示词里面写出你的秒数",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 1.25,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦900分组"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "grok-imagine-video-1.5-preview",
+      "description": "支持参考图/7张参考图/15秒任意秒",
+      "vendor_id": 6,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.8,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "1.5稳定批发",
+        "grok1.5纯享版"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-10图",
+      "description": "只支持10图 ，内置不卡人脸 （小部分卡人脸）。 只能30s，",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 3.3,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0me"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "gemini-3.8-flash",
+      "vendor_id": 7,
+      "quota_type": 0,
+      "model_ratio": 0.375,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "enable_groups": [
+        "gemini-语言模型"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.0-guanzhuan-480p",
+      "description": "按秒收费，官转渠道，0.45一秒，稳定，4–15秒；9图/3视频/3音频，不卡人脸",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.45,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦特价"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "gpt-5.5",
+      "vendor_id": 1,
+      "quota_type": 0,
+      "model_ratio": 37.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 6,
+      "enable_groups": [
+        "gpt-plus号池",
+        "gpt-pro号池"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "billing_mode": "tiered_expr",
+      "billing_expr": "(len <= 272000 ? tier(\"base\", p * 5 + c * 30 + cr * 0.5) : tier(\"long_context\", p * 10 + c * 45 + cr * 1)) * (param(\"service_tier\") == \"priority\" ? 2.5 : 1)"
+    },
+    {
+      "model_name": "seedance2.5-guanzhuan-480p",
+      "description": "按秒收费，官转Seedance2.5；4–30秒，有视频参考最长20秒；30图/10视频/10音频；@素材引用",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.6,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦特价"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "seedance2.5-30",
+      "description": "按次收费，30视频10图10音频满参数720p，4-30s，原生过人脸，按条收费。超过20分钟不出应该就是卡审卡版权，超过60分钟自动判定失败退款",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 6.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦特价"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.0-720p",
+      "description": "按次收费，支持9图片3视频3音频，网友反馈画质有点差，自行使用！！稳定",
+      "vendor_id": 14,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 4,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "gpt-image-2.5-sunburst",
+      "vendor_id": 1,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "gpt-image-2-主",
+        "gpt-image-2-备"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-9图",
+      "description": "即梦2.5，30图，卡人脸只支持30秒，2.4元一次。禁止IP侵权！禁止色情裸露肌肤！",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 2.4,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦900分组"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.0-md-720p",
+      "description": "720p。933，按次收费",
+      "vendor_id": 14,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 4.2,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-vd-720p",
+      "description": "按次收费。一条720p3.5元，20图参考，不支持视频、音频参考，时长仅支持30，不卡真人",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 3.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "deepseek-v4.1-flash-hc",
+      "vendor_id": 5,
+      "quota_type": 0,
+      "model_ratio": 1,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 4,
+      "cache_ratio": 0.02,
+      "enable_groups": [
+        "depsek"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gemini-3-pro-preview",
+      "tags": "gemini,google",
+      "vendor_id": 7,
+      "quota_type": 0,
+      "model_ratio": 1,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 6,
+      "cache_ratio": 0.25,
+      "enable_groups": [
+        "gemini-语言模型"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gemini-3.6-flash",
+      "vendor_id": 7,
+      "quota_type": 0,
+      "model_ratio": 0.75,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "enable_groups": [
+        "gemini-语言模型"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.0-720p-100%",
+      "description": "官方火山引擎的，按秒/元计算，稳定933，超级稳定，就是贵！不卡人脸",
+      "vendor_id": 16,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.85,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0批发"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "seedance2.0-900-3",
+      "description": "9图mini通道，内置的过人脸，不卡人脸，1.05元一条，支持15秒，失败基本都是卡审核，处理图片失败，重试一下",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 1.05,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦便宜900分组"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "claude-sonnet-4-6",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 1.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.25,
+      "enable_groups": [
+        "cursor-claude",
+        "claude-满血不降智",
+        "claude-kiro渠道",
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gpt-5.6-sol",
+      "vendor_id": 1,
+      "quota_type": 0,
+      "model_ratio": 37.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 8,
+      "enable_groups": [
+        "gpt-plus号池",
+        "gpt-pro号池",
+        "gpt-pro大客户号池"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "billing_mode": "tiered_expr",
+      "billing_expr": "(len < 272000 ? tier(\"base\", p * 5 + c * 30 + cr * 0.5 + cc * 6.25) : tier(\"long_context\", p * 10 + c * 45 + cr * 1 + cc * 12.5)) * (param(\"service_tier\") == \"priority\" ? 2.5 : 1)"
+    },
+    {
+      "model_name": "claude-opus-5",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 2.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.25,
+      "enable_groups": [
+        "cursor-claude",
+        "claude-满血不降智",
+        "claude-kiro渠道",
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.0-mini-480p",
+      "description": "按次收费，支持9个图片3个音频；不支持参考视频，480p",
+      "vendor_id": 14,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 1.8,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0批发"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-guanzhuan-720p",
+      "description": "按秒收费，官转Seedance2.5；4–30秒，有视频参考最长20秒；30图/10视频/10音频；@素材引用",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 1.19,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦特价"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "grok-4.7",
+      "vendor_id": 6,
+      "quota_type": 0,
+      "model_ratio": 1,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 3,
+      "cache_ratio": 0.25,
+      "enable_groups": [
+        "grok语言"
+      ],
+      "supported_endpoint_types": [
+        "openai",
+        "openai-response"
+      ]
+    },
+    {
+      "model_name": "seedance2.5-kl",
+      "description": "3.2元一次 一条30秒seedance2.5 原生卡脸 10图片3音频",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 3.2,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0满血"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-v3-720p",
+      "description": "质量很好 30图10音 4-30秒 1000秒之内 内置过人脸,过人脸概率可能比较低，尽量自行处理蒙眼睛打白条",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 4.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦高质量分组"
+      ],
+      "supported_endpoint_types": [
+        "openai-video"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "claude-fable-5",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.25,
+      "enable_groups": [
+        "正价kiro/满血",
+        "claude-满血不降智",
+        "claude-kiro渠道"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.5-hs-1080p",
+      "description": "火山引擎限时折扣。按秒收费，seedance 2.5 30图10视频10音频参考时长4-30秒\n注意：人物图，人脸大一点，小脸容易变脸，类似于那种大头照，",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.87,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "seedance2.0-hs-720p",
+      "description": "火山引擎限时折扣，按次收费，满血933\n注意：人物图，人脸大一点，小脸容易变脸，类似于那种大头照，",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 8.3,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "gemini-3.1-pro-preview",
+      "tags": "gemini,google",
+      "vendor_id": 7,
+      "quota_type": 0,
+      "model_ratio": 1,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 6,
+      "cache_ratio": 0.1,
+      "enable_groups": [
+        "gemini-语言模型"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.0-480p-100%",
+      "description": "官方火山引擎的，按秒/元计算，稳定933，超级稳定，就是贵！不卡人脸",
+      "vendor_id": 16,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.55,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0批发"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "seedance2.0-1080p-100%",
+      "description": "官方火山引擎的，按秒/元计算，稳定933，超级稳定，就是贵！不卡人脸",
+      "vendor_id": 16,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 1.85,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0批发"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "seedance2.0-tj-903",
+      "description": "按次收费,720p；4.75一次。4–15秒整数；9图/0视频/3音频，不卡人脸",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 4.75,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦特价"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance-2.0-lec-720p",
+      "description": "按次收费，933满血过人脸",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 4.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance-2.5"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.5-doubao",
+      "description": "3.5元一次4-30秒， seedance 2.5 10张图，3个音频，用三视图内置处理人脸",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 3.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0满血"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "gpt-image-2",
+      "vendor_id": 1,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.445,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "gpt-image-2-备",
+        "gpt-image-2-主",
+        "gpt-image-2散户自用",
+        "adobe低价渠道"
+      ],
+      "supported_endpoint_types": [
+        "image-edit",
+        "image-generation"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "deepseek-v4.1-flash",
+      "vendor_id": 5,
+      "quota_type": 0,
+      "model_ratio": 1,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 4,
+      "cache_ratio": 0.02,
+      "enable_groups": [
+        "depsek"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.0-guanzhuan-720p",
+      "description": "按秒收费，官转渠道，0.67一秒，稳定，4–15秒；9图/3视频/3音频，不卡人脸",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.67,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦特价"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "second"
+    },
+    {
+      "model_name": "claude-sonnet-4-5-20250929",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 1.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 2,
+      "create_cache_ratio": 0.1,
+      "enable_groups": [
+        "claude-kiro渠道"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gemini-3.7-flash",
+      "vendor_id": 7,
+      "quota_type": 0,
+      "model_ratio": 0.375,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "enable_groups": [
+        "gemini-语言模型"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "claude-opus-5.5",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 2,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.125,
+      "create_cache_ratio": 1.5625,
+      "enable_groups": [
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.0-hs-1080p",
+      "description": "火山引擎限时折扣，按次收费，满血933，\n注意：人物图，人脸大一点，小脸容易变脸，类似于那种大头照。",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 10,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "claude-opus-4-6",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 2.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.25,
+      "enable_groups": [
+        "cursor-claude",
+        "claude-满血不降智",
+        "claude-kiro渠道",
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "claude-opus-4-8",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 2.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.25,
+      "enable_groups": [
+        "cursor-claude",
+        "claude-满血不降智",
+        "claude-kiro渠道",
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gemini-3.1-flash-image-preview",
+      "description": "支持1k/2k/4k，不管什么价格都支持",
+      "tags": "图片/生图",
+      "vendor_id": 7,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 0.1,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "nano-banana",
+        "nano-banana渠道2"
+      ],
+      "supported_endpoint_types": [
+        "gemini"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.0-900-fast",
+      "description": "1.8元/次固定15秒、720P、fast，最多9张参考图。不是dala",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 1.8,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦便宜900分组"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.0-me",
+      "description": "9图/3视频/3音频/720p，即梦2.0，支持10秒，15秒",
+      "vendor_id": 14,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 5.1,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "seedance2.0me"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "sora-v3-933-pro",
+      "description": "2.0 满血 720P 支持9张参考图 0个参考视频 3个参考音频 不卡真人 按次计费/10/15秒。1000秒内包出",
+      "vendor_id": 14,
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 4,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "sora/ji/批发"
+      ],
+      "supported_endpoint_types": [
+        "openai-video"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "claude-fable-5-1",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.025,
+      "create_cache_ratio": 2,
+      "enable_groups": [
+        "cursor-claude",
+        "claude-满血不降智",
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "seedance2.5-vid",
+      "description": "2.5 720p模型，内置的过真人！！支持9张图片，5/10/15/30秒  按次计费",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 3,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦vid"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "gemini-3.1-flash-lite",
+      "vendor_id": 7,
+      "quota_type": 0,
+      "model_ratio": 0.125,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 6,
+      "enable_groups": [
+        "gemini-语言模型"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ]
+    },
+    {
+      "model_name": "claude-opus-4-5-20251101",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 0.355,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.253521126761,
+      "enable_groups": [
+        "claude-kiro渠道"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    },
+    {
+      "model_name": "gpt-5.6-terra",
+      "vendor_id": 1,
+      "quota_type": 0,
+      "model_ratio": 37.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 8,
+      "enable_groups": [
+        "gpt-plus号池",
+        "gpt-pro号池"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "billing_mode": "tiered_expr",
+      "billing_expr": "(len < 272000 ? tier(\"base\", p * 2 + c * 12 + cr * 0.2 + cc * 2.5) : tier(\"第2档\", p * 4 + c * 18 + cr * 0.4 + cc * 5)) * (param(\"service_tier\") == \"priority\" ? 2 : 1)"
+    },
+    {
+      "model_name": "seedance2.0-v3-720p",
+      "description": "质量很好 满血933 4-15秒 内置过人脸1000秒左右出,过人脸概率可能比较低，尽量自行处理蒙眼睛打白条",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 3,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "即梦高质量分组"
+      ],
+      "supported_endpoint_types": [
+        "openai-video"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "seedance2.0-480p",
+      "description": "按次收费，支持9图片3视频3音频，自行使用！！稳定",
+      "quota_type": 1,
+      "model_ratio": 0,
+      "model_price": 2.5,
+      "owner_by": "",
+      "completion_ratio": 0,
+      "enable_groups": [
+        "fseedance批发2"
+      ],
+      "supported_endpoint_types": [
+        "openai"
+      ],
+      "display_billing_unit": "request"
+    },
+    {
+      "model_name": "claude-opus-4-7",
+      "vendor_id": 2,
+      "quota_type": 0,
+      "model_ratio": 2.5,
+      "model_price": 0,
+      "owner_by": "",
+      "completion_ratio": 5,
+      "cache_ratio": 0.1,
+      "create_cache_ratio": 1.25,
+      "enable_groups": [
+        "cursor-claude",
+        "claude-满血不降智",
+        "claude-kiro渠道",
+        "正价kiro/满血"
+      ],
+      "supported_endpoint_types": [
+        "anthropic",
+        "openai"
+      ]
+    }
+  ],
+  "group_ratio": {
+    "1.5稳定批发": 1,
+    "adobe低价渠道": 0.095,
+    "auto": 1,
+    "claude-kiro渠道": 0.11,
+    "claude-满血不降智": 1.2,
+    "cursor-claude": 0.45,
+    "depsek": 0.3,
+    "fseedance批发2": 1,
+    "gemini-语言模型": 0.4,
+    "gpt-image-2-主": 0.023,
+    "gpt-image-2-备": 0.18,
+    "gpt-plus号池": 0.1,
+    "gpt-pro号池": 0.25,
+    "gpt-pro大客户号池": 0.3,
+    "grok语言": 0.15,
+    "nano-banana": 1,
+    "nano-banana渠道2": 0.6,
+    "seedance-2.5": 1,
+    "seedance2.0me": 1,
+    "seedance2.0批发": 1,
+    "seedance2.0满血": 1,
+    "sora/ji/批发": 1,
+    "即梦900分组": 1,
+    "即梦vid": 1,
+    "即梦便宜900分组": 1,
+    "即梦原生不卡脸分组": 1,
+    "即梦特价": 1,
+    "即梦超低价": 1,
+    "即梦高质量分组": 1,
+    "正价kiro/满血": 0.5,
+    "香蕉/低价渠道": 0.65
+  },
+  "pricing_version": "a42d372ccf0b5dd13ecf71203521f9d2",
+  "success": true,
+  "supported_endpoint": {
+    "anthropic": {
+      "path": "/v1/messages",
+      "method": "POST"
+    },
+    "gemini": {
+      "path": " v1beta/models/gemini-3-pro-image-preview:generateContent",
+      "method": "POST"
+    },
+    "image-edit": {
+      "path": "/v1/images/edits",
+      "method": "POST"
+    },
+    "image-generation": {
+      "path": "/v1/images/generations",
+      "method": "POST"
+    },
+    "openai": {
+      "path": "/v1/videos",
+      "method": "POST"
+    },
+    "openai-response": {
+      "path": "/v1/responses",
+      "method": "POST"
+    },
+    "openai-video": {
+      "path": "/v1/videos",
+      "method": "POST"
+    }
+  },
+  "usable_group": {
+    "1.5稳定批发": "grok ",
+    "adobe低价渠道": "1k-4k,支持high，千并发无压力",
+    "auto": "默认分组",
+    "claude-kiro渠道": "kiro渠道，百分之89.9硬缓存，不多不少。",
+    "claude-满血不降智": "满血claude-支持外接，只能跑代码",
+    "cursor-claude": "cursor渠道claude，智商比kiro高",
+    "default": "用户分组",
+    "depsek": "跑代码用hc带缓存",
+    "fseedance批发2": "不卡人脸",
+    "gemini-语言模型": "gemini语言模型",
+    "gpt-image-2-主": "gpt生图渠道1k",
+    "gpt-image-2-备": "1k-4k//adobe号池生图//支持high",
+    "gpt-plus号池": "纯正plus号池（3000并发）",
+    "gpt-pro号池": "纯正pro号池（首字基本毫秒）",
+    "gpt-pro大客户号池": "纯正pro号池（几乎1人1个pro号）稳定性♥♥♥♥♥",
+    "grok语言": "grok语言模型",
+    "nano-banana": "香蕉图片模型/带4k",
+    "nano-banana渠道2": "as+flow渠道",
+    "seedance-2.5": "2.5视频模型",
+    "seedance2.0me": "seedance2.0me",
+    "seedance2.0批发": "",
+    "seedance2.0满血": "seedance2.0满血",
+    "sora/ji/批发": "即梦稳定//1000秒内包出",
+    "即梦900分组": "即梦900分组",
+    "即梦vid": "",
+    "即梦便宜900分组": "即梦便宜900分组",
+    "即梦原生不卡脸分组": "",
+    "即梦特价": "",
+    "即梦超低价": "即梦超低价",
+    "即梦高质量分组": "即梦高质量分组，基本稳定高质量",
+    "正价kiro/满血": "满血kiro，可整理，高缓存，智商堪比满血claude",
+    "香蕉/低价渠道": "和nano-banana同能力，低价渠道，渠道多久死多久下"
+  },
+  "vendors": [
+    {
+      "id": 9,
+      "name": "即梦",
+      "icon": "Jimeng.Color"
+    },
+    {
+      "id": 2,
+      "name": "Anthropic",
+      "icon": "Claude.Color"
+    },
+    {
+      "id": 4,
+      "name": "智谱",
+      "icon": "Zhipu.Color"
+    },
+    {
+      "id": 7,
+      "name": "Google",
+      "icon": "Gemini.Color"
+    },
+    {
+      "id": 15,
+      "name": "官转渠道/已授权"
+    },
+    {
+      "id": 16,
+      "name": "字节跳动",
+      "icon": "Doubao.Color"
+    },
+    {
+      "id": 1,
+      "name": "OpenAI",
+      "icon": "OpenAI"
+    },
+    {
+      "id": 6,
+      "name": "xAI",
+      "icon": "XAI"
+    },
+    {
+      "id": 8,
+      "name": "讯飞",
+      "icon": "Spark.Color"
+    },
+    {
+      "id": 11,
+      "name": "快手",
+      "icon": "Kling.Color"
+    },
+    {
+      "id": 12,
+      "name": "kelingAI"
+    },
+    {
+      "id": 13,
+      "name": "MinimaxH3"
+    },
+    {
+      "id": 14,
+      "name": "jimeng-933"
+    },
+    {
+      "id": 3,
+      "name": "Moonshot",
+      "icon": "Moonshot"
+    },
+    {
+      "id": 5,
+      "name": "DeepSeek",
+      "icon": "DeepSeek.Color"
+    }
+  ]
+}

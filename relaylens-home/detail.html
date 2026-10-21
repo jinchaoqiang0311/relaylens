@@ -164,6 +164,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 .navswitch a{font-size:12.5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:6px 13px;color:#cdd9f6}
 .navswitch a:hover{background:rgba(255,255,255,.16)}
 </style>
+  <link rel="stylesheet" href="assets/theme-relaypick.css">
 </head>
 <body>
 
@@ -320,10 +321,10 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
       <div class="card">
         <h2 style="font-size:15px">🗺️ 检测覆盖</h2>
         <div style="margin-top:8px">
-          <div class="kv"><span class="k">检测节点</span><span class="v">3 个基准 + 2 社区探针</span></div>
-          <div class="kv"><span class="k">累计批次</span><span class="v" id="batchCount">188 批</span></div>
-          <div class="kv"><span class="k">累计核验账单</span><span class="v">¥6,820</span></div>
-          <div class="kv"><span class="k">首次收录</span><span class="v">2026-01-12</span></div>
+          <div class="kv"><span class="k">检测节点</span><span class="v">1 个自有探针(中国大陆) · 社区节点未开放</span></div>
+          <div class="kv"><span class="k">累计批次</span><span class="v" id="batchCount">—</span></div>
+          <div class="kv"><span class="k">累计核验账单</span><span class="v" id="billCount">—</span></div>
+          <div class="kv"><span class="k">首次收录</span><span class="v" id="sinceDate">—</span></div>
         </div>
       </div>
     </div>
@@ -703,6 +704,8 @@ document.getElementById("basicInfo").innerHTML=D.basic.map(function(b){
   return '<div class="kv"><span class="k">'+b[0]+'</span><span class="v" style="max-width:170px;white-space:normal">'+esc(b[1])+'</span></div>';
 }).join("");
 document.getElementById("batchCount").textContent=D.batches+" 批";
+var _bc=document.getElementById("billCount"); if(_bc) _bc.textContent=D.bill||"—";
+var _sd=document.getElementById("sinceDate"); if(_sd) _sd.textContent=D.since||"—";
 
 /* 侧栏:福利 */
 var ben=document.querySelector(".benefit");

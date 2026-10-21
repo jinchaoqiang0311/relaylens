@@ -3,6 +3,8 @@
  * 铁律:单站失败不传染;先 raw 后 metrics;任务收尾统一 rebuild。
  * v0.1 用 node-cron;`schedule` 命令常驻,`once` 单次执行。
  */
+import fs from "node:fs";
+import path from "node:path";
 import cron from "node-cron";
 import { runHealth } from "./probes/health.js";
 import { runPrice } from "./probes/price.js";
@@ -25,7 +27,7 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
 }
 
 /** 执行单站单任务:归档 → 入库 → 事件判定 */
-export async function runTask(site: SiteConfig, task: TaskName, cfg: ProbeConfig, opts: { rounds?: number } = {}): Promise<boolean> {
+export async function runTask(site: SiteConfig, task: TaskName, cfg: ProbeConfig, opts: { rounds?: number; collect?: (r: BillingResult) => void } = {}): Promise<boolean> {
   // ---- billing 自带 batchId 与逐轮落库,单独处理 ----
   if (task === "billing") {
     const startedAt = new Date().toISOString();
@@ -34,6 +36,7 @@ export async function runTask(site: SiteConfig, task: TaskName, cfg: ProbeConfig
       const batch: Batch = { batchId: res.batchId, site: site.name, task, startedAt, ok: res.errors.length === 0, result: res };
       const rawPath = saveRaw(batch);
       persistBilling(site.name, res, rawPath);
+      opts.collect?.(res);
       const dev = res.deviationPct;
       const infl = res.usageInflationRatio;
       console.log(`  ${res.errors.length === 0 ? "✓" : "⚠"} [billing] ${site.name} (${res.batchId}) ` +
@@ -97,14 +100,17 @@ export async function runTask(site: SiteConfig, task: TaskName, cfg: ProbeConfig
 export async function runRound(cfg: ProbeConfig, task: TaskName, sites?: SiteConfig[], opts: { rounds?: number } = {}): Promise<void> {
   const list = sites ?? enabledSites(cfg);
   console.log(`▸ ${task} round 开始 · ${list.length} 站 · ${new Date().toLocaleTimeString()}`);
+  const billing: BillingResult[] = [];
   for (const site of list) {
-    await runTask(site, task, cfg, opts);
+    await runTask(site, task, cfg, task === "billing" ? { ...opts, collect: r => billing.push(r) } : opts);
   }
   // rebuild 始终基于全部在册站点(单站重跑不得覆盖其他站点的 dist 数据)
   rebuild(enabledSites(cfg).map(s => s.name));
   console.log(`▸ ${task} round 完成,dist 已重建`);
   // 健康轮收尾:刷新 ops.json 并把新增 critical 告警推送到企微(未配置网关时安静跳过)
-  if (task === "health") await pushOpsAlerts(cfg);
+  // billing 轮同样刷新:对账超差(mismatch)等 critical 发现要能推出去
+  if (task === "health" || task === "billing") await pushOpsAlerts(cfg);
+  if (task === "billing" && billing.length) await pushBillingRound(cfg, billing);
 }
 
 /** ops 告警推送:失败只打日志,绝不影响调度循环 */
@@ -123,12 +129,51 @@ async function pushOpsAlerts(cfg: ProbeConfig): Promise<void> {
   }
 }
 
+/** billing 轮转选站:只在有 key 的站里轮;指针持久化到 store/billing-rotate.json,调度重启不重头开始 */
+function pickRotating(cfg: ProbeConfig, n: number): SiteConfig[] {
+  const eligible = enabledSites(cfg).filter(s => !!s.key_env);
+  if (eligible.length === 0) return [];
+  const file = path.join(import.meta.dirname, "..", "store", "billing-rotate.json");
+  let idx = 0;
+  try { idx = ((JSON.parse(fs.readFileSync(file, "utf8")) as { idx?: number }).idx ?? 0) % eligible.length; } catch { /* 无记录从 0 开始 */ }
+  const picked = Array.from({ length: Math.min(n, eligible.length) }, (_, i) => eligible[(idx + i) % eligible.length]);
+  try { fs.writeFileSync(file, JSON.stringify({ idx: (idx + picked.length) % eligible.length, at: new Date().toISOString() })); } catch { /* 写失败只影响下次起点 */ }
+  return picked;
+}
+
+/** billing 轮收尾:轮结果摘要推企微(未配置网关安静跳过);偏差/虚标异常行加 ⚠ */
+async function pushBillingRound(cfg: ProbeConfig, results: BillingResult[]): Promise<void> {
+  try {
+    const { pushWeComText } = await import("./push.js");
+    const warn = cfg.thresholds.dev_warn;
+    const usd = (c: number | null) => c === null ? "—" : "$" + (c / 100).toFixed(4);
+    const lines = results.map(r => {
+      const flags: string[] = [];
+      if (r.deviationPct !== null && Math.abs(r.deviationPct) > warn) flags.push(`偏差${r.deviationPct}%`);
+      if (r.usageInflationRatio !== null && r.usageInflationRatio > 3) flags.push(`虚标${r.usageInflationRatio}×`);
+      if (r.errors.length) flags.push(`${r.errors.length} 错误`);
+      return `${flags.length ? "⚠" : "✓"} ${r.site}(${r.batchId}) 实扣${usd(r.actualCostCents)} 应扣${usd(r.expectedCostCents)}` +
+        ` 偏差${r.deviationPct ?? "—"}% 倍率${r.impliedGroupRatio ?? "—"}${flags.length ? " · " + flags.join(",") : ""}`;
+    });
+    const ok = results.filter(r => r.errors.length === 0).length;
+    const sent = await pushWeComText(`💰 billing 对账轮 ${new Date().toLocaleString()} · ${ok}/${results.length} 站正常\n${lines.join("\n")}`);
+    if (sent) console.log("  📲 billing 轮摘要已推送企微");
+  } catch (e) {
+    console.log(`  (billing 摘要推送跳过:${(e as Error).message})`);
+  }
+}
+
 /** 常驻调度 */
 export function startScheduler(cfg: ProbeConfig) {
-  console.log("🧲 调度器启动(P1:health + price;billing 待 P2)");
+  console.log("🧲 调度器启动:health + price 常驻" + (cfg.schedules.billing ? " · billing 自动对账已启用" : ""));
   cron.schedule(cfg.schedules.health, () => { void runRound(cfg, "health"); });
   cron.schedule(cfg.schedules.price, () => { void runRound(cfg, "price"); });
-  // P2:cron.schedule(cfg.schedules.billing, () => runRound(cfg, "billing", pickRotating(2)));
+  // billing 自动对账(P2 已接通,2026-10-15 用户授权):有 key 的站轮转抽样,每轮 2 站,
+  // 真实扣费为分/厘级;与 perf 双窗口同一兼容策略 —— 未配置 schedules.billing 时不启用。
+  if (cfg.schedules.billing) {
+    cron.schedule(cfg.schedules.billing, () => { void runRound(cfg, "billing", pickRotating(cfg, 2)); });
+    console.log("⏱️ billing 自动对账已启用:" + cfg.schedules.billing + "(每轮轮转 2 站)");
+  }
   // perf 双窗口(2026-10-10.1 口径,用户已拍板):忙时/闲时各一轮,PF 取两桶较差值。
   // 有余额的站才产生实际费用(厘级/天);未配置窗口时不启用(兼容旧配置)。
   if (cfg.schedules.perf_work && cfg.schedules.perf_off) {

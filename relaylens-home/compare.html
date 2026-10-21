@@ -283,6 +283,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
+  <link rel="stylesheet" href="assets/theme-relaypick.css">
 </head>
 <body>
 
@@ -311,7 +312,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
   <div class="wrap">
     <div class="crumb"><a href="index.html">首页</a> / 模型比价</div>
     <h1>模型比价 · 标价 ≠ 成本,看清真实到手价</h1>
-    <p class="sub">同一模型,各站标价可能接近,但充值比例(多少人民币 = 1 美元额度)和缓存计费策略能让真实成本差出一倍以上。本页所有价格均按实测充值比例折算为「真实到手价」,缓存价取自逐轮对账结果。<b>标价一律用站方公示的额度价</b>(new-api 系显示为 $X/M,与你在站方页面看到的数字一致);人民币只出现在「到手价 = 额度价 × 站方声明的充值比例」里,比例未声明的站不给人民币价。口径见方法论页。</p>
+    <p class="sub">标价接近 ≠ 成本接近:<span data-tip="到手价 = 额度价 × 站方声明的充值比例(多少人民币 = 1 美元额度)。比例未声明的站不给人民币价。">到手价按各站声明充值比例折算</span> · <span data-tip="缓存价取自逐轮对账实测结果,不是站方标称。">缓存价来自逐轮对账</span> · 标价一律用站方公示的额度价(<span data-tip="new-api 系显示为 $X/M,与你在站方页面看到的数字一致。口径详见方法论页。">$X/M</span>)</p>
     <div class="hero-points">
       <span class="hp">💱 已按充值比例折算 <b>真实到手价</b></span>
       <span class="hp">🧾 缓存价来自 <b>逐轮实测对账</b></span>
@@ -322,13 +323,35 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 
 <div class="wrap" id="viewBar" style="margin-bottom:2px">
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <button class="btn btn-primary btn-sm" id="vBtnMatrix" type="button">📊 矩阵比价</button>
-    <button class="btn btn-ghost btn-sm" id="vBtnSite" type="button">🧪 站点实测明细</button>
-    <span style="font-size:12px;color:var(--faint)">矩阵=同模型各站横向比价;站点实测=逐站对账明细与成本计算器</span>
+    <button class="btn btn-primary btn-sm" id="vBtnAll" type="button">💰 全模型最低价</button>
+    <button class="btn btn-ghost btn-sm" id="vBtnMatrix" type="button">📊 矩阵比价</button>
+    <span style="font-size:12px;color:var(--faint)">最低价=每模型全站最低到手价;矩阵=同模型各站横向比价</span>
   </div>
 </div>
 
-<div class="wrap" id="matrixView">
+<div class="wrap" id="allView">
+  <!-- 全模型最低价(2026-10-21,对齐 getcheapai 首页形态:每模型一行,只看最低到手价) -->
+  <section class="block" style="margin-top:10px">
+    <div class="blk-head">
+      <h2>💰 全模型最低价</h2>
+      <a class="more" href="method.html">三因子口径 →</a>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 10px">
+      <input id="allSearch" placeholder="搜索模型名(如 opus / gemini)…" style="font:inherit;font-size:13px;padding:8px 12px;border:1px solid var(--line);border-radius:4px;min-width:230px">
+      <span id="allCount" style="font-size:12px;color:var(--faint)"></span>
+    </div>
+    <div style="overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--card)">
+      <table id="allTable" class="all-table"></table>
+    </div>
+    <p style="font-size:12px;color:var(--faint);margin-top:10px">
+      口径:最低价取「<span data-tip="到手价 = 站方公示额度价 × 站方声明的充值比例(多少人民币 = 1 美元额度)。只在声明了比例的站里选最低;若全部未声明,退回按公示汇率折算的标价并灰字标注。">到手价</span>」最低的一家 ·
+      <span data-tip="较官方 = 最低到手价 相对 官方参考价(OpenRouter 锚,按公示汇率 1 美元 = ¥7.1 折算)的偏差,负值越多越便宜。">较官方</span>为折扣率 ·
+      在售 = 有报价的站数 · 点模型名进逐站明细
+    </p>
+  </section>
+</div>
+
+<div class="wrap" id="matrixView" style="display:none">
   <!-- 矩阵比价(2026-10-11 升级:模型×站点,默认视图;交互对齐 relaybench,口径为本站三因子) -->
   <section class="block" style="margin-top:10px">
     <div class="blk-head">
@@ -344,119 +367,6 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
       <table id="mxTable" class="mx-table"></table>
     </div>
     <div id="mxDetail" style="display:none;margin-top:14px"></div>
-  </section>
-</div>
-
-<div class="wrap" id="siteView" style="display:none">
-
-  <!-- 模型Tab(静态为示例数据;探针数据到达后由 JS 重建,实测页签前置) -->
-  <!-- 模型族:族名称平铺一行(点选切族),选中族模型平铺其下(2026-10-11) -->
-  <div class="fam-row" id="famRow"></div>
-  <div class="fam-models" id="modelTabs">
-    <a class="on" data-model="opus5" data-real="0" title="示例数据(非实测)">Claude Opus 5</a>
-    <a data-model="sonnet5" data-real="0" title="示例数据(非实测)">Claude Sonnet 5</a>
-    <a data-model="gpt56sol" data-real="0" title="示例数据(非实测)">GPT-5.6 Sol</a>
-    <a data-model="gpt55" data-real="0" title="示例数据(非实测)">GPT-5.5</a>
-    <a data-model="gem31p" data-real="0" title="示例数据(非实测)">Gemini 3.1 Pro</a>
-    <a data-model="gem31fl" data-real="0" title="示例数据(非实测)">Gemini 3.1 Flash</a>
-    <a data-model="dsv4" data-real="0" title="示例数据(非实测)">DeepSeek V4</a>
-  </div>
-  <div class="model-meta" id="modelMeta"></div>
-  <p class="tab-legend" id="tabLegend">模型按钮分两类:<b>实线边框</b>=探针真实报价(带官方锚与逐笔对账实测)· <b>虚线灰</b>=演示数据(等接入更多站点后替换,悬停可见提示)。两类页签价格已统一为 ¥/百万 tokens</p>
-
-  <!-- 提示条 -->
-  <div class="alert" id="modelAlert">
-    <span style="font-size:17px">💡</span>
-    <span id="alertText"></span>
-  </div>
-
-  <!-- 比价表 -->
-  <div class="tbl-card">
-    <div class="tbl-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:56px">排名</th>
-            <th data-sk="name" class="sortable">站点 / 渠道 <span class="arr">↕</span></th>
-            <th data-sk="score" class="sortable sorted" style="width:150px" title="榜单评分 = 账单级逐笔对账 30% + 稳定性 25% + 模型完整性 25% + 价格 20%,权重版本见方法论页。未做账单对账的站不给分。">榜单评分 <span class="arr">▼</span></th>
-            <th data-sk="ttft" class="sortable" style="width:120px" title="首字延迟:SSE 流式探针实测,从请求发出到收到第一个内容字节;<1 秒显示毫秒,否则显示秒。">首字延迟 <span class="arr">↕</span></th>
-            <th style="width:150px" class="sortable" data-sk="hIn"><div class="sk-head">到手价<span class="th-help" tabindex="0">?<span class="pop"><b>到手价 = 官方价格 × 倍率 × 充值比例</b>——三因子在每格悬浮里摊开可验算。<br>主价用<b>默认分组</b>倍率(普通注册用户在的组),更低的<b>特价组</b>并列标组名(常有 VIP/号池门槛)。<br>角标是账单验证,不改价格:<b>✓实扣一致</b>=真金白银对上过;<b>⚠标价≠实扣</b>=公式与账单对不上(计费小动作信号);<b>未实测</b>=还没用账单验过。</span></span></div>
-              <div class="subsk"><span data-sk="hIn">输入<span class="arr">↕</span></span><span data-sk="hOut">输出<span class="arr">↕</span></span></div></th>
-            <th data-sk="cache" class="sortable" style="width:118px"><div class="sk-head">缓存命中<span class="th-help" tabindex="0">?<span class="pop">实测批次里 cacheTok / prompt 的中位占比。探针复用同一前缀,天然偏高,只用于横向比较,不代表你的真实命中率。<br>下方芯片是缓存计费诚实度:公示的缓存价是否真按它扣费。</span></span></div>（实测）<span class="arr">↕</span></th>
-            <th data-sk="dev" class="sortable" style="width:150px"><div class="sk-head">计费测试<span class="th-help" tabindex="0">?<span class="pop">逐笔对账:|实扣 − 应扣| ≤ max(2 quota, 1%) 判通过。<br>2 quota ≈ $0.000004 额度,只吸收整数取整。<br>注入开销也在这里:站点在你每个请求里塞进看不见的固定 token,你为它付费。</span></span></div><span class="arr">↕</span></th>
-            <th data-sk="stream" class="sortable" style="width:150px"><div class="sk-head">流式真伪 · 指纹验真<span class="th-help" tabindex="0">?<span class="pop">流式真伪:内容是否逐 token 送出。整段生成完才一次性下发 = 假流式,Cursor / Claude Code 的逐字渲染会失效。<br>指纹验真:响应特征与官方基线(OpenRouter)比对,判断是否掉包成小模型。</span></span></div><span class="arr">↕</span></th>
-            <th style="width:136px">操作</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-    <div class="m-cards" id="mCards"></div>
-    <div class="empty" id="empty">该模型暂无实测报价(0 倍率分组不参与比价)</div>
-  </div>
-  <p style="font-size:12px;color:var(--faint)">口径说明:<b>到手输入价</b> = 标价 × 充值比例(实测站尚未取得充值比例,故按标价比较并标注"比例未测");<b>缓存读</b>=命中部分的输入单价,<b>写</b>=首次写入单价,未公布即显示"未公布"而不臆造;<b>实测命中</b>为该站实测批次的 cacheTok/prompt 中位(探针复用前缀,天然偏高,仅供横向比较);<b>计费测试</b>的判定容差是 max(2 quota, 1%),2 quota≈$0.000004 额度,只吸收整数取整;<b>注入</b>为 token 计量对照实验推导的每请求固定多算量。带「✔ 实测」角标的页签是探针真实报价,其余为演示数据;两类价格均已统一为 ¥/百万 tokens(实测站与官方锚 OpenRouter 的美元报价按同一汇率 1 美元 = ¥7.1 折算,2026-10-02,故「占官方价 %」可直接比;源价本就是人民币的站不再二次换算,币种来源见每行的 ¥ 数值与「不适用/未测」标注)。</p>
-
-  <!-- 场景月成本计算器 -->
-  <div class="calc" id="calc">
-    <h2>🧮 场景月成本模拟器</h2>
-    <p class="desc">输入你的使用模式,按上方各站真实价格(含缓存策略)估算月账单——同标价下成本差可达 2.2 倍的原因就在这里。</p>
-    <div class="calc-grid">
-      <div class="inputs">
-        <label>每日输入 tokens(M/天)</label>
-        <div class="in-row"><input type="range" id="inTokens" min="1" max="100" value="10"><span class="in-val" id="inTokensV">10 M/天</span></div>
-        <label>缓存命中率(长对话/编程场景通常 50-80%)</label>
-        <div class="in-row"><input type="range" id="hitRate" min="0" max="90" value="60"><span class="in-val" id="hitRateV">60%</span></div>
-        <label>输出/输入比</label>
-        <div class="in-row"><input type="range" id="outRatio" min="5" max="50" value="12"><span class="in-val" id="outRatioV">12%</span></div>
-        <label class="chk" style="margin-top:18px"><input type="checkbox" id="cacheHonest" checked> 只比较「缓存计费诚实」的站点(偏差≤1% 且公示缓存价)</label>
-      </div>
-      <div class="result-box">
-        <h3>📅 按当前模型估算 · 月成本排行</h3>
-        <div id="calcResult"></div>
-        <div class="diff-bar"><i id="diffBar" style="width:100%"></i></div>
-        <p class="r-note" id="calcNote"></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 特价分组侦察:数据来自 sites.json realSites[].groups(tier=special) -->
-  <section class="block" id="special" style="display:none">
-    <div class="blk-head">
-      <h2>🏷 特价分组侦察</h2>
-      <a class="more" href="method.html">采样口径 →</a>
-    </div>
-    <p class="desc">特价便宜但常不稳定,所以<b>单独立榜、不进主评分</b>:小样本只回答一个问题 ——「这个便宜能不能用」。指纹列为未测状态(特价组小样本侦察排期中),可用率为站点级口径。</p>
-    <div id="specialBody"></div>
-  </section>
-
-  <!-- 价格陷阱科普 -->
-  <section class="block">
-    <div class="blk-head">
-      <h2>⚠️ 比价时最容易踩的四个坑</h2>
-      <a class="more" href="method.html">完整避坑指南 →</a>
-    </div>
-    <div class="traps">
-      <div class="trap">
-        <h4>🕳️ 坑一:只看标价,不看充值比例</h4>
-        <p>标价 ¥18/M 但 0.7 元 = 1 美元额度的站,实际比标价 ¥14/M 但 1:1 的站更贵。所有站必须折算到同一口径再比。</p>
-        <div class="ex"><b>示例:</b>标价 ¥18 × (1÷0.8 比例) = 到手 ¥22.5/M,贵了 25%。</div>
-      </div>
-      <div class="trap">
-        <h4>🕳️ 坑二:缓存价藏猫腻</h4>
-        <p>官方缓存读价约为输入价 10%,有的站收 15%~30%,甚至完全不算缓存。编程场景缓存命中占输入 50-80%,差距直接翻倍。</p>
-        <div class="ex"><b>月 100M 输入、60% 命中:</b>10% 缓存价成本 ¥460 → 30% → ¥580 → 不算缓存 → ¥1000。</div>
-      </div>
-      <div class="trap">
-        <h4>🕳️ 坑三:0 倍率 / 极端低价分组</h4>
-        <p>官方 1-3 折的报价只有三种可能:逆向接口(随时封)、计费黑盒(token 注水)、捞一波跑路。</p>
-        <div class="ex"><b>红线:</b>「1 元 285 万 Token」类报价一律不收录;0 倍率分组不参与比价。</div>
-      </div>
-      <div class="trap">
-        <h4>🕳️ 坑四:号池注入开销(标价完全看不出)</h4>
-        <p>号池类渠道(Codex / gpt-plus 池)每请求固定注入数千 tokens 的上游脚手架,成本转嫁给用户——对长任务影响小,对批量短任务是致命陷阱。最新实测(2026-09-30):aixoras ≈<b>4858</b> / aicost ≈<b>3959</b> tok/请求,且两站均存在<b>渠道混合</b>(同一模型部分请求无脚手架、部分被路由到号池),以批次实测为准。</p>
-        <div class="ex"><b>实测(2026-09-29):</b>30 字短请求被计费 4427 tokens(放大 147×);4000 字请求仅放大 2.1×。批量短任务请按榜单「注入开销」列筛选,或用工具箱计算器的短任务模式。</div>
-      </div>
-    </div>
   </section>
 </div>
 
@@ -612,6 +522,9 @@ function applyCompare(c,payload){
   DEMO_HIDE=Object.keys(MODELS).filter(function(k){
     return !MODELS[k].real && realNames[(MODELS[k].name||"").replace(/\s+/g,"").toLowerCase()];
   });
+  /* 2026-10-21 补删:之前只算列表不删除,新抓到的 claude-sonnet-5 / gemini-3-1-pro / gpt-5.6-sol
+     与示例页签同名,导致最低价表同一模型出现「示例行 + 实测行」两行(测试守门抓到) */
+  DEMO_HIDE.forEach(function(k){ delete MODELS[k]; });
   buildTabs();
   /* 深链:?model=<页签key 或 模型名> 直达某个模型页签(首页/外部分享用),实测与示例页签都认;非法值静默回退第一个页签 */
   var want=(location.search.match(/[?&]model=([^&]+)/)||[])[1];
@@ -622,16 +535,19 @@ function applyCompare(c,payload){
   })[0] || (MODELS[want]?{key:want}:null));
   var first=hit||c.tabs[0];
   if(first){state.model=first.key;state.sort="in";state.dir=1;setTabOn(first.key)}
-  document.getElementById("tabLegend").innerHTML=
+  var legendEl=document.getElementById("tabLegend");
+  if(legendEl)legendEl.innerHTML=
     '<b>实测 '+c.tabs.length+'</b> 个模型(¥ 标价,官方锚 OpenRouter,计费列为逐笔对账真数)· <b>示例 '+
     (Object.keys(MODELS).length-DEMO_HIDE.length-c.tabs.length)+'</b> 个(人民币演示,接入更多站点后替换)'+
     (c.note?'<br>'+esc(c.note):'');
   render();
+  if(typeof renderAllView==="function")renderAllView();   /* 全模型最低价表随真实数据刷新 */
 }
 
 var DEMO_HIDE=[];
 var FAM_INDEX={},FAM_ORDER=[],CUR_FAM=null; /* 族索引:族名称进抽屉,选中族的模型平铺页面 */
 function buildTabs(){
+  if(!document.getElementById("famRow"))return;   /* 2026-10-21 族抽屉随站点明细视图下线 */
   var mt=document.getElementById("modelTabs");
   FAM_INDEX={};FAM_ORDER=[];
   REAL_TABS.forEach(function(t){
@@ -666,6 +582,7 @@ function buildTabs(){
   bindTabs();
 }
 function renderFamModels(){
+  if(!document.getElementById("modelTabs"))return;   /* 2026-10-21 模型页签随站点明细视图下线 */
   var mt=document.getElementById("modelTabs");
   var html="";
   FAM_INDEX[CUR_FAM].forEach(function(t){
@@ -792,6 +709,9 @@ function probeBtn(r){
 }
 
 function render(){
+  /* 2026-10-21:站点实测明细视图已下线(modelMeta/tbody/calc 等 DOM 不复存在),此处直接返回,
+     保留函数体是为了不改动探针数据合并与价格口径代码;新视图入口是 renderAllView() */
+  if(!document.getElementById("modelMeta"))return;
   var m=MODELS[state.model];
   var cur=curOf(m);
   document.getElementById("modelMeta").innerHTML=
@@ -909,6 +829,7 @@ function render(){
 
 /* ============ 月成本模拟器 ============ */
 function renderCalc(){
+  if(!document.getElementById("inTokens"))return;   /* 2026-10-21 成本模拟器随站点明细视图下线 */
   var m=MODELS[state.model];
   var cur=curOf(m);
   var inM=+document.getElementById("inTokens").value;      /* M/天 */
@@ -951,6 +872,7 @@ function renderCalc(){
 
 /* ============ 绑定 ============ */
 function bindSubSort(){
+  if(!document.getElementById("inTokensV"))return;   /* 2026-10-21 子排序随站点明细视图下线 */
   document.querySelectorAll(".subsk span[data-sk]").forEach(function(x){
     x.addEventListener("click",function(ev){ev.stopPropagation();var k=x.getAttribute("data-sk");
       if(state.sort===k){state.dir=-state.dir;}else{state.sort=k;state.dir=1;}
@@ -959,6 +881,7 @@ function bindSubSort(){
       render();});});
 }
 function bindTabs(){
+  if(!document.getElementById("modelTabs"))return;   /* 2026-10-21 模型页签随站点明细视图下线 */
   document.querySelectorAll("#modelTabs a").forEach(function(a){
     a.addEventListener("click",function(){
       state.model=a.getAttribute("data-model");state.sort="score";state.dir=-1;
@@ -970,27 +893,32 @@ function bindTabs(){
     });
   });
 }
-bindTabs();bindSubSort();
-document.querySelectorAll("th.sortable").forEach(function(th){
-  th.addEventListener("click",function(){
-    var k=th.getAttribute("data-sk");
-    if(state.sort===k){state.dir*=-1}else{state.sort=k;state.dir=1}
-    document.querySelectorAll("th.sortable").forEach(function(x){x.classList.remove("sorted");x.querySelector(".arr").textContent="↕"});
-    th.classList.add("sorted");
-    th.querySelector(".arr").textContent=state.dir===1?"▼":"▲";
-    render();
+/* 2026-10-21:站点实测明细视图下线后,这段(逐站表排序 + 成本模拟器输入绑定)不再有对应 DOM。
+   cacheHonest 是计算器控件,存在即说明视图还在;不存在就整段跳过,避免 null.addEventListener 抛错
+   把后面所有顶层代码(最低价视图渲染)一起带走。 */
+if(document.getElementById("cacheHonest")){
+  bindTabs();bindSubSort();
+  document.querySelectorAll("th.sortable").forEach(function(th){
+    th.addEventListener("click",function(){
+      var k=th.getAttribute("data-sk");
+      if(state.sort===k){state.dir*=-1}else{state.sort=k;state.dir=1}
+      document.querySelectorAll("th.sortable").forEach(function(x){x.classList.remove("sorted");x.querySelector(".arr").textContent="↕"});
+      th.classList.add("sorted");
+      th.querySelector(".arr").textContent=state.dir===1?"▼":"▲";
+      render();
+    });
   });
-});
-["inTokens","hitRate","outRatio"].forEach(function(id){
-  document.getElementById(id).addEventListener("input",function(){
-    var v=+this.value;
-    if(id==="inTokens")document.getElementById("inTokensV").textContent=v+" M/天";
-    if(id==="hitRate")document.getElementById("hitRateV").textContent=v+"%";
-    if(id==="outRatio")document.getElementById("outRatioV").textContent=v+"%";
-    renderCalc();
+  ["inTokens","hitRate","outRatio"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",function(){
+      var v=+this.value;
+      if(id==="inTokens")document.getElementById("inTokensV").textContent=v+" M/天";
+      if(id==="hitRate")document.getElementById("hitRateV").textContent=v+"%";
+      if(id==="outRatio")document.getElementById("outRatioV").textContent=v+"%";
+      renderCalc();
+    });
   });
-});
-document.getElementById("cacheHonest").addEventListener("change",renderCalc);
+  document.getElementById("cacheHonest").addEventListener("change",renderCalc);
+}
 
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
@@ -999,6 +927,7 @@ render();
 
 /* ============ 特价分组侦察:渲染 tier=special 的声明分组 ============ */
 function renderSpecial(payload){
+  if(!document.getElementById("specialBody"))return;   /* 2026-10-21 特价组侦察随站点明细视图下线 */
   var body=document.getElementById("specialBody");
   var rows=(payload.realSites||[]).map(function(s){
     return (s.groups||[]).filter(function(g){return g.tier==="special"}).map(function(g){return {site:s.name,avail:s.avail,fp:s.fp,group:g}});
@@ -1023,6 +952,117 @@ function renderSpecial(payload){
       '<th style="text-align:left;padding:5px 8px;color:var(--faint);font-weight:700">模型真实性</th></tr></thead><tbody>'+trs+"</tbody></table></div>";
   }).join("");
 }
+
+/* ============ 全模型最低价视图(getcheapai 风格,2026-10-21) ============
+   每模型一行:家族 + 模型名 | 全站最低到手价(输入/输出) | 较官方折扣 | 最低价来自 | 在售家数。
+   只在声明了充值比例的站里选最低(到手价口径);全站未声明时退回按公示汇率折算的标价并标注。 */
+var ALL_SORT={k:"eff",dir:1}, ALL_Q="";
+function allOutEff(r){ if(r.effOut!=null)return r.effOut; if(r.ratio!=null)return r.out*r.ratio; return null; }
+function allBuildRows(){
+  return Object.keys(MODELS).map(function(k){
+    var m=MODELS[k], best=null, bestEff=null, fb=false;
+    m.rows.forEach(function(r){
+      if(r.official)return;
+      var e=(r.effIn!=null)?r.effIn:(r.ratio!=null?r.in*r.ratio:null);
+      if(e==null)return;
+      if(bestEff==null||e<bestEff){bestEff=e;best=r;}
+    });
+    if(!best){ m.rows.forEach(function(r){ if(r.official)return; if(!best||r.in<best.in)best=r; }); fb=!!best; }
+    return best?{key:k,m:m,best:best,eff:bestEff,fb:fb}:null;
+  }).filter(function(x){return x;});
+}
+function allDiscCell(x){
+  var offIn=x.m.officialIn; if(!offIn||offIn<=0)return '<span class="v-faint">—</span>';
+  var denom=(x.fb?x.best.in:x.eff), pct=Math.round((denom/offIn-1)*100);
+  if(x.fb)return '<span style="color:var(--faint)" data-tip="该模型所有在售站均未声明充值比例,此处为按公示汇率折算的标价对比,非真实到手折扣。">'+pfmt(x.best.in*FX)+' 折算</span>';
+  var col=pct<=-50?"var(--ok)":pct<=0?"var(--ok)":"var(--warn)";
+  return '<b style="color:'+col+'">'+(pct>0?"+":"")+pct+'%</b>';
+}
+function renderAllView(){
+  var tb=document.getElementById("allTable"); if(!tb)return;
+  var rows=allBuildRows();
+  if(ALL_Q){
+    rows=rows.filter(function(x){
+      var hay=(x.m.name+" "+(x.m.family||"")+" "+x.key).toLowerCase();
+      return hay.indexOf(ALL_Q)>=0;
+    });
+  }
+  var dir=ALL_SORT.dir;
+  rows.sort(function(a,b){
+    if(ALL_SORT.k==="name")return a.m.name.localeCompare(b.m.name,"zh")*dir;
+    if(ALL_SORT.k==="n")return (a.m.rows.length-b.m.rows.length)*dir;
+    var va=ALL_SORT.k==="eff"?(a.fb?a.best.in:a.eff):(a.fb?a.best.in/a.m.officialIn:a.eff/a.m.officialIn);
+    var vb=ALL_SORT.k==="eff"?(b.fb?b.best.in:b.eff):(b.fb?b.best.in/b.m.officialIn:b.eff/b.m.officialIn);
+    return (va-vb)*dir;
+  });
+  var th=function(k,label,tip){
+    return '<th data-sk="'+k+'"'+(tip?' title="'+tip+'"':'')+' style="cursor:pointer;user-select:none">'+label+
+      (ALL_SORT.k===k?'<span class="arr">'+(dir<0?" ↓":" ↑")+"</span>":"")+"</th>";
+  };
+  var trs=rows.map(function(x){
+    var m=x.m,r=x.best;
+    var outE=x.fb?null:allOutEff(r);
+    var siteCell=r.real
+      ? '<a href="detail.html?site='+encodeURIComponent(r.site)+'" style="color:var(--brand);font-weight:600">'+esc(r.site)+"</a>"
+      : '<span style="color:var(--faint)">'+esc(r.site)+' <span style="font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px">示例</span></span>';
+    var grp=(r.group?'<span style="display:block;font-family:ui-monospace,Consolas,monospace;font-size:10.5px;color:var(--faint)">'+esc(r.group)+"</span>":"");
+    var priceCell=x.fb
+      ? '<span style="color:var(--sub)" data-tip="全部在售站未声明充值比例,无法给出到手价;此处为标价按 1 美元 = ¥7.1 折算。">¥'+pfmt(x.best.in*FX)+' / ¥'+pfmt(x.best.out*FX)+'</span> <span style="font-size:10px;color:var(--faint)">标价折算</span>'
+      : '<b style="font-variant-numeric:tabular-nums">¥'+pfmt(x.eff)+"</b>"+(outE!=null?' / <span style="font-variant-numeric:tabular-nums">¥'+pfmt(outE)+"</span>":' / <span class="v-faint">—</span>');
+    return "<tr>"+
+      '<td><span class="fam">'+esc(m.family||"")+(m.real?"":" · 示例")+"</span>"+
+        '<a class="mname" data-go="'+esc(x.key)+'">'+esc(m.name)+"</a></td>"+
+      '<td class="price">'+priceCell+'<span style="font-size:10.5px;color:var(--faint)"> /M</span></td>'+
+      "<td>"+allDiscCell(x)+"</td>"+
+      "<td>"+siteCell+grp+"</td>"+
+      '<td style="font-variant-numeric:tabular-nums">'+m.rows.filter(function(rr){return !rr.official}).length+' 家</td>'+
+      "</tr>";
+  }).join("");
+  tb.innerHTML="<thead><tr>"+
+    th("name","模型")+
+    th("eff","最低到手价(输入/输出)","到手价 = 额度价 × 声明充值比例;按输入到手价升/降序")+
+    "<th"+(ALL_SORT.k==="disc"?"":"")+">较官方</th>"+
+    th("","最低价来自")+
+    th("n","在售")+
+    "</tr></thead><tbody>"+(trs||'<tr><td colspan="5" style="color:var(--faint);padding:18px">没有匹配的模型</td></tr>')+"</tbody>";
+  var cnt=document.getElementById("allCount");
+  if(cnt)cnt.textContent="共 "+rows.length+" 个模型";
+  tb.querySelectorAll("th[data-sk]").forEach(function(h){
+    h.onclick=function(){var k=h.getAttribute("data-sk");if(!k)return;
+      if(ALL_SORT.k===k)ALL_SORT.dir*=-1;else{ALL_SORT.k=k;ALL_SORT.dir=1;}
+      renderAllView();};
+  });
+  tb.querySelectorAll("a[data-go]").forEach(function(a){
+    a.onclick=function(ev){ev.preventDefault();allGoModel(a.getAttribute("data-go"));};
+  });
+}
+/* 2026-10-21:站点明细视图下线后,点模型名改为切到矩阵视图并把模型名灌进搜索框(同一模型的逐站横向价) */
+function allGoModel(key){
+  var m=MODELS[key];if(!m)return;
+  var bm=document.getElementById("vBtnMatrix");if(bm)bm.click();
+  var si=document.getElementById("mxSearch");
+  if(si){si.value=m.name;try{si.dispatchEvent(new Event("input"));}catch(e){if(window.renderMatrix&&window.SITES_DATA)window.renderMatrix(window.SITES_DATA);}}
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+(function(){
+  var si=document.getElementById("allSearch");
+  if(si)si.addEventListener("input",function(){ALL_Q=this.value.trim().toLowerCase();renderAllView();});
+})();
+renderAllView();
+/* 深链 ?model=xxx 兼容(2026-10-21):站点明细视图下线后,深链改为切矩阵视图并灌入模型名,老链接不至于落空 */
+(function(){
+  var want=(location.search.match(/[?&]model=([^&]+)/)||[])[1];
+  if(!want)return;
+  want=decodeURIComponent(String(want).replace(/\+/g," "));
+  var key=want.replace(/\./g,"-");
+  var hit=null;
+  Object.keys(MODELS).forEach(function(k){
+    var m=MODELS[k];
+    if(!hit&&(k===want||k===key||m.key===key||(m.name||"").replace(/\s+/g,"").toLowerCase()===want.replace(/\s+/g,"").toLowerCase()))hit=k;
+  });
+  if(!hit)return;
+  var t=setTimeout(function(){allGoModel(hit);},0);   /* 等 matrix 脚本完成 bind 后再切 */
+})();
 
 /* 探针真实报价接入:失败则保持示例页签(已有「示例」角标,不冒充实测) */
 fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))})

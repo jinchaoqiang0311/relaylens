@@ -8,6 +8,9 @@ import { parseDeepSeek } from "./deepseek.js";
 import { parseZhipu } from "./zhipu.js";
 import { parseNewAPI } from "./newapi.js";
 import { parseAicost } from "./aicost.js";
+import { parseModelPlaza } from "./modelplaza.js";
+import { parseUptoken } from "./uptoken.js";
+import { parseHeyRoute } from "./heyroute.js";
 
 export type PriceParser = (site: SiteConfig) => Promise<PriceResult>;
 
@@ -17,6 +20,9 @@ const REGISTRY: Record<string, PriceParser> = {
   zhipu: parseZhipu,
   newapi: parseNewAPI,
   aicost: parseAicost,
+  modelplaza: parseModelPlaza,
+  uptoken: parseUptoken,
+  heyroute: parseHeyRoute,
 };
 
 export function getParser(name: string | undefined): PriceParser | null {

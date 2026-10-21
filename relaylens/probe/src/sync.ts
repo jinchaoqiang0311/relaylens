@@ -12,7 +12,7 @@ import { getDb, siteHealth } from "./store.js";
 import { priceTableHash } from "./probes/billing.js";
 import { assembleMetrics } from "./assemble.js";
 import { latestInjection } from "./probes/tokenprobe.js";
-import { computeSceneScore, allScenes, weightsVersion, pricingDisplay, cny, money } from "./score.js";
+import { computeSceneScore, tierOf, sampleProgress, allScenes, weightsVersion, pricingDisplay, cny, money } from "./score.js";
 import { matchCanon } from "./parsers/models.js";
 
 const PROBE_ROOT = path.resolve(import.meta.dirname, "..");
@@ -67,6 +67,11 @@ export interface FrontendSite {
   coverage: Record<string, number>;
   confidence: Record<string, number>;
   lowConfidence: Record<string, boolean>;
+  /** 三态(v1 PRD §2):按场景的 L2(实测榜,置信达标)/L1(观察榜,不给分)。
+   *  只对 billing 站有语义;passive 站即 L0,由 level 表达 —— 前端先看 level 再看 tier。 */
+  tier: Record<string, "L2" | "L1">;
+  /** 观察榜信号卡的样本进度:每项 n=真实累计样本,need=weights.json 官方阈值(前端只渲染) */
+  signal: Array<{ key: string; label: string; n: number; need: number; ok: boolean }>;
   dev: number | null; avail: number | null; ttft: number | null;
   /** 首字延迟原始毫秒数:48ms 这种值用秒显示会变成"0 秒",页面必须拿毫秒自己排版 */
   ttftMs?: number | null;
@@ -297,9 +302,11 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
   const coverage: Record<string, number> = {};
   const confidence: Record<string, number> = {};
   const lowConfidence: Record<string, boolean> = {};
+  const tier: Record<string, "L2" | "L1"> = {};
   for (const scene of allScenes()) {
     const r = computeSceneScore(m, scene);
     score[scene] = r.score; coverage[scene] = r.coverage; confidence[scene] = r.confidence; lowConfidence[scene] = r.lowConfidence;
+    tier[scene] = tierOf(r);
   }
   // 指标
   const h = siteHealth(site);
@@ -354,7 +361,7 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
     name: site, real: true, dataLayer: "p2", status,
     /** billing = 做过账单级逐笔对账(可称"实测");passive = 只有免成本的健康与价格监测(只能称"监测中") */
     level: (latestSummary(site, "%reconcile%") ? "billing" : "passive") as "billing" | "passive",
-    score, coverage, confidence, lowConfidence,
+    score, coverage, confidence, lowConfidence, tier, signal: sampleProgress(m),
     dev: m.BH.match,
     avail: h.avail7d, ttft: m.PF.ttftMs !== null ? Math.round(m.PF.ttftMs / 100) / 10 : null,
     ttftMs: m.PF.ttftMs,

@@ -8,7 +8,10 @@
  * 所有响应含 updated / version / license 字段(CC BY 4.0)。
  */
 
-const SITE_ORIGIN = "https://jinchaoqiang0311.github.io/relaylens"; // 免费端点数据源
+const SITE_ORIGIN_DEFAULT = "https://jinchaoqiang0311.github.io/relaylens"; // 免费端点数据源(默认 GitHub Pages)
+// 自托管(Node 适配层/阿里云)用 env.SITE_ORIGIN 指向本站静态数据(如 https://aipaihangbang.cn/relay),免跨境拉取;
+// Cloudflare 部署在 wrangler.toml [vars] 里配 SITE_ORIGIN,两种目标共用本文件,业务逻辑零分叉。
+const siteOrigin = (env) => env.SITE_ORIGIN || SITE_ORIGIN_DEFAULT;
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -49,7 +52,7 @@ async function freeEndpoint(url, request, env, ctx) {
   const ck = new Request(url.toString(), { method: "GET" });
   let payload = await cache.match(ck);
   if (!payload) {
-    const r = await fetch(SITE_ORIGIN + "/data/sites.json");
+    const r = await fetch(siteOrigin(env) + "/data/sites.json");
     if (!r.ok) return json({ error: "upstream_unavailable" }, 502);
     payload = new Response(r.body, r);
     payload.headers.set("Cache-Control", "public, max-age=300");
@@ -198,7 +201,7 @@ export default {
       if (!uj.id) return json({ error: "github_profile_failed" }, 401);
       const sess = await upsertUserAndSession(env, "github", String(uj.id), uj.login ?? null);
       // 回跳前端:token 放 fragment(#),不会进服务器日志
-      return new Response(null, { status: 302, headers: { Location: (env.FRONTEND_ORIGIN || SITE_ORIGIN) + "/api.html#session=" + sess.token, ...CORS } });
+      return new Response(null, { status: 302, headers: { Location: (env.FRONTEND_ORIGIN || siteOrigin(env)) + "/api.html#session=" + sess.token, ...CORS } });
     }
 
     if (ep === "auth/me" && request.method === "GET") {

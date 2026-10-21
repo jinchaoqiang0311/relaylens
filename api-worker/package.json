@@ -1,0 +1,6 @@
+{
+  "name": "relaylens-api-worker",
+  "private": true,
+  "type": "module",
+  "description": "src/worker.js 双目标运行:Cloudflare Workers(wrangler.toml) 或 Node 自托管(node/server.mjs,阿里云)"
+}

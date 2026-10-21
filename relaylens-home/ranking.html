@@ -65,6 +65,31 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdr
 .tab-note{font-size:12.5px;color:var(--faint);margin:0 0 16px}
 .tab-note b{color:var(--brand)}
 
+/* ============ 三态分层 Tab(v1 PRD §2)============
+   L2 实测榜 / L1 观察榜 / L0 监测中。观察榜永不与实测榜混排:
+   不同底色 + 不同徽章,扫一眼就知道这行分数是"核过账的"还是"还在攒样本的"。 */
+.tier-tabs{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap;align-items:center}
+.tier-tabs a{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:600;color:var(--sub);cursor:pointer;transition:.15s}
+.tier-tabs a:hover{border-color:var(--brand);color:var(--brand)}
+.tier-tabs a.on{background:#16308f;border-color:#16308f;color:#fff}
+.tier-tabs a b{font-weight:800;margin-left:2px}
+.tier-tabs .tt{font-size:11.5px;color:var(--faint);font-weight:400;margin-left:4px}
+/* L1 观察榜徽章:琥珀,刻意与实测(蓝)和监测中(灰蓝)都不同色 */
+.bf-l1{background:#fef4e6;color:#b54708;border:1px solid #f3dbb1}
+/* 信号卡里的样本进度行:✓=达标 …=未达标,n/need 全部来自 weights.json 官方阈值 */
+.sig-row{font-size:11.5px;line-height:1.75;white-space:normal}
+.sig-row.ok{color:var(--ok)}
+.sig-row.todo{color:var(--faint)}
+/* 实测榜 <5 行时,表格下方的观察榜预告条(PRD §2.4):横向卡片,标注"正在攒数据" */
+.watch-strip{display:none;margin:14px 0 4px;padding:12px 14px;background:#fffdf6;border:1px dashed #f3dbb1;border-radius:10px}
+.ws-head{font-size:12.5px;color:#b54708;font-weight:600;margin-bottom:10px}
+.ws-cards{display:flex;gap:10px;flex-wrap:wrap}
+.ws-card{display:inline-flex;flex-direction:column;gap:2px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:150px;transition:.15s}
+.ws-card:hover{border-color:var(--brand)}
+.ws-card b{font-size:13px;color:var(--ink)}
+.ws-pct{font-size:16px;font-weight:800;color:#b54708}
+.ws-sub{font-size:11px;color:var(--faint)}
+
 /* ============ 筛选栏 ============ */
 .filters{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
 .f-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -239,6 +264,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
+  <link rel="stylesheet" href="assets/theme-relaypick.css">
 </head>
 <body>
 
@@ -293,7 +319,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
     <a data-scene="biz">🏢 企业榜</a>
     <a data-scene="risk">⚠️ 跑路风险榜</a>
   </div>
-  <p class="tab-note" id="tabNote"><b>综合榜</b> = 扣费诚实 30% + 稳定性 25% + 模型完整性 25% + 价格 20% · 不同场景下同一站点可能表现迥异,建议按你的用途切换分榜。</p>
+  <p class="tab-note" id="tabNote"><b>综合榜</b> = 扣费诚实 30% + 稳定性 25% + 模型完整性 25% + 价格 20%<span data-tip="不同场景下同一站点可能表现迥异,建议按你的用途切换分榜。"> …</span></p>
 
   <!-- 筛选栏 -->
   <div class="filters">
@@ -351,6 +377,13 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
   <div class="tbl-card">
     <div class="tbl-scroll">
       <div id="demoBanner" role="alert">演示模式已开启:下列 <b>16 家站点是虚构的示例数据</b>,不存在这些中转站,分数、报价、时间全是我编来演示页面形态的。<b>不要据此做任何充值决策。</b>关掉请点筛选栏「演示数据」或去掉地址栏的 ?demo=1。</div>
+      <!-- 三态分层(v1 PRD §2):页头/表尾/行数由同一份聚合渲染,禁止手写 -->
+      <div class="tier-tabs" id="tierTabs">
+        <a data-tier="L2" class="on">实测榜 <b id="cntL2">–</b></a>
+        <a data-tier="L1">观察榜 <b id="cntL1">–</b></a>
+        <a data-tier="L0">监测中 <b id="cntL0">–</b></a>
+        <span class="tt">实测榜=账单级逐笔对账且置信达标;观察榜=已对账未达标(不给分);监测中=仅有免费监测</span>
+      </div>
       <table id="rankTable">
         <thead><tr>
           <th style="width:56px">排名</th>
@@ -368,7 +401,8 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
       </table>
     </div>
     <p id="rankFoot" style="font-size:12px;color:var(--faint);padding:10px 16px 0">榜单家数统计加载中…</p>
-    <p style="font-size:12px;color:var(--faint);padding:6px 16px 0">「假流式」(术语:伪流式)= 答案<b>整段生成完才一次性发给你</b>,而不是像官方那样逐字蹦出。⚡ 真流式 = 逐字输出可用;◐ 混合 = 部分请求被缓冲。对 Cursor / Claude Code 等编程工具影响最大(看不到生成过程、无法中途打断);纯聊天场景影响较小。<br>「注入开销」= 站点在你每个请求里塞进一段<b>你看不见的固定内容</b>(上游脚手架),你为这些 token 买单 —— 30 字的短问题会被放大约 160 倍,长问题影响小;⚡ 无注入 = 未检出。⚠ 表示超出判定容差、进入复核队列。技术口径见<a href="method.html" style="color:var(--brand)">方法论页</a>。</p>
+    <div class="watch-strip" id="watchStrip"></div>
+    <p style="font-size:12px;color:var(--faint);padding:6px 16px 0">流式:<span data-tip="假流式(伪流式)= 答案整段生成完才一次性发给你,而不是像官方那样逐字蹦出;对 Cursor / Claude Code 等编程工具影响最大(看不到生成过程、无法中途打断),纯聊天影响较小。">⚡ 真流式 · ◐ 混合 · ✗ 假流式</span> ｜ 注入:<span data-tip="注入开销 = 站点在每个请求里塞进一段你看不见的固定内容(上游脚手架),你为这些 token 买单 —— 30 字短问题会被放大约 160 倍。⚡ 无注入 = 未检出;⚠ 超出判定容差进入复核队列。技术口径见方法论页。">⚡ 无注入 · ⚠ 超差复核</span> · <a href="method.html" style="color:var(--brand)">口径详情</a></p>
     <div class="m-cards" id="mCards"></div>
     <div class="empty" id="empty" style="display:none">没有符合条件的站点,试试放宽筛选 ~</div>
   </div>
@@ -377,7 +411,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
   <div class="method">
     <span style="font-size:20px">📐</span>
     <div style="flex:1;min-width:260px">
-      <b>指标口径:</b>扣费偏差 = |面板实扣 − 理论应扣| ÷ 理论应扣,取近 7 天批次均值;缓存命中 = 10 轮标准测试的命中占比;首字延迟(技术口径 TTFT)按忙/闲双窗口(工作日 10:30 / 每日 22:30)采样,近 7 天分桶取中位数,评分用较差桶(悲观值);模型指纹 = 与官方直连响应相似度(≥85% 通过)。原始数据与复现脚本 <a href="method.html#repro" style="color:var(--brand);font-weight:600">开源可查 →</a>
+      <b>指标口径:</b><span data-tip="扣费偏差 = |面板实扣 − 理论应扣| ÷ 理论应扣,取近 7 天批次均值">扣费偏差 · 7 天均值</span> · <span data-tip="10 轮标准测试的缓存命中占比">缓存命中 · 10 轮占比</span> · <span data-tip="首字延迟(技术口径 TTFT)按忙/闲双窗口(工作日 10:30 / 每日 22:30)采样,近 7 天分桶取中位数,评分用较差桶(悲观值)">首字延迟 · 悲观桶</span> · <span data-tip="与官方直连响应相似度,≥85% 通过">模型指纹 · ≥85% 通过</span> · 原始数据与复现脚本 <a href="method.html#repro" style="color:var(--brand);font-weight:600">开源可查 →</a>
     </div>
     <a class="btn btn-ghost btn-sm" href="api.html" id="exportBtn">⬇ 导出 JSON(API)</a>
   </div>
@@ -473,7 +507,22 @@ var DEMO_SEED=[
 ];
 
 /* ============ 状态 ============ */
-var state={scene:"all",model:"all",qf:{},sort:"score",sortDir:-1,search:""};
+var state={scene:"all",model:"all",qf:{},sort:"score",sortDir:-1,search:"",tier:"L2"};
+/* 三态分层(v1 PRD §2):行 → 层。demo 行不属于任何层(演示模式时在每一层都可见,横幅已警告)。
+   兜底种子无 tier 字段(数据管道未升级的历史快照)——保持旧展示按实测榜,不臆造分层。 */
+function tierOfRow(s){
+  if(s.real!==1)return "demo";
+  if(s.level==="passive")return "L0";
+  var t=s.tier||null;
+  var v=t?(t[state.scene==="risk"?"all":state.scene]||t.all||"L2"):null;
+  return v||"L2";
+}
+/* 观察榜排序依据 = 数据完成度(PRD §2:不是分数)。无 signal 数据返回 null 沉底 */
+function sigScore(s){
+  if(!s.signal||!s.signal.length)return null;
+  var ok=0;s.signal.forEach(function(x){if(x.ok)ok++});
+  return ok/s.signal.length;
+}
 /* 参照系行(官方直连/聚合平台):由 payload.referenceSites 填充,不参与排序与排名 */
 var REFS=[];
 /* 演示模式:默认关。URL ?demo=1 直接开启(便于回归测试和截图) */
@@ -481,12 +530,12 @@ var DEMO_ON=/[?&]demo=1/.test(location.search);
 function currentRows(){return DEMO_ON?MEASURED_SEED.concat(DEMO_SEED):MEASURED_SEED.slice();}
 var SITES=currentRows();
 var sceneNote={
- all:"<b>综合榜</b> = 扣费诚实 30% + 稳定性 25% + 模型完整性 25% + 价格 20% · 不同场景下同一站点可能表现迥异,建议按你的用途切换分榜。",
- code:"<b>编程榜</b> = 缓存命中真实性 25% + 模型指纹 25% + SSE 完整率 20% + 计费诚实 15% + 首字延迟 15% · 写代码场景缓存命中占输入 50-80%,缓存策略是成本第一变量。",
- office:"<b>办公榜</b> = 可用率 25% + 首字延迟 20% + 多模型覆盖 20% + 客户端兼容性 15% + 价格 20% · 翻译/总结/PPT 场景重在稳定顺手,轻度使用月成本普遍 ¥10 以内,不必为旗舰模型多花钱。",
- ecom:"<b>电商榜</b> = 文生图速度 25% + 生图指纹 20% + 并发能力 20% + 可用率 20% + 价格 15% · 批量出图最怕排队和图质降级;文本侧覆盖商品文案即可,不必追求旗舰。",
- drama:"<b>短剧创作榜</b> = 长上下文完整率 30% + 输出吞吐 25% + 模型指纹 20% + 缓存策略 15% + 价格 10% · 剧本动辄数万字上下文,「偷偷截断上下文」是创作场景最隐蔽的坑;输出速度决定灵感不断流。",
- image:"<b>生图榜</b> = 图像指纹检测 35% + 生图速度 25% + 可用率 20% + 价格 20% · 生图掉包比文本更难察觉(换底模/降分辨率/压缩画质),图像指纹抽检是本榜核心依据。",
+ all:"<b>综合榜</b> = 扣费诚实 30% + 稳定性 25% + 模型完整性 25% + 价格 20%<span data-tip=\"不同场景下同一站点可能表现迥异,建议按你的用途切换分榜。\"> …</span>",
+ code:"<b>编程榜</b> = 缓存命中真实性 25% + 模型指纹 25% + SSE 完整率 20% + 计费诚实 15% + 首字延迟 15%<span data-tip=\"写代码场景缓存命中占输入 50-80%,缓存策略是成本第一变量。\"> …</span>",
+ office:"<b>办公榜</b> = 可用率 25% + 首字延迟 20% + 多模型覆盖 20% + 客户端兼容性 15% + 价格 20%<span data-tip=\"翻译/总结/PPT 场景重在稳定顺手,轻度使用月成本普遍 ¥10 以内,不必为旗舰模型多花钱。\"> …</span>",
+ ecom:"<b>电商榜</b> = 文生图速度 25% + 生图指纹 20% + 并发能力 20% + 可用率 20% + 价格 15%<span data-tip=\"批量出图最怕排队和图质降级;文本侧覆盖商品文案即可,不必追求旗舰。\"> …</span>",
+ drama:"<b>短剧创作榜</b> = 长上下文完整率 30% + 输出吞吐 25% + 模型指纹 20% + 缓存策略 15% + 价格 10%<span data-tip=\"剧本动辄数万字上下文,「偷偷截断上下文」是创作场景最隐蔽的坑;输出速度决定灵感不断流。\"> …</span>",
+ image:"<b>生图榜</b> = 图像指纹检测 35% + 生图速度 25% + 可用率 20% + 价格 20%<span data-tip=\"生图掉包比文本更难察觉(换底模/降分辨率/压缩画质),图像指纹抽检是本榜核心依据。\"> …</span>",
  biz:"<b>企业榜</b> = 运营风险 30% + 开票/对公 25% + SLA 记录 25% + 隐私条款 20% · 只看运营 1 年以上、可开票、有故障响应记录的站。",
  risk:"<b>跑路风险榜</b>(风险升序展示)= 运营时长 20% + 充值门槛 20% + 价格波动率 20% + 公告/兑付记录 20% + 域名年龄 10% + 社群活跃度 10% · 风险与评分互相独立:服务好 ≠ 值得大额充值。"
 };
@@ -634,6 +683,7 @@ function scoreTip(s){
    这一字之差就是「我们核过账」和「我们看着它」的区别,不能含糊。 */
 function badgeLevel(s){
   if(s.level==="passive")return '<span class="badge-flag bf-passive" title="该站已入册并持续监测(免成本的健康检查与公开价格),但还没有做过真金白银的逐笔对账,故不给分、不称实测">监测中</span>';
+  if(tierOfRow(s)==="L1")return '<span class="badge-flag bf-l1" title="已做过账单级对账,但样本量/置信度未达实测榜门槛 —— 按口径不给分,综合评分列展示样本进度(信号卡)">观察中</span>';
   return '<span class="badge-flag bf-real">实测</span>';
 }
 /* ===== 商业信息列:三行紧凑;三项全未知时合并成一枚芯片,不堆三行「未声明」 ===== */
@@ -670,6 +720,8 @@ function cmpNull(a,b,dir){
 
 function getFiltered(){
   var list=SITES.filter(function(s){
+    /* 三态分层过滤:demo 行不受层过滤(演示模式可见性由 DEMO_ON 独立控制) */
+    if(s.real===1&&state.tier&&tierOfRow(s)!==state.tier)return false;
     if(state.model!=="all"){ /* 「GLM / 其他」档兜住 kimi/grok 等长尾家族(2026-10-03 模型换代) */
       var okM=state.model==="glm"?s.models.some(function(m){return ["glm","kimi","grok"].indexOf(m)>=0}):s.models.indexOf(state.model)>=0;
       if(!okM)return false; }
@@ -697,7 +749,12 @@ function getFiltered(){
       n=cmpNull(va,vb);return n!==null?n:vb-va;
     }
     if(key==="name")return a.name.localeCompare(b.name,"zh")*state.sortDir;
-    if(key==="score"){var sc=state.scene==="risk"?"all":state.scene;va=a.score[sc];vb=b.score[sc]}
+    if(key==="score"){
+      var sc=state.scene==="risk"?"all":state.scene;
+      /* 观察榜没有分数可排:按数据完成度(PRD §2 —— 排序依据不是分数) */
+      if(state.tier==="L1"){va=sigScore(a);vb=sigScore(b)}
+      else{va=a.score[sc];vb=b.score[sc]}
+    }
     else if(key==="price"){va=a.priceV;vb=b.priceV}
     else{va=a[key];vb=b[key]}
     n=cmpNull(va,vb);if(n!==null)return n;
@@ -709,12 +766,45 @@ function getFiltered(){
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 
+/* ===== 综合评分列:L2 出分;L1 观察榜不给分,给信号卡(PRD §2.3) ===== */
+function scoreCell(s,sc){
+  if(s.real===1&&s.level!=="passive"&&tierOfRow(s)==="L1"){
+    var sig=s.signal||[];
+    if(!sig.length)return '<div class="rc"><div class="rc-big mute">观察中</div><div class="rc-s">样本进度未录入</div></div>';
+    var okN=sig.filter(function(x){return x.ok}).length;
+    var rows=sig.map(function(x){
+      return '<div class="sig-row '+(x.ok?"ok":"todo")+'">'+(x.ok?"✓":"…")+" "+esc(x.label)+' <b>'+x.n+"/"+x.need+'</b></div>';
+    }).join("");
+    var miss=sig.filter(function(x){return !x.ok}).map(function(x){return x.label+" "+x.n+"/"+x.need}).join(" · ");
+    return '<div class="rc" title="观察榜口径:任一指标样本量达到 weights.json 官方阈值且置信达标才升入实测榜给分;样本进度实时可查,绝不给未达标站点出分">'+
+      '<div class="rc-big mute">观察中</div>'+
+      '<div class="rc-bar"><i style="width:'+Math.round(okN/sig.length*100)+'%;background:#b54708"></i></div>'+
+      '<div class="rc-s">已验证 '+okN+'/'+sig.length+' 项指标达标</div>'+
+      '<div class="sig">'+rows+'</div>'+
+      (miss?'<div class="rc-s">距出分还差:'+esc(miss)+'</div>':'<div class="rc-s" style="color:var(--ok)">全部指标达标,等待下一轮复核出分</div>')+
+      '<div class="rc-s"><a href="method.html#flow" style="color:var(--brand);font-weight:600">出分规则 →</a></div>'+
+    '</div>';
+  }
+  return '<div class="rc" title="'+esc(scoreTip(s))+'">'+
+    '<div class="rc-big '+((sc===null||sc===undefined)?"mute":scoreClass(sc))+'">'+((sc===null||sc===undefined)?'未评分':sc)+'</div>'+
+    ((sc===null||sc===undefined)?'':'<div class="rc-bar"><i style="width:'+sc+'%;background:'+scoreColor(sc)+'"></i></div>')+
+    '<div class="rc-mini">'+["code","office","ecom","biz"].map(function(k){var v=s.score?s.score[k]:null;return '<span>'+SCENE_SHORT[k]+' <b>'+(v==null?"—":v)+'</b></span>'}).join("")+'</div>'+
+    '<div class="rc-s">'+(s.coverage&&s.coverage[state.scene]!=null?'覆盖 '+s.coverage[state.scene]+'%':'覆盖未计')+(s.confidence&&s.confidence[state.scene]!=null?' · 置信 '+s.confidence[state.scene]:'')+(s.lowConfidence&&s.lowConfidence[state.scene]?' · 低置信':'')+'</div>'+
+    /* 分组口径是最重要的一条披露,只藏在悬浮里等于没说 —— 分数行保留一行可见标注 */
+    '<div class="rc-s">'+(s.measuredGroup&&s.measuredGroup.group?'分数仅代表实测分组 '+esc(s.measuredGroup.group):'实测分组未标注')+'</div>'+
+  '</div>';
+}
+
 function render(){
   var list=getFiltered();
   var tb=document.getElementById("tbody");tb.innerHTML="";
   var mc=document.getElementById("mCards");mc.innerHTML="";
   document.getElementById("fCount").innerHTML="筛选结果 <b>"+list.length+"</b> / "+SITES.length+" 家";
   document.getElementById("empty").style.display=list.length?"none":"block";
+  /* 三态计数与行数来自同一份 SITES 聚合(PRD §2.5 数据一致性铁律):页头 Tab、脚注、表格行数不许各写各的 */
+  var tc={"L2":0,"L1":0,"L0":0};
+  SITES.forEach(function(s){if(s.real===1)tc[tierOfRow(s)]++});
+  ["L2","L1","L0"].forEach(function(k){var e=document.getElementById("cnt"+k);if(e)e.textContent=tc[k]});
   list.forEach(function(s,i){
     var sc=s.score[state.scene==="risk"?"all":state.scene];
     var red=(s.dev>1||s.fp==="fail"||s.status==="r");
@@ -729,14 +819,7 @@ function render(){
         (s.age!=null?'<div class="rc-m">运营 '+s.age+' 年</div>':"")+
         tagLine(s)+
       '</div></td>'+
-      '<td class="rich"><div class="rc" title="'+esc(scoreTip(s))+'">'+
-        '<div class="rc-big '+((sc===null||sc===undefined)?"mute":scoreClass(sc))+'">'+((sc===null||sc===undefined)?'未评分':sc)+'</div>'+
-        ((sc===null||sc===undefined)?'':'<div class="rc-bar"><i style="width:'+sc+'%;background:'+scoreColor(sc)+'"></i></div>')+
-        '<div class="rc-mini">'+["code","office","ecom","biz"].map(function(k){var v=s.score?s.score[k]:null;return '<span>'+SCENE_SHORT[k]+' <b>'+(v==null?"—":v)+'</b></span>'}).join("")+'</div>'+
-        '<div class="rc-s">'+(s.coverage&&s.coverage[state.scene]!=null?'覆盖 '+s.coverage[state.scene]+'%':'覆盖未计')+(s.confidence&&s.confidence[state.scene]!=null?' · 置信 '+s.confidence[state.scene]:'')+(s.lowConfidence&&s.lowConfidence[state.scene]?' · 低置信':'')+'</div>'+
-        /* 分组口径是最重要的一条披露,只藏在悬浮里等于没说 —— 分数行保留一行可见标注 */
-        '<div class="rc-s">'+(s.measuredGroup&&s.measuredGroup.group?'分数仅代表实测分组 '+esc(s.measuredGroup.group):'实测分组未标注')+'</div>'+
-      '</div></td>'+
+      '<td class="rich">'+scoreCell(s,sc)+'</td>'+
       '<td class="rich"><div class="rc" title="'+esc(s.audit&&s.audit.lastAt?("账单核验于 "+s.audit.lastAt+(s.audit.verified?" · 逐笔 "+s.audit.verified+" 笔":"")+(s.checks?" · 健康检查 "+s.checks+" 次":"")):"该站尚无账单级核验记录")+'">'+
         '<div class="rc-big '+(s.audit&&s.audit.matchPct!=null?(s.audit.matchPct>=99?"ok":"bad"):"mute")+'">'+(s.audit&&s.audit.matchPct!=null?s.audit.matchPct+"%":"未对账")+'</div>'+
         (s.passive
@@ -780,7 +863,8 @@ function render(){
     // 移动卡片
     var d=document.createElement("div");
     d.className="m-card"+(red?" row-red":"");
-    d.innerHTML='<div class="mc-top"><span class="rk">'+(i+1)+'</span><span class="mini-logo" style="background:'+s.color+'">'+s.ab+'</span><span class="mc-name">'+esc(s.name)+(s.real?' '+badgeLevel(s):"")+(s.cert?' <span class="cert">✔</span>':"")+'</span>'+(sc===null||sc===undefined?'<span class="mc-score v-faint">—</span>':'<span class="mc-score '+scoreClass(sc)+'">'+sc+'</span>')+'</div>'+
+    var isL1=(s.real===1&&s.level!=="passive"&&tierOfRow(s)==="L1");
+    d.innerHTML='<div class="mc-top"><span class="rk">'+(i+1)+'</span><span class="mini-logo" style="background:'+s.color+'">'+s.ab+'</span><span class="mc-name">'+esc(s.name)+(s.real?' '+badgeLevel(s):"")+(s.cert?' <span class="cert">✔</span>':"")+'</span>'+(isL1?'<span class="mc-score v-faint">观察中</span>':(sc===null||sc===undefined?'<span class="mc-score v-faint">—</span>':'<span class="mc-score '+scoreClass(sc)+'">'+sc+'</span>'))+'</div>'+
       '<div class="mc-grid">'+
       '<div class="mc-cell"><div class="k">扣费偏差</div><div class="v">'+(s.dev==null?'未测':(s.real===1?(s.dev===0?'全过':'全过·最大'+s.dev+'%'):(s.dev===0?'0% ✅':s.dev+'%')))+'</div></div>'+
       '<div class="mc-cell"><div class="k">缓存命中</div><div class="v">'+(s.cache==null?'未测':s.cache+'%')+'</div></div>'+
@@ -800,6 +884,32 @@ function render(){
   });
   renderRefs(tb, mc);
   renderFootNote(list.length);
+  renderWatchStrip();
+}
+
+/* ===== 观察榜预告条(PRD §2.4):实测榜 <5 行时,在下方横向展示观察榜卡片区 =====
+   空的地方恰恰是最能激发贡献的地方 —— 「样本 8/12」就是回流入口。 */
+function renderWatchStrip(){
+  var host=document.getElementById("watchStrip");if(!host)return;
+  if(state.tier!=="L2"){host.style.display="none";return;}
+  var l2=0;SITES.forEach(function(s){if(s.real===1&&tierOfRow(s)==="L2")l2++});
+  if(l2>=5){host.style.display="none";return;}
+  var l1=SITES.filter(function(s){
+    if(s.real!==1||tierOfRow(s)!=="L1")return false;
+    if(state.search){var q=state.search.toLowerCase();if((s.name+" "+(s.tags||[]).join(" ")).toLowerCase().indexOf(q)<0)return false;}
+    return true;
+  });
+  if(!l1.length){host.style.display="none";return;}
+  l1.sort(function(a,b){return (sigScore(b)==null?-1:sigScore(b))-(sigScore(a)==null?-1:sigScore(a))});
+  host.style.display="block";
+  host.innerHTML='<div class="ws-head">这些站正在攒数据(观察榜) —— 样本达到官方阈值即升入实测榜出分,当前实测榜不足 5 行,先看它们的完成度</div>'+
+    '<div class="ws-cards">'+l1.map(function(s){
+      var sig=s.signal||[];var okN=sig.filter(function(x){return x.ok}).length;
+      return '<a class="ws-card" href="detail.html?site='+encodeURIComponent(s.name)+'">'+
+        '<b>'+esc(s.name)+'</b>'+
+        '<span class="ws-pct">'+(sig.length?Math.round(okN/sig.length*100):0)+'%</span>'+
+        '<span class="ws-sub">已验证 '+okN+'/'+sig.length+' 项 · 点开看信号卡</span></a>';
+    }).join("")+'</div>';
 }
 
 /* ===== 参照系(官方直连 / 聚合平台)=====
@@ -863,11 +973,14 @@ function renderRefs(tb, mc){
 /* 底部脚注按实际渲染数生成 —— 历史上这里写死过「18 家」,数据改了字没改就是说谎 */
 function renderFootNote(shown){
   var el=document.getElementById('rankFoot'); if(!el){el=document.createElement('p');el.id='rankFoot';el.style.cssText='font-size:12px;color:var(--faint);padding:10px 16px 0';var mt=document.getElementById('mCards');if(mt&&mt.parentNode)mt.parentNode.insertBefore(el,mt);} if(!el)return;
-  var real=SITES.filter(function(x){return x.real===1&&x.level!=="passive"}).length;
-  var passive=SITES.filter(function(x){return x.real===1&&x.level==="passive"}).length;
-  var demo=SITES.length-real-passive;
-  var bits=['本表当前渲染 <b>'+SITES.length+'</b> 行中转站(显示 '+shown+' 行):<b>'+real+'</b> 行走过账单级逐笔实测'];
-  if(passive)bits.push('<b>'+passive+'</b> 行监测中(只有免费的健康与价格数据,尚未做账单级实测,故不给分)');
+  /* 三类计数与 Tab/表格行同源(禁手写,PRD §2.5) */
+  var l2=SITES.filter(function(x){return x.real===1&&tierOfRow(x)==="L2"}).length;
+  var l1=SITES.filter(function(x){return x.real===1&&tierOfRow(x)==="L1"}).length;
+  var l0=SITES.filter(function(x){return x.real===1&&tierOfRow(x)==="L0"}).length;
+  var demo=SITES.length-l2-l1-l0;
+  var bits=['本表当前渲染 <b>'+SITES.length+'</b> 行中转站(显示 '+shown+' 行,分三态展示):实测榜 <b>'+l2+'</b> 行(账单级逐笔实测且置信达标)'];
+  if(l1)bits.push('观察榜 <b>'+l1+'</b> 行(已对账但样本/置信未达标,不给分)');
+  if(l0)bits.push('监测中 <b>'+l0+'</b> 行(只有免费的健康与价格数据,尚未做账单级实测,故不给分)');
   if(demo)bits.push('<b style="color:var(--bad)">'+demo+' 行为演示用虚构站点</b>');
   else bits.push('虚构示例站点已撤下,需查看请点筛选栏「演示数据」');
   if(REFS.length)bits.push('另有 <b>'+REFS.length+'</b> 行官方/聚合参照系(不参与排名)');
@@ -900,6 +1013,15 @@ document.querySelectorAll("#sceneTabs a").forEach(function(a){
     a.classList.add("on");
     state.scene=a.getAttribute("data-scene");
     document.getElementById("tabNote").innerHTML=sceneNote[state.scene];
+    render();
+  });
+});
+// 三态Tab(v1 PRD §2):切换层,计数与脚注由 render() 统一刷新
+document.querySelectorAll("#tierTabs a").forEach(function(a){
+  a.addEventListener("click",function(){
+    document.querySelectorAll("#tierTabs a").forEach(function(x){x.classList.remove("on")});
+    a.classList.add("on");
+    state.tier=a.getAttribute("data-tier");
     render();
   });
 });
@@ -995,6 +1117,7 @@ function applyRealData(payload){
     if(Array.isArray(r.models)&&r.models.length)s.models=r.models;  // 模型筛选栏:以价表实测覆盖种子的臆断家族
     s.injectSplit=r.injectSplit||null;        // 注入的缓存/fresh 拆分(行内副注与成本计算用)
     s.coverage=r.coverage||null; s.confidence=r.confidence||null; s.lowConfidence=r.lowConfidence||null;
+    s.tier=r.tier||null; s.signal=r.signal||null;   // 三态分层与信号卡样本进度(PRD §2)
     /* 无对账的监测站不该有"逐笔判定/容差"这类账单行话,给一句人话 */
     if(s.passive){ s.audit={matchPct:null,verified:0,consistency:null,lastAt:""}; s.dev=null; }
     s.price=r.price||s.price;

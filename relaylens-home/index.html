@@ -257,6 +257,7 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(min-width:721px){.toast{bottom:30px}}
 </style>
+  <link rel="stylesheet" href="assets/theme-relaypick.css">
 </head>
 <body>
 
@@ -298,7 +299,7 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
     </div>
 
     <h1>不看广告,看<em>账单</em>。<br>3 秒找到值得充值的那家中转站</h1>
-    <p class="sub">我们真金白银付费实测站点:健康检查每 5 小时一次、报价每 6 小时刷新,<b>付费对账由人工发起批次</b> —— 逐轮核对「应扣 vs 实扣」、验证模型指纹与缓存命中。扣费偏差 &gt;1% 的站点进入标红复核队列,判定后移出推荐榜。榜单只信账单,不信嘴。</p>
+    <p class="sub">真金白银付费实测 · 每 5h 健康检查 · 每 6h 刷新报价 · <span data-tip="付费对账由人工发起批次:用真实充值的钱调用真实模型,逐轮核对「应扣 vs 实扣」,并验证模型指纹与缓存命中。扣费偏差 >1% 的站点进入标红复核队列,判定后移出推荐榜。">逐笔核对「应扣 vs 实扣」</span>。榜单只信账单,不信嘴。</p>
 
     <div class="hero-cta">
       <a class="btn btn-light" href="#evidence">🔍 查看实测证据</a>
@@ -425,13 +426,13 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
           <div class="stamp"><span id="ev-note">可验证 <b id="ev-verified">—</b> 笔</span><span id="ev-at">—</span></div>
           <div class="ev-tabs" id="ev-tabs"></div>
         </div>
-        <div class="ev-cap" id="ev-cap">上表为真实消费日志逐笔对账样本(可点开不同量级的请求),原始 Response 全量存档于开源仓库</div>
+        <div class="ev-cap" id="ev-cap">真实消费日志逐笔对账样本 · 原始 Response 已全量存档</div>
       </div>
       <div>
         <ul class="ev-points">
-          <li><span class="n">1</span><span><b>付费对账由人工发起批次</b> — 用真实充值的钱调用真实模型,不是免费健康检查;每批 10 轮,样本覆盖不同时刻。健康与报价则是自动巡航采集。</span></li>
-          <li><span class="n">2</span><span><b>API 原始 Response 全量存档可查</b> — 每一轮调用的 usage 明细、model 返回值、耗时全部留痕,欢迎逐条复核。</span></li>
-          <li><span class="n">3</span><span><b>扣费偏差 &gt;1% 进入标红复核队列</b> — 系统只提示不自动改分,是否下架由人工判定并登记在审计日志里,理由公开可查。</span></li>
+          <li><span class="n">1</span><span><b>付费对账,人工发起</b> — 真金白银调用,每批 10 轮<span data-tip="用真实充值的钱调用真实模型,不是免费健康检查;每批 10 轮,样本覆盖不同时刻。健康与报价则是自动巡航采集。"> …</span></span></li>
+          <li><span class="n">2</span><span><b>原始 Response 全量存档</b> — 欢迎逐条复核<span data-tip="每一轮调用的 usage 明细、model 返回值、耗时全部留痕,可逐条复核。"> …</span></span></li>
+          <li><span class="n">3</span><span><b>偏差 &gt;1% 标红复核</b> — 人工判定,留痕可查<span data-tip="系统只提示不自动改分,是否下架由人工判定并登记在审计日志里,理由公开可查。"> …</span></span></li>
         </ul>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a class="btn btn-primary" href="method.html">查看完整检测方法 &amp; 原始数据</a>
@@ -449,7 +450,7 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
       <div class="rec-empty" id="recEmpty">正在读取推荐位…</div>
     </div>
 
-    <p style="font-size:12px;color:var(--faint);margin-top:14px">推荐位规则:<b>先过实测门槛</b>(标红复核中、模型指纹未通过的站点一律不进),再按 综合得分 → 佣金率 → 活动有效期 排序;佣金率只参与服务端排序、不下发。推广关系不改变任何实测指标与榜单排名,所有合作位变更均记入<a href="method.html#audit" style="color:var(--brand)">公开审计日志</a>。</p>
+    <p style="font-size:12px;color:var(--faint);margin-top:14px">推荐位 <span data-tip="先过实测门槛(标红复核中、模型指纹未通过的站点一律不进),再按 综合得分 → 佣金率 → 活动有效期 排序;佣金率只参与服务端排序、不下发。推广关系不改变任何实测指标与榜单排名,所有合作位变更均记入公开审计日志(method.html#audit)。">先过实测门槛,再按综合分排序</span> · 佣金不影响实测与排名</p>
 
     <!-- 工具横幅 -->
     <div class="tools" id="tools">
@@ -482,7 +483,7 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
         <span class="badge bg-bad">实锤降级</span>
         <div>
           <h3>Site-X Opus 模型降级实锤:3 批次返回 Sonnet 内容</h3>
-          <p>模型指纹对比相似度仅 71%,response 中 model 字段仍显示 opus-5,已标红并移出推荐榜。</p>
+          <p>指纹相似度仅 71%,已标红移出推荐榜。</p>
           <div class="meta"><span>2026-09-28</span><span>示例数据</span><span>指纹相似度 71%</span></div>
         </div>
         <span class="thumb"><i class="w65"></i><i class="w45"></i><i class="w80"></i><i class="w30"></i></span>
@@ -492,7 +493,7 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
         <span class="badge bg-warn">价格异常</span>
         <div>
           <h3>Orbelis 单周涨价 22%,触发波动预警</h3>
-          <p>30 天价格波动率超阈值,叠加近期充值优惠缩水,跑路风险指数上调至「中高」。</p>
+          <p>30 天波动率超阈值,风险指数上调至「中高」。</p>
           <div class="meta"><span>2026-09-27</span><span>历史价格曲线 ×90 天</span></div>
         </div>
         <span class="thumb"><i class="w30"></i><i class="w45"></i><i class="w65"></i><i class="w80"></i></span>
@@ -502,7 +503,7 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
         <span class="badge bg-ok">复检通过</span>
         <div>
           <h3>塞尔达传说缓存计费修复复检:虚标问题已消除</h3>
-          <p>此前缓存命中率统计异常,站方修复后连续 3 批次应扣实扣一致,恢复推荐资格。</p>
+          <p>连续 3 批次应扣实扣一致,恢复推荐资格。</p>
           <div class="meta"><span>2026-09-26</span><span>复检批次 ×3</span><span>全程时间线公开</span></div>
         </div>
         <span class="thumb"><i class="w80"></i><i class="w65"></i><i class="w45"></i><i class="w30"></i></span>
@@ -522,9 +523,9 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
           <div><h4>码农老王 <span class="verified demo-ugc">示例反馈</span></h4><span class="t">使用 RelayLens 4 个月 · Claude Code 重度用户</span></div>
         </div>
         <div class="story">
-          <div class="step"><span class="lbl lb1">发现问题</span><span>反馈某站扣费比理论值高 ~8%,自己没证据不敢下结论。</span></div>
-          <div class="step"><span class="lbl lb2">平台响应</span><span>站长 2 小时内补测 5 批次,确认 token 统计虚标,当晚标红下架。</span></div>
-          <div class="step"><span class="lbl lb3">结果</span><span>三天后该站公告修复并退款,现在榜单分数也回来了。第一次感觉测评站真的替用户说话。</span></div>
+          <div class="step"><span class="lbl lb1">发现问题</span><span>某站扣费比理论值高 ~8%</span></div>
+          <div class="step"><span class="lbl lb2">平台响应</span><span>补测 5 批次,确认 token 虚标,当晚标红下架</span></div>
+          <div class="step"><span class="lbl lb3">结果</span><span>三天后修复退款,榜单分数恢复</span></div>
         </div>
       </div>
       <div class="review">
@@ -533,9 +534,9 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
           <div><h4>Lena <span class="verified demo-ugc">示例反馈</span></h4><span class="t">使用 RelayLens 2 个月 · 团队采购</span></div>
         </div>
         <div class="story">
-          <div class="step"><span class="lbl lb1">发现问题</span><span>团队要开票 + 对公,市面测评站根本不标这些维度。</span></div>
-          <div class="step"><span class="lbl lb2">平台响应</span><span>企业场景可按「可开票 / 对公 / 运营年限」筛,这几个维度市面测评站根本不标。</span></div>
-          <div class="step"><span class="lbl lb3">结果</span><span>按榜单选了家运营 3 年的站,月账单对得上一分不差,采购流程一次过。</span></div>
+          <div class="step"><span class="lbl lb1">发现问题</span><span>团队要开票 + 对公,别家测评站不标这些</span></div>
+          <div class="step"><span class="lbl lb2">平台响应</span><span>企业场景可按「可开票 / 对公 / 运营年限」筛选</span></div>
+          <div class="step"><span class="lbl lb3">结果</span><span>选了运营 3 年的站,月账单一分不差</span></div>
         </div>
       </div>
     </div>
@@ -547,19 +548,19 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
     <div class="faq">
       <details open>
         <summary>API 中转站扣费偏差多少算正常?</summary>
-        <div class="ans">计费系统四舍五入与汇率折算会带来 <b>±0.5% 以内</b>的正常误差(我们实测到的最短单笔因整数取整,偏差可达 2.86%,量级越小越明显)。我们以 1% 为红线:偏差 &gt;1% 的站点进入标红复核队列,人工判定后移出推荐榜;连续多笔同向偏差判定「计费虚标」进黑名单流程。每站的偏差率与逐笔明细在实测详情页可查。</div>
+        <div class="ans">四舍五入与汇率折算的正常误差在 <b>±0.5% 以内</b>。我们以 <b>1%</b> 为红线:超差的站进入标红复核,人工判定后移出推荐榜。每站逐笔明细在实测详情页可查。</div>
       </details>
       <details>
         <summary>Claude Code 用什么中转站不掉包?</summary>
-        <div class="ans">编程场景请认准三个指标:①<b>模型指纹检测通过</b>(返回内容特征与官方直连对比相似度 ≥85%);②<b>缓存命中真实性</b>(写代码场景缓存命中应占输入 50% 以上,不认缓存意味着成本翻倍);③<b>SSE 流式完整率</b>。首页「编程专用」卡片已按这三项预筛选,直达结果。</div>
+        <div class="ans">认准三个指标:<span data-tip="返回内容特征与官方直连对比相似度 ≥85%">① 模型指纹通过</span>、<span data-tip="写代码场景缓存命中应占输入 50% 以上,不认缓存意味着成本翻倍">② 缓存命中真实</span>、<span data-tip="SSE 流式是否完整不中断">③ SSE 流式完整</span>。「编程专用」卡片已按这三项预筛选。</div>
       </details>
       <details>
         <summary>如何验证缓存是否真实生效?</summary>
-        <div class="ans">最简单的方法:连续发两轮相同的长 Prompt,检查第二轮响应的 usage 字段中 <b>prompt_tokens_cached</b> 是否显著上升、扣费是否按缓存价(官方约输入价的 10%)计算。我们每站每批次都做 10 轮缓存命中率统计,数据在实测详情页公开;你也可以用「自测工具箱」的 API Key 自测 3 分钟跑完。</div>
+        <div class="ans">连发两轮相同长 Prompt,看第二轮 <b>prompt_tokens_cached</b> 是否上升、扣费是否按缓存价计。每站每批次的命中率统计在详情页公开;也可用「自测工具箱」3 分钟自测。</div>
       </details>
       <details>
         <summary>你们的推荐位收费吗?排名能买吗?</summary>
-        <div class="ans">排名不能买。推荐位先过<b>实测门槛</b>(不通过的站不接推广),再按 综合得分 → 佣金率 → 活动有效期 依次排序,卡片均标注「含推广链接」;佣金率只在服务端参与排序,不下发到页面。另有两条硬红线:<b>实测不通过的站不接推广</b>、<b>进入黑名单的站永久解除合作</b>。目前没有合格合作站时,那个区域就空着并写明原因 —— 我们不会摆一个假优惠码上去。全部实测数据与复现脚本开源,欢迎逐条验证。</div>
+        <div class="ans">排名不能买。推荐位先过<b>实测门槛</b>,再按 综合得分 → 佣金率 → 活动有效期 排序,佣金只在服务端参与排序、不下发。两条硬红线:实测不通过不接推广、进黑名单永久解除合作。</div>
       </details>
     </div>
   </section>
@@ -571,7 +572,7 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
     <div class="ft-grid">
       <div>
         <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
-        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位与 Pro 订阅维持运营。</p>
+        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。榜单与工具全免费,靠标注清晰的合作位与 Pro 订阅维持运营。</p>
       </div>
       <div>
         <h4>站点</h4>
@@ -583,9 +584,8 @@ footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
       </div>
     </div>
     <div class="fine">
-      免责声明:本站为第三方测评平台,不提供 API 转售或代充服务;中转服务本身存在合规与资金风险,请理性小额充值。所有实测数据来自公开付费测试,检测时间与批次号可溯源;推广合作不影响实测指标与排名算法。<br>
-      数据来源:现阶段全部为<b>本站自有探针的实测批次</b>(健康巡航 + 报价快照每 6 小时,付费逐笔对账为人工发起),批次号与原始 Response 可溯源;社区探针节点与用户举报通道尚未开放,开通后其贡献将标注来源。<br>
-      © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+      免责声明:第三方测评平台,不售卖 API 与代充;中转服务有合规与资金风险,请小额理性充值。数据来自公开付费实测,批次号可溯源;推广不影响实测与排名。<br>
+      数据来源:<b>本站自有探针实测批次</b><span data-tip="健康巡航 + 报价快照每 6 小时,付费逐笔对账为人工发起;批次号与原始 Response 可溯源。社区探针节点与用户举报通道尚未开放,开通后其贡献将标注来源。"> …</span> · © 2026 RelayLens · 测评数据仅供决策参考
     </div>
   </div>
 </footer>

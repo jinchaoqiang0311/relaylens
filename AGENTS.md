@@ -37,7 +37,9 @@ npx tsx cli.ts once --task=billing --site=X        # ⚠ 真实扣费(分/厘级
 npx tsx cli.ts perf --site=all --force             # TTFT+流式专项
 npx tsx cli.ts fingerprint --site=all              # 跨站差分指纹
 npx tsx cli.ts sync                                # 重建 sites.json(改任何数据后必跑)
-npx tsx cli.ts schedule                            # 常驻调度(见下方红线)
+npx tsx cli.ts schedule                            # 常驻调度(见下方红线);billing 自动对账已接通
+                                                   # (2026-10-15 用户授权):schedules.billing 节拍,
+                                                   # 每轮从有 key 的站轮转 2 站,轮后刷 ops + 推企微摘要
 node build-relay.js                                # 构建 dist-relay
 node test_compare_render.js                        # 逐个跑 17 套件,发布前必须全绿
 ```

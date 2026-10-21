@@ -1,6 +1,8 @@
-# RelayLens 在册站点配置(v0.2 · 首批真实站点)
+# RelayLens 在册站点配置(v0.3 · 2026-10-17 用户裁定:中转站只保留 9 家,其余全部下架)
 # 健康检查均用公开/免key端点;价格采集见 src/parsers/
 # enabled: false 的站点会被所有任务跳过
+# 下架记录(用户 2026-10-17 决定,审计链已留痕):wolfai / api75 / thinkai / boxying / chatfire /
+#   jiuqingyun / toonflow / ebondai / totkn / ricktoken / placeholder-gamma
 
 sites:
   # ---------- 真实中转站(new-api 系,首批 2 家) ----------
@@ -27,8 +29,8 @@ sites:
       recharge_ratio: "¥1 = 1 美元额度"        # 公示价的记账单位是美元额度
       ratio_cny_per_usd: 1                     # 数值口径:到手价 = 标价(美元数字) × 本值
       source: "manual"                         # manual=运营方人工核实(未经站方书面确认),declared=站方入驻声明
-      verified: "2026-10-02"
-    notes: "真实中转站;/api/pricing 公开,含分组倍率"
+      verified: "2026-10-17"                   # 用户 2026-10-17 提供站方表格复核:起充 ¥5 · 1¥=1$
+    notes: "真实中转站;价格页 https://api.aixoras.com/pricing 公开,含分组倍率"
 
   - name: "aicost"
     base_url: "https://www.aicost.me"         # /v1/models 带 key 200;定价需登录,走手动导出
@@ -52,10 +54,10 @@ sites:
       recharge_ratio: "¥1 = 1 美元额度"
       ratio_cny_per_usd: 1
       source: "manual"
-      verified: "2026-10-02"
-    notes: "真实中转站;定价页 requireAuth,数据来自浏览器 Console 手动导出"
+      verified: "2026-10-17"                   # 用户 2026-10-17 提供站方表格复核:起充 ¥2 · 1¥=1$
+    notes: "真实中转站;价格页 https://www.aicost.me/pricing requireAuth,数据来自浏览器 Console 手动导出"
 
-  # ---------- 官方/聚合平台(参照系) ----------
+  # ---------- 官方/聚合平台(参照系,非中转商,不参与排名) ----------
   - name: "openrouter"
     base_url: "https://openrouter.ai/api/v1"   # /models 免鉴权 200,定价内嵌于响应
     enabled: true
@@ -77,38 +79,7 @@ sites:
     parser: "zhipu"                             # 定价从 open.bigmodel.cn/pricing 页解析
     notes: "智谱 BigModel 官方;GLM 系,Flash 档免费"
 
-  # ---------- 2026-10-02 批量入册(来自用户提供的站方测试 key,已逐把验活) ----------
-  # 判定依据:GET /v1/models 带 key 返 200 JSON;价格接口单独记录
-  - name: "wolfai"
-    base_url: "https://wolfai.top"                # /v1/models 200(84 模型);/api/pricing 公开 JSON
-    enabled: true
-    tags: ["relay", "new-api"]
-    parser: "newapi"
-    key_env: "RL_WOLFAI_TOP_API_KEY"
-    directions: []                                # 站方未声明,不猜
-    commerce:
-      min_top_up: "¥4"
-      recharge_ratio: "¥2 = 1 美元额度"
-      ratio_cny_per_usd: 2
-      source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;价格接口公开,可直接进比价"
-
-  - name: "api75"
-    base_url: "https://www.75api.com"             # 裸域 75api.com DNS 不存在,必须带 www
-    enabled: true
-    tags: ["relay", "new-api"]
-    parser: "newapi"
-    key_env: "RL_75API_COM_API_KEY"
-    directions: []
-    commerce:
-      min_top_up: "¥10"
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-      source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;/api/pricing 公开 JSON(model_ratio 完整)"
-
+  # ---------- 2026-10-17 用户裁定保留的 9 家(商业信息来自用户提供的站方表格) ----------
   - name: "memecode"
     base_url: "https://memecode.de"
     enabled: true
@@ -117,63 +88,18 @@ sites:
     key_env: "RL_MEMECODE_DE_API_KEY"
     directions: []
     commerce:
-      min_top_up: "¥10"
+      min_top_up: "¥5"                          # 用户 2026-10-17 表格:5¥(原记录 ¥10 已更正)
       recharge_ratio: "¥1 = 1 美元额度"
       ratio_cny_per_usd: 1
       source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;/api/pricing 公开 JSON"
-
-  - name: "thinkai"
-    base_url: "https://www.thinkai.tv"
-    enabled: true
-    tags: ["relay", "new-api"]
-    parser: "newapi"
-    key_env: "RL_THINKAI_TV_API_KEY"
-    directions: []
-    commerce:
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-      source: "manual"
-      verified: "2026-10-02"
-      # 起充金额未提供
-    notes: "2026-10-02 入册;该 key 只见 1 个模型(grok-4.5),分组覆盖窄"
-
-  - name: "boxying"
-    base_url: "https://www.boxying.com"           # 裸域 301 → www
-    enabled: true
-    tags: ["relay", "new-api"]
-    parser: "newapi"
-    key_env: "RL_BOXYING_COM_API_KEY"
-    directions: []
-    commerce:
-      min_top_up: "¥1"
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-      source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;/api/pricing 公开 JSON"
-
-  - name: "chatfire"
-    base_url: "https://api.chatfire.site"
-    enabled: true
-    tags: ["relay", "multi-modal"]
-    parser: "newapi"
-    key_env: "RL_API_CHATFIRE_SITE_API_KEY"
-    directions: []
-    commerce:
-      min_top_up: "¥34"
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-      source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;/v1/models 102 个,含 qwen-image / wan 等图像与视频模型(图视频验真首个候选);/api/pricing 404 → 报价需另行取得"
+      verified: "2026-10-17"
+    notes: "2026-10-02 入册;价格页 https://memecode.de/pricing;/api/pricing 公开 JSON;2026-10-17 用户裁定保留"
 
   - name: "uuapi"
     base_url: "https://uuapi.io"
     enabled: true
     tags: ["relay", "new-api"]
-    parser: "newapi"
+    parser: "modelplaza"
     key_env: "RL_UUAPI_IO_API_KEY"
     directions: []
     commerce:
@@ -181,123 +107,83 @@ sites:
       recharge_ratio: "¥1 = 1 美元额度"
       ratio_cny_per_usd: 1
       source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;/api/pricing 404,报价未公开"
+      verified: "2026-10-17"
+    notes: "2026-10-02 入册;价格页 https://uuapi.io/model-plaza;/api/pricing 404,报价未公开;2026-10-17 用户裁定保留"
 
   - name: "fluxionai"
     base_url: "https://fluxionai.space"
     enabled: true
     tags: ["relay", "new-api"]
-    parser: "newapi"
+    parser: "modelplaza"
     key_env: "RL_FLUXIONAI_SPACE_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥5"                          # 用户 2026-10-17 表格:5¥(原记录 ¥0 已更正)
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-17"
+    notes: "2026-10-02 入册;价格页 https://fluxionai.space/model-plaza;/api/pricing 404;⚠ 与演示数据里同名虚构站重名,演示站已改名避让;2026-10-17 用户裁定保留"
+
+  - name: "hahacode"
+    base_url: "https://hahacode.com"
+    enabled: true                             # 2026-10-17 用户提供新 key 重新启用(此前 403 余额不足)
+    tags: ["relay", "new-api"]
+    parser: "modelplaza"
+    key_env: "RL_HAHACODE_COM_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥5"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
+      source: "manual"
+      verified: "2026-10-17"
+    notes: "2026-10-17 用户提供新 key + 商业信息重新入册;价格页 https://hahacode.com/model-plaza?embedded=1;若仍 403 余额不足,ops 会如实标注"
+
+  - name: "uptoken"
+    base_url: "https://uptoken.top"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "uptoken"
+    key_env: "RL_UPTOKEN_TOP_API_KEY"
     directions: []
     commerce:
       min_top_up: "¥0"
       recharge_ratio: "¥1 = 1 美元额度"
       ratio_cny_per_usd: 1
       source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;/api/pricing 404。⚠ 与演示数据里同名虚构站重名,演示站已改名避让"
+      verified: "2026-10-17"
+    notes: "2026-10-17 新入册(用户提供 key);价格数据仅登录态可见(SPA 换 token 后拉 /api/users/me/available-models),走手动导入 store/manual-imports/uptoken-pricing-*.json(README-export.md 有导出脚本);价格页 https://uptoken.top/dashboard/models"
 
-  - name: "jiuqingyun"
-    base_url: "https://ai.jiuqingyunapi.top"
+  - name: "heyroute"
+    base_url: "https://heyroute.ai"
+    enabled: true
+    tags: ["relay", "new-api"]
+    parser: "heyroute"
+    key_env: "RL_HEYROUTE_AI_API_KEY"
+    directions: []
+    commerce:
+      min_top_up: "¥0"
+      recharge_ratio: "¥1 = 4 美元额度"        # 用户 2026-10-17 表格:1¥=4$
+      ratio_cny_per_usd: 0.25                  # 数值口径:买 1 美元额度只要 ¥0.25
+      source: "manual"
+      verified: "2026-10-17"
+    notes: "2026-10-17 新入册(用户提供 key);价格页 https://heyroute.ai/pricing;比例 1¥=4$ 与别家不同,到手价以标价×0.25 算,横向比价不受比例写法影响"
+
+  - name: "infistar"
+    base_url: "https://infistar.cc"           # 无限星河
     enabled: true
     tags: ["relay", "new-api"]
     parser: "newapi"
-    key_env: "RL_AI_JIUQINGYUNAPI_TOP_API_KEY"
+    key_env: "RL_INFISTAR_CC_API_KEY"
     directions: []
     commerce:
-      min_top_up: "¥10"
-      recharge_ratio: "¥1 = 10 美元额度"
-      ratio_cny_per_usd: 0.1        # 买 1 美元额度只要 ¥0.1
+      min_top_up: "¥1"
+      recharge_ratio: "¥1 = 1 美元额度"
+      ratio_cny_per_usd: 1
       source: "manual"
-      verified: "2026-10-02"
-      # 站方原话(用户 2026-10-02 确认未抄错):1¥=10$。原因在其模型倍率比同行高一个数量级 ——
-      # 比例与倍率是同一笔价格的两种写法,不能据此判"便宜到可疑"。该站 /api/pricing 需登录,
-      # 拿不到倍率明细,所以到手价暂时算不出来;等价格表到手后用**最终到手价**与同行和官方锚对比,而不是看比例。
-    notes: "2026-10-02 入册;/api/pricing 需登录(401)"
-
-  - name: "toonflow"
-    base_url: "https://api.toonflow.net"
-    enabled: true
-    tags: ["relay", "new-api"]
-    parser: "newapi"
-    key_env: "RL_API_TOONFLOW_NET_API_KEY"
-    directions: []
-    commerce:
-      pay_methods: ["仅人民币"]
-      min_top_up: "¥10"
-      source: "manual"
-      verified: "2026-10-02"
-    notes: "2026-10-02 入册;该 key 只见 1 个模型(deepseek-v4.1-flash),价格接口返回 HTML 非 JSON"
-
-  # ---------- 给了 key 但账户不具备测试条件:key 保留,先不启用,不编数据 ----------
-  - name: "ebondai"
-    base_url: "https://ebondai.com"
-    enabled: false                                # /v1/models 带 key 返 403 INSUFFICIENT_BALANCE
-    tags: ["relay", "blocked"]
-    parser: "newapi"
-    key_env: "RL_EBONDAI_COM_API_KEY"
-
-    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
-    commerce:
-      source: "运营方人工核实(2026-10-11)"
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-
-    notes: "站点在营业,但测试账户余额为 0 → 需站方按约定充值测试额度后再开"
-
-  - name: "hahacode"
-    base_url: "https://hahacode.com"
-    enabled: false                                # 403 INSUFFICIENT_BALANCE
-    tags: ["relay", "blocked"]
-    parser: "newapi"
-    key_env: "RL_HAHACODE_COM_API_KEY"
-
-    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
-    commerce:
-      source: "运营方人工核实(2026-10-11)"
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-
-    notes: "站点在营业,测试账户余额为 0"
-
-  - name: "totkn"
-    base_url: "https://totkn.com"
-    enabled: false                                # 403 INSUFFICIENT_BALANCE
-    tags: ["relay", "blocked"]
-    parser: "newapi"
-    key_env: "RL_TOTKN_COM_API_KEY"
-
-    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
-    commerce:
-      source: "运营方人工核实(2026-10-11)"
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-
-    notes: "站点在营业,测试账户余额为 0"
-
-  - name: "ricktoken"
-    base_url: "https://ricktoken.top"
-    enabled: false                                # 403 GROUP_DISABLED
-    tags: ["relay", "blocked"]
-    parser: "newapi"
-    key_env: "RL_RICKTOKEN_TOP_API_KEY"
-
-    # 充值比例:运营方人工核实 2026-10-11(¥1 = 1 美元额度,全站统一口径)
-    commerce:
-      source: "运营方人工核实(2026-10-11)"
-      recharge_ratio: "¥1 = 1 美元额度"
-      ratio_cny_per_usd: 1
-
-    notes: "站方返回「API Key 所属分组已停用」→ 需站方开通分组;⚠ 与演示数据里同名虚构站重名,演示站已改名避让"
-
-  # ---------- 占位站点(保留用于回归测试) ----------
-  - name: "placeholder-gamma"
-    base_url: "https://invalid.relaylens.invalid"
-    enabled: true
-    tags: ["placeholder"]
-    notes: "占位站点,失联场景回归用,默认关闭"
+      verified: "2026-10-17"
+    notes: "2026-10-17 新入册(用户提供 key);站名「无限星河」,slug 用 infistar;价格页 https://infistar.cc/pricing"
 
 # 标准测试模型组合(P2 付费对账时启用)
 models:
@@ -311,7 +197,9 @@ models:
 # ②新站攒够 ≥12 次样本从"1 小时内"变成"约 3 天",入榜速度变慢 —— 这是采样密度的直接代价,不是 bug。
 schedules:
   health: "0 */5 * * *"
-  price:  "0 */6 * * *"
+  price: "0 */6 * * *"
+  # billing 自动对账(2026-10-15 用户授权接通,P2):每轮从有 key 的站轮转 2 站,真实扣费分/厘级;
+  # 轮后自动刷新 ops 看板并推企微摘要。删掉本行即停用自动对账(回退 CLI 手动模式)。
   billing: "30 */6 * * *"
   # perf 双窗口(2026-10-10.1 口径):忙时/闲时各一轮,PF 取两桶较差值;有余额的站才产生费用(厘级/天)
   perf_work: "30 10 * * 1-5"

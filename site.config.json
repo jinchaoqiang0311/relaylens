@@ -7,6 +7,7 @@
   "icpLink": "https://beian.miit.gov.cn/",
   "policeIcp": "",
   "analyticsHtml": "<script>\nvar _hmt = _hmt || [];\n(function() {\n  var hm = document.createElement(\"script\");\n  hm.src = \"https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1\";\n  var s = document.getElementsByTagName(\"script\")[0];\n  s.parentNode.insertBefore(hm, s);\n})();\n</script>",
+  "apiBase": "",
   "changefreq": { "index.html": "hourly", "ranking.html": "hourly", "compare.html": "hourly", "reports.html": "daily", "api.html": "weekly", "method.html": "monthly", "blacklist.html": "daily", "detail.html": "hourly", "tools.html": "weekly", "onboarding.html": "weekly", "claim.html": "weekly", "selector.html": "daily" },
   "lastmod": "2026-09-30"
 }
