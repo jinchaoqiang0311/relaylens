@@ -130,7 +130,18 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
   all &= check("真实数据:72h 走势如实标注样本覆盖(有样本给 n/12 段,不足则明说)",
     /\d+\/12 段有样本\(6h\/格\)/.test(ax) || /走势样本不足\(\d+\/12 段\)/.test(ax));
   all &= check("走势列标题已随采样密度改口径", /72H 可用率 \/ 趋势/.test(html) && !/24H 可用率/.test(html));
-  all &= check("真实数据:P95 / 逐笔 / 容差口径", /P95 \d+(\.\d)?s/.test(ax) && /逐笔 \d+ 笔/.test(ax) && /max\(2 quota, 1%\)/.test(ax));
+  /* 2026-10-22 起 PF 只留 P50 中位数(P95 已移除,见 f238257),并展示忙/闲双桶值 ——
+     期望串按 payload 现算(与页面 ttftDual 同构),不写死数字;同时守住「均值口径」的页面披露。 */
+  const axS = SITES.realSites.find(r => r.name === "aixoras") || {};
+  const fmtB = ms => ms == null ? null : (ms < 1000 ? Math.round(ms) + "ms" : (ms / 1000).toFixed(1) + "s");
+  const wantDual = (axS.ttftWorkMs == null && axS.ttftOffMs == null) ? null
+    : (axS.ttftOffMs == null ? "忙 " + fmtB(axS.ttftWorkMs) + " · 闲未测"
+      : axS.ttftWorkMs == null ? "忙未测 · 闲 " + fmtB(axS.ttftOffMs)
+        : "忙 " + fmtB(axS.ttftWorkMs) + " · 闲 " + fmtB(axS.ttftOffMs));
+  all &= check("真实数据:首字延迟忙/闲双桶 · 逐笔 · 容差口径",
+    (!wantDual || ax.includes(wantDual)) && /逐笔判定/.test(ax) && /max\(2 quota, 1%\)/.test(ax),
+    wantDual || "无双桶样本");
+  all &= check("首字延迟列公示「忙/闲中位数均值」口径(P95 已下线)", /忙\/闲两时段中位数的均值/.test(ax));
   all &= check("真实数据:分组口径可见(分数仅代表实测分组)", /分数仅代表实测分组/.test(ax));
   const opTd = (ax.match(/<td class="rich"><div class="op-col">([\s\S]*?)<\/div><\/td>\s*$/) || ["", ""])[1]
     || (ax.slice(ax.lastIndexOf("op-col")) );
@@ -150,10 +161,19 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
     !!declared[0].priceModel && !!declared[0].priceGroup &&
     dRow.includes(declared[0].priceModel) && dRow.includes(declared[0].priceGroup),
     `${declared[0].priceModel} · ${declared[0].priceGroup}`);
-  const noPriceNoRatio = SITES.realSites.filter(r => r.price && r.effPrice == null);
+  /* 两种「未声明」必须分开判(2026-10-21 用户拍板):
+     CNY 公示价站(heyroute 价格页直接写 ¥ 单价)→ 页面上的 ¥ 就是到手价,说「不给人民币价」是自相矛盾的假话;
+     只给美元额度价又没声明比例的站 → 才说「不给人民币价」。未进入当前视图时用源码分支兜底。 */
+  const isCny = r => !!(r.priceSrc && r.priceSrc.src === "CNY");
+  const cnyDirect = SITES.realSites.filter(r => r.price && r.effPrice == null && isCny(r));
+  const usdNoRatio = SITES.realSites.filter(r => r.price && r.effPrice == null && !isCny(r));
+  const rowOrSrc = r => rowWith(br, new RegExp(">" + r.name + "<")) || html;
+  all &= check("CNY 公示价站明说「即到手价 · 不乘充值比例」(不谎称不给人民币价)",
+    cnyDirect.length ? cnyDirect.every(r => /站方人民币公示价 · 即到手价/.test(rowOrSrc(r)))
+      : /站方人民币公示价 · 即到手价/.test(html), cnyDirect.map(r => r.name).join(","));
   all &= check("有标价但比例未声明的站明说「不给人民币价」(无此类站时校验代码分支)",
-    noPriceNoRatio.length ? noPriceNoRatio.every(r => /充值比例未声明 · 不给人民币价/.test(rowWith(br, new RegExp(">" + r.name + "<"))))
-      : /充值比例未声明 · 不给人民币价/.test(html));
+    usdNoRatio.length ? usdNoRatio.every(r => /充值比例未声明 · 不给人民币价/.test(rowOrSrc(r)))
+      : /充值比例未声明 · 不给人民币价/.test(html), usdNoRatio.map(r => r.name).join(","));
   all &= check("全表不出现按 1$=¥7.1 乘出来的假主价", !/¥(6\.39|12\.43|4\.97|53\.25|79\.88)/.test(br.join("")));
   const jq = rowWith(br, />jiuqingyun</);
   all &= check("不用充值比例做风险判断(比例风险标已撤,只看测得出的量)", !/⚠ 比例/.test(jq) && !/⚠ 比例/.test(html));
