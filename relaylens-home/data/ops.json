@@ -1,18 +1,18 @@
 {
   "meta": {
-    "generatedAt": "2026-10-21T07:31:55.679Z",
-    "weightsVersion": "2026-10-10.1",
+    "generatedAt": "2026-10-22T14:13:36.508Z",
+    "weightsVersion": "2026-10-22.2",
     "dataLayer": "internal-readonly",
     "note": "本文件仅描述运营状态,不含任何编辑能力。人工改动全部记录在 audit 链中。"
   },
   "integrity": {
     "chainOk": true,
-    "total": 178,
+    "total": 195,
     "brokenAt": null,
     "why": null,
-    "headHash": "232ad6ac2d91e9005a9b8cda44da04f2b4809e7b4fba6c4935cc0a11fe90d59c",
-    "rawHeadHash": "232ad6ac2d91e9005a9b8cda44da04f2b4809e7b4fba6c4935cc0a11fe90d59c",
-    "rawCount": 178,
+    "headHash": "ee1291dc78cd22f5644bed1feb7f0eac8fa0f6c68783d1941cebee8819c727a9",
+    "rawHeadHash": "ee1291dc78cd22f5644bed1feb7f0eac8fa0f6c68783d1941cebee8819c727a9",
+    "rawCount": 195,
     "rawDrift": 0
   },
   "thresholds": {
@@ -25,7 +25,7 @@
     "coverage_floor": 0.6,
     "rules": "置信度 = min(1, 样本达标比) × 指标覆盖率;覆盖率<0.6 → 评分置 null(数据不足);0.6-0.8 → 展示但挂低置信标。稳定性额外要求样本时间跨度 ≥45 分钟,防止短时猛采刷满次数却不代表真实分布。",
     "scoreFloorPct": 60,
-    "weightsFile": "a71a2b48b938"
+    "weightsFile": "4ed038a24ce5"
   },
   "scenes": [
     {
@@ -44,18 +44,8 @@
       "separate": false
     },
     {
-      "key": "ecom",
-      "label": "电商",
-      "separate": false
-    },
-    {
       "key": "drama",
-      "label": "短剧",
-      "separate": false
-    },
-    {
-      "key": "image",
-      "label": "生图",
+      "label": "剧本创作",
       "separate": false
     },
     {
@@ -127,18 +117,14 @@
         "all": 75,
         "code": 65,
         "office": 45,
-        "ecom": 50,
         "drama": 59,
-        "image": 58,
         "biz": 64
       },
       "coveragePct": {
         "all": 75,
         "code": 85,
         "office": 75,
-        "ecom": 75,
         "drama": 80,
-        "image": 85,
         "biz": 70
       },
       "scenesWithoutScore": [],
@@ -1535,18 +1521,14 @@
         "all": 86,
         "code": 84,
         "office": null,
-        "ecom": 63,
         "drama": 78,
-        "image": 73,
         "biz": null
       },
       "coveragePct": {
         "all": 70,
         "code": 70,
         "office": 55,
-        "ecom": 65,
         "drama": 65,
-        "image": 85,
         "biz": 50
       },
       "scenesWithoutScore": [
@@ -2599,27 +2581,21 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coveragePct": {
         "all": 15,
         "code": 30,
         "office": 30,
-        "ecom": 35,
         "drama": 25,
-        "image": 40,
         "biz": 10
       },
       "scenesWithoutScore": [
         "综合",
         "编程",
         "办公",
-        "电商",
-        "短剧",
-        "生图",
+        "剧本创作",
         "企业"
       ],
       "metrics": {
@@ -3545,26 +3521,21 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": 52,
         "biz": null
       },
       "coveragePct": {
         "all": 40,
         "code": 50,
         "office": 45,
-        "ecom": 50,
         "drama": 50,
-        "image": 75,
         "biz": 25
       },
       "scenesWithoutScore": [
         "综合",
         "编程",
         "办公",
-        "电商",
-        "短剧",
+        "剧本创作",
         "企业"
       ],
       "metrics": {
@@ -4517,7 +4488,7 @@
                     "cacheRead": 0.25
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 10,
                     "output": 50,
@@ -4563,7 +4534,7 @@
                     "cacheRead": 0.1
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 4,
                     "input": 1,
                     "output": 5,
@@ -4592,7 +4563,7 @@
                 "output": 25,
                 "cacheRead": 0.5,
                 "cacheWrite": 6.25,
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "groupKind": "median",
                 "grpRatio": 1,
                 "base": {
@@ -4616,7 +4587,7 @@
                     "cacheRead": 0.5
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 5,
                     "output": 25,
@@ -4662,7 +4633,7 @@
                     "cacheRead": 0.5
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 5,
                     "output": 25,
@@ -4708,7 +4679,7 @@
                     "cacheRead": 0.5
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 5,
                     "output": 25,
@@ -4754,7 +4725,7 @@
                     "cacheRead": 0.5
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 5,
                     "output": 25,
@@ -4783,7 +4754,7 @@
                 "output": 20,
                 "cacheRead": 0.2,
                 "cacheWrite": 5,
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "groupKind": "median",
                 "grpRatio": 1,
                 "base": {
@@ -4807,7 +4778,7 @@
                     "cacheRead": 0.2
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 4,
                     "output": 20,
@@ -4836,7 +4807,7 @@
                 "output": 15,
                 "cacheRead": 0.3,
                 "cacheWrite": 3.75,
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "groupKind": "median",
                 "grpRatio": 1,
                 "base": {
@@ -4860,7 +4831,7 @@
                     "cacheRead": 0.3
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 3,
                     "output": 15,
@@ -4906,7 +4877,7 @@
                     "cacheRead": 0.2
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 2,
                     "output": 10,
@@ -4935,7 +4906,7 @@
                 "output": 10,
                 "cacheRead": 0.2,
                 "cacheWrite": 2.5,
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "groupKind": "median",
                 "grpRatio": 1,
                 "base": {
@@ -4959,7 +4930,7 @@
                     "cacheRead": 0.2
                   },
                   {
-                    "group": "企业级Kiro-Claude(优化版) 🔥",
+                    "group": "企业级Kiro-Claude(优化版)",
                     "ratio": 1,
                     "input": 2,
                     "output": 10,
@@ -5798,26 +5769,21 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": 29,
         "biz": null
       },
       "coveragePct": {
         "all": 40,
         "code": 50,
         "office": 45,
-        "ecom": 50,
         "drama": 50,
-        "image": 75,
         "biz": 25
       },
       "scenesWithoutScore": [
         "综合",
         "编程",
         "办公",
-        "电商",
-        "短剧",
+        "剧本创作",
         "企业"
       ],
       "metrics": {
@@ -9212,27 +9178,21 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coveragePct": {
         "all": 15,
         "code": 20,
         "office": 30,
-        "ecom": 35,
         "drama": 25,
-        "image": 40,
         "biz": 10
       },
       "scenesWithoutScore": [
         "综合",
         "编程",
         "办公",
-        "电商",
-        "短剧",
-        "生图",
+        "剧本创作",
         "企业"
       ],
       "metrics": {
@@ -10786,27 +10746,21 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coveragePct": {
         "all": 15,
         "code": 20,
         "office": 30,
-        "ecom": 35,
         "drama": 25,
-        "image": 40,
         "biz": 10
       },
       "scenesWithoutScore": [
         "综合",
         "编程",
         "办公",
-        "电商",
-        "短剧",
-        "生图",
+        "剧本创作",
         "企业"
       ],
       "metrics": {
@@ -11503,27 +11457,21 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coveragePct": {
         "all": 15,
         "code": 20,
         "office": 30,
-        "ecom": 35,
         "drama": 25,
-        "image": 40,
         "biz": 10
       },
       "scenesWithoutScore": [
         "综合",
         "编程",
         "办公",
-        "电商",
-        "短剧",
-        "生图",
+        "剧本创作",
         "企业"
       ],
       "metrics": {
@@ -11585,1654 +11533,1341 @@
           }
         },
         "price": {
-          "at": "2026-10-21T07:20:10.422Z",
-          "id": "RL-RC-20261021-045",
+          "at": "2026-10-21T11:21:34.402Z",
+          "id": "RL-RC-20261021-053",
           "s": {
             "task": "price",
             "site": "heyroute",
-            "capturedAt": "2026-10-17T16:13:10.656Z",
-            "currency": "USD",
+            "capturedAt": "2026-10-21T11:21:13.326Z",
+            "currency": "CNY",
             "models": [
               {
-                "model": "gpt-6-astra",
-                "input": 0.48,
-                "output": 2.4,
-                "cacheRead": 0.048,
-                "cacheWrite": null,
-                "group": "codex-pro20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.48,
-                  "output": 2.4,
-                  "cacheRead": 0.048
-                },
-                "groups": [
-                  {
-                    "group": "codex-pro20x",
-                    "ratio": 1,
-                    "input": 0.48,
-                    "output": 2.4,
-                    "cacheRead": 0.048
-                  },
-                  {
-                    "group": "codex-Pro20x-Max",
-                    "ratio": 1.5,
-                    "input": 0.72,
-                    "output": 3.6,
-                    "cacheRead": 0.072
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$12/out$60 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "gpt-6.1-sol",
-                "input": 0.12,
-                "output": 0.6,
-                "cacheRead": 0.012,
-                "cacheWrite": null,
-                "group": "codex-pro20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.12,
-                  "output": 0.6,
-                  "cacheRead": 0.012
-                },
-                "groups": [
-                  {
-                    "group": "codex-pro20x",
-                    "ratio": 1,
-                    "input": 0.12,
-                    "output": 0.6,
-                    "cacheRead": 0.012
-                  },
-                  {
-                    "group": "codex-Pro20x-Max",
-                    "ratio": 1.5,
-                    "input": 0.18,
-                    "output": 0.9,
-                    "cacheRead": 0.018
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$3/out$15 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "gpt-5.6-sol",
-                "input": 0.2,
-                "output": 1.2,
-                "cacheRead": 0.02,
-                "cacheWrite": null,
-                "group": "codex-pro20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.2,
-                  "output": 1.2,
-                  "cacheRead": 0.02
-                },
-                "groups": [
-                  {
-                    "group": "codex-pro20x",
-                    "ratio": 1,
-                    "input": 0.2,
-                    "output": 1.2,
-                    "cacheRead": 0.02
-                  },
-                  {
-                    "group": "codex-Pro20x-Max",
-                    "ratio": 1.5,
-                    "input": 0.3,
-                    "output": 1.8,
-                    "cacheRead": 0.03
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$5/out$30 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "gpt-5.6-terra",
-                "input": 0.08,
-                "output": 0.48,
-                "cacheRead": 0.008,
-                "cacheWrite": null,
-                "group": "codex-pro20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.08,
-                  "output": 0.48,
-                  "cacheRead": 0.008
-                },
-                "groups": [
-                  {
-                    "group": "codex-pro20x",
-                    "ratio": 1,
-                    "input": 0.08,
-                    "output": 0.48,
-                    "cacheRead": 0.008
-                  },
-                  {
-                    "group": "codex-Pro20x-Max",
-                    "ratio": 1.5,
-                    "input": 0.12,
-                    "output": 0.72,
-                    "cacheRead": 0.012
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$12 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "gpt-6-sol",
-                "input": 0.12,
-                "output": 0.6,
-                "cacheRead": 0.012,
-                "cacheWrite": null,
-                "group": "codex-pro20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.12,
-                  "output": 0.6,
-                  "cacheRead": 0.012
-                },
-                "groups": [
-                  {
-                    "group": "codex-pro20x",
-                    "ratio": 1,
-                    "input": 0.12,
-                    "output": 0.6,
-                    "cacheRead": 0.012
-                  },
-                  {
-                    "group": "codex-Pro20x-Max",
-                    "ratio": 1.5,
-                    "input": 0.18,
-                    "output": 0.9,
-                    "cacheRead": 0.018
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$3/out$15 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-opus-5-5",
-                "input": 0.16,
-                "output": 0.8,
-                "cacheRead": 0.008,
-                "cacheWrite": null,
-                "group": "claude",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.16,
-                  "output": 0.8,
-                  "cacheRead": 0.008
-                },
-                "groups": [
-                  {
-                    "group": "claude",
-                    "ratio": 1,
-                    "input": 0.16,
-                    "output": 0.8,
-                    "cacheRead": 0.008
-                  },
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 5.25,
-                    "input": 0.84,
-                    "output": 4.2,
-                    "cacheRead": 0.042
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$4/out$20 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-opus-5",
-                "input": 0.2,
-                "output": 1,
-                "cacheRead": 0.02,
-                "cacheWrite": null,
-                "group": "claude",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.2,
-                  "output": 1,
-                  "cacheRead": 0.02
-                },
-                "groups": [
-                  {
-                    "group": "claude",
-                    "ratio": 1,
-                    "input": 0.2,
-                    "output": 1,
-                    "cacheRead": 0.02
-                  },
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 5.25,
-                    "input": 1.05,
-                    "output": 5.25,
-                    "cacheRead": 0.1
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$5/out$25 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-sonnet-5-5",
-                "input": 0.08,
-                "output": 0.4,
-                "cacheRead": 0.008,
-                "cacheWrite": null,
-                "group": "claude",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.08,
-                  "output": 0.4,
-                  "cacheRead": 0.008
-                },
-                "groups": [
-                  {
-                    "group": "claude",
-                    "ratio": 1,
-                    "input": 0.08,
-                    "output": 0.4,
-                    "cacheRead": 0.008
-                  },
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 5.25,
-                    "input": 0.42,
-                    "output": 2.1,
-                    "cacheRead": 0.042
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$10 · heyroute-prices-20261018.json"
-              },
-              {
                 "model": "claude-haiku-4-5-20251001",
-                "input": 0.04,
-                "output": 0.2,
-                "cacheRead": 0.004,
+                "input": 0.28,
+                "output": 1.4,
+                "cacheRead": 0.028,
                 "cacheWrite": null,
                 "group": "claude",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 1.5,
                 "base": {
-                  "input": 0.04,
-                  "output": 0.2,
-                  "cacheRead": 0.004
+                  "input": 0.28,
+                  "output": 1.4,
+                  "cacheRead": 0.028
                 },
                 "groups": [
                   {
                     "group": "claude",
                     "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.2,
-                    "cacheRead": 0.004
+                    "input": 0.28,
+                    "output": 1.4,
+                    "cacheRead": 0.028
                   },
                   {
                     "group": "Claude-Max20x",
                     "ratio": 5.25,
-                    "input": 0.21,
-                    "output": 1.05,
-                    "cacheRead": 0.021
+                    "input": 1.47,
+                    "output": 7.35,
+                    "cacheRead": 0.15
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1/out$5 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-sonnet-5",
-                "input": 0.08,
-                "output": 0.4,
-                "cacheRead": 0.008,
-                "cacheWrite": null,
-                "group": "claude",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.08,
-                  "output": 0.4,
-                  "cacheRead": 0.008
-                },
-                "groups": [
-                  {
-                    "group": "claude",
-                    "ratio": 1,
-                    "input": 0.08,
-                    "output": 0.4,
-                    "cacheRead": 0.008
-                  },
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 5.25,
-                    "input": 0.42,
-                    "output": 2.1,
-                    "cacheRead": 0.042
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$10 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-sonnet-4-6",
-                "input": 0.12,
-                "output": 0.6,
-                "cacheRead": 0.012,
-                "cacheWrite": null,
-                "group": "claude",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.12,
-                  "output": 0.6,
-                  "cacheRead": 0.012
-                },
-                "groups": [
-                  {
-                    "group": "claude",
-                    "ratio": 1,
-                    "input": 0.12,
-                    "output": 0.6,
-                    "cacheRead": 0.012
-                  },
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 5.25,
-                    "input": 0.63,
-                    "output": 3.15,
-                    "cacheRead": 0.063
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$3/out$15 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-opus-4-8",
-                "input": 0.2,
-                "output": 1,
-                "cacheRead": 0.02,
-                "cacheWrite": null,
-                "group": "claude",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.2,
-                  "output": 1,
-                  "cacheRead": 0.02
-                },
-                "groups": [
-                  {
-                    "group": "claude",
-                    "ratio": 1,
-                    "input": 0.2,
-                    "output": 1,
-                    "cacheRead": 0.02
-                  },
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 5.25,
-                    "input": 1.05,
-                    "output": 5.25,
-                    "cacheRead": 0.1
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$5/out$25 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$7/out$35 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "claude-opus-4-6",
-                "input": 0.2,
-                "output": 1,
-                "cacheRead": 0.02,
+                "input": 1.4,
+                "output": 7,
+                "cacheRead": 0.14,
                 "cacheWrite": null,
                 "group": "claude",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 1.5,
                 "base": {
-                  "input": 0.2,
-                  "output": 1,
-                  "cacheRead": 0.02
+                  "input": 1.4,
+                  "output": 7,
+                  "cacheRead": 0.14
                 },
                 "groups": [
                   {
                     "group": "claude",
                     "ratio": 1,
-                    "input": 0.2,
-                    "output": 1,
-                    "cacheRead": 0.02
+                    "input": 1.4,
+                    "output": 7,
+                    "cacheRead": 0.14
                   },
                   {
                     "group": "Claude-Max20x",
                     "ratio": 5.25,
-                    "input": 1.05,
-                    "output": 5.25,
-                    "cacheRead": 0.1
+                    "input": 7.35,
+                    "output": 36.75,
+                    "cacheRead": 0.73
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$5/out$25 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$35/out$175 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "claude-opus-4-7",
-                "input": 0.2,
-                "output": 1,
-                "cacheRead": 0.02,
+                "input": 1.4,
+                "output": 7,
+                "cacheRead": 0.14,
                 "cacheWrite": null,
                 "group": "claude",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 1.5,
                 "base": {
-                  "input": 0.2,
-                  "output": 1,
-                  "cacheRead": 0.02
+                  "input": 1.4,
+                  "output": 7,
+                  "cacheRead": 0.14
                 },
                 "groups": [
                   {
                     "group": "claude",
                     "ratio": 1,
-                    "input": 0.2,
-                    "output": 1,
-                    "cacheRead": 0.02
+                    "input": 1.4,
+                    "output": 7,
+                    "cacheRead": 0.14
                   },
                   {
                     "group": "Claude-Max20x",
                     "ratio": 5.25,
-                    "input": 1.05,
-                    "output": 5.25,
-                    "cacheRead": 0.1
+                    "input": 7.35,
+                    "output": 36.75,
+                    "cacheRead": 0.73
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$5/out$25 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$35/out$175 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-opus-4-8",
+                "input": 1.4,
+                "output": 7,
+                "cacheRead": 0.14,
+                "cacheWrite": null,
+                "group": "claude",
+                "groupKind": "default",
+                "grpRatio": 1.5,
+                "base": {
+                  "input": 1.4,
+                  "output": 7,
+                  "cacheRead": 0.14
+                },
+                "groups": [
+                  {
+                    "group": "claude",
+                    "ratio": 1,
+                    "input": 1.4,
+                    "output": 7,
+                    "cacheRead": 0.14
+                  },
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 5.25,
+                    "input": 7.35,
+                    "output": 36.75,
+                    "cacheRead": 0.73
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$35/out$175 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-opus-5",
+                "input": 1.4,
+                "output": 7,
+                "cacheRead": 0.14,
+                "cacheWrite": null,
+                "group": "claude",
+                "groupKind": "default",
+                "grpRatio": 1.5,
+                "base": {
+                  "input": 1.4,
+                  "output": 7,
+                  "cacheRead": 0.14
+                },
+                "groups": [
+                  {
+                    "group": "claude",
+                    "ratio": 1,
+                    "input": 1.4,
+                    "output": 7,
+                    "cacheRead": 0.14
+                  },
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 5.25,
+                    "input": 7.35,
+                    "output": 36.75,
+                    "cacheRead": 0.73
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$35/out$175 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-opus-5-5",
+                "input": 1.12,
+                "output": 5.6,
+                "cacheRead": 0.056,
+                "cacheWrite": null,
+                "group": "claude",
+                "groupKind": "default",
+                "grpRatio": 1.5,
+                "base": {
+                  "input": 1.12,
+                  "output": 5.6,
+                  "cacheRead": 0.056
+                },
+                "groups": [
+                  {
+                    "group": "claude",
+                    "ratio": 1,
+                    "input": 1.12,
+                    "output": 5.6,
+                    "cacheRead": 0.056
+                  },
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 5.25,
+                    "input": 5.88,
+                    "output": 29.4,
+                    "cacheRead": 0.29
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$28/out$140 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-sonnet-4-6",
+                "input": 0.84,
+                "output": 4.2,
+                "cacheRead": 0.084,
+                "cacheWrite": null,
+                "group": "claude",
+                "groupKind": "default",
+                "grpRatio": 1.5,
+                "base": {
+                  "input": 0.84,
+                  "output": 4.2,
+                  "cacheRead": 0.084
+                },
+                "groups": [
+                  {
+                    "group": "claude",
+                    "ratio": 1,
+                    "input": 0.84,
+                    "output": 4.2,
+                    "cacheRead": 0.084
+                  },
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 5.25,
+                    "input": 4.41,
+                    "output": 22.05,
+                    "cacheRead": 0.44
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$21/out$105 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-sonnet-5",
+                "input": 0.56,
+                "output": 2.8,
+                "cacheRead": 0.056,
+                "cacheWrite": null,
+                "group": "claude",
+                "groupKind": "default",
+                "grpRatio": 1.5,
+                "base": {
+                  "input": 0.56,
+                  "output": 2.8,
+                  "cacheRead": 0.056
+                },
+                "groups": [
+                  {
+                    "group": "claude",
+                    "ratio": 1,
+                    "input": 0.56,
+                    "output": 2.8,
+                    "cacheRead": 0.056
+                  },
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 5.25,
+                    "input": 2.94,
+                    "output": 14.7,
+                    "cacheRead": 0.29
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$70 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-sonnet-5-5",
+                "input": 0.56,
+                "output": 2.8,
+                "cacheRead": 0.056,
+                "cacheWrite": null,
+                "group": "claude",
+                "groupKind": "default",
+                "grpRatio": 1.5,
+                "base": {
+                  "input": 0.56,
+                  "output": 2.8,
+                  "cacheRead": 0.056
+                },
+                "groups": [
+                  {
+                    "group": "claude",
+                    "ratio": 1,
+                    "input": 0.56,
+                    "output": 2.8,
+                    "cacheRead": 0.056
+                  },
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 5.25,
+                    "input": 2.94,
+                    "output": 14.7,
+                    "cacheRead": 0.29
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$70 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-fable-5",
+                "input": 14.7,
+                "output": 73.5,
+                "cacheRead": 1.47,
+                "cacheWrite": null,
+                "group": "Claude-Max20x",
+                "groupKind": "default",
+                "grpRatio": 8,
+                "base": {
+                  "input": 14.7,
+                  "output": 73.5,
+                  "cacheRead": 1.47
+                },
+                "groups": [
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 1,
+                    "input": 14.7,
+                    "output": 73.5,
+                    "cacheRead": 1.47
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$70/out$350 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-fable-5-1",
+                "input": 14.7,
+                "output": 73.5,
+                "cacheRead": 0.37,
+                "cacheWrite": null,
+                "group": "Claude-Max20x",
+                "groupKind": "default",
+                "grpRatio": 8,
+                "base": {
+                  "input": 14.7,
+                  "output": 73.5,
+                  "cacheRead": 0.37
+                },
+                "groups": [
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 1,
+                    "input": 14.7,
+                    "output": 73.5,
+                    "cacheRead": 0.37
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$70/out$350 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "claude-haiku-5-5",
+                "input": 0.15,
+                "output": 0.73,
+                "cacheRead": 0.015,
+                "cacheWrite": null,
+                "group": "Claude-Max20x",
+                "groupKind": "default",
+                "grpRatio": 8,
+                "base": {
+                  "input": 0.15,
+                  "output": 0.73,
+                  "cacheRead": 0.015
+                },
+                "groups": [
+                  {
+                    "group": "Claude-Max20x",
+                    "ratio": 1,
+                    "input": 0.15,
+                    "output": 0.73,
+                    "cacheRead": 0.015
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$0.7/out$3.5 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "deepseek-flash",
+                "input": 1.12,
+                "output": 4.48,
+                "cacheRead": 0.022,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 1.12,
+                  "output": 4.48,
+                  "cacheRead": 0.022
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 1.12,
+                    "output": 4.48,
+                    "cacheRead": 0.022
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$2/out$8 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "deepseek-v4-flash-0731",
+                "input": 1.12,
+                "output": 4.48,
+                "cacheRead": 0.022,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 1.12,
+                  "output": 4.48,
+                  "cacheRead": 0.022
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 1.12,
+                    "output": 4.48,
+                    "cacheRead": 0.022
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$2/out$8 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "deepseek-v4-pro",
+                "input": 5.04,
+                "output": 15.12,
+                "cacheRead": 0.17,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 5.04,
+                  "output": 15.12,
+                  "cacheRead": 0.17
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 5.04,
+                    "output": 15.12,
+                    "cacheRead": 0.17
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$9/out$27 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "deepseek-v4-pro-0813",
+                "input": 5.04,
+                "output": 15.12,
+                "cacheRead": 0.17,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 5.04,
+                  "output": 15.12,
+                  "cacheRead": 0.17
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 5.04,
+                    "output": 15.12,
+                    "cacheRead": 0.17
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$9/out$27 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "deepseek-v4.1-flash",
+                "input": 1.12,
+                "output": 4.48,
+                "cacheRead": 0.022,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 1.12,
+                  "output": 4.48,
+                  "cacheRead": 0.022
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 1.12,
+                    "output": 4.48,
+                    "cacheRead": 0.022
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$2/out$8 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "glm-5.1",
+                "input": 3.36,
+                "output": 13.44,
+                "cacheRead": 0.73,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 3.36,
+                  "output": 13.44,
+                  "cacheRead": 0.73
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 3.36,
+                    "output": 13.44,
+                    "cacheRead": 0.73
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$6/out$24 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "glm-5.2",
+                "input": 4.48,
+                "output": 15.68,
+                "cacheRead": 1.12,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 4.48,
+                  "output": 15.68,
+                  "cacheRead": 1.12
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 4.48,
+                    "output": 15.68,
+                    "cacheRead": 1.12
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$8/out$28 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "glm-5.3",
-                "input": 0.64,
-                "output": 2.24,
-                "cacheRead": 0.16,
+                "input": 4.48,
+                "output": 15.68,
+                "cacheRead": 1.12,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.64,
-                  "output": 2.24,
-                  "cacheRead": 0.16
+                  "input": 4.48,
+                  "output": 15.68,
+                  "cacheRead": 1.12
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.64,
-                    "output": 2.24,
-                    "cacheRead": 0.16
+                    "input": 4.48,
+                    "output": 15.68,
+                    "cacheRead": 1.12
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1.14/out$4 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$8/out$28 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "glm-5.3-flash",
-                "input": 0.064,
-                "output": 0.22,
-                "cacheRead": 0.018,
+                "input": 0.45,
+                "output": 1.57,
+                "cacheRead": 0.13,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.064,
-                  "output": 0.22,
-                  "cacheRead": 0.018
+                  "input": 0.45,
+                  "output": 1.57,
+                  "cacheRead": 0.13
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.064,
-                    "output": 0.22,
-                    "cacheRead": 0.018
+                    "input": 0.45,
+                    "output": 1.57,
+                    "cacheRead": 0.13
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.11/out$0.4 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$0.8/out$2.8 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "glm-5.3-flashx",
-                "input": 0.16,
-                "output": 0.56,
-                "cacheRead": 0.046,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.16,
-                  "output": 0.56,
-                  "cacheRead": 0.046
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.16,
-                    "output": 0.56,
-                    "cacheRead": 0.046
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.29/out$1 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "glm-5.2-fast-preview",
-                "input": 1.28,
-                "output": 4.48,
+                "input": 1.12,
+                "output": 3.92,
                 "cacheRead": 0.32,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 1.28,
-                  "output": 4.48,
+                  "input": 1.12,
+                  "output": 3.92,
                   "cacheRead": 0.32
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 1.28,
-                    "output": 4.48,
+                    "input": 1.12,
+                    "output": 3.92,
                     "cacheRead": 0.32
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2.29/out$8 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "deepseek-v4.1-flash",
-                "input": 0.16,
-                "output": 0.64,
-                "cacheRead": 0.0032,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.16,
-                  "output": 0.64,
-                  "cacheRead": 0.0032
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.16,
-                    "output": 0.64,
-                    "cacheRead": 0.0032
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.29/out$1.14 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "deepseek-v4-pro",
-                "input": 0.72,
-                "output": 2.16,
-                "cacheRead": 0.024,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.72,
-                  "output": 2.16,
-                  "cacheRead": 0.024
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.72,
-                    "output": 2.16,
-                    "cacheRead": 0.024
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1.29/out$3.86 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "kimi-k3",
-                "input": 1.6,
-                "output": 8,
-                "cacheRead": 0.16,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 1.6,
-                  "output": 8,
-                  "cacheRead": 0.16
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 1.6,
-                    "output": 8,
-                    "cacheRead": 0.16
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2.86/out$14.29 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "kimi-k2.7-code",
-                "input": 0.52,
-                "output": 2.16,
-                "cacheRead": 0.1,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.52,
-                  "output": 2.16,
-                  "cacheRead": 0.1
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.52,
-                    "output": 2.16,
-                    "cacheRead": 0.1
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.93/out$3.86 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "qwen3.7-plus",
-                "input": 0.16,
-                "output": 0.64,
-                "cacheRead": 0.032,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.16,
-                  "output": 0.64,
-                  "cacheRead": 0.032
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.16,
-                    "output": 0.64,
-                    "cacheRead": 0.032
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.29/out$1.14 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "qwen3.8-max",
-                "input": 0.96,
-                "output": 2.88,
-                "cacheRead": 0.12,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.96,
-                  "output": 2.88,
-                  "cacheRead": 0.12
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.96,
-                    "output": 2.88,
-                    "cacheRead": 0.12
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1.71/out$5.14 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "qwen3.8-flash",
-                "input": 0.064,
-                "output": 0.22,
-                "cacheRead": 0.008,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.064,
-                  "output": 0.22,
-                  "cacheRead": 0.008
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.064,
-                    "output": 0.22,
-                    "cacheRead": 0.008
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.11/out$0.39 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "minimax-m2.7",
-                "input": 0.17,
-                "output": 0.67,
-                "cacheRead": 0.034,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.17,
-                  "output": 0.67,
-                  "cacheRead": 0.034
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.17,
-                    "output": 0.67,
-                    "cacheRead": 0.034
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.3/out$1.2 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "minimax-m3",
-                "input": 0.17,
-                "output": 0.67,
-                "cacheRead": 0.034,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.17,
-                  "output": 0.67,
-                  "cacheRead": 0.034
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.17,
-                    "output": 0.67,
-                    "cacheRead": 0.034
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.3/out$1.2 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "minimax-m2.7-highspeed",
-                "input": 0.34,
-                "output": 1.34,
-                "cacheRead": 0.034,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.34,
-                  "output": 1.34,
-                  "cacheRead": 0.034
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.34,
-                    "output": 1.34,
-                    "cacheRead": 0.034
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.6/out$2.4 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "hy4-preview",
-                "input": 0.48,
-                "output": 1.44,
-                "cacheRead": 0.024,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.48,
-                  "output": 1.44,
-                  "cacheRead": 0.024
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.48,
-                    "output": 1.44,
-                    "cacheRead": 0.024
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.86/out$2.57 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$2/out$7 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "hy3",
-                "input": 0.08,
-                "output": 0.32,
-                "cacheRead": 0.02,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.08,
-                  "output": 0.32,
-                  "cacheRead": 0.02
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.08,
-                    "output": 0.32,
-                    "cacheRead": 0.02
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.14/out$0.57 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "doubao-seed-2.1-pro",
-                "input": 0.48,
-                "output": 2.4,
-                "cacheRead": 0.096,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.48,
-                  "output": 2.4,
-                  "cacheRead": 0.096
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.48,
-                    "output": 2.4,
-                    "cacheRead": 0.096
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.86/out$4.29 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "doubao-seed-2.1-lite",
-                "input": 0.064,
-                "output": 0.22,
-                "cacheRead": 0.013,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.064,
-                  "output": 0.22,
-                  "cacheRead": 0.013
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.064,
-                    "output": 0.22,
-                    "cacheRead": 0.013
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.11/out$0.39 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "doubao-seed-2.0-code",
-                "input": 0.26,
-                "output": 1.28,
-                "cacheRead": 0.051,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.26,
-                  "output": 1.28,
-                  "cacheRead": 0.051
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.26,
-                    "output": 1.28,
-                    "cacheRead": 0.051
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.46/out$2.29 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "doubao-seed-2.0-mini",
-                "input": 0.016,
-                "output": 0.16,
-                "cacheRead": 0.0032,
-                "cacheWrite": null,
-                "group": "cn-models",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.016,
-                  "output": 0.16,
-                  "cacheRead": 0.0032
-                },
-                "groups": [
-                  {
-                    "group": "cn-models",
-                    "ratio": 1,
-                    "input": 0.016,
-                    "output": 0.16,
-                    "cacheRead": 0.0032
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.029/out$0.29 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "glm-5.2",
-                "input": 0.64,
+                "input": 0.56,
                 "output": 2.24,
-                "cacheRead": 0.16,
+                "cacheRead": 0.14,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.64,
+                  "input": 0.56,
                   "output": 2.24,
-                  "cacheRead": 0.16
+                  "cacheRead": 0.14
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.64,
+                    "input": 0.56,
                     "output": 2.24,
-                    "cacheRead": 0.16
+                    "cacheRead": 0.14
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1.14/out$4 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$1/out$4 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "glm-5.1",
-                "input": 0.48,
-                "output": 1.92,
-                "cacheRead": 0.1,
+                "model": "hy4-preview",
+                "input": 3.36,
+                "output": 10.08,
+                "cacheRead": 0.17,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.48,
-                  "output": 1.92,
-                  "cacheRead": 0.1
+                  "input": 3.36,
+                  "output": 10.08,
+                  "cacheRead": 0.17
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.48,
-                    "output": 1.92,
-                    "cacheRead": 0.1
+                    "input": 3.36,
+                    "output": 10.08,
+                    "cacheRead": 0.17
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.86/out$3.43 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$6/out$18 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "deepseek-v4-pro-0813",
-                "input": 0.72,
-                "output": 2.16,
-                "cacheRead": 0.024,
+                "model": "kimi-k2.7-code",
+                "input": 3.64,
+                "output": 15.12,
+                "cacheRead": 0.73,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.72,
-                  "output": 2.16,
-                  "cacheRead": 0.024
+                  "input": 3.64,
+                  "output": 15.12,
+                  "cacheRead": 0.73
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.72,
-                    "output": 2.16,
-                    "cacheRead": 0.024
+                    "input": 3.64,
+                    "output": 15.12,
+                    "cacheRead": 0.73
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1.29/out$3.86 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$6.5/out$27 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "deepseek-v4-flash-0731",
-                "input": 0.16,
-                "output": 0.64,
-                "cacheRead": 0.0032,
+                "model": "kimi-k3",
+                "input": 11.2,
+                "output": 56,
+                "cacheRead": 1.12,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.16,
-                  "output": 0.64,
-                  "cacheRead": 0.0032
+                  "input": 11.2,
+                  "output": 56,
+                  "cacheRead": 1.12
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.16,
-                    "output": 0.64,
-                    "cacheRead": 0.0032
+                    "input": 11.2,
+                    "output": 56,
+                    "cacheRead": 1.12
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.29/out$1.14 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$20/out$100 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "deepseek-flash",
-                "input": 0.16,
-                "output": 0.64,
-                "cacheRead": 0.0032,
+                "model": "minimax-m3",
+                "input": 1.18,
+                "output": 4.7,
+                "cacheRead": 0.24,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.16,
-                  "output": 0.64,
-                  "cacheRead": 0.0032
+                  "input": 1.18,
+                  "output": 4.7,
+                  "cacheRead": 0.24
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.16,
-                    "output": 0.64,
-                    "cacheRead": 0.0032
+                    "input": 1.18,
+                    "output": 4.7,
+                    "cacheRead": 0.24
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.29/out$1.14 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$2.1/out$8.4 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "kimi-k2.6",
-                "input": 0.52,
-                "output": 2.16,
-                "cacheRead": 0.088,
+                "model": "qwen3.7-max",
+                "input": 6.72,
+                "output": 20.16,
+                "cacheRead": 1.34,
                 "cacheWrite": null,
                 "group": "cn-models",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 3,
                 "base": {
-                  "input": 0.52,
-                  "output": 2.16,
-                  "cacheRead": 0.088
+                  "input": 6.72,
+                  "output": 20.16,
+                  "cacheRead": 1.34
                 },
                 "groups": [
                   {
                     "group": "cn-models",
                     "ratio": 1,
-                    "input": 0.52,
-                    "output": 2.16,
-                    "cacheRead": 0.088
+                    "input": 6.72,
+                    "output": 20.16,
+                    "cacheRead": 1.34
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.93/out$3.86 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$12/out$36 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "kimi-k2.5",
-                "input": 0.32,
-                "output": 1.68,
+                "model": "qwen3.7-plus",
+                "input": 1.12,
+                "output": 4.48,
+                "cacheRead": 0.22,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 1.12,
+                  "output": 4.48,
+                  "cacheRead": 0.22
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 1.12,
+                    "output": 4.48,
+                    "cacheRead": 0.22
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$2/out$8 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "qwen3.8-max",
+                "input": 6.72,
+                "output": 20.16,
+                "cacheRead": 0.84,
+                "cacheWrite": null,
+                "group": "cn-models",
+                "groupKind": "default",
+                "grpRatio": 3,
+                "base": {
+                  "input": 6.72,
+                  "output": 20.16,
+                  "cacheRead": 0.84
+                },
+                "groups": [
+                  {
+                    "group": "cn-models",
+                    "ratio": 1,
+                    "input": 6.72,
+                    "output": 20.16,
+                    "cacheRead": 0.84
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$12/out$36 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "gpt-5.6-sol",
+                "input": 1.12,
+                "output": 5.6,
+                "cacheRead": 0.11,
+                "cacheWrite": null,
+                "group": "codex-pro20x",
+                "groupKind": "default",
+                "grpRatio": 1.8,
+                "base": {
+                  "input": 1.12,
+                  "output": 5.6,
+                  "cacheRead": 0.11
+                },
+                "groups": [
+                  {
+                    "group": "codex-pro20x",
+                    "ratio": 1,
+                    "input": 1.12,
+                    "output": 5.6,
+                    "cacheRead": 0.11
+                  },
+                  {
+                    "group": "codex-Pro20x-Max",
+                    "ratio": 1.5,
+                    "input": 1.68,
+                    "output": 8.4,
+                    "cacheRead": 0.17
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$28/out$140 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "gpt-5.6-terra",
+                "input": 0.56,
+                "output": 3.36,
                 "cacheRead": 0.056,
                 "cacheWrite": null,
-                "group": "cn-models",
+                "group": "codex-pro20x",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 1.8,
                 "base": {
-                  "input": 0.32,
-                  "output": 1.68,
+                  "input": 0.56,
+                  "output": 3.36,
                   "cacheRead": 0.056
                 },
                 "groups": [
                   {
-                    "group": "cn-models",
+                    "group": "codex-pro20x",
                     "ratio": 1,
-                    "input": 0.32,
-                    "output": 1.68,
+                    "input": 0.56,
+                    "output": 3.36,
                     "cacheRead": 0.056
+                  },
+                  {
+                    "group": "codex-Pro20x-Max",
+                    "ratio": 1.5,
+                    "input": 0.84,
+                    "output": 5.04,
+                    "cacheRead": 0.084
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.57/out$3 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$84 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "qwen3.7-max",
-                "input": 0.96,
-                "output": 2.88,
-                "cacheRead": 0.19,
+                "model": "gpt-6-astra",
+                "input": 2.8,
+                "output": 14,
+                "cacheRead": 0.28,
                 "cacheWrite": null,
-                "group": "cn-models",
+                "group": "codex-pro20x",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 1.8,
                 "base": {
-                  "input": 0.96,
-                  "output": 2.88,
-                  "cacheRead": 0.19
+                  "input": 2.8,
+                  "output": 14,
+                  "cacheRead": 0.28
                 },
                 "groups": [
                   {
-                    "group": "cn-models",
+                    "group": "codex-pro20x",
                     "ratio": 1,
-                    "input": 0.96,
-                    "output": 2.88,
-                    "cacheRead": 0.19
+                    "input": 2.8,
+                    "output": 14,
+                    "cacheRead": 0.28
+                  },
+                  {
+                    "group": "codex-Pro20x-Max",
+                    "ratio": 1.5,
+                    "input": 4.2,
+                    "output": 21,
+                    "cacheRead": 0.42
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1.71/out$5.14 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$70/out$350 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "qwen3.6-plus",
-                "input": 0.16,
-                "output": 0.96,
-                "cacheRead": 0.032,
+                "model": "gpt-6-sol",
+                "input": 0.67,
+                "output": 3.36,
+                "cacheRead": 0.067,
                 "cacheWrite": null,
-                "group": "cn-models",
+                "group": "codex-pro20x",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 1.8,
                 "base": {
-                  "input": 0.16,
-                  "output": 0.96,
-                  "cacheRead": 0.032
+                  "input": 0.67,
+                  "output": 3.36,
+                  "cacheRead": 0.067
                 },
                 "groups": [
                   {
-                    "group": "cn-models",
+                    "group": "codex-pro20x",
                     "ratio": 1,
-                    "input": 0.16,
-                    "output": 0.96,
-                    "cacheRead": 0.032
+                    "input": 0.67,
+                    "output": 3.36,
+                    "cacheRead": 0.067
+                  },
+                  {
+                    "group": "codex-Pro20x-Max",
+                    "ratio": 1.50746269,
+                    "input": 1.01,
+                    "output": 5.04,
+                    "cacheRead": 0.1
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.29/out$1.71 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$16.8/out$84 · heyroute-prices-cny-20261021.json"
               },
               {
-                "model": "doubao-seed-2.0-pro",
-                "input": 0.26,
-                "output": 1.28,
-                "cacheRead": 0.051,
+                "model": "gpt-6.1-sol",
+                "input": 0.67,
+                "output": 3.36,
+                "cacheRead": 0.067,
                 "cacheWrite": null,
-                "group": "cn-models",
+                "group": "codex-pro20x",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 1.8,
                 "base": {
-                  "input": 0.26,
-                  "output": 1.28,
-                  "cacheRead": 0.051
+                  "input": 0.67,
+                  "output": 3.36,
+                  "cacheRead": 0.067
                 },
                 "groups": [
                   {
-                    "group": "cn-models",
+                    "group": "codex-pro20x",
                     "ratio": 1,
-                    "input": 0.26,
-                    "output": 1.28,
-                    "cacheRead": 0.051
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.46/out$2.29 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-fable-5-1",
-                "input": 2.1,
-                "output": 10.5,
-                "cacheRead": 0.052,
-                "cacheWrite": null,
-                "group": "Claude-Max20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 2.1,
-                  "output": 10.5,
-                  "cacheRead": 0.052
-                },
-                "groups": [
+                    "input": 0.67,
+                    "output": 3.36,
+                    "cacheRead": 0.067
+                  },
                   {
-                    "group": "Claude-Max20x",
-                    "ratio": 1,
-                    "input": 2.1,
-                    "output": 10.5,
-                    "cacheRead": 0.052
+                    "group": "codex-Pro20x-Max",
+                    "ratio": 1.50746269,
+                    "input": 1.01,
+                    "output": 5.04,
+                    "cacheRead": 0.1
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$10/out$50 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-haiku-5-5",
-                "input": 0.021,
-                "output": 0.1,
-                "cacheRead": 0.0021,
-                "cacheWrite": null,
-                "group": "Claude-Max20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.021,
-                  "output": 0.1,
-                  "cacheRead": 0.0021
-                },
-                "groups": [
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 1,
-                    "input": 0.021,
-                    "output": 0.1,
-                    "cacheRead": 0.0021
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.1/out$0.5 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "claude-fable-5",
-                "input": 2.1,
-                "output": 10.5,
-                "cacheRead": 0.21,
-                "cacheWrite": null,
-                "group": "Claude-Max20x",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 2.1,
-                  "output": 10.5,
-                  "cacheRead": 0.21
-                },
-                "groups": [
-                  {
-                    "group": "Claude-Max20x",
-                    "ratio": 1,
-                    "input": 2.1,
-                    "output": 10.5,
-                    "cacheRead": 0.21
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$10/out$50 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "grok-4.7",
-                "input": 0.04,
-                "output": 0.12,
-                "cacheRead": 0.01,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.04,
-                  "output": 0.12,
-                  "cacheRead": 0.01
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.12,
-                    "cacheRead": 0.01
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$6 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "grok-4.6",
-                "input": 0.04,
-                "output": 0.12,
-                "cacheRead": 0.01,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.04,
-                  "output": 0.12,
-                  "cacheRead": 0.01
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.12,
-                    "cacheRead": 0.01
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$6 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "grok-4.5",
-                "input": 0.04,
-                "output": 0.12,
-                "cacheRead": 0.006,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.04,
-                  "output": 0.12,
-                  "cacheRead": 0.006
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.12,
-                    "cacheRead": 0.006
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$6 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "grok",
-                "input": 0.04,
-                "output": 0.12,
-                "cacheRead": 0.006,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.04,
-                  "output": 0.12,
-                  "cacheRead": 0.006
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.12,
-                    "cacheRead": 0.006
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$6 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "composer-2.5",
-                "input": 0.04,
-                "output": 0.12,
-                "cacheRead": 0.006,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.04,
-                  "output": 0.12,
-                  "cacheRead": 0.006
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.12,
-                    "cacheRead": 0.006
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$6 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "grok-composer-2.5-fast",
-                "input": 0.04,
-                "output": 0.12,
-                "cacheRead": 0.006,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.04,
-                  "output": 0.12,
-                  "cacheRead": 0.006
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.12,
-                    "cacheRead": 0.006
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$6 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "grok-composer",
-                "input": 0.04,
-                "output": 0.12,
-                "cacheRead": 0.006,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.04,
-                  "output": 0.12,
-                  "cacheRead": 0.006
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.04,
-                    "output": 0.12,
-                    "cacheRead": 0.006
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$6 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "grok-build-latest",
-                "input": 0.02,
-                "output": 0.04,
-                "cacheRead": 0.004,
-                "cacheWrite": null,
-                "group": "grok",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.02,
-                  "output": 0.04,
-                  "cacheRead": 0.004
-                },
-                "groups": [
-                  {
-                    "group": "grok",
-                    "ratio": 1,
-                    "input": 0.02,
-                    "output": 0.04,
-                    "cacheRead": 0.004
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$1/out$2 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "gemini-4-argon",
-                "input": 0.1,
-                "output": 0.5,
-                "cacheRead": 0.005,
-                "cacheWrite": null,
-                "group": "gemini",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.1,
-                  "output": 0.5,
-                  "cacheRead": 0.005
-                },
-                "groups": [
-                  {
-                    "group": "gemini",
-                    "ratio": 1,
-                    "input": 0.1,
-                    "output": 0.5,
-                    "cacheRead": 0.005
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$2/out$10 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$16.8/out$84 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "gemini-3-flash",
-                "input": 0.025,
-                "output": 0.15,
-                "cacheRead": 0.0025,
+                "input": 0.17,
+                "output": 1.05,
+                "cacheRead": 0.018,
                 "cacheWrite": null,
                 "group": "gemini",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 2,
                 "base": {
-                  "input": 0.025,
-                  "output": 0.15,
-                  "cacheRead": 0.0025
+                  "input": 0.17,
+                  "output": 1.05,
+                  "cacheRead": 0.018
                 },
                 "groups": [
                   {
                     "group": "gemini",
                     "ratio": 1,
-                    "input": 0.025,
-                    "output": 0.15,
-                    "cacheRead": 0.0025
+                    "input": 0.17,
+                    "output": 1.05,
+                    "cacheRead": 0.018
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.5/out$3 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$3.5/out$21 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "gemini-3.1-flash-lite",
-                "input": 0.013,
-                "output": 0.075,
-                "cacheRead": 0.0013,
+                "input": 0.087,
+                "output": 0.53,
+                "cacheRead": 0.0088,
                 "cacheWrite": null,
                 "group": "gemini",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 2,
                 "base": {
-                  "input": 0.013,
-                  "output": 0.075,
-                  "cacheRead": 0.0013
+                  "input": 0.087,
+                  "output": 0.53,
+                  "cacheRead": 0.0088
                 },
                 "groups": [
                   {
                     "group": "gemini",
                     "ratio": 1,
-                    "input": 0.013,
-                    "output": 0.075,
-                    "cacheRead": 0.0013
+                    "input": 0.087,
+                    "output": 0.53,
+                    "cacheRead": 0.0088
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.25/out$1.5 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "gemini-3.8-flash",
-                "input": 0.037,
-                "output": 0.19,
-                "cacheRead": 0.0037,
-                "cacheWrite": null,
-                "group": "gemini",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.037,
-                  "output": 0.19,
-                  "cacheRead": 0.0037
-                },
-                "groups": [
-                  {
-                    "group": "gemini",
-                    "ratio": 1,
-                    "input": 0.037,
-                    "output": 0.19,
-                    "cacheRead": 0.0037
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.75/out$3.75 · heyroute-prices-20261018.json"
-              },
-              {
-                "model": "gemini-3.7-flash",
-                "input": 0.037,
-                "output": 0.19,
-                "cacheRead": 0.0037,
-                "cacheWrite": null,
-                "group": "gemini",
-                "groupKind": "default",
-                "grpRatio": 1,
-                "base": {
-                  "input": 0.037,
-                  "output": 0.19,
-                  "cacheRead": 0.0037
-                },
-                "groups": [
-                  {
-                    "group": "gemini",
-                    "ratio": 1,
-                    "input": 0.037,
-                    "output": 0.19,
-                    "cacheRead": 0.0037
-                  }
-                ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.75/out$3.75 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$1.75/out$10.5 · heyroute-prices-cny-20261021.json"
               },
               {
                 "model": "gemini-3.6-flash",
-                "input": 0.037,
-                "output": 0.19,
-                "cacheRead": 0.0037,
+                "input": 0.26,
+                "output": 1.31,
+                "cacheRead": 0.026,
                 "cacheWrite": null,
                 "group": "gemini",
                 "groupKind": "default",
-                "grpRatio": 1,
+                "grpRatio": 2,
                 "base": {
-                  "input": 0.037,
-                  "output": 0.19,
-                  "cacheRead": 0.0037
+                  "input": 0.26,
+                  "output": 1.31,
+                  "cacheRead": 0.026
                 },
                 "groups": [
                   {
                     "group": "gemini",
                     "ratio": 1,
-                    "input": 0.037,
-                    "output": 0.19,
-                    "cacheRead": 0.0037
+                    "input": 0.26,
+                    "output": 1.31,
+                    "cacheRead": 0.026
                   }
                 ],
-                "source": "heyroute-pricing-page(DOM抓取,默认分组为文档首现分组;含促销was/now) · list(before promo) in$0.75/out$3.75 · heyroute-prices-20261018.json"
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$5.25/out$26.25 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "gemini-3.7-flash",
+                "input": 0.26,
+                "output": 1.31,
+                "cacheRead": 0.026,
+                "cacheWrite": null,
+                "group": "gemini",
+                "groupKind": "default",
+                "grpRatio": 2,
+                "base": {
+                  "input": 0.26,
+                  "output": 1.31,
+                  "cacheRead": 0.026
+                },
+                "groups": [
+                  {
+                    "group": "gemini",
+                    "ratio": 1,
+                    "input": 0.26,
+                    "output": 1.31,
+                    "cacheRead": 0.026
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$5.25/out$26.25 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "gemini-3.8-flash",
+                "input": 0.26,
+                "output": 1.31,
+                "cacheRead": 0.026,
+                "cacheWrite": null,
+                "group": "gemini",
+                "groupKind": "default",
+                "grpRatio": 2,
+                "base": {
+                  "input": 0.26,
+                  "output": 1.31,
+                  "cacheRead": 0.026
+                },
+                "groups": [
+                  {
+                    "group": "gemini",
+                    "ratio": 1,
+                    "input": 0.26,
+                    "output": 1.31,
+                    "cacheRead": 0.026
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$5.25/out$26.25 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "gemini-4-argon",
+                "input": 0.7,
+                "output": 3.5,
+                "cacheRead": 0.035,
+                "cacheWrite": null,
+                "group": "gemini",
+                "groupKind": "default",
+                "grpRatio": 2,
+                "base": {
+                  "input": 0.7,
+                  "output": 3.5,
+                  "cacheRead": 0.035
+                },
+                "groups": [
+                  {
+                    "group": "gemini",
+                    "ratio": 1,
+                    "input": 0.7,
+                    "output": 3.5,
+                    "cacheRead": 0.035
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$70 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "composer-2.5",
+                "input": 0.28,
+                "output": 0.84,
+                "cacheRead": 0.042,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.28,
+                  "output": 0.84,
+                  "cacheRead": 0.042
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.28,
+                    "output": 0.84,
+                    "cacheRead": 0.042
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$42 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "grok",
+                "input": 0.28,
+                "output": 0.84,
+                "cacheRead": 0.042,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.28,
+                  "output": 0.84,
+                  "cacheRead": 0.042
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.28,
+                    "output": 0.84,
+                    "cacheRead": 0.042
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$42 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "grok-4.5",
+                "input": 0.28,
+                "output": 0.84,
+                "cacheRead": 0.042,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.28,
+                  "output": 0.84,
+                  "cacheRead": 0.042
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.28,
+                    "output": 0.84,
+                    "cacheRead": 0.042
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$42 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "grok-4.6",
+                "input": 0.28,
+                "output": 0.84,
+                "cacheRead": 0.07,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.28,
+                  "output": 0.84,
+                  "cacheRead": 0.07
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.28,
+                    "output": 0.84,
+                    "cacheRead": 0.07
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$42 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "grok-4.7",
+                "input": 0.28,
+                "output": 0.84,
+                "cacheRead": 0.07,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.28,
+                  "output": 0.84,
+                  "cacheRead": 0.07
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.28,
+                    "output": 0.84,
+                    "cacheRead": 0.07
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$42 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "grok-build-latest",
+                "input": 0.14,
+                "output": 0.28,
+                "cacheRead": 0.028,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.14,
+                  "output": 0.28,
+                  "cacheRead": 0.028
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.14,
+                    "output": 0.28,
+                    "cacheRead": 0.028
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$7/out$14 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "grok-composer",
+                "input": 0.28,
+                "output": 0.84,
+                "cacheRead": 0.042,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.28,
+                  "output": 0.84,
+                  "cacheRead": 0.042
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.28,
+                    "output": 0.84,
+                    "cacheRead": 0.042
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$42 · heyroute-prices-cny-20261021.json"
+              },
+              {
+                "model": "grok-composer-2.5-fast",
+                "input": 0.28,
+                "output": 0.84,
+                "cacheRead": 0.042,
+                "cacheWrite": null,
+                "group": "grok",
+                "groupKind": "default",
+                "grpRatio": 1,
+                "base": {
+                  "input": 0.28,
+                  "output": 0.84,
+                  "cacheRead": 0.042
+                },
+                "groups": [
+                  {
+                    "group": "grok",
+                    "ratio": 1,
+                    "input": 0.28,
+                    "output": 0.84,
+                    "cacheRead": 0.042
+                  }
+                ],
+                "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json · list(before promo) in$14/out$42 · heyroute-prices-cny-20261021.json"
               }
             ],
             "ratio": null,
             "parser": "heyroute-manual",
-            "parseErrors": [
-              "价格缺失跳过: grok-imagine-image",
-              "价格缺失跳过: gpt-image-2",
-              "价格缺失跳过: gemini-3.1-flash-image",
-              "价格缺失跳过: gemini-3-pro-image",
-              "价格缺失跳过: gpt-image-2.5",
-              "价格缺失跳过: grok-video",
-              "价格缺失跳过: grok-imagine-video",
-              "价格缺失跳过: grok-imagine-video-1.5",
-              "价格缺失跳过: minimax-h3-original-768p",
-              "价格缺失跳过: minimax-h3-original-1080p",
-              "价格缺失跳过: minimax-h3-original-cf-2k",
-              "价格缺失跳过: seedance-2.5"
-            ]
+            "parseErrors": []
           }
         },
         "perf": null,
@@ -13240,7 +12875,7 @@
         "reconcile": null,
         "fingerprint": null
       },
-      "lastBatchAt": "2026-10-21T07:20:10.422Z"
+      "lastBatchAt": "2026-10-21T11:21:34.402Z"
     },
     {
       "name": "infistar",
@@ -13293,27 +12928,21 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coveragePct": {
         "all": 15,
         "code": 20,
         "office": 30,
-        "ecom": 35,
         "drama": 25,
-        "image": 40,
         "biz": 10
       },
       "scenesWithoutScore": [
         "综合",
         "编程",
         "办公",
-        "电商",
-        "短剧",
-        "生图",
+        "剧本创作",
         "企业"
       ],
       "metrics": {
@@ -19354,9 +18983,7 @@
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "scenesWithoutScore": [],
@@ -20105,9 +19732,7 @@
         "all": 15,
         "code": 20,
         "office": 30,
-        "ecom": 35,
         "drama": 25,
-        "image": 40,
         "biz": 10
       },
       "scenesWithoutScore": [],
@@ -20254,9 +19879,7 @@
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "scenesWithoutScore": [],
@@ -20395,6 +20018,14 @@
     },
     {
       "level": "warn",
+      "code": "aging_health",
+      "site": "aixoras",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-001",
+      "action": "等下一轮或手动补跑"
+    },
+    {
+      "level": "warn",
       "code": "high_timeout",
       "site": "aixoras",
       "msg": "超时率 25%(ST 桶按 0.3 倍扣减)",
@@ -20408,6 +20039,14 @@
       "msg": "价格波动 >10%:claude-fable-5 16→7 / glm-5.3 8→5.6 / claude-opus-5 8→3.5 等 12 项",
       "evidence": null,
       "action": "前端已标注涨价,复核是否影响 EP 排名"
+    },
+    {
+      "level": "warn",
+      "code": "aging_health",
+      "site": "aicost",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-003",
+      "action": "等下一轮或手动补跑"
     },
     {
       "level": "warn",
@@ -20427,11 +20066,27 @@
     },
     {
       "level": "warn",
+      "code": "aging_health",
+      "site": "memecode",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-011",
+      "action": "等下一轮或手动补跑"
+    },
+    {
+      "level": "warn",
       "code": "inject_untested",
       "site": "memecode",
       "msg": "注入开销未实测(无 tokens 批次)—— EP 桶按无注入计,会低估号池渠道真实成本",
       "evidence": null,
       "action": "tsx cli.ts tokens --site=memecode 补测后自动生效"
+    },
+    {
+      "level": "warn",
+      "code": "aging_health",
+      "site": "uuapi",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-013",
+      "action": "等下一轮或手动补跑"
     },
     {
       "level": "warn",
@@ -20443,11 +20098,27 @@
     },
     {
       "level": "warn",
+      "code": "aging_health",
+      "site": "fluxionai",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-015",
+      "action": "等下一轮或手动补跑"
+    },
+    {
+      "level": "warn",
       "code": "inject_untested",
       "site": "fluxionai",
       "msg": "注入开销未实测(无 tokens 批次)—— EP 桶按无注入计,会低估号池渠道真实成本",
       "evidence": null,
       "action": "tsx cli.ts tokens --site=fluxionai 补测后自动生效"
+    },
+    {
+      "level": "warn",
+      "code": "aging_health",
+      "site": "hahacode",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-017",
+      "action": "等下一轮或手动补跑"
     },
     {
       "level": "warn",
@@ -20459,6 +20130,14 @@
     },
     {
       "level": "warn",
+      "code": "aging_health",
+      "site": "uptoken",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-019",
+      "action": "等下一轮或手动补跑"
+    },
+    {
+      "level": "warn",
       "code": "inject_untested",
       "site": "uptoken",
       "msg": "注入开销未实测(无 tokens 批次)—— EP 桶按无注入计,会低估号池渠道真实成本",
@@ -20467,11 +20146,35 @@
     },
     {
       "level": "warn",
+      "code": "aging_health",
+      "site": "heyroute",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-021",
+      "action": "等下一轮或手动补跑"
+    },
+    {
+      "level": "warn",
+      "code": "price_jump",
+      "site": "heyroute",
+      "msg": "价格波动 >10%:claude-haiku-4-5-20251001 0.04→0.28 / claude-opus-4-6 0.2→1.4 / claude-opus-4-7 0.2→1.4 等 49 项",
+      "evidence": null,
+      "action": "前端已标注涨价,复核是否影响 EP 排名"
+    },
+    {
+      "level": "warn",
       "code": "inject_untested",
       "site": "heyroute",
       "msg": "注入开销未实测(无 tokens 批次)—— EP 桶按无注入计,会低估号池渠道真实成本",
       "evidence": null,
       "action": "tsx cli.ts tokens --site=heyroute 补测后自动生效"
+    },
+    {
+      "level": "warn",
+      "code": "aging_health",
+      "site": "infistar",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-023",
+      "action": "等下一轮或手动补跑"
     },
     {
       "level": "warn",
@@ -20488,6 +20191,30 @@
       "msg": "注入开销未实测(无 tokens 批次)—— EP 桶按无注入计,会低估号池渠道真实成本",
       "evidence": null,
       "action": "tsx cli.ts tokens --site=infistar 补测后自动生效"
+    },
+    {
+      "level": "warn",
+      "code": "aging_health",
+      "site": "openrouter",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-005",
+      "action": "等下一轮或手动补跑"
+    },
+    {
+      "level": "warn",
+      "code": "aging_health",
+      "site": "deepseek-official",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-007",
+      "action": "等下一轮或手动补跑"
+    },
+    {
+      "level": "warn",
+      "code": "aging_health",
+      "site": "zhipu-bigmodel",
+      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "evidence": "RL-RC-20261021-009",
+      "action": "等下一轮或手动补跑"
     },
     {
       "level": "info",
@@ -20821,7 +20548,7 @@
   "counts": {
     "sites": 12,
     "critical": 2,
-    "warn": 12,
+    "warn": 25,
     "info": 41
   }
 }

@@ -90,10 +90,10 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   check("深链匹配实测 key/模型名/示例 key 三路", /t\.key===want/.test(cmp) && /MODELS\[want\]/.test(cmp));
   check("非法值静默回退(c.tabs[0])", /var first=hit\|\|c\.tabs\[0\]/.test(cmp));
   const idx = fs.readFileSync(DIR + "index.html", "utf8");
-  check("首页含模型直达容器", /id="modelDirect"/.test(idx));
-  check("首页 chips 链接带 encodeURIComponent(t.key)", /compare\.html\?model='?\+encodeURIComponent\(t\.key\)/.test(idx));
-  check("首页「¥X 起」取 effIn 最小值(非标价)", /r\.effIn/.test(idx) && /Math\.min\.apply\(null,prices\)/.test(idx));
-  check("首页数据不来只留通用入口", /<a class="md-chip" href="compare\.html">进入模型比价/.test(idx));
+  check("首页含模型选择控件(源自 compare.tabs)", /id="model-select"/.test(idx) && /compare\.tabs/.test(idx));
+  check("首页按所选模型取价读 effIn(人民币到手价)", /r\.effIn/.test(idx) && /priceFor/.test(idx));
+  check("首页保留进入模型比价通用入口", /href="price\.html"/.test(idx));
+  check("首页模型数据缺失时给占位而非崩溃", /暂无报价数据/.test(idx));
 
   /* ---- 结构守卫(只看静态 HTML:JS 字符串拼接里的 class="…" 不算渲染产物) ---- */
   const staticHtml = src.replace(/<script>[\s\S]*?<\/script>/g, "").replace(/<style>[\s\S]*?<\/style>/g, "");

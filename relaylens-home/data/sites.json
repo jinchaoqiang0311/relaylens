@@ -1,7 +1,7 @@
 {
   "meta": {
-    "updated": "2026-10-21T07:31:55.323Z",
-    "weightsVersion": "2026-10-10.1",
+    "updated": "2026-10-22T14:13:36.174Z",
+    "weightsVersion": "2026-10-22.2",
     "license": "CC-BY-4.0",
     "source": "relaylens-probe",
     "fx": {
@@ -15,14 +15,14 @@
       "sitesRegistered": 12,
       "sitesPaidMeasured": 2,
       "sitesMonitored": 7,
-      "priceLineItems": 547,
-      "distinctModels": 202,
+      "priceLineItems": 535,
+      "distinctModels": 193,
       "reconcileVerified": 138,
       "reconcileMismatched": 0,
       "reconcileAmountUsd": 1.382,
       "reconcileAmountCny": 9.81,
       "maxSingleRequestTokens": 405338,
-      "batchesToday": 25,
+      "batchesToday": 0,
       "healthChecksTotal": 2957,
       "since": "2026-09-29",
       "referenceCount": 3
@@ -87,7 +87,7 @@
   },
   "compare": {
     "unit": "站方公示价 /M tokens(new-api 系为美元额度价,智谱为人民币)",
-    "fx": "到手价 = 站方额度价 × 站方声明的充值比例;比例未声明的站不给人民币价。 官方直连(OpenRouter)按美元现金支付,参考汇率 1 美元 = ¥7.1(2026-10-02)仅适用于它",
+    "fx": "到手价 = 站方额度价 × 站方声明的充值比例;比例未声明的站不给人民币价。 站方价格页直接公示人民币单价的站(如 heyroute 的 ¥ CNY 视图)以页面价为准,不乘比例。 官方直连(OpenRouter)按美元现金支付,参考汇率 1 美元 = ¥7.1(2026-10-02)仅适用于它",
     "officialAnchor": "openrouter",
     "note": "仅收录有官方锚(OpenRouter)的模型;价格为各站最新价格快照,计费列为该站最近一次逐笔对账实测。",
     "tabs": [
@@ -100,6 +100,7 @@
           "out": 50,
           "cr": 0.25
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -277,7 +278,7 @@
                 "head": false
               },
               {
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "grpRatio": 1,
                 "inP": 10,
                 "outP": 50,
@@ -477,24 +478,24 @@
             "site": "heyroute",
             "group": "Claude-Max20x",
             "groupKind": "default",
-            "inP": 2.1,
-            "outP": 10.5,
-            "cacheP": 0.05,
+            "inP": 14.7,
+            "outP": 73.5,
+            "cacheP": 0.37,
             "special": null,
             "channels": [
               {
                 "group": "Claude-Max20x",
                 "grpRatio": 1,
-                "inP": 2.1,
-                "outP": 10.5,
-                "cacheP": 0.05,
+                "inP": 14.7,
+                "outP": 73.5,
+                "cacheP": 0.37,
                 "head": true
               }
             ],
-            "baseIn": 2.1,
-            "baseOut": 10.5,
-            "baseCr": 0.052,
-            "grpRatio": 1,
+            "baseIn": 14.7,
+            "baseOut": 73.5,
+            "baseCr": 0.37,
+            "grpRatio": 8,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -503,11 +504,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.53,
-            "effOut": 2.63,
-            "effCr": 0.01,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 14.7,
+            "effOut": 73.5,
+            "effCr": 0.37,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -713,8 +714,7 @@
             "effCr": 0.25,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "claude-opus-5-5",
@@ -725,6 +725,7 @@
           "out": 20,
           "cr": 0.2
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -918,7 +919,7 @@
           },
           {
             "site": "uuapi",
-            "group": "企业级Kiro-Claude(优化版) 🔥",
+            "group": "企业级Kiro-Claude(优化版)",
             "groupKind": "median",
             "inP": 4,
             "outP": 20,
@@ -926,7 +927,7 @@
             "special": null,
             "channels": [
               {
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "grpRatio": 1,
                 "inP": 4,
                 "outP": 20,
@@ -1166,32 +1167,32 @@
             "site": "heyroute",
             "group": "claude",
             "groupKind": "default",
-            "inP": 0.16,
-            "outP": 0.8,
-            "cacheP": 0.01,
+            "inP": 1.12,
+            "outP": 5.6,
+            "cacheP": 0.06,
             "special": null,
             "channels": [
               {
                 "group": "claude",
                 "grpRatio": 1,
-                "inP": 0.16,
-                "outP": 0.8,
-                "cacheP": 0.01,
+                "inP": 1.12,
+                "outP": 5.6,
+                "cacheP": 0.06,
                 "head": true
               },
               {
                 "group": "Claude-Max20x",
                 "grpRatio": 5.25,
-                "inP": 0.84,
-                "outP": 4.2,
-                "cacheP": 0.04,
+                "inP": 5.88,
+                "outP": 29.4,
+                "cacheP": 0.29,
                 "head": false
               }
             ],
-            "baseIn": 0.16,
-            "baseOut": 0.8,
-            "baseCr": 0.008,
-            "grpRatio": 1,
+            "baseIn": 1.12,
+            "baseOut": 5.6,
+            "baseCr": 0.056,
+            "grpRatio": 1.5,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -1200,11 +1201,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.04,
-            "effOut": 0.2,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 1.12,
+            "effOut": 5.6,
+            "effCr": 0.06,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -1458,8 +1459,7 @@
             "effCr": 0.2,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gpt-6-1-sol",
@@ -1470,6 +1470,7 @@
           "out": 10,
           "cr": 0.1
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -1903,32 +1904,32 @@
             "site": "heyroute",
             "group": "codex-pro20x",
             "groupKind": "default",
-            "inP": 0.12,
-            "outP": 0.6,
-            "cacheP": 0.01,
+            "inP": 0.67,
+            "outP": 3.36,
+            "cacheP": 0.07,
             "special": null,
             "channels": [
               {
                 "group": "codex-pro20x",
                 "grpRatio": 1,
-                "inP": 0.12,
-                "outP": 0.6,
-                "cacheP": 0.01,
+                "inP": 0.67,
+                "outP": 3.36,
+                "cacheP": 0.07,
                 "head": true
               },
               {
                 "group": "codex-Pro20x-Max",
-                "grpRatio": 1.5,
-                "inP": 0.18,
-                "outP": 0.9,
-                "cacheP": 0.02,
+                "grpRatio": 1.50746269,
+                "inP": 1.01,
+                "outP": 5.04,
+                "cacheP": 0.1,
                 "head": false
               }
             ],
-            "baseIn": 0.12,
-            "baseOut": 0.6,
-            "baseCr": 0.012,
-            "grpRatio": 1,
+            "baseIn": 0.67,
+            "baseOut": 3.36,
+            "baseCr": 0.067,
+            "grpRatio": 1.8,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -1937,11 +1938,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.03,
-            "effOut": 0.15,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 0.67,
+            "effOut": 3.36,
+            "effCr": 0.07,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -2059,8 +2060,7 @@
             "effCr": 0.1,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gpt-6-astra",
@@ -2071,6 +2071,7 @@
           "out": 50,
           "cr": 1
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -2504,32 +2505,32 @@
             "site": "heyroute",
             "group": "codex-pro20x",
             "groupKind": "default",
-            "inP": 0.48,
-            "outP": 2.4,
-            "cacheP": 0.05,
+            "inP": 2.8,
+            "outP": 14,
+            "cacheP": 0.28,
             "special": null,
             "channels": [
               {
                 "group": "codex-pro20x",
                 "grpRatio": 1,
-                "inP": 0.48,
-                "outP": 2.4,
-                "cacheP": 0.05,
+                "inP": 2.8,
+                "outP": 14,
+                "cacheP": 0.28,
                 "head": true
               },
               {
                 "group": "codex-Pro20x-Max",
                 "grpRatio": 1.5,
-                "inP": 0.72,
-                "outP": 3.6,
-                "cacheP": 0.07,
+                "inP": 4.2,
+                "outP": 21,
+                "cacheP": 0.42,
                 "head": false
               }
             ],
-            "baseIn": 0.48,
-            "baseOut": 2.4,
-            "baseCr": 0.048,
-            "grpRatio": 1,
+            "baseIn": 2.8,
+            "baseOut": 14,
+            "baseCr": 0.28,
+            "grpRatio": 1.8,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -2538,11 +2539,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.12,
-            "effOut": 0.6,
-            "effCr": 0.01,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 2.8,
+            "effOut": 14,
+            "effCr": 0.28,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -2724,8 +2725,7 @@
             "effCr": 2,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gpt-6-sol",
@@ -2736,6 +2736,7 @@
           "out": 10,
           "cr": 0.2
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -3169,32 +3170,32 @@
             "site": "heyroute",
             "group": "codex-pro20x",
             "groupKind": "default",
-            "inP": 0.12,
-            "outP": 0.6,
-            "cacheP": 0.01,
+            "inP": 0.67,
+            "outP": 3.36,
+            "cacheP": 0.07,
             "special": null,
             "channels": [
               {
                 "group": "codex-pro20x",
                 "grpRatio": 1,
-                "inP": 0.12,
-                "outP": 0.6,
-                "cacheP": 0.01,
+                "inP": 0.67,
+                "outP": 3.36,
+                "cacheP": 0.07,
                 "head": true
               },
               {
                 "group": "codex-Pro20x-Max",
-                "grpRatio": 1.5,
-                "inP": 0.18,
-                "outP": 0.9,
-                "cacheP": 0.02,
+                "grpRatio": 1.50746269,
+                "inP": 1.01,
+                "outP": 5.04,
+                "cacheP": 0.1,
                 "head": false
               }
             ],
-            "baseIn": 0.12,
-            "baseOut": 0.6,
-            "baseCr": 0.012,
-            "grpRatio": 1,
+            "baseIn": 0.67,
+            "baseOut": 3.36,
+            "baseCr": 0.067,
+            "grpRatio": 1.8,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -3203,11 +3204,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.03,
-            "effOut": 0.15,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 0.67,
+            "effOut": 3.36,
+            "effCr": 0.07,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -3381,8 +3382,7 @@
             "effCr": 0.2,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "glm-5-3",
@@ -3393,6 +3393,7 @@
           "out": 1.4,
           "cr": 0.078
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -3614,24 +3615,24 @@
             "site": "heyroute",
             "group": "cn-models",
             "groupKind": "default",
-            "inP": 0.64,
-            "outP": 2.24,
-            "cacheP": 0.16,
+            "inP": 4.48,
+            "outP": 15.68,
+            "cacheP": 1.12,
             "special": null,
             "channels": [
               {
                 "group": "cn-models",
                 "grpRatio": 1,
-                "inP": 0.64,
-                "outP": 2.24,
-                "cacheP": 0.16,
+                "inP": 4.48,
+                "outP": 15.68,
+                "cacheP": 1.12,
                 "head": true
               }
             ],
-            "baseIn": 0.64,
-            "baseOut": 2.24,
-            "baseCr": 0.16,
-            "grpRatio": 1,
+            "baseIn": 4.48,
+            "baseOut": 15.68,
+            "baseCr": 1.12,
+            "grpRatio": 3,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -3640,11 +3641,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.16,
-            "effOut": 0.56,
-            "effCr": 0.04,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 4.48,
+            "effOut": 15.68,
+            "effCr": 1.12,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -3746,8 +3747,7 @@
             "effCr": 0.26,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gpt-5-6-sol",
@@ -3758,6 +3758,7 @@
           "out": 20,
           "cr": 0.4
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -4155,32 +4156,32 @@
             "site": "heyroute",
             "group": "codex-pro20x",
             "groupKind": "default",
-            "inP": 0.2,
-            "outP": 1.2,
-            "cacheP": 0.02,
+            "inP": 1.12,
+            "outP": 5.6,
+            "cacheP": 0.11,
             "special": null,
             "channels": [
               {
                 "group": "codex-pro20x",
                 "grpRatio": 1,
-                "inP": 0.2,
-                "outP": 1.2,
-                "cacheP": 0.02,
+                "inP": 1.12,
+                "outP": 5.6,
+                "cacheP": 0.11,
                 "head": true
               },
               {
                 "group": "codex-Pro20x-Max",
                 "grpRatio": 1.5,
-                "inP": 0.3,
-                "outP": 1.8,
-                "cacheP": 0.03,
+                "inP": 1.68,
+                "outP": 8.4,
+                "cacheP": 0.17,
                 "head": false
               }
             ],
-            "baseIn": 0.2,
-            "baseOut": 1.2,
-            "baseCr": 0.02,
-            "grpRatio": 1,
+            "baseIn": 1.12,
+            "baseOut": 5.6,
+            "baseCr": 0.11,
+            "grpRatio": 1.8,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -4189,11 +4190,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.05,
-            "effOut": 0.3,
-            "effCr": 0.01,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 1.12,
+            "effOut": 5.6,
+            "effCr": 0.11,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -4367,8 +4368,7 @@
             "effCr": 0.8,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gpt-5-6-terra",
@@ -4379,6 +4379,7 @@
           "out": 12,
           "cr": 0.2
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -4768,32 +4769,32 @@
             "site": "heyroute",
             "group": "codex-pro20x",
             "groupKind": "default",
-            "inP": 0.08,
-            "outP": 0.48,
-            "cacheP": 0.01,
+            "inP": 0.56,
+            "outP": 3.36,
+            "cacheP": 0.06,
             "special": null,
             "channels": [
               {
                 "group": "codex-pro20x",
                 "grpRatio": 1,
-                "inP": 0.08,
-                "outP": 0.48,
-                "cacheP": 0.01,
+                "inP": 0.56,
+                "outP": 3.36,
+                "cacheP": 0.06,
                 "head": true
               },
               {
                 "group": "codex-Pro20x-Max",
                 "grpRatio": 1.5,
-                "inP": 0.12,
-                "outP": 0.72,
-                "cacheP": 0.01,
+                "inP": 0.84,
+                "outP": 5.04,
+                "cacheP": 0.08,
                 "head": false
               }
             ],
-            "baseIn": 0.08,
-            "baseOut": 0.48,
-            "baseCr": 0.008,
-            "grpRatio": 1,
+            "baseIn": 0.56,
+            "baseOut": 3.36,
+            "baseCr": 0.056,
+            "grpRatio": 1.8,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -4802,11 +4803,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.02,
-            "effOut": 0.12,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 0.56,
+            "effOut": 3.36,
+            "effCr": 0.06,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -4980,8 +4981,7 @@
             "effCr": 0.4,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "grok-4-7",
@@ -4992,6 +4992,7 @@
           "out": 6,
           "cr": 0.5
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -5221,23 +5222,23 @@
             "site": "heyroute",
             "group": "grok",
             "groupKind": "default",
-            "inP": 0.04,
-            "outP": 0.12,
-            "cacheP": 0.01,
+            "inP": 0.28,
+            "outP": 0.84,
+            "cacheP": 0.07,
             "special": null,
             "channels": [
               {
                 "group": "grok",
                 "grpRatio": 1,
-                "inP": 0.04,
-                "outP": 0.12,
-                "cacheP": 0.01,
+                "inP": 0.28,
+                "outP": 0.84,
+                "cacheP": 0.07,
                 "head": true
               }
             ],
-            "baseIn": 0.04,
-            "baseOut": 0.12,
-            "baseCr": 0.01,
+            "baseIn": 0.28,
+            "baseOut": 0.84,
+            "baseCr": 0.07,
             "grpRatio": 1,
             "calib": "page",
             "calibStatus": null,
@@ -5247,11 +5248,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.01,
-            "effOut": 0.03,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 0.28,
+            "effOut": 0.84,
+            "effCr": 0.07,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -5327,8 +5328,7 @@
             "effCr": 0.5,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "claude-sonnet-5",
@@ -5339,6 +5339,7 @@
           "out": 10,
           "cr": 0.2
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -5482,7 +5483,7 @@
                 "head": false
               },
               {
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "grpRatio": 1,
                 "inP": 2,
                 "outP": 10,
@@ -5662,32 +5663,32 @@
             "site": "heyroute",
             "group": "claude",
             "groupKind": "default",
-            "inP": 0.08,
-            "outP": 0.4,
-            "cacheP": 0.01,
+            "inP": 0.56,
+            "outP": 2.8,
+            "cacheP": 0.06,
             "special": null,
             "channels": [
               {
                 "group": "claude",
                 "grpRatio": 1,
-                "inP": 0.08,
-                "outP": 0.4,
-                "cacheP": 0.01,
+                "inP": 0.56,
+                "outP": 2.8,
+                "cacheP": 0.06,
                 "head": true
               },
               {
                 "group": "Claude-Max20x",
                 "grpRatio": 5.25,
-                "inP": 0.42,
-                "outP": 2.1,
-                "cacheP": 0.04,
+                "inP": 2.94,
+                "outP": 14.7,
+                "cacheP": 0.29,
                 "head": false
               }
             ],
-            "baseIn": 0.08,
-            "baseOut": 0.4,
-            "baseCr": 0.008,
-            "grpRatio": 1,
+            "baseIn": 0.56,
+            "baseOut": 2.8,
+            "baseCr": 0.056,
+            "grpRatio": 1.5,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -5696,11 +5697,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.02,
-            "effOut": 0.1,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 0.56,
+            "effOut": 2.8,
+            "effCr": 0.06,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -5978,8 +5979,7 @@
             "effCr": 0.2,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "claude-sonnet-5-5",
@@ -5990,6 +5990,7 @@
           "out": 10,
           "cr": 0.1
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -6087,7 +6088,7 @@
           },
           {
             "site": "uuapi",
-            "group": "企业级Kiro-Claude(优化版) 🔥",
+            "group": "企业级Kiro-Claude(优化版)",
             "groupKind": "median",
             "inP": 2,
             "outP": 10,
@@ -6095,7 +6096,7 @@
             "special": null,
             "channels": [
               {
-                "group": "企业级Kiro-Claude(优化版) 🔥",
+                "group": "企业级Kiro-Claude(优化版)",
                 "grpRatio": 1,
                 "inP": 2,
                 "outP": 10,
@@ -6267,32 +6268,32 @@
             "site": "heyroute",
             "group": "claude",
             "groupKind": "default",
-            "inP": 0.08,
-            "outP": 0.4,
-            "cacheP": 0.01,
+            "inP": 0.56,
+            "outP": 2.8,
+            "cacheP": 0.06,
             "special": null,
             "channels": [
               {
                 "group": "claude",
                 "grpRatio": 1,
-                "inP": 0.08,
-                "outP": 0.4,
-                "cacheP": 0.01,
+                "inP": 0.56,
+                "outP": 2.8,
+                "cacheP": 0.06,
                 "head": true
               },
               {
                 "group": "Claude-Max20x",
                 "grpRatio": 5.25,
-                "inP": 0.42,
-                "outP": 2.1,
-                "cacheP": 0.04,
+                "inP": 2.94,
+                "outP": 14.7,
+                "cacheP": 0.29,
                 "head": false
               }
             ],
-            "baseIn": 0.08,
-            "baseOut": 0.4,
-            "baseCr": 0.008,
-            "grpRatio": 1,
+            "baseIn": 0.56,
+            "baseOut": 2.8,
+            "baseCr": 0.056,
+            "grpRatio": 1.5,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -6301,11 +6302,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.02,
-            "effOut": 0.1,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 0.56,
+            "effOut": 2.8,
+            "effCr": 0.06,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -6487,18 +6488,18 @@
             "effCr": 0.2,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "deepseek-v4-1-flash",
         "name": "DeepSeek V4.1 Flash",
         "family": "DeepSeek",
         "official": {
-          "in": 0.049,
-          "out": 0.375,
-          "cr": 0.001
+          "in": 2,
+          "out": 8,
+          "cr": 0.2
         },
+        "officialCur": "CNY",
         "rows": [
           {
             "site": "aixoras",
@@ -6684,24 +6685,24 @@
             "site": "heyroute",
             "group": "cn-models",
             "groupKind": "default",
-            "inP": 0.16,
-            "outP": 0.64,
-            "cacheP": 0,
+            "inP": 1.12,
+            "outP": 4.48,
+            "cacheP": 0.02,
             "special": null,
             "channels": [
               {
                 "group": "cn-models",
                 "grpRatio": 1,
-                "inP": 0.16,
-                "outP": 0.64,
-                "cacheP": 0,
+                "inP": 1.12,
+                "outP": 4.48,
+                "cacheP": 0.02,
                 "head": true
               }
             ],
-            "baseIn": 0.16,
-            "baseOut": 0.64,
-            "baseCr": 0.0032,
-            "grpRatio": 1,
+            "baseIn": 1.12,
+            "baseOut": 4.48,
+            "baseCr": 0.022,
+            "grpRatio": 3,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -6710,11 +6711,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.04,
-            "effOut": 0.16,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 1.12,
+            "effOut": 4.48,
+            "effCr": 0.02,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -6798,18 +6799,18 @@
             "effCr": 0.04,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "deepseek-v4-pro",
         "name": "DeepSeek V4 Pro",
         "family": "DeepSeek",
         "official": {
-          "in": 0.95526,
-          "out": 1.91052,
-          "cr": 0.079605
+          "in": 12,
+          "out": 24,
+          "cr": 1
         },
+        "officialCur": "CNY",
         "rows": [
           {
             "site": "aixoras",
@@ -6959,24 +6960,24 @@
             "site": "heyroute",
             "group": "cn-models",
             "groupKind": "default",
-            "inP": 0.72,
-            "outP": 2.16,
-            "cacheP": 0.02,
+            "inP": 5.04,
+            "outP": 15.12,
+            "cacheP": 0.17,
             "special": null,
             "channels": [
               {
                 "group": "cn-models",
                 "grpRatio": 1,
-                "inP": 0.72,
-                "outP": 2.16,
-                "cacheP": 0.02,
+                "inP": 5.04,
+                "outP": 15.12,
+                "cacheP": 0.17,
                 "head": true
               }
             ],
-            "baseIn": 0.72,
-            "baseOut": 2.16,
-            "baseCr": 0.024,
-            "grpRatio": 1,
+            "baseIn": 5.04,
+            "baseOut": 15.12,
+            "baseCr": 0.17,
+            "grpRatio": 3,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -6985,11 +6986,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.18,
-            "effOut": 0.54,
-            "effCr": 0.01,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 5.04,
+            "effOut": 15.12,
+            "effCr": 0.17,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -7073,8 +7074,7 @@
             "effCr": 0.3,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gemini-3-7-flash",
@@ -7085,6 +7085,7 @@
           "out": 3.75,
           "cr": 0.075
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -7248,24 +7249,24 @@
             "site": "heyroute",
             "group": "gemini",
             "groupKind": "default",
-            "inP": 0.04,
-            "outP": 0.19,
-            "cacheP": 0,
+            "inP": 0.26,
+            "outP": 1.31,
+            "cacheP": 0.03,
             "special": null,
             "channels": [
               {
                 "group": "gemini",
                 "grpRatio": 1,
-                "inP": 0.04,
-                "outP": 0.19,
-                "cacheP": 0,
+                "inP": 0.26,
+                "outP": 1.31,
+                "cacheP": 0.03,
                 "head": true
               }
             ],
-            "baseIn": 0.037,
-            "baseOut": 0.19,
-            "baseCr": 0.0037,
-            "grpRatio": 1,
+            "baseIn": 0.26,
+            "baseOut": 1.31,
+            "baseCr": 0.026,
+            "grpRatio": 2,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -7274,11 +7275,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.01,
-            "effOut": 0.05,
-            "effCr": 0,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 0.26,
+            "effOut": 1.31,
+            "effCr": 0.03,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -7354,8 +7355,7 @@
             "effCr": 0.08,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "kimi-k3",
@@ -7366,6 +7366,7 @@
           "out": 11.936,
           "cr": 0.21
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -7479,24 +7480,24 @@
             "site": "heyroute",
             "group": "cn-models",
             "groupKind": "default",
-            "inP": 1.6,
-            "outP": 8,
-            "cacheP": 0.16,
+            "inP": 11.2,
+            "outP": 56,
+            "cacheP": 1.12,
             "special": null,
             "channels": [
               {
                 "group": "cn-models",
                 "grpRatio": 1,
-                "inP": 1.6,
-                "outP": 8,
-                "cacheP": 0.16,
+                "inP": 11.2,
+                "outP": 56,
+                "cacheP": 1.12,
                 "head": true
               }
             ],
-            "baseIn": 1.6,
-            "baseOut": 8,
-            "baseCr": 0.16,
-            "grpRatio": 1,
+            "baseIn": 11.2,
+            "baseOut": 56,
+            "baseCr": 1.12,
+            "grpRatio": 3,
             "calib": "page",
             "calibStatus": null,
             "calibDiffPct": null,
@@ -7505,11 +7506,11 @@
             "dev": null,
             "cacheShare": null,
             "inject": null,
-            "ratio": 0.25,
-            "effIn": 0.4,
-            "effOut": 2,
-            "effCr": 0.04,
-            "src": "USD"
+            "ratio": null,
+            "effIn": 11.2,
+            "effOut": 56,
+            "effCr": 1.12,
+            "src": "CNY"
           },
           {
             "site": "infistar",
@@ -7627,8 +7628,7 @@
             "effCr": 0.27,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gemini-3-1-pro",
@@ -7639,6 +7639,7 @@
           "out": 12,
           "cr": 0.2
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aicost",
@@ -7874,8 +7875,7 @@
             "effCr": 0.2,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
       },
       {
         "key": "gemini-3-5-flash",
@@ -7886,6 +7886,7 @@
           "out": 9,
           "cr": 0.15
         },
+        "officialCur": "USD",
         "rows": [
           {
             "site": "aixoras",
@@ -8063,8 +8064,177 @@
             "effCr": 0.15,
             "src": "USD"
           }
-        ],
-        "officialCur": "USD"
+        ]
+      },
+      {
+        "key": "qwen3-7-max",
+        "name": "Qwen3.7 Max",
+        "family": "Qwen",
+        "official": {
+          "in": 12,
+          "out": 36,
+          "cr": 2.4
+        },
+        "officialCur": "CNY",
+        "rows": [
+          {
+            "site": "uuapi",
+            "group": "国模-openai协议",
+            "groupKind": "median",
+            "inP": 7.8,
+            "outP": 23.4,
+            "cacheP": 1.56,
+            "special": null,
+            "channels": [
+              {
+                "group": "国模-openai协议",
+                "grpRatio": 1,
+                "inP": 7.8,
+                "outP": 23.4,
+                "cacheP": 1.56,
+                "head": true
+              }
+            ],
+            "baseIn": 7.8,
+            "baseOut": 23.4,
+            "baseCr": 1.56,
+            "grpRatio": 1,
+            "calib": "page",
+            "calibStatus": null,
+            "calibDiffPct": null,
+            "cacheBill": "unknown",
+            "matchPct": null,
+            "dev": null,
+            "cacheShare": null,
+            "inject": null,
+            "ratio": 1,
+            "effIn": 7.8,
+            "effOut": 23.4,
+            "effCr": 1.56,
+            "src": "USD"
+          },
+          {
+            "site": "heyroute",
+            "group": "cn-models",
+            "groupKind": "default",
+            "inP": 6.72,
+            "outP": 20.16,
+            "cacheP": 1.34,
+            "special": null,
+            "channels": [
+              {
+                "group": "cn-models",
+                "grpRatio": 1,
+                "inP": 6.72,
+                "outP": 20.16,
+                "cacheP": 1.34,
+                "head": true
+              }
+            ],
+            "baseIn": 6.72,
+            "baseOut": 20.16,
+            "baseCr": 1.34,
+            "grpRatio": 3,
+            "calib": "page",
+            "calibStatus": null,
+            "calibDiffPct": null,
+            "cacheBill": "unknown",
+            "matchPct": null,
+            "dev": null,
+            "cacheShare": null,
+            "inject": null,
+            "ratio": null,
+            "effIn": 6.72,
+            "effOut": 20.16,
+            "effCr": 1.34,
+            "src": "CNY"
+          }
+        ]
+      },
+      {
+        "key": "qwen3-8-max",
+        "name": "Qwen3.8 Max",
+        "family": "Qwen",
+        "official": {
+          "in": 12,
+          "out": 36,
+          "cr": 1.5
+        },
+        "officialCur": "CNY",
+        "rows": [
+          {
+            "site": "uuapi",
+            "group": "国模-openai协议",
+            "groupKind": "median",
+            "inP": 7.8,
+            "outP": 23.4,
+            "cacheP": 1.56,
+            "special": null,
+            "channels": [
+              {
+                "group": "国模-openai协议",
+                "grpRatio": 1,
+                "inP": 7.8,
+                "outP": 23.4,
+                "cacheP": 1.56,
+                "head": true
+              }
+            ],
+            "baseIn": 7.8,
+            "baseOut": 23.4,
+            "baseCr": 1.56,
+            "grpRatio": 1,
+            "calib": "page",
+            "calibStatus": null,
+            "calibDiffPct": null,
+            "cacheBill": "unknown",
+            "matchPct": null,
+            "dev": null,
+            "cacheShare": null,
+            "inject": null,
+            "ratio": 1,
+            "effIn": 7.8,
+            "effOut": 23.4,
+            "effCr": 1.56,
+            "src": "USD"
+          },
+          {
+            "site": "heyroute",
+            "group": "cn-models",
+            "groupKind": "default",
+            "inP": 6.72,
+            "outP": 20.16,
+            "cacheP": 0.84,
+            "special": null,
+            "channels": [
+              {
+                "group": "cn-models",
+                "grpRatio": 1,
+                "inP": 6.72,
+                "outP": 20.16,
+                "cacheP": 0.84,
+                "head": true
+              }
+            ],
+            "baseIn": 6.72,
+            "baseOut": 20.16,
+            "baseCr": 0.84,
+            "grpRatio": 3,
+            "calib": "page",
+            "calibStatus": null,
+            "calibDiffPct": null,
+            "cacheBill": "unknown",
+            "matchPct": null,
+            "dev": null,
+            "cacheShare": null,
+            "inject": null,
+            "ratio": null,
+            "effIn": 6.72,
+            "effOut": 20.16,
+            "effCr": 0.84,
+            "src": "CNY"
+          }
+        ]
       }
     ]
   },
@@ -8079,45 +8249,35 @@
         "all": 75,
         "code": 65,
         "office": 45,
-        "ecom": 50,
         "drama": 59,
-        "image": 58,
         "biz": 64
       },
       "coverage": {
         "all": 0.75,
         "code": 0.85,
         "office": 0.75,
-        "ecom": 0.75,
         "drama": 0.8,
-        "image": 0.85,
         "biz": 0.7
       },
       "confidence": {
         "all": 0.45,
         "code": 0.51,
         "office": 0.45,
-        "ecom": 0.45,
         "drama": 0.48,
-        "image": 0.51,
         "biz": 0.42
       },
       "lowConfidence": {
         "all": true,
         "code": true,
         "office": true,
-        "ecom": true,
         "drama": true,
-        "image": true,
         "biz": true
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -8460,7 +8620,6 @@
           "probedAt": "2026-10-17T10:22:54.722Z",
           "model": "gpt-5.6-sol",
           "medianTtftMs": 6386,
-          "p95TtftMs": 18150,
           "successRate": 75,
           "timeoutRate": 25,
           "bufferedRate": 0,
@@ -8577,31 +8736,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -8635,10 +8769,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": 18150,
         "successRate": 75,
         "timeoutRate": 25,
         "bufferedRate": 0,
@@ -8688,45 +8846,35 @@
         "all": 86,
         "code": 84,
         "office": null,
-        "ecom": 63,
         "drama": 78,
-        "image": 73,
         "biz": null
       },
       "coverage": {
         "all": 0.7,
         "code": 0.7,
         "office": 0.55,
-        "ecom": 0.65,
         "drama": 0.65,
-        "image": 0.85,
         "biz": 0.5
       },
       "confidence": {
         "all": 0.28,
         "code": 0.28,
         "office": 0,
-        "ecom": 0.26,
         "drama": 0.26,
-        "image": 0.34,
         "biz": 0
       },
       "lowConfidence": {
         "all": true,
         "code": true,
         "office": false,
-        "ecom": true,
         "drama": true,
-        "image": true,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -9021,7 +9169,6 @@
           "probedAt": "2026-10-17T10:25:27.779Z",
           "model": "gpt-5.6-sol",
           "medianTtftMs": 26732,
-          "p95TtftMs": 26732,
           "successRate": 25,
           "timeoutRate": 62.5,
           "bufferedRate": 0,
@@ -9138,31 +9285,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -9196,10 +9318,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": 26732,
         "successRate": 25,
         "timeoutRate": 62.5,
         "bufferedRate": 0,
@@ -9249,45 +9395,35 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.3,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -9381,7 +9517,6 @@
           "probedAt": "2026-10-10T14:38:44.577Z",
           "model": "gpt-5.5",
           "medianTtftMs": 12455,
-          "p95TtftMs": 25607,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -9498,31 +9633,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -9556,10 +9666,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": 25607,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -9609,45 +9743,35 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": 52,
         "biz": null
       },
       "coverage": {
         "all": 0.4,
         "code": 0.5,
         "office": 0.45,
-        "ecom": 0.5,
         "drama": 0.5,
-        "image": 0.75,
         "biz": 0.25
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0.15,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": true,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -9745,7 +9869,6 @@
           "probedAt": "2026-10-10T14:45:38.744Z",
           "model": "gpt-5.6",
           "medianTtftMs": 9238,
-          "p95TtftMs": 20716,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -9862,31 +9985,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -9920,10 +10018,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": 20716,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -9973,45 +10095,35 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": 29,
         "biz": null
       },
       "coverage": {
         "all": 0.4,
         "code": 0.5,
         "office": 0.45,
-        "ecom": 0.5,
         "drama": 0.5,
-        "image": 0.75,
         "biz": 0.25
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0.15,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": true,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -10109,7 +10221,6 @@
           "probedAt": "2026-10-10T14:49:00.584Z",
           "model": "gpt-5.6-sol",
           "medianTtftMs": 2957,
-          "p95TtftMs": 3120,
           "successRate": 100,
           "timeoutRate": 0,
           "bufferedRate": 0,
@@ -10226,31 +10337,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -10284,10 +10370,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": 3120,
         "successRate": 100,
         "timeoutRate": 0,
         "bufferedRate": 0,
@@ -10337,45 +10447,35 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -10469,31 +10569,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -10527,10 +10602,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": null,
         "successRate": null,
         "timeoutRate": null,
         "bufferedRate": null,
@@ -10572,45 +10671,35 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -10705,31 +10794,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -10763,10 +10827,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": null,
         "successRate": null,
         "timeoutRate": null,
         "bufferedRate": null,
@@ -10808,45 +10896,35 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -10901,26 +10979,26 @@
       "timeout": null,
       "stream": null,
       "fp": "pending",
-      "price": "¥0.01/M",
-      "priceV": 0.037,
+      "price": "¥0.26/M",
+      "priceV": 0.26,
       "priceSrc": {
-        "src": "USD",
+        "src": "CNY",
         "fxApplied": false
       },
-      "priceBase": 0.037,
-      "priceBaseCur": "USD",
+      "priceBase": 0.26,
+      "priceBaseCur": "CNY",
       "priceGroup": "gemini",
       "priceModel": "gemini-3.7-flash",
       "priceCalib": "page",
       "priceCalibFactor": null,
       "models": [
-        "gpt",
         "claude",
-        "glm",
         "deepseek",
+        "glm",
         "kimi",
-        "grok",
-        "gemini"
+        "gpt",
+        "gemini",
+        "grok"
       ],
       "audit": {
         "matchPct": null,
@@ -10942,31 +11020,6 @@
         "archived": null
       },
       "slaSeries": [
-        {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
         {
           "h": "10-19 18:00",
           "pct": null,
@@ -11001,10 +11054,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": null,
         "successRate": null,
         "timeoutRate": null,
         "bufferedRate": null,
@@ -11031,10 +11108,8 @@
         "invoice": null,
         "refund": null,
         "src": "manual",
-        "at": "2026-10-17"
-      },
-      "effRatio": 0.25,
-      "effPrice": 0.01
+        "at": "2026-10-21"
+      }
     },
     {
       "name": "infistar",
@@ -11046,45 +11121,35 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "tier": {
         "all": "L1",
         "code": "L1",
         "office": "L1",
-        "ecom": "L1",
         "drama": "L1",
-        "image": "L1",
         "biz": "L1"
       },
       "signal": [
@@ -11181,31 +11246,6 @@
       },
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -11239,10 +11279,34 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "perf": {
-        "p95": null,
         "successRate": null,
         "timeoutRate": null,
         "bufferedRate": null,
@@ -11288,31 +11352,6 @@
       "timeout": null,
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -11346,6 +11385,31 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "probeLatencyMs": 553,
@@ -11383,31 +11447,6 @@
       "timeout": null,
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -11441,6 +11480,31 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "probeLatencyMs": 88,
@@ -11478,31 +11542,6 @@
       "timeout": null,
       "slaSeries": [
         {
-          "h": "10-18 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-18 18:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 00:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 06:00",
-          "pct": null,
-          "n": 0
-        },
-        {
-          "h": "10-19 12:00",
-          "pct": null,
-          "n": 0
-        },
-        {
           "h": "10-19 18:00",
           "pct": null,
           "n": 0
@@ -11536,6 +11575,31 @@
           "h": "10-21 06:00",
           "pct": 100,
           "n": 1
+        },
+        {
+          "h": "10-21 12:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-21 18:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 00:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 06:00",
+          "pct": null,
+          "n": 0
+        },
+        {
+          "h": "10-22 12:00",
+          "pct": null,
+          "n": 0
         }
       ],
       "probeLatencyMs": 101,
@@ -11569,36 +11633,28 @@
         "all": 75,
         "code": 65,
         "office": 45,
-        "ecom": 50,
         "drama": 59,
-        "image": 58,
         "biz": 64
       },
       "coverage": {
         "all": 0.75,
         "code": 0.85,
         "office": 0.75,
-        "ecom": 0.75,
         "drama": 0.8,
-        "image": 0.85,
         "biz": 0.7
       },
       "confidence": {
         "all": 0.45,
         "code": 0.51,
         "office": 0.45,
-        "ecom": 0.45,
         "drama": 0.48,
-        "image": 0.51,
         "biz": 0.42
       },
       "lowConfidence": {
         "all": true,
         "code": true,
         "office": true,
-        "ecom": true,
         "drama": true,
-        "image": true,
         "biz": true
       },
       "promo": {
@@ -11655,36 +11711,28 @@
         "all": 86,
         "code": 84,
         "office": null,
-        "ecom": 63,
         "drama": 78,
-        "image": 73,
         "biz": null
       },
       "coverage": {
         "all": 0.7,
         "code": 0.7,
         "office": 0.55,
-        "ecom": 0.65,
         "drama": 0.65,
-        "image": 0.85,
         "biz": 0.5
       },
       "confidence": {
         "all": 0.28,
         "code": 0.28,
         "office": 0,
-        "ecom": 0.26,
         "drama": 0.26,
-        "image": 0.34,
         "biz": 0
       },
       "lowConfidence": {
         "all": true,
         "code": true,
         "office": false,
-        "ecom": true,
         "drama": true,
-        "image": true,
         "biz": false
       },
       "promo": {
@@ -11740,36 +11788,28 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.3,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "promo": null,
@@ -11816,36 +11856,28 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": 52,
         "biz": null
       },
       "coverage": {
         "all": 0.4,
         "code": 0.5,
         "office": 0.45,
-        "ecom": 0.5,
         "drama": 0.5,
-        "image": 0.75,
         "biz": 0.25
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0.15,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": true,
         "biz": false
       },
       "promo": null,
@@ -11892,36 +11924,28 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": 29,
         "biz": null
       },
       "coverage": {
         "all": 0.4,
         "code": 0.5,
         "office": 0.45,
-        "ecom": 0.5,
         "drama": 0.5,
-        "image": 0.75,
         "biz": 0.25
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0.15,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": true,
         "biz": false
       },
       "promo": null,
@@ -11968,36 +11992,28 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "promo": null,
@@ -12040,36 +12056,28 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "promo": null,
@@ -12112,36 +12120,28 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "promo": null,
@@ -12153,7 +12153,7 @@
         "invoice": null,
         "refund": null,
         "src": "manual",
-        "at": "2026-10-17"
+        "at": "2026-10-21"
       },
       "audit": {
         "matchPct": null,
@@ -12184,36 +12184,28 @@
         "all": null,
         "code": null,
         "office": null,
-        "ecom": null,
         "drama": null,
-        "image": null,
         "biz": null
       },
       "coverage": {
         "all": 0.15,
         "code": 0.2,
         "office": 0.3,
-        "ecom": 0.35,
         "drama": 0.25,
-        "image": 0.4,
         "biz": 0.1
       },
       "confidence": {
         "all": 0,
         "code": 0,
         "office": 0,
-        "ecom": 0,
         "drama": 0,
-        "image": 0,
         "biz": 0
       },
       "lowConfidence": {
         "all": false,
         "code": false,
         "office": false,
-        "ecom": false,
         "drama": false,
-        "image": false,
         "biz": false
       },
       "promo": null,

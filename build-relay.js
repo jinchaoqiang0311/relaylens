@@ -41,6 +41,15 @@ for (const file of pages) {
   let html = fs.readFileSync(path.join(SRC, file), "utf8");
   const url = cfg.base.replace(/\/+$/, "") + "/" + (file === cfg.defaultPage ? "" : file);
 
+  // ①'' 统一顶部导航(构建期集中注入,避免各页手写导航不一致 —— 曾出现 price/pitfalls/404 项偏少、切页按钮移位)。
+  // 每次都从源文件重注,幂等;**含首页**(此前豁免 index 导致首页用自带 .nav、几何与注入的 .nav-links 不同,切页即移位)。
+  // 要改全站导航只改这里即可;样式统一由 assets/theme-relayindex.css 的 .nav-links 提供。
+  {
+    const NAV = [["index.html","选站比价"],["ranking.html","全站榜单"],["price.html","模型比价"],["compare.html","比价矩阵"],["blacklist.html","避雷黑名单"],["method.html","方法论"],["tools.html","自测工具箱"]];
+    const nav = '<nav class="nav-links">' + NAV.map(([h,l]) => '<a href="'+h+'"'+(h===file?' class="active"':'')+'>'+l+'</a>').join("") + '</nav>';
+    html = html.replace(/<nav\b[^>]*>[\s\S]*?<\/nav>/, nav);
+  }
+
   // ① canonical(幂等:先清旧的再注入;404 是 noindex 页,不需要 canonical)
   html = html.replace(/\s*<link rel="canonical"[^>]*>/g, "");
   if (!NOINDEX_PAGES.includes(file)) {

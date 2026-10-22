@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
 :root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--r:14px;
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;min-height:100vh;display:flex;flex-direction:column}
@@ -46,30 +46,31 @@ h1{font-size:21px;margin:18px 0 8px}
 footer{border-top:1px solid var(--line);background:var(--card);padding:16px 0;font-size:12px;color:var(--faint);text-align:center}
 @media(max-width:560px){.err-card{padding:34px 22px}.code{font-size:64px}}
 </style>
-  <link rel="stylesheet" href="assets/theme-relaypick.css">
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
 <main>
-  <div class="wrap">
-    <div class="err-card">
-      <div class="code">404</div>
-      <h1>这一页不在我们的实测记录里</h1>
-      <p class="lead">地址可能改版前遗留、拼写有误,或该站点已下架归档。<b>如果你是从某篇文章的旧链接点进来的</b>,下面的入口能最快把你送回正轨。</p>
-      <div class="btns">
-        <a class="btn btn-primary" href="index.html">← 返回首页</a>
-        <a class="btn btn-ghost" href="ranking.html">查看实测榜单</a>
-      </div>
-      <div class="entries">
-        <a class="entry" href="ranking.html"><div class="t">📊 全站榜单</div><div class="d">八场景分榜 · 实测与示例分标</div></a>
-        <a class="entry" href="compare.html"><div class="t">💰 模型比价</div><div class="d">真实报价 × 官方锚,双站实测</div></a>
-        <a class="entry" href="tools.html"><div class="t">🧰 工具箱</div><div class="d">成本计算器 · 配置生成器</div></a>
-        <a class="entry" href="blacklist.html"><div class="t">⚠️ 黑名单档案库</div><div class="d">跑路/掉包记录,投稿前先查</div></a>
-        <a class="entry" href="method.html"><div class="t">🔬 检测方法</div><div class="d">我们怎么得出每一个数字</div></a>
-        <a class="entry" href="reports.html"><div class="t">📄 实测报告</div><div class="d">号池注入、假流式等深度记录</div></a>
-      </div>
-      <p class="hint">确认链接没问题却仍然 404?那可能是我们的疏漏 —— 欢迎反馈,核实后会公开修正并记录在 <a href="method.html#audit" style="color:var(--brand)">审计日志</a>里。子目录部署下本页路径为 <code>/relay/404.html</code>。</p>
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="err-card">
+ <div class="code">404</div>
+ <h1>这一页不在我们的实测记录里</h1>
+ <p class="lead">地址可能改版前遗留、拼写有误,或该站点已下架归档。<b>如果你是从某篇文章的旧链接点进来的</b>,下面的入口能最快把你送回正轨。</p>
+ <div class="btns">
+ <a class="btn btn-primary" href="index.html">← 返回首页</a>
+ <a class="btn btn-ghost" href="ranking.html">查看实测榜单</a>
+ </div>
+ <div class="entries">
+ <a class="entry" href="ranking.html"><div class="t">全站榜单</div><div class="d">八场景分榜 · 实测与示例分标</div></a>
+ <a class="entry" href="price.html"><div class="t">模型比价</div><div class="d">真实报价 × 官方锚,双站实测</div></a>
+ <a class="entry" href="tools.html"><div class="t">工具箱</div><div class="d">成本计算器 · 配置生成器</div></a>
+ <a class="entry" href="blacklist.html"><div class="t">黑名单档案库</div><div class="d">跑路/掉包记录,投稿前先查</div></a>
+ <a class="entry" href="method.html"><div class="t">检测方法</div><div class="d">我们怎么得出每一个数字</div></a>
+ <a class="entry" href="reports.html"><div class="t">实测报告</div><div class="d">号池注入、假流式等深度记录</div></a>
+ </div>
+ <p class="hint">确认链接没问题却仍然 404?那可能是我们的疏漏 —— 欢迎反馈,核实后会公开修正并记录在 <a href="method.html#audit" style="color:var(--brand)">审计日志</a>里。子目录部署下本页路径为 <code>/relay/404.html</code>。</p>
+ </div>
+ </div>
 </main>
 <footer>© 2026 RelayLens · 榜单只信账单,不信嘴</footer>
 </body>

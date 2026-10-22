@@ -13,6 +13,10 @@ Thumbs.db
 *.log
 .trash/
 
+# 测试套件的 npx tsx 实跑临时脚本(跑完即删;进程占用/EPERM 时会残留成 untracked 垃圾)
+relaylens/probe/.tmp-*
+relaylens/probe/tmp-*
+
 # 本地工具状态
 .codebuddy/
 

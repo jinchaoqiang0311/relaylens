@@ -1,16 +1,205 @@
 {
   "meta": {
-    "generatedAt": "2026-10-21T07:31:55.685Z",
-    "weightsVersion": "2026-10-10.1",
+    "generatedAt": "2026-10-22T14:13:36.517Z",
+    "weightsVersion": "2026-10-22.2",
     "policy": "哈希链式追加日志:每条记录包含前一条的哈希,任意改写或删除都会使链校验失败。",
     "verify": "本地校验:tsx cli.ts audit verify(探针仓库开源,任何人可重放)"
   },
   "chain": {
     "ok": true,
-    "total": 178,
-    "head": "232ad6ac2d91e9005a9b8cda44da04f2b4809e7b4fba6c4935cc0a11fe90d59c"
+    "total": 195,
+    "head": "ee1291dc78cd22f5644bed1feb7f0eac8fa0f6c68783d1941cebee8819c727a9"
   },
   "entries": [
+    {
+      "seq": 195,
+      "at": "2026-10-22T14:13:36.328Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "850eb85e552d368f15e96e1ff45a938630c1669daf15dd878a04aa2830e3dcf1"
+      },
+      "after": {
+        "hash": "987d4a290db7edd1d97e87177ff53f1134076ca252ab0d8e11af301458bf0434",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "ee1291dc78cd22f5"
+    },
+    {
+      "seq": 194,
+      "at": "2026-10-22T11:21:47.532Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "a2e3dd3bd0d59ea21dcff136e2c5ee9140517784d257d6369ba0307e54212b7f"
+      },
+      "after": {
+        "hash": "850eb85e552d368f15e96e1ff45a938630c1669daf15dd878a04aa2830e3dcf1",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "ec760e553007d551"
+    },
+    {
+      "seq": 192,
+      "at": "2026-10-22T11:21:46.847Z",
+      "actor": "probe",
+      "action": "weights.bump",
+      "target": "shared/weights.json",
+      "before": {
+        "version": "2026-10-22.1"
+      },
+      "after": {
+        "version": "2026-10-22.2"
+      },
+      "reason": "评分权重升版 2026-10-22.1 → 2026-10-22.2:全部历史评分口径变化,旧批次数据需重算才能同榜比较",
+      "hash": "3b4e7c3612c82e7f"
+    },
+    {
+      "seq": 191,
+      "at": "2026-10-22T10:07:52.478Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "5422b5ccde6585ae53922a793d5364eee0f2824d470064453c553e987689f40c"
+      },
+      "after": {
+        "hash": "a2e3dd3bd0d59ea21dcff136e2c5ee9140517784d257d6369ba0307e54212b7f",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.1"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.1",
+      "hash": "a9fad8f23d8cf490"
+    },
+    {
+      "seq": 189,
+      "at": "2026-10-22T10:07:51.575Z",
+      "actor": "probe",
+      "action": "weights.bump",
+      "target": "shared/weights.json",
+      "before": {
+        "version": "2026-10-10.1"
+      },
+      "after": {
+        "version": "2026-10-22.1"
+      },
+      "reason": "评分权重升版 2026-10-10.1 → 2026-10-22.1:全部历史评分口径变化,旧批次数据需重算才能同榜比较",
+      "hash": "8e24148107ad877c"
+    },
+    {
+      "seq": 187,
+      "at": "2026-10-21T14:31:16.427Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "bda05068e14bf8a5a2f7ca4811c6408b797f4b5c04a7a3ee1af4dea1ab4ed417"
+      },
+      "after": {
+        "hash": "5422b5ccde6585ae53922a793d5364eee0f2824d470064453c553e987689f40c",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "02d0c613978530b7"
+    },
+    {
+      "seq": 186,
+      "at": "2026-10-21T11:39:17.012Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "b7daad47ed34a6466abd8ab00abb9e1881be57743ad5d03961111a64d7d90615"
+      },
+      "after": {
+        "hash": "bda05068e14bf8a5a2f7ca4811c6408b797f4b5c04a7a3ee1af4dea1ab4ed417",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "1e7b06bd6b759713"
+    },
+    {
+      "seq": 185,
+      "at": "2026-10-21T11:28:43.984Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "d8d67497be0de5c95bcd2c46d388ec38d0e150c0523ca788431e27b200a11449"
+      },
+      "after": {
+        "hash": "b7daad47ed34a6466abd8ab00abb9e1881be57743ad5d03961111a64d7d90615",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "f1f670df93c7cb35"
+    },
+    {
+      "seq": 183,
+      "at": "2026-10-21T11:26:54.964Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "2948bcba1a9cc62df5d24c632bd56600e12656c9afe0d4c56a17515df6c7d423"
+      },
+      "after": {
+        "hash": "d8d67497be0de5c95bcd2c46d388ec38d0e150c0523ca788431e27b200a11449",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "a20cd5f50027749b"
+    },
+    {
+      "seq": 182,
+      "at": "2026-10-21T10:06:17.517Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "d430ecb41fd84d5477b6bb8aeed491c4874fbf8812b301643a5b8b47cb5dbd57"
+      },
+      "after": {
+        "hash": "2948bcba1a9cc62df5d24c632bd56600e12656c9afe0d4c56a17515df6c7d423",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "4b006cb9950374b4"
+    },
+    {
+      "seq": 180,
+      "at": "2026-10-21T10:06:16.507Z",
+      "actor": "probe",
+      "action": "site.commerce",
+      "target": "heyroute",
+      "before": {
+        "commerce": "[null,\"¥1 = 4 美元额度\",\"¥0\",null,null,\"manual\",\"2026-10-17\"]"
+      },
+      "after": {
+        "commerce": "[null,\"¥1 = 4 美元额度\",\"¥0\",null,null,\"manual\",\"2026-10-21\"]"
+      },
+      "reason": "站点 heyroute 商业信息变更(榜单站名下方支付方式 logo 与详情页商业栏随之变化;来源标注决定它被读作「站方声明」还是「人工核实」)",
+      "hash": "8f417768a7370a23"
+    },
+    {
+      "seq": 179,
+      "at": "2026-10-21T09:38:51.621Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "97f5cd594f155810f61c601d453b683b1d9fc16de4db7283c926b324221dca8e"
+      },
+      "after": {
+        "hash": "d430ecb41fd84d5477b6bb8aeed491c4874fbf8812b301643a5b8b47cb5dbd57",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-10.1"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-10.1",
+      "hash": "595d8fde6b39f0b0"
+    },
     {
       "seq": 178,
       "at": "2026-10-21T07:31:55.494Z",

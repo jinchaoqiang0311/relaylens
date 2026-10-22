@@ -11,10 +11,10 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
 :root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;--r:14px;
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;--r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75}
@@ -109,172 +109,173 @@ footer a:hover{color:var(--brand)}
 .toast.show{transform:translateX(-50%);opacity:1}
 @media(max-width:640px){.ft-grid{grid-template-columns:1fr}.kv{grid-template-columns:1fr 1fr}}
 </style>
-  <link rel="stylesheet" href="assets/theme-relaypick.css">
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
 
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
-    <nav class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="ranking.html">全站榜单</a>
-      <a href="compare.html">模型比价</a>
-      <a href="selector.html" class="active">选型顾问</a>
-      <a href="tools.html">自测工具箱</a>
-      <a href="blacklist.html" class="hot">⚠ 避雷黑名单</a>
-      <a href="method.html">方法论</a>
-      <a href="reports.html">实测报告</a>
-    </nav>
-    <a class="btn btn-ghost btn-sm" href="onboarding.html">站长入驻</a>
-  </div>
+ <div class="wrap nav">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links">
+ <a href="index.html">首页</a>
+ <a href="ranking.html">全站榜单</a>
+ <a href="price.html">模型比价</a>
+ <a href="selector.html" class="active">选型顾问</a>
+ <a href="tools.html">自测工具箱</a>
+ <a href="blacklist.html" class="hot">避雷黑名单</a>
+ <a href="method.html">方法论</a>
+ <a href="reports.html">实测报告</a>
+ </nav>
+ <a class="btn btn-ghost btn-sm" href="onboarding.html">站长入驻</a>
+ </div>
 </header>
 
 <div class="wrap">
 
-  <div class="hero">
-    <h1>AI 选型顾问</h1>
-    <p>告诉我你的真实负载,我算出<b>同一个模型在哪家站、哪个分组最划算可靠</b> —— 成本里含上你看不见的号池注入,排序里带上实测的首字延迟、可用率与模型指纹。</p>
-    <div class="scope">
-      <span>✅ 只出建议,<b>不转发你的流量</b></span>
-      <span>✅ 成本按<b>你自己的请求量与命中率</b>算</span>
-      <span class="no">❌ 不声称哪个模型更强(我们没有能力基准数据)</span>
-    </div>
-  </div>
+ <div class="hero">
+ <h1>AI 选型顾问</h1>
+ <p>告诉我你的真实负载,我算出<b>同一个模型在哪家站、哪个分组最划算可靠</b> —— 成本里含上你看不见的号池注入,排序里带上实测的首字延迟、可用率与模型指纹。</p>
+ <div class="scope">
+ <span>只出建议,<b>不转发你的流量</b></span>
+ <span>成本按<b>你自己的请求量与命中率</b>算</span>
+ <span class="no">不声称哪个模型更强(我们没有能力基准数据)</span>
+ </div>
+ </div>
 
-  <section>
-    <div class="card">
-      <div class="f-grid">
-        <div>
-          <label class="fl">使用场景 <span class="req">*</span></label>
-          <select id="sScene">
-            <option value="code">编程 / Agent(逐字输出刚需)</option>
-            <option value="office">办公:翻译 / 摘要 / 写作</option>
-            <option value="ecom">批量短任务:客服 / 打标 / 分类</option>
-            <option value="drama">长文分析 / 剧本生成</option>
-            <option value="all">通用对话</option>
-          </select>
-          <div class="hint">决定各维度权重(下方可展开查看)</div>
-        </div>
-        <div>
-          <label class="fl">目标模型 <span class="req">*</span></label>
-          <select id="sModel"></select>
-          <div class="hint">只列出我们有实测报价且拿到官方锚的模型</div>
-        </div>
-        <div>
-          <label class="fl">日请求数</label>
-          <input type="number" id="sReq" value="1000" min="1" max="2000000">
-        </div>
-        <div>
-          <label class="fl">平均输入 tokens / 请求</label>
-          <input type="number" id="sIn" value="2000" min="1" max="1000000">
-        </div>
-        <div>
-          <label class="fl">平均输出 tokens / 请求</label>
-          <input type="number" id="sOut" value="400" min="1" max="100000">
-        </div>
-        <div>
-          <label class="fl">你的缓存命中率</label>
-          <div class="in-row"><input type="range" id="sHit" min="0" max="95" value="50"><span class="v num" id="sHitV">50%</span></div>
-          <div class="hint">长系统提示/多轮对话通常 50-85%</div>
-        </div>
-        <div>
-          <label class="fl">月预算上限(选填,人民币元)</label>
-          <input type="number" id="sBudget" placeholder="不限" min="1">
-          <div class="hint">超出预算的选项会被排除并说明原因</div>
-        </div>
-        <div>
-          <label class="fl">首字延迟要求</label>
-          <select id="sTtft">
-            <option value="999">不限</option>
-            <option value="3">≤ 3 秒</option>
-            <option value="2">≤ 2 秒(交互式体验)</option>
-          </select>
-        </div>
-        <div style="grid-column:1/-1">
-          <label class="chk" id="sStreamWrap"><input type="checkbox" id="sStream"> 我需要<b style="margin:0 4px">真流式逐字输出</b>(用 Cursor / Claude Code / Cline 等编程工具)—— 勾选后,实测假流式的站点会被直接排除</label>
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-big" id="sRun">生成选型建议</button>
-        <button class="btn btn-ghost" id="sPresetEcom" type="button">试试:批量短任务</button>
-        <button class="btn btn-ghost" id="sPresetCode" type="button">试试:编程 Agent</button>
-      </div>
-      <details style="margin-top:14px">
-        <summary style="font-size:12.5px;color:var(--brand);cursor:pointer;font-weight:600">查看排序权重与计算口径(全部公开)</summary>
-        <div style="font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.9">
-          选型顾问使用<b>自己的一套权重</b>,与榜单评分相互独立;榜单分仅作参考展示。各维度先归一化到 0–1 再加权(原始公式里美元、秒、百分制分不能直接相减)。
-          <table class="wtable" id="wTable"></table>
-          <div style="margin-top:6px"><b>真实成本 = 标价成本 + 注入成本</b>,其中注入成本 = 该站实测的固定注入 token × (fresh 份额 × 输入价 + 缓存份额 × 缓存价)。<b>只算标价会严重低估号池渠道</b> —— 这是我们实测两家站后发现的关键差异。</div>
-        </div>
-      </details>
-    </div>
-  </section>
+ <section>
+ <div class="card">
+ <div class="f-grid">
+ <div>
+ <label class="fl">使用场景 <span class="req">*</span></label>
+ <select id="sScene">
+ <option value="code">编程 / Agent(逐字输出刚需)</option>
+ <option value="office">办公:翻译 / 摘要 / 写作</option>
+ <option value="ecom">批量短任务:客服 / 打标 / 分类</option>
+ <option value="drama">长文分析 / 剧本生成</option>
+ <option value="all">通用对话</option>
+ </select>
+ <div class="hint">决定各维度权重(下方可展开查看)</div>
+ </div>
+ <div>
+ <label class="fl">目标模型 <span class="req">*</span></label>
+ <select id="sModel"></select>
+ <div class="hint">只列出我们有实测报价且拿到官方锚的模型</div>
+ </div>
+ <div>
+ <label class="fl">日请求数</label>
+ <input type="number" id="sReq" value="1000" min="1" max="2000000">
+ </div>
+ <div>
+ <label class="fl">平均输入 tokens / 请求</label>
+ <input type="number" id="sIn" value="2000" min="1" max="1000000">
+ </div>
+ <div>
+ <label class="fl">平均输出 tokens / 请求</label>
+ <input type="number" id="sOut" value="400" min="1" max="100000">
+ </div>
+ <div>
+ <label class="fl">你的缓存命中率</label>
+ <div class="in-row"><input type="range" id="sHit" min="0" max="95" value="50"><span class="v num" id="sHitV">50%</span></div>
+ <div class="hint">长系统提示/多轮对话通常 50-85%</div>
+ </div>
+ <div>
+ <label class="fl">月预算上限(选填,人民币元)</label>
+ <input type="number" id="sBudget" placeholder="不限" min="1">
+ <div class="hint">超出预算的选项会被排除并说明原因</div>
+ </div>
+ <div>
+ <label class="fl">首字延迟要求</label>
+ <select id="sTtft">
+ <option value="999">不限</option>
+ <option value="3">≤ 3 秒</option>
+ <option value="2">≤ 2 秒(交互式体验)</option>
+ </select>
+ </div>
+ <div style="grid-column:1/-1">
+ <label class="chk" id="sStreamWrap"><input type="checkbox" id="sStream"> 我需要<b style="margin:0 4px">真流式逐字输出</b>(用 Cursor / Claude Code / Cline 等编程工具)—— 勾选后,实测假流式的站点会被直接排除</label>
+ </div>
+ </div>
+ <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+ <button class="btn btn-primary btn-big" id="sRun">生成选型建议</button>
+ <button class="btn btn-ghost" id="sPresetEcom" type="button">试试:批量短任务</button>
+ <button class="btn btn-ghost" id="sPresetCode" type="button">试试:编程 Agent</button>
+ </div>
+ <details style="margin-top:14px">
+ <summary style="font-size:12.5px;color:var(--brand);cursor:pointer;font-weight:600">查看排序权重与计算口径(全部公开)</summary>
+ <div style="font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.9">
+ 选型顾问使用<b>自己的一套权重</b>,与榜单评分相互独立;榜单分仅作参考展示。各维度先归一化到 0–1 再加权(原始公式里美元、秒、百分制分不能直接相减)。
+ <table class="wtable" id="wTable"></table>
+ <div style="margin-top:6px"><b>真实成本 = 标价成本 + 注入成本</b>,其中注入成本 = 该站实测的固定注入 token × (fresh 份额 × 输入价 + 缓存份额 × 缓存价)。<b>只算标价会严重低估号池渠道</b> —— 这是我们实测两家站后发现的关键差异。</div>
+ </div>
+ </details>
+ </div>
+ </section>
 
-  <section id="outSec" style="display:none">
-    <div class="blk-head"><h2>建议结果</h2><a class="more" href="compare.html">看完整比价表 →</a></div>
-    <div class="res" id="resBox"></div>
-  </section>
+ <section id="outSec" style="display:none">
+ <div class="blk-head"><h2>建议结果</h2><a class="more" href="price.html">看完整比价表 →</a></div>
+ <div class="res" id="resBox"></div>
+ </section>
 
-  <section>
-    <div class="card">
-      <h2 style="font-size:16px;margin-bottom:8px">这个工具不做什么</h2>
-      <div style="font-size:13px;color:var(--sub);line-height:1.95">
-        <p><b>1. 不做流量转发。</b>它只给建议,不代理你的请求,因此不存在托管你 Key 的风险 —— 我们也不因此收站方的转发费用。</p>
-        <p><b>2. 不评价"哪个模型更强"。</b>我们没有跑过能力基准(LMSYS / SWE-bench 类),所以模型由你自己定,我们只回答"这个模型在哪家站买最靠谱划算"。任何声称能替你判断模型智力的选型工具,你都该多问一句它拿什么测的。</p>
-        <p><b>3. 不覆盖未实测的站与分组。</b>一个 API Key 只能绑定一个分组,所以我们的数据只代表<b>该站被实测的那个分组</b>;同一站其他分组(尤其特价分组)价格与稳定性可能完全不同,结果页会明确标注这一点。</p>
-      </div>
-      <div class="note">⏱ 数据是时点数据:渠道会换、倍率会调、号池会枯竭。充值前建议用<a href="tools.html" style="color:var(--brand);font-weight:600">工具箱自测</a>跑一次你自己的 Key,并用<a href="ranking.html" style="color:var(--brand);font-weight:600">榜单</a>核对最近审计日期。</div>
-    </div>
-  </section>
+ <section>
+ <div class="card">
+ <h2 style="font-size:16px;margin-bottom:8px">这个工具不做什么</h2>
+ <div style="font-size:13px;color:var(--sub);line-height:1.95">
+ <p><b>1. 不做流量转发。</b>它只给建议,不代理你的请求,因此不存在托管你 Key 的风险 —— 我们也不因此收站方的转发费用。</p>
+ <p><b>2. 不评价"哪个模型更强"。</b>我们没有跑过能力基准(LMSYS / SWE-bench 类),所以模型由你自己定,我们只回答"这个模型在哪家站买最靠谱划算"。任何声称能替你判断模型智力的选型工具,你都该多问一句它拿什么测的。</p>
+ <p><b>3. 不覆盖未实测的站与分组。</b>一个 API Key 只能绑定一个分组,所以我们的数据只代表<b>该站被实测的那个分组</b>;同一站其他分组(尤其特价分组)价格与稳定性可能完全不同,结果页会明确标注这一点。</p>
+ </div>
+ <div class="note">数据是时点数据:渠道会换、倍率会调、号池会枯竭。充值前建议用<a href="tools.html" style="color:var(--brand);font-weight:600">工具箱自测</a>跑一次你自己的 Key,并用<a href="ranking.html" style="color:var(--brand);font-weight:600">榜单</a>核对最近审计日期。</div>
+ </div>
+ </section>
 
 </div>
 
 <footer>
-  <div class="wrap">
-    <div class="ft-grid">
-      <div>
-        <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
-        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位与 Pro 订阅维持运营。</p>
-      </div>
-      <div>
-        <h4>站点</h4>
-        <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="compare.html">模型比价</a><a href="selector.html">选型顾问</a><a href="tools.html">自测工具箱</a><a href="blacklist.html">避雷黑名单</a>
-      </div>
-      <div>
-        <h4>关于</h4>
-        <a href="method.html">检测方法与开源数据</a><a href="reports.html">实测报告</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a>
-      </div>
-    </div>
-    <div class="fine">
-      免责声明:本站为第三方测评平台,不提供 API 转售、代充或流量转发服务;选型建议基于实测时点数据,不构成采购或投资建议,请理性小额充值。<br>
-      © 2026 RelayLens · 测评数据仅供决策参考
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="selector.html">选型顾问</a><a href="tools.html">自测工具箱</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="reports.html">实测报告</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售、代充或流量转发服务;选型建议基于实测时点数据,不构成采购或投资建议,请理性小额充值。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考
+ </div>
+ </div>
 </footer>
 
 <div class="toast" id="toast"></div>
 <script>
 /* ============ 选型顾问引擎 ============
  * 原则:①只用实测数据,缺维度显示"未测"并降权而非编造;
- *      ②成本必须含注入(标价会低估号池);③硬约束排除要给出理由,
- *      让用户看见"为什么没推荐某家"和"推荐了谁"同样重要。
+ * ②成本必须含注入(标价会低估号池);③硬约束排除要给出理由,
+ * 让用户看见"为什么没推荐某家"和"推荐了谁"同样重要。
  */
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2400)}
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function num(id){return +document.getElementById(id).value}
 /* 选型顾问的成本一律按站方公示的额度价计算(new-api 系为美元额度)。
-   人民币到手成本 = 该数字 × 站方声明的充值比例;比例未声明时不给人民币数,别拿汇率猜。 */
+ 人民币到手成本 = 该数字 × 站方声明的充值比例;比例未声明时不给人民币数,别拿汇率猜。 */
 function usd(v){return "$"+(v<1?v.toFixed(4):v<100?v.toFixed(2):Math.round(v).toLocaleString())+" 额度"}
 
 /* 选型顾问权重表(独立于榜单):cost 真实成本 / speed 首字延迟 / sla 可用率 / truth 模型真实性 / stream 流式真伪 */
 var SEL_W={
-  code:  {cost:0.25,speed:0.20,sla:0.15,truth:0.25,stream:0.15},
-  office:{cost:0.35,speed:0.20,sla:0.20,truth:0.25,stream:0.00},
-  ecom:  {cost:0.45,speed:0.15,sla:0.20,truth:0.20,stream:0.00},
-  drama: {cost:0.30,speed:0.15,sla:0.20,truth:0.35,stream:0.00},
-  all:   {cost:0.30,speed:0.20,sla:0.20,truth:0.30,stream:0.00}
+ code: {cost:0.25,speed:0.20,sla:0.15,truth:0.25,stream:0.15},
+ office:{cost:0.35,speed:0.20,sla:0.20,truth:0.25,stream:0.00},
+ ecom: {cost:0.45,speed:0.15,sla:0.20,truth:0.20,stream:0.00},
+ drama: {cost:0.30,speed:0.15,sla:0.20,truth:0.35,stream:0.00},
+ all: {cost:0.30,speed:0.20,sla:0.20,truth:0.30,stream:0.00}
 };
 var SEL_LABEL={cost:"真实成本(含注入)",speed:"首字延迟",sla:"7 日可用率",truth:"模型指纹真实性",stream:"流式真伪"};
 var SCENE_LABEL={code:"编程 / Agent",office:"办公翻译摘要",ecom:"批量短任务",drama:"长文分析",all:"通用对话"};
@@ -285,127 +286,127 @@ function siteOf(name){return (DATA.realSites||[]).filter(function(s){return s.na
 
 /* 单请求真实成本(¥,随 payload 一并折算):标价部分 + 注入部分 */
 function costOf(site,row){
-  var hit=Math.min(.95,Math.max(0,num("sHit")/100)), inT=Math.max(1,num("sIn")), outT=Math.max(1,num("sOut"));
-  var cached=inT*hit, fresh=inT-cached;
-  var cacheP=(row.cacheP==null)?row.inP:row.cacheP;         // 未公布缓存价 → 按输入价计(不占便宜)
-  var list=(fresh*row.inP+cached*cacheP+outT*row.outP)/1e6;
-  var inj=0;
-  if(site&&site.inject&&site.injectSplit){
-    var iCacheP=(row.cacheP==null)?row.inP:row.cacheP;
-    inj=(site.inject*site.injectSplit.fresh_share*row.inP+site.inject*site.injectSplit.cached_share*iCacheP)/1e6;
-  }
-  return {list:list,inject:inj,total:list+inj,cacheUnknown:row.cacheP==null,fresh:fresh,cached:cached,
-          injectTokens:site?site.inject:null};
+ var hit=Math.min(.95,Math.max(0,num("sHit")/100)), inT=Math.max(1,num("sIn")), outT=Math.max(1,num("sOut"));
+ var cached=inT*hit, fresh=inT-cached;
+ var cacheP=(row.cacheP==null)?row.inP:row.cacheP; // 未公布缓存价 → 按输入价计(不占便宜)
+ var list=(fresh*row.inP+cached*cacheP+outT*row.outP)/1e6;
+ var inj=0;
+ if(site&&site.inject&&site.injectSplit){
+ var iCacheP=(row.cacheP==null)?row.inP:row.cacheP;
+ inj=(site.inject*site.injectSplit.fresh_share*row.inP+site.inject*site.injectSplit.cached_share*iCacheP)/1e6;
+ }
+ return {list:list,inject:inj,total:list+inj,cacheUnknown:row.cacheP==null,fresh:fresh,cached:cached,
+ injectTokens:site?site.inject:null};
 }
 
 function run(){
-  if(!DATA){toast("数据尚未加载");return}
-  var key=document.getElementById("sModel").value, scene=document.getElementById("sScene").value;
-  var tab=modelList().filter(function(t){return t.key===key})[0];
-  var box=document.getElementById("resBox");
-  document.getElementById("outSec").style.display="block";
-  if(!tab||!tab.rows.length){box.innerHTML='<div class="sk">该模型暂无两家以上实测报价可比</div>';return}
+ if(!DATA){toast("数据尚未加载");return}
+ var key=document.getElementById("sModel").value, scene=document.getElementById("sScene").value;
+ var tab=modelList().filter(function(t){return t.key===key})[0];
+ var box=document.getElementById("resBox");
+ document.getElementById("outSec").style.display="block";
+ if(!tab||!tab.rows.length){box.innerHTML='<div class="sk">该模型暂无两家以上实测报价可比</div>';return}
 
-  var needStream=document.getElementById("sStream").checked;
-  var ttftMax=num("sTtft"), budget=num("sBudget")||0, reqDay=Math.max(1,num("sReq"));
-  var cand=[],rejected=[];
-  tab.rows.forEach(function(row){
-    var s=siteOf(row.site)||{};
-    var c=costOf(s,row), month=c.total*reqDay*30;
-    var why=[];
-    if(needStream&&s.stream!=null&&s.stream>=50){why.push("实测假流式 "+s.stream+"%(内容块缓冲后一次下发),Cursor / Claude Code 的逐字渲染会失效")}
-    if(s.fp==="fail"){why.push("模型指纹未通过(疑似掉包)")}
-    if(ttftMax<999&&s.ttft!=null&&s.ttft>ttftMax){why.push("实测首字延迟 "+s.ttft+"s,超出你设的 "+ttftMax+"s 上限")}
-    if(ttftMax<999&&s.ttft==null){why.push("该站首字延迟未测,无法确认满足你的延迟要求")}
-    if(budget&&month>budget){why.push("预估月成本 "+usd(month)+" 超出预算 "+usd(budget))}
-    if(why.length){rejected.push({site:row.site,group:row.group,reasons:why,month:month});return}
-    cand.push({site:row.site,group:row.group,row:row,cost:c,month:month,s:s});
-  });
-  if(!cand.length){
-    box.innerHTML='<div class="sk">没有满足你当前约束的选项 —— 试试放宽预算或延迟要求,或看 <a href="ranking.html" style="color:var(--brand)">完整榜单</a>。</div>'+renderRejected(rejected);
-    return;
-  }
-  /* 归一化打分:各维度 0–1 后再加权(美元/秒/百分制不能直接相减) */
-  var W=SEL_W[scene]||SEL_W.all;
-  var minC=Math.min.apply(null,cand.map(function(x){return x.cost.total})), maxC=Math.max.apply(null,cand.map(function(x){return x.cost.total}));
-  var ttfts=cand.map(function(x){return x.s.ttft}).filter(function(v){return v!=null});
-  var minT=ttfts.length?Math.min.apply(null,ttfts):0, maxT=ttfts.length?Math.max.apply(null,ttfts):1;
-  cand.forEach(function(x){
-    var costScore=maxC>minC?(maxC-x.cost.total)/(maxC-minC):1;
-    var speedScore=x.s.ttft==null?0.5:(maxT>minT?(maxT-x.s.ttft)/(maxT-minT):1);   // 未测给中性 0.5 并标注
-    var avail=x.s.avail; var slaScore=avail==null?0.5:Math.max(0,Math.min(1,(avail-97)/3));
-    var truthScore=x.s.fp==="pass"?1:x.s.fp==="suspect"?0.5:x.s.fp==="fail"?0:0.3;
-    var streamScore=x.s.stream==null?0.5:(100-x.s.stream)/100;
-    x.parts={cost:costScore,speed:speedScore,sla:slaScore,truth:truthScore,stream:streamScore};
-    x.score=Math.round(100*(W.cost*costScore+W.speed*speedScore+W.sla*slaScore+W.truth*truthScore+W.stream*streamScore));
-  });
-  cand.sort(function(a,b){return b.score-a.score});
-  box.innerHTML=cand.map(function(x,i){return renderPick(x,i,W,reqDay,scene)}).join("")
-    +renderRejected(rejected)
-    +'<div class="note"> 口径提醒:成本按你填的负载与<b>该站被实测的那个分组</b>报价计算;同一站的其他分组价格与稳定性可能差异很大(我们实测到同站同模型不同分组差 8 倍)。未测维度按中性值参与打分并已标注。</div>';
+ var needStream=document.getElementById("sStream").checked;
+ var ttftMax=num("sTtft"), budget=num("sBudget")||0, reqDay=Math.max(1,num("sReq"));
+ var cand=[],rejected=[];
+ tab.rows.forEach(function(row){
+ var s=siteOf(row.site)||{};
+ var c=costOf(s,row), month=c.total*reqDay*30;
+ var why=[];
+ if(needStream&&s.stream!=null&&s.stream>=50){why.push("实测假流式 "+s.stream+"%(内容块缓冲后一次下发),Cursor / Claude Code 的逐字渲染会失效")}
+ if(s.fp==="fail"){why.push("模型指纹未通过(疑似掉包)")}
+ if(ttftMax<999&&s.ttft!=null&&s.ttft>ttftMax){why.push("实测首字延迟 "+s.ttft+"s,超出你设的 "+ttftMax+"s 上限")}
+ if(ttftMax<999&&s.ttft==null){why.push("该站首字延迟未测,无法确认满足你的延迟要求")}
+ if(budget&&month>budget){why.push("预估月成本 "+usd(month)+" 超出预算 "+usd(budget))}
+ if(why.length){rejected.push({site:row.site,group:row.group,reasons:why,month:month});return}
+ cand.push({site:row.site,group:row.group,row:row,cost:c,month:month,s:s});
+ });
+ if(!cand.length){
+ box.innerHTML='<div class="sk">没有满足你当前约束的选项 —— 试试放宽预算或延迟要求,或看 <a href="ranking.html" style="color:var(--brand)">完整榜单</a>。</div>'+renderRejected(rejected);
+ return;
+ }
+ /* 归一化打分:各维度 0–1 后再加权(美元/秒/百分制不能直接相减) */
+ var W=SEL_W[scene]||SEL_W.all;
+ var minC=Math.min.apply(null,cand.map(function(x){return x.cost.total})), maxC=Math.max.apply(null,cand.map(function(x){return x.cost.total}));
+ var ttfts=cand.map(function(x){return x.s.ttft}).filter(function(v){return v!=null});
+ var minT=ttfts.length?Math.min.apply(null,ttfts):0, maxT=ttfts.length?Math.max.apply(null,ttfts):1;
+ cand.forEach(function(x){
+ var costScore=maxC>minC?(maxC-x.cost.total)/(maxC-minC):1;
+ var speedScore=x.s.ttft==null?0.5:(maxT>minT?(maxT-x.s.ttft)/(maxT-minT):1); // 未测给中性 0.5 并标注
+ var avail=x.s.avail; var slaScore=avail==null?0.5:Math.max(0,Math.min(1,(avail-97)/3));
+ var truthScore=x.s.fp==="pass"?1:x.s.fp==="suspect"?0.5:x.s.fp==="fail"?0:0.3;
+ var streamScore=x.s.stream==null?0.5:(100-x.s.stream)/100;
+ x.parts={cost:costScore,speed:speedScore,sla:slaScore,truth:truthScore,stream:streamScore};
+ x.score=Math.round(100*(W.cost*costScore+W.speed*speedScore+W.sla*slaScore+W.truth*truthScore+W.stream*streamScore));
+ });
+ cand.sort(function(a,b){return b.score-a.score});
+ box.innerHTML=cand.map(function(x,i){return renderPick(x,i,W,reqDay,scene)}).join("")
+ +renderRejected(rejected)
+ +'<div class="note"> 口径提醒:成本按你填的负载与<b>该站被实测的那个分组</b>报价计算;同一站的其他分组价格与稳定性可能差异很大(我们实测到同站同模型不同分组差 8 倍)。未测维度按中性值参与打分并已标注。</div>';
 }
 
 function renderPick(x,i,W,reqDay,scene){
-  var s=x.s, c=x.cost, amp=c.list>0?c.total/c.list:1;
-  var tags=[];
-  tags.push('<span class="tag '+(s.fp==="pass"?"ok":s.fp==="suspect"?"warn":"")+'">模型指纹 '+(s.fp==="pass"?"通过":s.fp==="suspect"?"存疑":s.fp==="fail"?"未通过":"未测")+(s.fp==="pass"?" "+(s.score?"":""):"")+'</span>');
-  tags.push('<span class="tag '+(s.stream==null?"":s.stream===0?"ok":"bad")+'">流式 '+(s.stream==null?"未测":s.stream===0?"⚡ 真流式":"🔇 假流式 "+s.stream+"%")+'</span>');
-  tags.push('<span class="tag '+(c.inject>0?"bad":"ok")+'">注入 '+(c.inject>0?"+"+c.injectTokens+" tok/请求":"⚡ 未检出")+'</span>');
-  if(c.cacheUnknown)tags.push('<span class="tag warn">该分组未公布缓存价,按输入价计</span>');
-  if(s.audit&&s.audit.matchPct!=null)tags.push('<span class="tag ok">逐笔对账 '+s.audit.matchPct+'%</span>');
-  if(s.measuredGroup&&s.measuredGroup.group&&s.measuredGroup.group!==x.group)tags.push('<span class="tag warn">实测分组为 '+s.measuredGroup.group+',此报价来自价格快照</span>');
-  var dimNote=function(v,label){return '<span class="tag">'+label+' '+(v==null?"未测":v)+'</span>'};
-  return '<div class="pick'+(i===0?" best":"")+'"><span class="rk">'+(i===0?"推荐 · 最契合":"备选 "+(i+1))+'</span>'+
-    '<h3>'+esc(x.site)+' <span class="grp">'+esc(x.group||"默认分组")+'</span><span style="margin-left:auto;font-size:13px;color:var(--faint)">匹配度 <b class="num" style="font-size:20px;color:'+(i===0?"var(--ok)":"var(--brand)")+'">'+x.score+'</b>/100</span></h3>'+
-    '<div class="why">'+pickReason(x,W,scene)+'</div>'+
-    '<div class="kv">'+
-      '<div class="c"><div class="k">预估月成本</div><div class="v '+(i===0?"good":"")+' num">'+usd(x.month)+'</div></div>'+
-      '<div class="c"><div class="k">单请求真实成本</div><div class="v num">'+usd(c.total)+'</div></div>'+
-      '<div class="c"><div class="k">首字延迟</div><div class="v '+(s.ttft==null?"":s.ttft<=2?"good":s.ttft<=3?"mid":"bad")+' num">'+(s.ttft==null?"未测":s.ttft+"s")+'</div></div>'+
-      '<div class="c"><div class="k">7 日可用率</div><div class="v '+(s.avail==null?"":s.avail>=99?"good":"mid")+' num">'+(s.avail==null?"未测":s.avail+"%")+'</div></div>'+
-      '<div class="c"><div class="k">榜单分('+esc(SCENE_LABEL[scene])+')</div><div class="v num">'+(s.score&&s.score[scene]!=null?s.score[scene]:"—")+'</div></div>'+
-    '</div>'+
-    '<div class="tags">'+tags.join("")+'</div>'+
-    '<div class="calc">成本明细(每请求):标价部分 <b>'+usd(c.list)+'</b>'+
-      (c.inject>0?' + 注入部分 <span class="inj">'+usd(c.inject)+'</span>(该站实测每请求固定注入 '+c.injectTokens+' tok,其中 fresh '+(c.injectTokens*s.injectSplit.fresh_share|0)+' / 缓存 '+(c.injectTokens*s.injectSplit.cached_share|0)+')':'')+
-      ' = <b>'+usd(c.total)+'</b>'+(amp>1.05?' —— 比只看标价贵 <b>'+((amp-1)*100).toFixed(0)+'%</b>':'')+
-      ';按 '+reqDay.toLocaleString()+' 次/日 × 30 天 = <b>'+usd(x.month)+'/月</b>。'+
-      (s.commerce&&s.commerce.ratioNum?(' 该站充值比例 ¥'+s.commerce.ratioNum+'/1$ → 人民币到手约 <b>¥'+(x.month*s.commerce.ratioNum).toFixed(2)+'/月</b>。'):' 该站充值比例未声明,无法给出人民币到手成本。')+
-      dimNote(s.timeout,"超时率%")+'</div>'+
-    '</div>';
+ var s=x.s, c=x.cost, amp=c.list>0?c.total/c.list:1;
+ var tags=[];
+ tags.push('<span class="tag '+(s.fp==="pass"?"ok":s.fp==="suspect"?"warn":"")+'">模型指纹 '+(s.fp==="pass"?"通过":s.fp==="suspect"?"存疑":s.fp==="fail"?"未通过":"未测")+(s.fp==="pass"?" "+(s.score?"":""):"")+'</span>');
+ tags.push('<span class="tag '+(s.stream==null?"":s.stream===0?"ok":"bad")+'">流式 '+(s.stream==null?"未测":s.stream===0?"真流式":"假流式 "+s.stream+"%")+'</span>');
+ tags.push('<span class="tag '+(c.inject>0?"bad":"ok")+'">注入 '+(c.inject>0?"+"+c.injectTokens+" tok/请求":"未检出")+'</span>');
+ if(c.cacheUnknown)tags.push('<span class="tag warn">该分组未公布缓存价,按输入价计</span>');
+ if(s.audit&&s.audit.matchPct!=null)tags.push('<span class="tag ok">逐笔对账 '+s.audit.matchPct+'%</span>');
+ if(s.measuredGroup&&s.measuredGroup.group&&s.measuredGroup.group!==x.group)tags.push('<span class="tag warn">实测分组为 '+s.measuredGroup.group+',此报价来自价格快照</span>');
+ var dimNote=function(v,label){return '<span class="tag">'+label+' '+(v==null?"未测":v)+'</span>'};
+ return '<div class="pick'+(i===0?" best":"")+'"><span class="rk">'+(i===0?"推荐 · 最契合":"备选 "+(i+1))+'</span>'+
+ '<h3>'+esc(x.site)+' <span class="grp">'+esc(x.group||"默认分组")+'</span><span style="margin-left:auto;font-size:13px;color:var(--faint)">匹配度 <b class="num" style="font-size:20px;color:'+(i===0?"var(--ok)":"var(--brand)")+'">'+x.score+'</b>/100</span></h3>'+
+ '<div class="why">'+pickReason(x,W,scene)+'</div>'+
+ '<div class="kv">'+
+ '<div class="c"><div class="k">预估月成本</div><div class="v '+(i===0?"good":"")+' num">'+usd(x.month)+'</div></div>'+
+ '<div class="c"><div class="k">单请求真实成本</div><div class="v num">'+usd(c.total)+'</div></div>'+
+ '<div class="c"><div class="k">首字延迟</div><div class="v '+(s.ttft==null?"":s.ttft<=2?"good":s.ttft<=3?"mid":"bad")+' num">'+(s.ttft==null?"未测":s.ttft+"s")+'</div></div>'+
+ '<div class="c"><div class="k">7 日可用率</div><div class="v '+(s.avail==null?"":s.avail>=99?"good":"mid")+' num">'+(s.avail==null?"未测":s.avail+"%")+'</div></div>'+
+ '<div class="c"><div class="k">榜单分('+esc(SCENE_LABEL[scene])+')</div><div class="v num">'+(s.score&&s.score[scene]!=null?s.score[scene]:"—")+'</div></div>'+
+ '</div>'+
+ '<div class="tags">'+tags.join("")+'</div>'+
+ '<div class="calc">成本明细(每请求):标价部分 <b>'+usd(c.list)+'</b>'+
+ (c.inject>0?' + 注入部分 <span class="inj">'+usd(c.inject)+'</span>(该站实测每请求固定注入 '+c.injectTokens+' tok,其中 fresh '+(c.injectTokens*s.injectSplit.fresh_share|0)+' / 缓存 '+(c.injectTokens*s.injectSplit.cached_share|0)+')':'')+
+ ' = <b>'+usd(c.total)+'</b>'+(amp>1.05?' —— 比只看标价贵 <b>'+((amp-1)*100).toFixed(0)+'%</b>':'')+
+ ';按 '+reqDay.toLocaleString()+' 次/日 × 30 天 = <b>'+usd(x.month)+'/月</b>。'+
+ (s.commerce&&s.commerce.ratioNum?(' 该站充值比例 ¥'+s.commerce.ratioNum+'/1$ → 人民币到手约 <b>¥'+(x.month*s.commerce.ratioNum).toFixed(2)+'/月</b>。'):' 该站充值比例未声明,无法给出人民币到手成本。')+
+ dimNote(s.timeout,"超时率%")+'</div>'+
+ '</div>';
 }
 function pickReason(x,W,scene){
-  var s=x.s,p=x.parts,r=[];
-  if(p.cost>=0.99)r.push("在你这个负载下真实成本最低");
-  else if(p.cost>=0.6)r.push("成本接近最低档");
-  else r.push("成本偏高(注意注入开销)");
-  if(s.fp==="pass")r.push("模型指纹通过实测验证");
-  else if(s.fp==="suspect")r.push("但指纹存疑,建议先小额验证");
-  if(s.stream===0)r.push("真流式,逐字输出可用");
-  else if(s.stream!=null)r.push("但假流式率 "+s.stream+"%");
-  if(s.ttft!=null)r.push("首字 "+s.ttft+"s");
-  if(s.avail!=null)r.push("可用率 "+s.avail+"%");
-  return r.join(" · ");
+ var s=x.s,p=x.parts,r=[];
+ if(p.cost>=0.99)r.push("在你这个负载下真实成本最低");
+ else if(p.cost>=0.6)r.push("成本接近最低档");
+ else r.push("成本偏高(注意注入开销)");
+ if(s.fp==="pass")r.push("模型指纹通过实测验证");
+ else if(s.fp==="suspect")r.push("但指纹存疑,建议先小额验证");
+ if(s.stream===0)r.push("真流式,逐字输出可用");
+ else if(s.stream!=null)r.push("但假流式率 "+s.stream+"%");
+ if(s.ttft!=null)r.push("首字 "+s.ttft+"s");
+ if(s.avail!=null)r.push("可用率 "+s.avail+"%");
+ return r.join(" · ");
 }
 function renderRejected(rejected){
-  if(!rejected.length)return"";
-  return '<div class="rejected"><h4>被排除的选项(以及为什么)</h4>'+rejected.map(function(x){
-    return '<div class="r"><b>'+esc(x.site)+'</b>'+(x.group?' · '+esc(x.group):'')+' —— '+x.reasons.map(esc).join(";")+'</div>';
-  }).join("")+'</div>';
+ if(!rejected.length)return"";
+ return '<div class="rejected"><h4>被排除的选项(以及为什么)</h4>'+rejected.map(function(x){
+ return '<div class="r"><b>'+esc(x.site)+'</b>'+(x.group?' · '+esc(x.group):'')+' —— '+x.reasons.map(esc).join(";")+'</div>';
+ }).join("")+'</div>';
 }
 
 function fillModels(){
-  var sel=document.getElementById("sModel"),list=modelList();
-  sel.innerHTML=list.map(function(t){return '<option value="'+esc(t.key)+'">'+esc(t.name)+'('+t.rows.length+' 家站有报价)</option>'}).join("")
-    ||'<option value="">暂无实测模型</option>';
+ var sel=document.getElementById("sModel"),list=modelList();
+ sel.innerHTML=list.map(function(t){return '<option value="'+esc(t.key)+'">'+esc(t.name)+'('+t.rows.length+' 家站有报价)</option>'}).join("")
+ ||'<option value="">暂无实测模型</option>';
 }
 function fillWeights(){
-  var scene=document.getElementById("sScene").value,W=SEL_W[scene]||SEL_W.all;
-  var t=document.getElementById("wTable");
-  if(t)t.innerHTML='<tr><th>维度</th><th>权重</th><th>数据来源</th></tr>'+Object.keys(W).filter(function(k){return W[k]>0}).map(function(k){
-    var src={cost:"各站报价快照 + 实测注入量(按你的负载算)",speed:"SSE 流式探针实测首字延迟",sla:"7 日健康检查",truth:"模型指纹比对",stream:"SSE 内容块间隔判据 <50ms"}[k];
-    return '<tr><td>'+SEL_LABEL[k]+'</td><td class="num">'+(W[k]*100).toFixed(0)+'%</td><td>'+src+'</td></tr>';
-  }).join("");
+ var scene=document.getElementById("sScene").value,W=SEL_W[scene]||SEL_W.all;
+ var t=document.getElementById("wTable");
+ if(t)t.innerHTML='<tr><th>维度</th><th>权重</th><th>数据来源</th></tr>'+Object.keys(W).filter(function(k){return W[k]>0}).map(function(k){
+ var src={cost:"各站报价快照 + 实测注入量(按你的负载算)",speed:"SSE 流式探针实测首字延迟",sla:"7 日健康检查",truth:"模型指纹比对",stream:"SSE 内容块间隔判据 <50ms"}[k];
+ return '<tr><td>'+SEL_LABEL[k]+'</td><td class="num">'+(W[k]*100).toFixed(0)+'%</td><td>'+src+'</td></tr>';
+ }).join("");
 }
 
 /* 预设 */
@@ -420,12 +421,12 @@ document.getElementById("sStream").addEventListener("change",syncChk);
 document.getElementById("sScene").addEventListener("change",fillWeights);
 
 fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))}).then(function(j){
-  DATA=j;fillModels();fillWeights();syncRange();syncChk();
-  document.getElementById("sRun").textContent="生成选型建议";
+ DATA=j;fillModels();fillWeights();syncRange();syncChk();
+ document.getElementById("sRun").textContent="生成选型建议";
 }).catch(function(){
-  document.getElementById("resBox").innerHTML="";
-  document.getElementById("outSec").style.display="block";
-  document.getElementById("resBox").innerHTML='<div class="err"><b>读不到实测数据</b><br>需要先运行 <code>tsx cli.ts sync</code> 生成 data/sites.json。选型顾问不做演示数据回退 —— 给你假的成本测算比不给建议更糟。</div>';
+ document.getElementById("resBox").innerHTML="";
+ document.getElementById("outSec").style.display="block";
+ document.getElementById("resBox").innerHTML='<div class="err"><b>读不到实测数据</b><br>需要先运行 <code>tsx cli.ts sync</code> 生成 data/sites.json。选型顾问不做演示数据回退 —— 给你假的成本测算比不给建议更糟。</div>';
 });
 </script>
 </body>

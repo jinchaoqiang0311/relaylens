@@ -35,9 +35,9 @@ check("ranking 列头与筛选项说「首字延迟」", /首字延迟 ≤ 2s/.t
 check("compare 场景说明说「首字延迟」", /晚高峰首字延迟/.test(fs.readFileSync(DIR + "compare.html", "utf8")));
 check("selector 维度名说「首字延迟」", /speed:"首字延迟"/.test(fs.readFileSync(DIR + "selector.html", "utf8")));
 check("detail 指标条说「首字延迟」", /首字延迟·晚高峰/.test(fs.readFileSync(DIR + "detail.html", "utf8")));
-check("index 的 quota 换算输出额度价,比例已知才补 ¥",
-  /function q2cny/.test(fs.readFileSync(DIR + "index.html", "utf8")) &&
-  /额度/.test(fs.readFileSync(DIR + "index.html", "utf8")) && !/q2usd/.test(fs.readFileSync(DIR + "index.html", "utf8")));
+check("index 价格列以人民币到手价呈现并说明额度价口径",
+  /到手价/.test(fs.readFileSync(DIR + "index.html", "utf8")) &&
+  /额度价/.test(fs.readFileSync(DIR + "index.html", "utf8")) && !/q2usd/.test(fs.readFileSync(DIR + "index.html", "utf8")));
 
 console.log("\n【技术页:保留 TTFT 但必须先给大白话】");
 const meth = fs.readFileSync(DIR + "method.html", "utf8");

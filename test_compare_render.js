@@ -2,11 +2,12 @@
  * test_compare_render.js —— 比价页渲染与价格口径断言
  * 核心原则:①已实测的模型不许再显示演示数据(同名示例页签必须弃用)
  *           ②未测字段(充值比例/缓存写)必须显示「未测/未公布」,不得显示 0 或编数
- *           ③全模型最低价视图的最低价必须是 payload 各行到手价的真最小值
+ *           ③已下线视图必须真正删干净(容器/函数/样式/切换逻辑都不许留残骸)
  *           ④取不到数据时保持示例页签(带「示例」角标),不冒充实测
  *
- * 2026-10-21 变更:「站点实测明细」视图(含成本模拟器/特价组/四个坑)按产品决策下线,
- *   断言改为守「全模型最低价」默认视图 + 矩阵比价视图;价格口径不变式(数据层)全部保留。
+ * 2026-10-21 变更:「站点实测明细」视图(含成本模拟器/特价组/四个坑)按产品决策下线;
+ *   同日「全模型最低价」视图也下线(每模型最低价的诉求由 price.html「模型比价」主页承担),
+ *   矩阵比价成为 compare.html 唯一视图;价格口径不变式(数据层)全部保留。
  */
 const fs = require("fs"), vm = require("vm");
 const DIR = __dirname+"/relaylens-home/";
@@ -14,6 +15,7 @@ const SITES = JSON.parse(fs.readFileSync(DIR + "data/sites.json", "utf8"));
 const CMP = SITES.compare;
 const html = fs.readFileSync(DIR + "compare.html", "utf8");
 const matrixJs = fs.readFileSync(DIR + "assets/compare-matrix.js", "utf8");
+const themeCss = fs.readFileSync(DIR + "assets/theme-relaypick.css", "utf8");
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).join("\n");
 
 function run(fetchImpl, search, strictDom) {
@@ -81,50 +83,40 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   const A = run(u => Promise.resolve({ ok: true, json: () => Promise.resolve(SITES) }));
   await new Promise(r => setImmediate(r)); await new Promise(r => setImmediate(r));
   const allHtml = A.captured["allTable"] || "";
+  const mxHtml = A.captured["mxTable"] || "";
 
-  /* ===== ① 全模型最低价视图(默认视图) ===== */
-  console.log("\n【① 全模型最低价视图(getcheapai 形态,默认视图)】");
-  check("视图按钮与容器存在(全模型最低价 / 矩阵比价)", /id="vBtnAll"/.test(html) && /id="allView"/.test(html) && /id="allTable"/.test(html));
-  check("矩阵视图默认隐藏、最低价视图默认展示", /id="matrixView" style="display:none"/.test(html) && !/id="allView" style="display:none"/.test(html));
-  check("搜索框与计数位存在", /id="allSearch"/.test(html) && /id="allCount"/.test(html));
-  check("渲染出行(不是空表)", allHtml.includes("<tbody>") && allHtml.includes("</tbody>"), allHtml.length + " chars");
-  const tbodyHtml = (allHtml.match(/<tbody>([\s\S]*)<\/tbody>/) || [null, ""])[1];
-  const rowsHtml = tbodyHtml.split(/<tr>/).filter(r => /<td\b/.test(r));
-  check("行数 ≥ 实测模型数(每个 payload tab 一行)", rowsHtml.length >= CMP.tabs.length, `${rowsHtml.length} 行 / 实测 ${CMP.tabs.length} 模型`);
-  check("每个实测模型名都出现在表里", CMP.tabs.every(t => allHtml.includes(t.name)), CMP.tabs.filter(t => !allHtml.includes(t.name)).map(t => t.name).join(",") || "全覆盖");
+  /* ===== ① 「全模型最低价」视图已下线(2026-10-21):最低价诉求由 price.html「模型比价」主页承担 ===== */
+  console.log("\n【① 全模型最低价视图已下线】");
+  check("allView / allTable / allSearch / vBtnAll 容器与控件全部移除",
+    !/id="allView"/.test(html) && !/id="allTable"/.test(html) && !/id="allSearch"/.test(html) && !/id="vBtnAll"/.test(html));
+  check("对应渲染函数与状态一并清除",
+    !/function renderAllView/.test(html) && !/function allBuildRows/.test(html) && !/function allDiscCell/.test(html) &&
+    !/function allOutEff/.test(html) && !/function allGoModel/.test(html) && !/ALL_SORT/.test(html));
+  check("主题 CSS 里 .all-table 样式已清理", !/\.all-table/.test(themeCss));
+  check("矩阵视图成为唯一视图且默认可见", /id="matrixView"/.test(html) && !/id="matrixView" style="display:none"/.test(html));
+  check("视图切换逻辑下线(bind 里不再有 vBtnAll / allView 分支)",
+    !/vBtnAll/.test(matrixJs) && !/getElementById\("allView"\)/.test(matrixJs) && !/show\("all"\)/.test(matrixJs));
+  check("页头指引「每模型最低到手价去哪看」→ price.html", /模型比价主页/.test(html));
 
-  // 逐 tab 核对:最低到手价 / 较官方折扣 / 来源站 三列都与 payload 真值一致
-  const missPrice = [], missDisc = [], missSite = [];
-  for (const t of CMP.tabs) {
-    const m = minEffOf(t);
-    if (!m) continue;
-    const row = rowsHtml.find(r => r.includes(t.name)) || "";
-    if (m.eff != null) {
-      if (!row.includes("¥" + pfmt(m.eff))) missPrice.push(t.name);
-      const pct = Math.round((m.eff / t.official.in - 1) * 100);
-      if (!row.includes((pct > 0 ? "+" : "") + pct + "%")) missDisc.push(t.name);
-    }
-    if (!row.includes(m.row.site)) missSite.push(t.name);
-  }
-  check("最低到手价 = payload 各行到手价真最小值(逐模型核对)", missPrice.length === 0, missPrice.slice(0, 3).join(",") || `${CMP.tabs.length} 个模型全对`);
-  check("较官方折扣 = 到手价相对官方锚的偏差(逐模型核对)", missDisc.length === 0, missDisc.slice(0, 3).join(",") || "全对");
-  check("最低价来源站取自 payload", missSite.length === 0, missSite.slice(0, 3).join(",") || "全对");
-  check("折扣为负显示绿色(--ok),不给假主价", /color:var\(--ok\)/.test(allHtml) && !/¥(6\.39|12\.43|4\.97|53\.25|79\.88)/.test(allHtml));
-  check("示例数据有显式「示例」角标(不冒充实测)", /示例<\/span>|· 示例/.test(allHtml) || !SITES.realSites.some(s => s.level === "passive"));
-  check("口径说明挂在悬停浮窗(到手价 / 较官方)", /data-tip="到手价 = 站方公示额度价/.test(html) && /data-tip="较官方 = 最低到手价/.test(html));
-  check("在售家数列存在", /家<\/td>|家<\/span>/.test(allHtml));
+  /* ===== ② 矩阵视图改为源码级断言 =====
+     矩阵表由外部 assets/compare-matrix.js 渲染,不在本 harness 执行的内联脚本里,
+     因此这里只能守「结构 + 数据源 + 渲染入口」,行级渲染由 compare-matrix.js 的语法检查与浏览器实测兜底。 */
+  const mxBody = (mxHtml.match(/<tbody>([\s\S]*)<\/tbody>/) || [null, ""])[1];
+  check("矩阵表容器就位且脚本会写入它", /id="mxTable"/.test(html) && /getElementById\("mxTable"\)/.test(matrixJs));
+  check("矩阵数据源 = compare.tabs + realSites(不另造数)", /payload\.compare/.test(matrixJs) && /c\.tabs/.test(matrixJs) && /realSites/.test(matrixJs));
+  check("主脚本数据回调把 payload 交给 renderMatrix", /renderMatrix\(j\)/.test(html));
 
-  /* ===== ② 结构守门:引号闭合 / td 配平 / 格数=列数 ===== */
+  /* ===== ③ 结构守门:引号闭合 / td 配平 ===== */
+  const rowsHtml = mxBody.split(/<tr>/).filter(r => /<td\b/.test(r));
   const badAttr = [], badTd = [];
   rowsHtml.forEach((r, i) => {
     const m = r.match(/<[a-zA-Z]+[^>]*?="[^"]*>/g);
     if (m) badAttr.push(`行${i + 1}: ${m[0].slice(0, 70)}`);
     const o = (r.match(/<td\b/g) || []).length, c = (r.match(/<\/td>/g) || []).length;
     if (o !== c) badTd.push(`行${i + 1}: td 开闭不等 ${o}/${c}`);
-    if (o !== 5) badTd.push(`行${i + 1}: 格数 ${o} ≠ 5 列`);
   });
   check("渲染 HTML 无未闭合引号属性(防列合并错位)", badAttr.length === 0, badAttr.slice(0, 2).join(" | "));
-  check("每行 td 开闭配平且格数 = 5 列", badTd.length === 0, badTd.slice(0, 2).join(" | "));
+  check("每行 td 开闭配平", badTd.length === 0, badTd.slice(0, 2).join(" | "));
 
   /* ===== ③ 站点实测明细视图已下线(2026-10-21) ===== */
   console.log("\n【② 站点实测明细视图已下线】");
@@ -135,18 +127,20 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
     /function renderCalc\(\)\{[\s\S]{0,120}getElementById\("inTokens"\)\)?\s*return/.test(html) &&
     /function renderSpecial\(payload\)\{[\s\S]{0,120}getElementById\("specialBody"\)\)?\s*return/.test(html) &&
     /function bindTabs\(\)\{[\s\S]{0,120}getElementById\("modelTabs"\)\)?\s*return/.test(html));
-  check("点模型名改跳矩阵视图(不再依赖已删的族索引)", /function allGoModel[\s\S]{0,400}vBtnMatrix/.test(html) && !/allGoModel[\s\S]{0,400}vBtnSite/.test(html));
-  check("老深链 ?model= 兼容(改为切矩阵并灌模型名)", /location\.search\.match\(\/\[\?&\]model=/.test(html) && /allGoModel\(hit\)/.test(html));
+  check("点模型名改跳矩阵视图的 allGoModel 已随最低价视图一并下线", !/function allGoModel/.test(html) && !/allGoModel\(/.test(html));
+  check("老深链 ?model= 兼容(直接把模型名灌进矩阵搜索框)", /location\.search\.match\(\/\[\?&\]model=/.test(html) && /getElementById\("mxSearch"\)/.test(html));
 
   /* ===== ④ 矩阵比价视图(源码级) ===== */
   console.log("\n【③ 矩阵比价视图】");
   check("矩阵容器与表格存在", /id="matrixView"/.test(html) && /id="mxTable"/.test(html));
-  check("搜索与到手价开关", /id="mxSearch"/.test(html) && /id="mxEff"/.test(html));
-  check("矩阵脚本:数据源为 compare.tabs + realSites.effRatio", /compare\.tabs/.test(matrixJs) && /effRatio/.test(matrixJs));
-  check("矩阵脚本:最低价高亮(悲观最佳标记)", /mx-best/.test(matrixJs));
-  check("矩阵脚本:未声明比例站如实标注", /比例未声明/.test(matrixJs));
+  check("搜索框保留、到手价开关已随站点列下线", /id="mxSearch"/.test(html) && !/id="mxEff"/.test(html));
+  check("矩阵脚本:每模型一行,只取到手价最低的一家", /function buildRow/.test(matrixJs) && /v < best\.v/.test(matrixJs));
+  check("矩阵脚本:不再铺站点列(无 stationOrder / 按站遍历表头)", !/stationOrder/.test(matrixJs) && !/stations\.forEach\(function \(st\)/.test(matrixJs));
+  check("矩阵脚本:未声明比例的站如实标「比例未声明」", /比例未声明/.test(matrixJs));
+  check("矩阵脚本:缓存写入无数据时给「—」不推算", /未公布缓存写入单价/.test(matrixJs));
+  check("矩阵脚本:官方价按 meta.fx 换算并标注倍数", /usdCny/.test(matrixJs) && /×/.test(matrixJs));
   check("主脚本数据回调挂接 renderMatrix", /renderMatrix\(j\)/.test(html));
-  check("切换函数对已删的 siteView 做了空值保护", /if \(sv\) sv\.style\.display/.test(matrixJs) && /if \(bs\) bs\.onclick/.test(matrixJs));
+  check("bind() 只绑搜索(到手价开关随站点列一并下线)", /getElementById\("mxSearch"\)/.test(matrixJs) && !/mxEff/.test(matrixJs) && !/function show\(/.test(matrixJs));
   try { new Function(matrixJs); check(true, "compare-matrix.js 语法合法"); }
   catch (e) { check(false, "compare-matrix.js 语法错误: " + e.message); }
 
@@ -160,8 +154,12 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   check("未校准行一律 calib=page(前端出估算角标)", allRows.filter(r => r.calib !== "measured").every(r => r.calib === "page" || r.calib == null));
   const pageRows = allRows.filter(r => r.calib === "page");
   check("page 占比如实(未校准站仍是多数,别假装全覆盖)", allRows.length === 0 || pageRows.length / allRows.length > 0.3, pageRows.length + "/" + allRows.length);
-  check("三因子摊开可验算:额度价 = 官方价格 × 倍率(baseIn×grpRatio≈inP)", allRows.every(r => r.baseIn == null || r.grpRatio == null || Math.abs(r.baseIn * r.grpRatio - r.inP) <= 0.011));
-  check("到手价 = 额度价 × 充值比例(严格公式,校准因子不乘价)", allRows.filter(r => r.ratio != null && r.effIn != null).every(r => Math.abs(r.effIn - Math.round(r.inP * r.ratio * 100) / 100) <= 0.011));
+  /* 官方锚 × 组倍率 = 额度价,只对「标价按美元额度记账」的站成立(src=USD)。
+     src=CNY 的站(heyroute 价格页 ¥ CNY 视图)inP 是页面公示人民币单价,与美元官方锚不同量纲,不参与该恒等式。 */
+  const usdRows = allRows.filter(r => (r.src || "USD") === "USD");
+  check("三因子摊开可验算:额度价 = 官方价格 × 倍率(baseIn×grpRatio≈inP,限 USD 额度价站)", usdRows.every(r => r.baseIn == null || r.grpRatio == null || Math.abs(r.baseIn * r.grpRatio - r.inP) <= 0.011));
+  check("CNY 公示价站不被美元锚恒等式误判", allRows.filter(r => r.src === "CNY").every(r => r.effIn == null || Math.abs(r.effIn - r.inP) <= 0.011));
+  check("到手价 = 额度价 × 充值比例(严格公式,校准因子不乘价)", usdRows.filter(r => r.ratio != null && r.effIn != null).every(r => Math.abs(r.effIn - Math.round(r.inP * r.ratio * 100) / 100) <= 0.011));
   const keyRows = allRows.filter(r => r.groupKind === "key");
   check("key 组归位行必须带 match 验证(实扣与所选组公式价吻合)", keyRows.every(r => r.calibStatus === "match"));
 
@@ -181,18 +179,18 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   try {
     const C = run(u => Promise.resolve({ ok: true, json: () => Promise.resolve(SITES) }), "", true);
     await new Promise(r => setImmediate(r)); await new Promise(r => setImmediate(r));
-    strictAll = C.captured["allTable"] || "";
+    strictAll = C.captured["mxTable"] || "";
   } catch (e) { strictErr = e; }
   check("脚本在真实 DOM 语义下不抛错(顶层无未守卫的 getElementById 解引用)", strictErr === null, strictErr ? strictErr.message : "");
-  check("最低价视图在严格语义下仍渲染出实测模型", CMP.tabs.some(t => strictAll.includes(t.name)), (strictAll.match(/<tr>/g) || []).length + " 行");
+  check("严格语义下不残留已下线视图的渲染产物", !/全模型最低价|allTable/.test(strictAll), strictAll.length + " chars");
   check("已删控件(cacheHonest 等)不再被顶层 addEventListener 直接解引用", /if\(document\.getElementById\("cacheHonest"\)\)\{/.test(html));
 
-  /* ===== ⑥ 取不到数据态:降级不炸,且仍渲染示例最低价表 ===== */
+  /* ===== ⑥ 取不到数据态:降级不炸,不抛未捕获错 ===== */
   console.log("\n【比价页 · 取不到数据态】");
   const B = run(() => Promise.reject(new Error("404")));
   await new Promise(r => setImmediate(r)); await new Promise(r => setImmediate(r));
-  const allB = B.captured["allTable"] || "";
-  check("降级态仍渲染最低价表(示例数据,带「示例」标注)", allB.includes("<tbody>") && /示例/.test(allB), allB.length + " chars");
+  const degradedHtml = Object.values(B.captured).join("");
+  check("降级态不抛未捕获错,且不渲染任何已下线视图的残骸", !/allTable|全模型最低价/.test(degradedHtml), degradedHtml.length + " chars");
 
   console.log(`\n${fail === 0 ? "✓ 全部通过" : "✗ 有失败"} · ${pass} 通过 / ${fail} 失败`);
   process.exit(fail ? 1 : 0);

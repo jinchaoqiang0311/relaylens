@@ -41,6 +41,9 @@ export async function parseHeyRoute(site: SiteConfig): Promise<PriceResult> {
   }
   const body = JSON.parse(fs.readFileSync(imp.file, "utf8")) as HRPayload;
   const capturedAt = imp.mtime.toISOString();
+  /** 源货币跟着导入文件走:价格页切到 ¥ CNY 抓的就标 CNY(页面明写的人民币单价),
+   *  不再默认 USD —— 把 ¥2.80/M 当美元再乘汇率/充值比例是数量级错误。 */
+  const cur = String((body as any).currency || "USD").toUpperCase() === "CNY" ? "CNY" : "USD";
   const rows = body.models ?? [];
   if (!rows.length) throw new Error("heyroute import 无 models");
 
@@ -71,6 +74,6 @@ export async function parseHeyRoute(site: SiteConfig): Promise<PriceResult> {
 
   return {
     task: "price", site: site.name, capturedAt,
-    currency: "USD", models, ratio: null, parser: "heyroute-manual", parseErrors,
+    currency: cur, models, ratio: null, parser: "heyroute-manual", parseErrors,
   };
 }

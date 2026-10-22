@@ -1,0 +1,1429 @@
+{
+ "scrapedAt": "2026-10-21T11:19:53.657Z",
+ "site": "heyroute",
+ "currency": "CNY",
+ "note": "2026-10-21 登录态 DOM 抓取(¥ CNY 模式):价格为价格页明示的人民币单价,与充值比例无关;图片/视频按张/秒计价未纳入",
+ "models": [
+  {
+   "model": "claude-haiku-4-5-20251001",
+   "input": 0.28,
+   "output": 1.4,
+   "cacheRead": 0.028,
+   "listInput": 7,
+   "listOutput": 35,
+   "listCacheRead": 0.7,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 0.28,
+    "output": 1.4,
+    "cacheRead": 0.028
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 1.4,
+     "cacheRead": 0.028
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 1.47,
+     "output": 7.35,
+     "cacheRead": 0.15
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-opus-4-6",
+   "input": 1.4,
+   "output": 7,
+   "cacheRead": 0.14,
+   "listInput": 35,
+   "listOutput": 175,
+   "listCacheRead": 3.5,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 1.4,
+    "output": 7,
+    "cacheRead": 0.14
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 1.4,
+     "output": 7,
+     "cacheRead": 0.14
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 7.35,
+     "output": 36.75,
+     "cacheRead": 0.73
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-opus-4-7",
+   "input": 1.4,
+   "output": 7,
+   "cacheRead": 0.14,
+   "listInput": 35,
+   "listOutput": 175,
+   "listCacheRead": 3.5,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 1.4,
+    "output": 7,
+    "cacheRead": 0.14
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 1.4,
+     "output": 7,
+     "cacheRead": 0.14
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 7.35,
+     "output": 36.75,
+     "cacheRead": 0.73
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-opus-4-8",
+   "input": 1.4,
+   "output": 7,
+   "cacheRead": 0.14,
+   "listInput": 35,
+   "listOutput": 175,
+   "listCacheRead": 3.5,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 1.4,
+    "output": 7,
+    "cacheRead": 0.14
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 1.4,
+     "output": 7,
+     "cacheRead": 0.14
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 7.35,
+     "output": 36.75,
+     "cacheRead": 0.73
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-opus-5",
+   "input": 1.4,
+   "output": 7,
+   "cacheRead": 0.14,
+   "listInput": 35,
+   "listOutput": 175,
+   "listCacheRead": 3.5,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 1.4,
+    "output": 7,
+    "cacheRead": 0.14
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 1.4,
+     "output": 7,
+     "cacheRead": 0.14
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 7.35,
+     "output": 36.75,
+     "cacheRead": 0.73
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-opus-5-5",
+   "input": 1.12,
+   "output": 5.6,
+   "cacheRead": 0.056,
+   "listInput": 28,
+   "listOutput": 140,
+   "listCacheRead": 1.4,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 1.12,
+    "output": 5.6,
+    "cacheRead": 0.056
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 1.12,
+     "output": 5.6,
+     "cacheRead": 0.056
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 5.88,
+     "output": 29.4,
+     "cacheRead": 0.29
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-sonnet-4-6",
+   "input": 0.84,
+   "output": 4.2,
+   "cacheRead": 0.084,
+   "listInput": 21,
+   "listOutput": 105,
+   "listCacheRead": 2.1,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 0.84,
+    "output": 4.2,
+    "cacheRead": 0.084
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 0.84,
+     "output": 4.2,
+     "cacheRead": 0.084
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 4.41,
+     "output": 22.05,
+     "cacheRead": 0.44
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-sonnet-5",
+   "input": 0.56,
+   "output": 2.8,
+   "cacheRead": 0.056,
+   "listInput": 14,
+   "listOutput": 70,
+   "listCacheRead": 1.4,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 0.56,
+    "output": 2.8,
+    "cacheRead": 0.056
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 0.56,
+     "output": 2.8,
+     "cacheRead": 0.056
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 2.94,
+     "output": 14.7,
+     "cacheRead": 0.29
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "input": 0.56,
+   "output": 2.8,
+   "cacheRead": 0.056,
+   "listInput": 14,
+   "listOutput": 70,
+   "listCacheRead": 1.4,
+   "group": "claude",
+   "groupKind": "group",
+   "grpRatio": 1.5,
+   "base": {
+    "input": 0.56,
+    "output": 2.8,
+    "cacheRead": 0.056
+   },
+   "groups": [
+    {
+     "group": "claude",
+     "ratio": 1,
+     "input": 0.56,
+     "output": 2.8,
+     "cacheRead": 0.056
+    },
+    {
+     "group": "Claude-Max20x",
+     "ratio": 5.25,
+     "input": 2.94,
+     "output": 14.7,
+     "cacheRead": 0.29
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-fable-5",
+   "input": 14.7,
+   "output": 73.5,
+   "cacheRead": 1.47,
+   "listInput": 70,
+   "listOutput": 350,
+   "listCacheRead": 7,
+   "group": "Claude-Max20x",
+   "groupKind": "group",
+   "grpRatio": 8,
+   "base": {
+    "input": 14.7,
+    "output": 73.5,
+    "cacheRead": 1.47
+   },
+   "groups": [
+    {
+     "group": "Claude-Max20x",
+     "ratio": 1,
+     "input": 14.7,
+     "output": 73.5,
+     "cacheRead": 1.47
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-fable-5-1",
+   "input": 14.7,
+   "output": 73.5,
+   "cacheRead": 0.37,
+   "listInput": 70,
+   "listOutput": 350,
+   "listCacheRead": 1.75,
+   "group": "Claude-Max20x",
+   "groupKind": "group",
+   "grpRatio": 8,
+   "base": {
+    "input": 14.7,
+    "output": 73.5,
+    "cacheRead": 0.37
+   },
+   "groups": [
+    {
+     "group": "Claude-Max20x",
+     "ratio": 1,
+     "input": 14.7,
+     "output": 73.5,
+     "cacheRead": 0.37
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "input": 0.15,
+   "output": 0.73,
+   "cacheRead": 0.015,
+   "listInput": 0.7,
+   "listOutput": 3.5,
+   "listCacheRead": 0.07,
+   "group": "Claude-Max20x",
+   "groupKind": "group",
+   "grpRatio": 8,
+   "base": {
+    "input": 0.15,
+    "output": 0.73,
+    "cacheRead": 0.015
+   },
+   "groups": [
+    {
+     "group": "Claude-Max20x",
+     "ratio": 1,
+     "input": 0.15,
+     "output": 0.73,
+     "cacheRead": 0.015
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "deepseek-flash",
+   "input": 1.12,
+   "output": 4.48,
+   "cacheRead": 0.022,
+   "listInput": 2,
+   "listOutput": 8,
+   "listCacheRead": 0.04,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 1.12,
+    "output": 4.48,
+    "cacheRead": 0.022
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 1.12,
+     "output": 4.48,
+     "cacheRead": 0.022
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "deepseek-v4-flash-0731",
+   "input": 1.12,
+   "output": 4.48,
+   "cacheRead": 0.022,
+   "listInput": 2,
+   "listOutput": 8,
+   "listCacheRead": 0.04,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 1.12,
+    "output": 4.48,
+    "cacheRead": 0.022
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 1.12,
+     "output": 4.48,
+     "cacheRead": 0.022
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "deepseek-v4-pro",
+   "input": 5.04,
+   "output": 15.12,
+   "cacheRead": 0.17,
+   "listInput": 9,
+   "listOutput": 27,
+   "listCacheRead": 0.3,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 5.04,
+    "output": 15.12,
+    "cacheRead": 0.17
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 5.04,
+     "output": 15.12,
+     "cacheRead": 0.17
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "deepseek-v4-pro-0813",
+   "input": 5.04,
+   "output": 15.12,
+   "cacheRead": 0.17,
+   "listInput": 9,
+   "listOutput": 27,
+   "listCacheRead": 0.3,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 5.04,
+    "output": 15.12,
+    "cacheRead": 0.17
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 5.04,
+     "output": 15.12,
+     "cacheRead": 0.17
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "input": 1.12,
+   "output": 4.48,
+   "cacheRead": 0.022,
+   "listInput": 2,
+   "listOutput": 8,
+   "listCacheRead": 0.04,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 1.12,
+    "output": 4.48,
+    "cacheRead": 0.022
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 1.12,
+     "output": 4.48,
+     "cacheRead": 0.022
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "glm-5.1",
+   "input": 3.36,
+   "output": 13.44,
+   "cacheRead": 0.73,
+   "listInput": 6,
+   "listOutput": 24,
+   "listCacheRead": 1.3,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 3.36,
+    "output": 13.44,
+    "cacheRead": 0.73
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 3.36,
+     "output": 13.44,
+     "cacheRead": 0.73
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "glm-5.2",
+   "input": 4.48,
+   "output": 15.68,
+   "cacheRead": 1.12,
+   "listInput": 8,
+   "listOutput": 28,
+   "listCacheRead": 2,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 4.48,
+    "output": 15.68,
+    "cacheRead": 1.12
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 4.48,
+     "output": 15.68,
+     "cacheRead": 1.12
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "glm-5.3",
+   "input": 4.48,
+   "output": 15.68,
+   "cacheRead": 1.12,
+   "listInput": 8,
+   "listOutput": 28,
+   "listCacheRead": 2,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 4.48,
+    "output": 15.68,
+    "cacheRead": 1.12
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 4.48,
+     "output": 15.68,
+     "cacheRead": 1.12
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "glm-5.3-flash",
+   "input": 0.45,
+   "output": 1.57,
+   "cacheRead": 0.13,
+   "listInput": 0.8,
+   "listOutput": 2.8,
+   "listCacheRead": 0.23,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 0.45,
+    "output": 1.57,
+    "cacheRead": 0.13
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 0.45,
+     "output": 1.57,
+     "cacheRead": 0.13
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "glm-5.3-flashx",
+   "input": 1.12,
+   "output": 3.92,
+   "cacheRead": 0.32,
+   "listInput": 2,
+   "listOutput": 7,
+   "listCacheRead": 0.57,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 1.12,
+    "output": 3.92,
+    "cacheRead": 0.32
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 1.12,
+     "output": 3.92,
+     "cacheRead": 0.32
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "hy3",
+   "input": 0.56,
+   "output": 2.24,
+   "cacheRead": 0.14,
+   "listInput": 1,
+   "listOutput": 4,
+   "listCacheRead": 0.25,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 0.56,
+    "output": 2.24,
+    "cacheRead": 0.14
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 0.56,
+     "output": 2.24,
+     "cacheRead": 0.14
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "hy4-preview",
+   "input": 3.36,
+   "output": 10.08,
+   "cacheRead": 0.17,
+   "listInput": 6,
+   "listOutput": 18,
+   "listCacheRead": 0.3,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 3.36,
+    "output": 10.08,
+    "cacheRead": 0.17
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 3.36,
+     "output": 10.08,
+     "cacheRead": 0.17
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "kimi-k2.7-code",
+   "input": 3.64,
+   "output": 15.12,
+   "cacheRead": 0.73,
+   "listInput": 6.5,
+   "listOutput": 27,
+   "listCacheRead": 1.3,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 3.64,
+    "output": 15.12,
+    "cacheRead": 0.73
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 3.64,
+     "output": 15.12,
+     "cacheRead": 0.73
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "kimi-k3",
+   "input": 11.2,
+   "output": 56,
+   "cacheRead": 1.12,
+   "listInput": 20,
+   "listOutput": 100,
+   "listCacheRead": 2,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 11.2,
+    "output": 56,
+    "cacheRead": 1.12
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 11.2,
+     "output": 56,
+     "cacheRead": 1.12
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "minimax-m3",
+   "input": 1.18,
+   "output": 4.7,
+   "cacheRead": 0.24,
+   "listInput": 2.1,
+   "listOutput": 8.4,
+   "listCacheRead": 0.42,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 1.18,
+    "output": 4.7,
+    "cacheRead": 0.24
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 1.18,
+     "output": 4.7,
+     "cacheRead": 0.24
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "qwen3.7-max",
+   "input": 6.72,
+   "output": 20.16,
+   "cacheRead": 1.34,
+   "listInput": 12,
+   "listOutput": 36,
+   "listCacheRead": 2.4,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 6.72,
+    "output": 20.16,
+    "cacheRead": 1.34
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 6.72,
+     "output": 20.16,
+     "cacheRead": 1.34
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "qwen3.7-plus",
+   "input": 1.12,
+   "output": 4.48,
+   "cacheRead": 0.22,
+   "listInput": 2,
+   "listOutput": 8,
+   "listCacheRead": 0.4,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 1.12,
+    "output": 4.48,
+    "cacheRead": 0.22
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 1.12,
+     "output": 4.48,
+     "cacheRead": 0.22
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "qwen3.8-max",
+   "input": 6.72,
+   "output": 20.16,
+   "cacheRead": 0.84,
+   "listInput": 12,
+   "listOutput": 36,
+   "listCacheRead": 1.5,
+   "group": "cn-models",
+   "groupKind": "group",
+   "grpRatio": 3,
+   "base": {
+    "input": 6.72,
+    "output": 20.16,
+    "cacheRead": 0.84
+   },
+   "groups": [
+    {
+     "group": "cn-models",
+     "ratio": 1,
+     "input": 6.72,
+     "output": 20.16,
+     "cacheRead": 0.84
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "input": 1.12,
+   "output": 5.6,
+   "cacheRead": 0.11,
+   "listInput": 28,
+   "listOutput": 140,
+   "listCacheRead": 2.8,
+   "group": "codex-pro20x",
+   "groupKind": "group",
+   "grpRatio": 1.8,
+   "base": {
+    "input": 1.12,
+    "output": 5.6,
+    "cacheRead": 0.11
+   },
+   "groups": [
+    {
+     "group": "codex-pro20x",
+     "ratio": 1,
+     "input": 1.12,
+     "output": 5.6,
+     "cacheRead": 0.11
+    },
+    {
+     "group": "codex-Pro20x-Max",
+     "ratio": 1.5,
+     "input": 1.68,
+     "output": 8.4,
+     "cacheRead": 0.17
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "input": 0.56,
+   "output": 3.36,
+   "cacheRead": 0.056,
+   "listInput": 14,
+   "listOutput": 84,
+   "listCacheRead": 1.4,
+   "group": "codex-pro20x",
+   "groupKind": "group",
+   "grpRatio": 1.8,
+   "base": {
+    "input": 0.56,
+    "output": 3.36,
+    "cacheRead": 0.056
+   },
+   "groups": [
+    {
+     "group": "codex-pro20x",
+     "ratio": 1,
+     "input": 0.56,
+     "output": 3.36,
+     "cacheRead": 0.056
+    },
+    {
+     "group": "codex-Pro20x-Max",
+     "ratio": 1.5,
+     "input": 0.84,
+     "output": 5.04,
+     "cacheRead": 0.084
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gpt-6-astra",
+   "input": 2.8,
+   "output": 14,
+   "cacheRead": 0.28,
+   "listInput": 70,
+   "listOutput": 350,
+   "listCacheRead": 7,
+   "group": "codex-pro20x",
+   "groupKind": "group",
+   "grpRatio": 1.8,
+   "base": {
+    "input": 2.8,
+    "output": 14,
+    "cacheRead": 0.28
+   },
+   "groups": [
+    {
+     "group": "codex-pro20x",
+     "ratio": 1,
+     "input": 2.8,
+     "output": 14,
+     "cacheRead": 0.28
+    },
+    {
+     "group": "codex-Pro20x-Max",
+     "ratio": 1.5,
+     "input": 4.2,
+     "output": 21,
+     "cacheRead": 0.42
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gpt-6-sol",
+   "input": 0.67,
+   "output": 3.36,
+   "cacheRead": 0.067,
+   "listInput": 16.8,
+   "listOutput": 84,
+   "listCacheRead": 1.68,
+   "group": "codex-pro20x",
+   "groupKind": "group",
+   "grpRatio": 1.8,
+   "base": {
+    "input": 0.67,
+    "output": 3.36,
+    "cacheRead": 0.067
+   },
+   "groups": [
+    {
+     "group": "codex-pro20x",
+     "ratio": 1,
+     "input": 0.67,
+     "output": 3.36,
+     "cacheRead": 0.067
+    },
+    {
+     "group": "codex-Pro20x-Max",
+     "ratio": 1.50746269,
+     "input": 1.01,
+     "output": 5.04,
+     "cacheRead": 0.1
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "input": 0.67,
+   "output": 3.36,
+   "cacheRead": 0.067,
+   "listInput": 16.8,
+   "listOutput": 84,
+   "listCacheRead": 1.68,
+   "group": "codex-pro20x",
+   "groupKind": "group",
+   "grpRatio": 1.8,
+   "base": {
+    "input": 0.67,
+    "output": 3.36,
+    "cacheRead": 0.067
+   },
+   "groups": [
+    {
+     "group": "codex-pro20x",
+     "ratio": 1,
+     "input": 0.67,
+     "output": 3.36,
+     "cacheRead": 0.067
+    },
+    {
+     "group": "codex-Pro20x-Max",
+     "ratio": 1.50746269,
+     "input": 1.01,
+     "output": 5.04,
+     "cacheRead": 0.1
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gemini-3-flash",
+   "input": 0.17,
+   "output": 1.05,
+   "cacheRead": 0.018,
+   "listInput": 3.5,
+   "listOutput": 21,
+   "listCacheRead": 0.35,
+   "group": "gemini",
+   "groupKind": "group",
+   "grpRatio": 2,
+   "base": {
+    "input": 0.17,
+    "output": 1.05,
+    "cacheRead": 0.018
+   },
+   "groups": [
+    {
+     "group": "gemini",
+     "ratio": 1,
+     "input": 0.17,
+     "output": 1.05,
+     "cacheRead": 0.018
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gemini-3.1-flash-lite",
+   "input": 0.087,
+   "output": 0.53,
+   "cacheRead": 0.0088,
+   "listInput": 1.75,
+   "listOutput": 10.5,
+   "listCacheRead": 0.17,
+   "group": "gemini",
+   "groupKind": "group",
+   "grpRatio": 2,
+   "base": {
+    "input": 0.087,
+    "output": 0.53,
+    "cacheRead": 0.0088
+   },
+   "groups": [
+    {
+     "group": "gemini",
+     "ratio": 1,
+     "input": 0.087,
+     "output": 0.53,
+     "cacheRead": 0.0088
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gemini-3.6-flash",
+   "input": 0.26,
+   "output": 1.31,
+   "cacheRead": 0.026,
+   "listInput": 5.25,
+   "listOutput": 26.25,
+   "listCacheRead": 0.53,
+   "group": "gemini",
+   "groupKind": "group",
+   "grpRatio": 2,
+   "base": {
+    "input": 0.26,
+    "output": 1.31,
+    "cacheRead": 0.026
+   },
+   "groups": [
+    {
+     "group": "gemini",
+     "ratio": 1,
+     "input": 0.26,
+     "output": 1.31,
+     "cacheRead": 0.026
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gemini-3.7-flash",
+   "input": 0.26,
+   "output": 1.31,
+   "cacheRead": 0.026,
+   "listInput": 5.25,
+   "listOutput": 26.25,
+   "listCacheRead": 0.53,
+   "group": "gemini",
+   "groupKind": "group",
+   "grpRatio": 2,
+   "base": {
+    "input": 0.26,
+    "output": 1.31,
+    "cacheRead": 0.026
+   },
+   "groups": [
+    {
+     "group": "gemini",
+     "ratio": 1,
+     "input": 0.26,
+     "output": 1.31,
+     "cacheRead": 0.026
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gemini-3.8-flash",
+   "input": 0.26,
+   "output": 1.31,
+   "cacheRead": 0.026,
+   "listInput": 5.25,
+   "listOutput": 26.25,
+   "listCacheRead": 0.53,
+   "group": "gemini",
+   "groupKind": "group",
+   "grpRatio": 2,
+   "base": {
+    "input": 0.26,
+    "output": 1.31,
+    "cacheRead": 0.026
+   },
+   "groups": [
+    {
+     "group": "gemini",
+     "ratio": 1,
+     "input": 0.26,
+     "output": 1.31,
+     "cacheRead": 0.026
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "gemini-4-argon",
+   "input": 0.7,
+   "output": 3.5,
+   "cacheRead": 0.035,
+   "listInput": 14,
+   "listOutput": 70,
+   "listCacheRead": 0.7,
+   "group": "gemini",
+   "groupKind": "group",
+   "grpRatio": 2,
+   "base": {
+    "input": 0.7,
+    "output": 3.5,
+    "cacheRead": 0.035
+   },
+   "groups": [
+    {
+     "group": "gemini",
+     "ratio": 1,
+     "input": 0.7,
+     "output": 3.5,
+     "cacheRead": 0.035
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "composer-2.5",
+   "input": 0.28,
+   "output": 0.84,
+   "cacheRead": 0.042,
+   "listInput": 14,
+   "listOutput": 42,
+   "listCacheRead": 2.1,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.28,
+    "output": 0.84,
+    "cacheRead": 0.042
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 0.84,
+     "cacheRead": 0.042
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "grok",
+   "input": 0.28,
+   "output": 0.84,
+   "cacheRead": 0.042,
+   "listInput": 14,
+   "listOutput": 42,
+   "listCacheRead": 2.1,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.28,
+    "output": 0.84,
+    "cacheRead": 0.042
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 0.84,
+     "cacheRead": 0.042
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "grok-4.5",
+   "input": 0.28,
+   "output": 0.84,
+   "cacheRead": 0.042,
+   "listInput": 14,
+   "listOutput": 42,
+   "listCacheRead": 2.1,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.28,
+    "output": 0.84,
+    "cacheRead": 0.042
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 0.84,
+     "cacheRead": 0.042
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "grok-4.6",
+   "input": 0.28,
+   "output": 0.84,
+   "cacheRead": 0.07,
+   "listInput": 14,
+   "listOutput": 42,
+   "listCacheRead": 3.5,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.28,
+    "output": 0.84,
+    "cacheRead": 0.07
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 0.84,
+     "cacheRead": 0.07
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "grok-4.7",
+   "input": 0.28,
+   "output": 0.84,
+   "cacheRead": 0.07,
+   "listInput": 14,
+   "listOutput": 42,
+   "listCacheRead": 3.5,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.28,
+    "output": 0.84,
+    "cacheRead": 0.07
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 0.84,
+     "cacheRead": 0.07
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "grok-build-latest",
+   "input": 0.14,
+   "output": 0.28,
+   "cacheRead": 0.028,
+   "listInput": 7,
+   "listOutput": 14,
+   "listCacheRead": 1.4,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.14,
+    "output": 0.28,
+    "cacheRead": 0.028
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.14,
+     "output": 0.28,
+     "cacheRead": 0.028
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "grok-composer",
+   "input": 0.28,
+   "output": 0.84,
+   "cacheRead": 0.042,
+   "listInput": 14,
+   "listOutput": 42,
+   "listCacheRead": 2.1,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.28,
+    "output": 0.84,
+    "cacheRead": 0.042
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 0.84,
+     "cacheRead": 0.042
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  },
+  {
+   "model": "grok-composer-2.5-fast",
+   "input": 0.28,
+   "output": 0.84,
+   "cacheRead": 0.042,
+   "listInput": 14,
+   "listOutput": 42,
+   "listCacheRead": 2.1,
+   "group": "grok",
+   "groupKind": "group",
+   "grpRatio": 1,
+   "base": {
+    "input": 0.28,
+    "output": 0.84,
+    "cacheRead": 0.042
+   },
+   "groups": [
+    {
+     "group": "grok",
+     "ratio": 1,
+     "input": 0.28,
+     "output": 0.84,
+     "cacheRead": 0.042
+    }
+   ],
+   "source": "heyroute-pricing-page(登录态 DOM,¥ CNY 模式,now=页面人民币单价/was=页面人民币参考价) · heyroute-pricing-20261021.json"
+  }
+ ]
+}
