@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>检测方法与中立性声明 · RelayLens — 我们如何得出每一个数字</title>
+<link rel="canonical" href="https://aipaihangbang.cn/relay/method.html">
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="description" content="RelayLens 检测方法全公开:账单级实测流程、扣费偏差计算、模型指纹比对、缓存命中统计、评分权重公式、数据更新机制、利益冲突声明与复现指南。每个结论都可复现。">
+<style>
+:root{
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+ --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums}
+
+/* 导航 */
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:22px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px}
+.logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav-links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:8px;white-space:nowrap;transition:.15s}
+.nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
+.nav-links a.active{background:var(--brand-soft);color:var(--brand);font-weight:700}
+.nav-links a.hot{color:var(--bad);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:none;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-deep)}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn-sm{padding:7px 13px;font-size:13px;border-radius:8px}
+
+/* 页头 */
+.page-hero{background:linear-gradient(180deg,#0c1633,#16308f);color:#fff;padding:36px 0 34px}
+.crumb{font-size:12.5px;opacity:.65;margin-bottom:10px}
+.crumb a:hover{color:#8fd0ff}
+.page-hero h1{font-size:clamp(23px,3.4vw,30px);font-weight:800}
+.page-hero .sub{font-size:14px;opacity:.82;margin-top:8px;max-width:760px}
+.hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.hp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:7px 14px;font-size:12.5px}
+.hp b{color:#8fd0ff}
+
+/* 目录条 */
+.toc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px;margin:-18px auto 0;position:relative;box-shadow:0 4px 16px rgba(16,24,40,.06);display:flex;gap:6px;flex-wrap:wrap}
+.toc a{font-size:13px;color:var(--sub);padding:5px 13px;border-radius:8px;background:#f4f6fa;transition:.13s;font-weight:500}
+.toc a:hover{background:var(--brand-soft);color:var(--brand)}
+
+/* 章节 */
+section.block{margin-top:44px;scroll-margin-top:80px}
+.blk-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+.blk-head h2{font-size:22px;font-weight:800;display:flex;align-items:center;gap:10px}
+.blk-head h2 .no{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:var(--brand);color:#fff;border-radius:9px;font-size:14px;font-weight:700}
+.lead{font-size:14px;color:var(--sub);margin-bottom:18px;max-width:820px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px}
+
+/* 流程步骤 */
+.flow{display:grid;gap:0;margin-top:6px}
+.flow-step{display:flex;gap:16px;padding:16px 0;border-bottom:1px dashed var(--line)}
+.flow-step:last-child{border-bottom:none}
+.flow-step .fn{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:var(--brand-soft);color:var(--brand);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
+.flow-step h4{font-size:15px;margin-bottom:4px}
+.flow-step p{font-size:13.5px;color:var(--sub)}
+.flow-step .kw{font-size:12px;color:var(--brand);background:var(--brand-soft);border-radius:5px;padding:1px 9px;display:inline-block;margin-top:6px;font-family:Consolas,monospace}
+
+/* 公式卡 */
+.formula{background:linear-gradient(135deg,#0f1e3d,#1e3a8a);color:#fff;border-radius:12px;padding:20px 24px;font-family:Consolas,monospace;font-size:14px;margin:14px 0;overflow-x:auto;white-space:nowrap}
+.formula .v{color:#8fd0ff;font-weight:700}
+.formula .cm{color:#64748b;font-size:12px;font-family:"PingFang SC",sans-serif}
+.formula-cap{font-size:12.5px;color:var(--faint);margin-top:-8px;margin-bottom:16px}
+
+/* 表格 */
+.tbl-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+th{background:#f0f3f8;text-align:left;padding:11px 14px;font-weight:700;border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.rowh{font-weight:700;background:#fafbfd;white-space:nowrap}
+.tm-g{color:var(--ok);font-weight:600}.tm-y{color:var(--warn);font-weight:600}.tm-r{color:var(--bad);font-weight:600}
+.tag-m{font-size:11px;padding:2px 8px;border-radius:5px;background:#f2f4f8;color:var(--sub);font-weight:600}
+.bdg{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:2px 9px;margin-bottom:6px}
+.bdg-ok{background:var(--ok-soft);color:var(--ok)}
+.bdg-warn{background:var(--warn-soft);color:var(--warn)}
+.bdg-bad{background:var(--bad-soft);color:var(--bad)}
+
+/* 承诺卡 */
+.pledges{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.pledge{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;position:relative}
+.pledge .pi{font-size:24px;margin-bottom:10px}
+.pledge h4{font-size:15px;margin-bottom:6px}
+.pledge p{font-size:13px;color:var(--sub)}
+.pledge.p-do{border-left:4px solid var(--ok)}
+.pledge.p-dont{border-left:4px solid var(--bad)}
+
+/* ⑥ 审计日志 */
+.al-bar{display:flex;align-items:center;gap:9px;background:var(--brand-soft);border:1px solid #d7e0ff;border-radius:10px;padding:11px 14px;font-size:13.5px;color:var(--brand-deep);margin-bottom:14px;overflow-wrap:anywhere;line-height:1.7}
+.al-bar.ok{background:var(--ok-soft);border-color:#b7e2c9;color:var(--ok)}
+.al-bar.bad{background:var(--bad-soft);border-color:#f4b7b1;color:var(--bad)}
+.al-dot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:0 0 auto}
+.al-bar.ok .al-dot{background:var(--ok)}.al-bar.bad .al-dot{background:var(--bad)}
+.al-list{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.al-item{display:grid;grid-template-columns:112px 96px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #f1f3f7;font-size:13px;align-items:start}
+.al-item:last-child{border-bottom:none}
+.al-item .when{color:var(--faint);font-size:12px;font-variant-numeric:tabular-nums;padding-top:2px}
+.al-item .act{font-weight:700;font-size:12px;border-radius:6px;padding:2px 7px;text-align:center;white-space:nowrap}
+.al-item .act.human{background:var(--gold-soft);color:var(--gold)}
+.al-item .act.probe{background:var(--brand-soft);color:var(--brand-deep)}
+.al-item .body b{font-family:Consolas,monospace;font-size:12.5px}
+.al-item .body .why{color:var(--sub);margin-top:2px}
+.al-item .body .hsh{color:var(--faint);font-size:11px;font-family:Consolas,monospace;margin-top:2px}
+.al-empty{padding:18px 14px;color:var(--faint);font-size:13px;text-align:center}
+.al-why{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
+.al-why h4{font-size:13.5px;margin-bottom:4px}
+.al-why p{font-size:12.5px;color:var(--sub)}
+pre.al-verify{font-size:12px}
+pre .k{color:#7dd3fc}
+.al-note{font-size:12.5px;color:var(--warn);background:var(--warn-soft);border-radius:9px;padding:10px 13px;margin-top:12px}
+@media(max-width:640px){.al-item{grid-template-columns:1fr;gap:3px}}
+
+/* 代码块 */
+pre{background:#0d1424;color:#dbe4f3;border-radius:12px;padding:18px 20px;font-family:Consolas,monospace;font-size:12.5px;line-height:1.8;overflow-x:auto;box-shadow:0 10px 28px rgba(13,20,36,.22)}
+pre .cm{color:#64748b}
+pre .s{color:#86efac}
+pre .k{color:#8fd0ff}
+
+/* FAQ */
+details{border-bottom:1px solid var(--line)}
+details:last-child{border-bottom:none}
+summary{padding:16px 22px;font-size:14.5px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:19px;color:var(--faint);transition:.2s;flex-shrink:0}
+details[open] summary::after{transform:rotate(45deg)}
+details .ans{padding:0 22px 18px;font-size:13.5px;color:var(--sub)}
+details .ans b{color:var(--ink)}
+
+/* 双栏 */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+.mini-list{list-style:none}
+.mini-list li{font-size:13.5px;color:var(--sub);padding:6px 0 6px 20px;position:relative}
+.mini-list.yes li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}
+.mini-list.no li::before{content:"✕";position:absolute;left:0;color:var(--bad);font-weight:700}
+.mini-list li b{color:var(--ink)}
+
+footer{margin-top:56px;background:#0c1633;color:#94a3c4;padding:36px 0 28px;font-size:13px}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.1)}
+@media(max-width:720px){.ft-grid{grid-template-columns:1fr}}
+footer h4{color:#fff;font-size:14px;margin-bottom:12px}
+footer a{display:block;padding:3.5px 0}
+footer a:hover{color:#fff}
+footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RelayLens">
+<meta property="og:title" content="检测方法与中立性声明 · RelayLens — 我们如何得出每一个数字">
+<meta property="og:description" content="RelayLens 检测方法全公开:账单级实测流程、扣费偏差计算、模型指纹比对、缓存命中统计、评分权重公式、数据更新机制、利益冲突声明与复现指南。每个结论都可复现。">
+<meta property="og:url" content="https://aipaihangbang.cn/relay/method.html">
+<meta property="og:image" content="https://aipaihangbang.cn/relay/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+<!-- 导航 -->
+<header>
+ <div class="wrap nav" style="max-width:1160px">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="compare.html">比价矩阵</a><a href="blacklist.html">避雷黑名单</a><a href="method.html" class="active">方法论</a><a href="tools.html">自测工具箱</a>  <a href="https://aipaihangbang.cn" class="back-main">← 返回主站</a>
+    </nav>
+ <a class="btn btn-ghost btn-sm" href="#">登录</a>
+ <a class="btn btn-primary btn-sm" href="#">注册</a>
+ </div>
+</header>
+
+<!-- 页头 -->
+<div class="page-hero">
+ <div class="wrap">
+ <div class="crumb"><a href="index.html">首页</a> / 检测方法与中立性声明</div>
+ <h1>我们如何得出每一个数字</h1>
+ <p class="sub">这一页是 RelayLens 的"算法说明书":检测流程、指标口径、评分公式、更新机制、利益边界与复现方式全部公开。你可以不同意我们的权重设定,但你永远能算出我们为什么给出这个分。</p>
+ <div class="hero-points">
+ <span class="hp">评分公式与探针脚本 <b>全部开源</b></span>
+ <span class="hp">每个结论附 <b>批次号可溯源</b></span>
+ <span class="hp">变现路径 <b>不触碰排名</b></span>
+ </div>
+ </div>
+</div>
+
+<div class="wrap">
+
+ <!-- 目录 -->
+ <nav class="toc">
+ <a href="#flow">① 实测流程</a>
+ <a href="#metrics">② 指标口径</a>
+ <a href="#scores">③ 评分公式</a>
+ <a href="#updates">④ 更新与置信度</a>
+ <a href="#neutrality">⑤ 中立性声明</a>
+ <a href="#audit">⑥ 审计日志</a>
+ <a href="#repro">⑦ 复现指南</a>
+ <a href="#faq">⑧ 常见质疑</a>
+ </nav>
+
+ <!-- ① 实测流程 -->
+ <section class="block" id="flow">
+ <div class="blk-head"><h2><span class="no">①</span>账单级实测流程</h2></div>
+ <p class="lead">每 6 小时,检测系统对每个收录站点执行一轮完整付费测试。核心原则:用真实充值的钱、调真实模型、留下真实账单——不是免费健康检查,不是爬虫抓页面。</p>
+ <div class="card">
+ <div class="flow">
+ <div class="flow-step">
+ <div class="fn">1</div>
+ <div><h4>注册与充值</h4>
+ <p>以标准流程注册站点账号(不做特殊标记),用平台运营资金真实充值。充值金额控制在能完成 3-5 个检测批次的最低档,既是成本控制,也是对"最低充值门槛"这一风险指标的天然采样。</p>
+ <span class="kw">输出:充值记录、到账金额、充值比例实测值</span></div>
+ </div>
+ <div class="flow-step">
+ <div class="fn">2</div>
+ <div><h4>标准混合模型测试(10 轮)</h4>
+ <p>每批次固定 10 轮:5 轮旗舰模型(Opus/最大档)+ 3 轮主力模型(Sonnet/中档)+ 2 轮低价模型。固定输入语料(公开测试集,版本号管理),覆盖短上下文、长上下文、流式输出三种模式。</p>
+ <span class="kw">输出:每轮 usage 明细、耗时、model 返回值、原始 Response</span></div>
+ </div>
+ <div class="flow-step">
+ <div class="fn">3</div>
+ <div><h4>对账核验</h4>
+ <p>逐轮计算"理论应扣"(按站方公示价格 × 实际 token 用量)并与面板流水"实际扣费"比对。<b>判定容差:|实扣−应扣| ≤ max(2 quota, 1%)</b> —— 2 quota ≈ $0.000004 额度,只吸收 quota 整数取整(超短请求的相对偏差因此可到 2~3%,绝对量级可忽略);大单按 1% 相对容差,站方篡改倍率产生的<b>系统性同向偏差</b>不受此容差影响,仍会被逐笔抓出。任何偏差超容差触发复核流程;连续 3 批次 &gt;3% 且站方 72 小时无法解释,列入黑名单。</p>
+ <span class="kw">输出:逐轮对账表、批次偏差率、面板流水存档</span></div>
+ </div>
+ <div class="flow-step">
+ <div class="fn">4</div>
+ <div><h4>模型指纹比对</h4>
+ <p>同一组探针问题(复杂推理、代码生成、知识边界、拒答模式)分别发给中转站与官方直连,对响应特征做相似度比对。相似度 ≥85% 通过、70-85% 存疑(复检)、&lt;70% 未通过。不依赖"问模型你是谁"——系统提示词可以让模型说谎。</p>
+ <span class="kw">输出:指纹相似度、能力探针得分曲线</span></div>
+ </div>
+ <div class="flow-step">
+ <div class="fn">5</div>
+ <div><h4>缓存命中统计</h4>
+ <p>10 轮中固定 4 轮使用相同长前缀,检测第二轮起的 usage 中缓存命中字段是否真实增长、扣费是否按公示缓存价执行。同时记录站方是否公示缓存价、缓存读价与输入价的比值。</p>
+ <span class="kw">输出:命中率、缓存价/输入价比、是否"不算缓存"</span></div>
+ </div>
+ <div class="flow-step">
+ <div class="fn">6</div>
+ <div><h4>数据入档</h4>
+ <p>全部原始数据(含 API Response JSON、面板截图、批次号、时间戳)写入开源数据仓库,站点详情页逐条展示。任何指标变动都可回溯到具体批次。</p>
+ <span class="kw">输出:存档编号 RL-RC-YYYYMMDD-NNN</span></div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- ② 指标口径 -->
+ <section class="block" id="metrics">
+ <div class="blk-head"><h2><span class="no">②</span>核心指标口径</h2></div>
+ <p class="lead">每个指标的定义、计算方式与阈值。我们只公布测得出的数字,测不出的宁可标注"数据不足"。</p>
+ <div class="tbl-wrap">
+ <table>
+ <tr><th style="width:120px">指标</th><th>计算方式</th><th style="width:190px">阈值分档</th></tr>
+ <tr><td class="rowh">扣费偏差</td><td>|面板实扣 − 理论应扣| ÷ 理论应扣,取近 7 天批次均值。理论应扣 = 公示单价 × usage 实测 token(输入/输出/缓存三分项)。<b>判定容差:|实扣−应扣| ≤ max(2 quota, 1%)</b> —— 2 quota ≈ $0.000004 额度,只吸收整数取整(超短请求相对偏差可到 2~3%,绝对量级可忽略);大单按 1% 管,系统性倍率篡改仍会被逐笔抓出。所以「匹配率 100%」与「最大偏差 2.86%」可以同时为真:前者是全部过线,后者是过线者里最歪的一笔</td><td><span class="tag-m tm-g">≤1% 正常</span> <span class="tag-m tm-y">1-3% 复核</span> <span class="tag-m tm-r">&gt;3% 虚标嫌疑</span></td></tr>
+ <tr><td class="rowh">缓存命中</td><td>10 轮标准测试中,固定长前缀轮次的缓存命中 token ÷ 输入 token。低于 35% 视为缓存策略异常或弱</td><td><span class="tag-m tm-g">≥50% 优秀</span> <span class="tag-m tm-y">35-50% 一般</span> <span class="tag-m tm-r">&lt;35% 异常</span></td></tr>
+ <tr><td class="rowh">可用率 7d</td><td>近 7 天全部检测请求中,HTTP 2xx 且返回体完整(流式无截断)的占比。5xx、超时、响应体损坏均计失败</td><td><span class="tag-m tm-g">≥99% 优秀</span> <span class="tag-m tm-y">97-99% 一般</span> <span class="tag-m tm-r">&lt;97% 预警</span></td></tr>
+ <tr><td class="rowh">晚高峰首字延迟(TTFT)</td><td><b>SSE 流式探针实测</b>:固定极短 prompt + max_tokens=16,取「首个内容 chunk 到达时间」中位数(≤1s=100 分,≥8s=0 分,线性)。此前借用付费批次耗时,混入 4000 字长前缀请求导致中位 21s 的假 0 分,已修正(权重版本 .3)</td><td><span class="tag-m tm-g">≤2s 优秀</span> <span class="tag-m tm-y">2-3s 一般</span> <span class="tag-m tm-r">&gt;3s 预警</span></td></tr>
+ <tr><td class="rowh">伪流式率<br><span style="font-weight:400;font-size:11px;color:var(--faint)">(面向用户称「假流式」)</span></td><td><b>通俗版:答案不是逐字蹦出,而是「卡住→整段砸出」。</b>技术口径:首个与末个内容 chunk 间隔 &lt;50ms 判为「缓冲后一次性下发」。对流式客户端(Claude Code / Cursor 逐 token 渲染)体验等价于非流式,是独立于 TTFT 的缺陷。实测两家号池渠道均为 <b>100%</b></td><td><span class="tag-m tm-g">0% 真流式</span> <span class="tag-m tm-y">◐ 混合</span> <span class="tag-m tm-r">&gt;50% 假流式</span></td></tr>
+ <tr><td class="rowh">模型指纹</td><td>探针响应与官方直连的相似度。四态:通过(≥85%)/ 存疑(70-85%,复检)/ 未通过(&lt;70%)/ 未检测</td><td><span class="tag-m tm-g">通过</span> <span class="tag-m tm-y">存疑</span> <span class="tag-m tm-r">未通过</span></td></tr>
+ <tr><td class="rowh">到手价</td><td>标价 × 充值比例折算系数。充值比例 = 实付金额 ÷ 到账美元额度(继承"监视者"口径,实测而非站方宣称)</td><td><span class="tag-m tm-g">≤官方 50% 低价</span> <span class="tag-m tm-y">50-100% 常规</span> <span class="tag-m tm-r">&gt;官方 贵</span></td></tr>
+ <tr><td class="rowh">跑路风险</td><td>运营时长 20% + 充值门槛 20% + 30 天价格波动率 20% + 公告履约率 20% + 域名年龄 10% + 社群活跃度 10%。独立于评分展示,不并入任何综合分</td><td><span class="tag-m tm-g">低</span> <span class="tag-m tm-y">中</span> <span class="tag-m tm-r">高</span></td></tr>
+ </table>
+ </div>
+ </section>
+
+ <!-- ③ 评分公式 -->
+ <section class="block" id="scores">
+ <div class="blk-head"><h2><span class="no">③</span>评分公式与权重</h2></div>
+ <p class="lead">单一综合分掩盖场景差异——写代码最在乎缓存,日常聊天最在乎首字延迟。因此每站有独立的多场景评分,权重按场景第一决策变量设计。分数强制携带覆盖率与置信度,样本不足显示"数据不足"而非低分。</p>
+ <div style="background:var(--brand-soft);border-radius:10px;padding:12px 16px;font-size:13px;color:#24409a;margin-bottom:14px"><b>权重版本 2026-10-22.1</b> · 本表与探针计算代码共用同一份 <code>weights.json</code>(网页说什么,代码就算什么)。<b>本次变更</b>:①<b>计价口径纠偏</b>——站方公示价恢复为其原始<b>额度单位</b>(new-api 系 $X/M,与站方页面一致),人民币只作为「到手价 = 额度价 × 站方声明的充值比例」出现,比例未声明不给人民币价(此前用 1$=¥7.1 折主价,造出站方页面不存在的数字);②决策页「TTFT」统一改称「首字延迟」;③榜单站点列瘦身、商业信息独立成列;④报价标出来源分组与「最优价口径」。评分口径与数值不变。<b>.6 修订</b>:文档化对账判定容差 max(2 quota, 1%),无计算变化。<b>.5 修订</b>:注入开销落库按站实测(aixoras 4858 / aicost 3959),EP 拆分按站,渠道混合标 unstable。<b>.4 修订</b>:编程榜新增独立桶 SR(流式真实性,权重10),弃用「并入 PF」方案(沙盘证明对首字延迟触底站零增量)。<b>.3 修订</b>:PF 改用专用流式探针测真首字延迟,新增伪流式率指标,超时率首次持久化。<b>2026-10-22 修订</b>:首字延迟 PF 由忙/闲双桶较差值(悲观值)改两桶中位数均值(用户拍板),榜单同时展示忙/闲双值。<b>更早</b>:①注入开销以「场景有效价格」吸收,避免双重计分;②计量一致性并入计费诚实;③超时率并入稳定性(慢≠挂,0.3 倍扣减);④未测指标重归一化而非零分;⑤稳定性增加时间跨度门槛(≥45 分钟),防止短时猛采刷样本。历史版本见开源仓库 changelog。</div>
+ <div class="card">
+ <div class="formula">综合分 = Σ( 指标归一化值 × 场景权重 ) × <span class="v">置信度因子</span> <span class="cm">// 置信度 &lt; 0.8 不展示</span></div>
+ <p class="formula-cap">归一化:每项指标线性映射到 0-100(如可用率 95%→0 分,100%→100 分)。<b>未测指标不惩罚</b>:剩余权重重归一化;覆盖率(已测权重占比)&lt;60% → 评分置空「数据不足」;60-80% → 展示但挂低置信标。置信度 = 样本达标比 × 覆盖率 × 基线折扣(跨站差分指纹 ×0.8)。稳定性样本需同时满足<b>次数 ≥12 且时间跨度 ≥45 分钟</b>——避免短时猛采刷出虚假置信。</p>
+ <p class="formula-cap"><b>PF 锚点为初版统一值(≤1s=100 / ≥8s=0)</b>,而推理模型自带思考耗时、号池注入的 4392 token 也需预填充——因此 PF 偏低部分是注入开销的连带症状而非独立缺陷。我们<b>不会为了让数字好看而回调锚点</b>;分模型测量通道已于 2026-10-10 上线(perf 探针在主模型之外自动加测推理档,task=perf_reasoning,不计入评分),锚点校准待分模型数据积累后按「沙盘模拟→用户拍板→升版本→公示」流程走。同一批次起,perf 采样改为<b>双窗口</b>(工作日 10:30 忙时 + 每天 22:30 闲时):同一站闲时 2.1s / 高峰 14.8s 的实测证明单时点采样让分数被运气摆布——<b>PF 取忙/闲两桶中位数的均值(2026-10-22 用户拍板,由悲观较差值改均值)</b>,榜单展示忙/闲双值;单桶缺样本时如实标注。</p>
+ <p class="formula-cap"><b>有效价格(EP)</b> = 场景参考负载下的真实成本 ÷ 官方直连同负载成本,对数映射(5% 官价=100 分,官价=20 分)。注入开销在此被定价:每站由 token 计量对照实验自动推导并落库(2026-09-30 实测 aixoras ≈4858 / aicost ≈3959 tok/请求,缓存/fresh 拆分亦按站实测),实测短请求场景下,额度价 $0.9/M 的号池渠道真实成本<b>反超官方直连</b>,这正是 EP 存在的意义。</p>
+ <div class="tbl-wrap">
+ <table style="min-width:720px">
+ <tr><th>场景</th><th>权重构成</th><th>设计依据</th></tr>
+ <tr><td class="rowh">综合榜</td><td>计费诚实 30 · 模型真实 25 · 稳定性 25 · 性能 5 · 有效价格 15</td><td>通用决策的最大公约数;信任类指标过半</td></tr>
+ <tr><td class="rowh">编程榜</td><td>模型真实 20 · 计费诚实 20 · 稳定性 15 · 性能 15 · <b>流式真实 10</b> · 有效价格 20</td><td>编程是唯一逐 token 渲染刚需场景:伪流式(缓冲后一次性下发)让 Claude Code / Cursor 的流式体验失效,故单列 SR 桶;沙盘验证其穿透 TTFT 饱和区(实测站 aixoras TTFT 8.4s 已致 PF=0,SR 独立计分仍可再降 9 分,避免"快但假流式"的站混入高分位)</td></tr>
+ <tr><td class="rowh">办公榜</td><td>稳定性 25 · 性能 20 · <b>有效价格 30</b> · 模型真实 15 · 计费诚实 10</td><td>短请求场景:注入开销直接决定成本(实测短请求可放大 147×)</td></tr>
+ <tr><td class="rowh">剧本创作榜</td><td>模型真实 25 · <b>有效价格 25</b> · 稳定性 20 · 性能 15 · 计费诚实 15</td><td>长上下文稀释注入,但截断与掉包风险最高,真实性与价格并重</td></tr>
+ <tr><td class="rowh">企业榜</td><td>稳定性 30 · 计费诚实 25 · 性能 20 · 模型真实 15 · 有效价格 10</td><td>合规优先于价格;开票/对公/隐私等未测维度达标后并入(当前按可测维度重归一化)</td></tr>
+ </table>
+ </div>
+ </div>
+ </section>
+
+ <!-- ④ 更新与置信度 -->
+ <section class="block" id="updates">
+ <div class="blk-head"><h2><span class="no">④</span>更新机制与置信度门槛</h2></div>
+ <div class="two">
+ <div class="card">
+ <h4 style="font-size:15px;margin-bottom:10px">更新节奏</h4>
+ <ul class="mini-list yes">
+ <li><b>健康检查</b>:<b>每 5 小时一次</b>的免鉴权探活请求(不计 token,只确认端点可达)。代价说清楚:站点宕机最长 5 小时后才被我们发现,所以榜单趋势列是「近 72 小时 · 每 6 小时一格」而不是逐小时;新站要攒够 ≥12 次样本才出分,按这个节拍约需 3 天。</li>
+ <li><b>完整付费批次</b>:每 6 小时,10 轮标准混合模型测试(对账/指纹/缓存的时效来源)</li>
+ <li><b>价格采集</b>:随完整批次同步,含分组倍率与充值比例复核</li>
+ <li><b>榜单刷新</b>:每批次完成后即时刷新,页面显示"最后更新"时间戳</li>
+ </ul>
+ </div>
+ <div class="card">
+ <h4 style="font-size:15px;margin-bottom:10px">置信度规则(反小样本误判)</h4>
+ <ul class="mini-list">
+ <li>样本 <b>&lt; 12 批次或跨度 &lt; 45 分钟</b> → 不展示分数,标注"数据不足"</li>
+ <li>置信度 = min(1, 批次数 ÷ 12),&lt; 0.8 的分数带"低置信"标识</li>
+ <li>新站需连续 <b>14 天</b> 正常检测才进入正式榜单</li>
+ <li>黑名单判定要求连续 3 批次证据(排除单批次网络抖动)</li>
+ </ul>
+ </div>
+ </div>
+ <div class="card" style="margin-top:14px;border-left:4px solid var(--warn)">
+ <h4 style="font-size:14px;margin-bottom:6px">已知局限(诚实披露)</h4>
+ <ul class="mini-list" style="font-size:13.5px;color:var(--sub);margin-top:4px">
+ <li><b>分组口径(最重要的一条)</b>:new-api 系中转站的一个 API Key 只能绑定一个分组,因此<b>我们的"站点分"实际是"该站某一个分组的分"</b>。详情页与榜单已标注实测分组;同一站的其他分组(尤其特价分组)在未拿到对应测试额度前<b>不测不打分</b>。</li>
+ <li><b>检测节点</b>:现阶段只有 <b>1 个</b> 中国大陆检测节点,海外直连与不同运营商环境的表现未覆盖;社区探针节点尚未开放,开通后本条会更新。</li>
+ <li><b>额度价、到手价与汇率(重要)</b>:中转站后台的计价单位是<b>额度</b>(500000 quota = 1 美元额度),站方页面上的 "$1.75/M" 是<b>额度价</b>,不是美元现金价。你真正花的人民币 = 额度价 × <b>充值比例</b>(常见 ¥1 = 1 美元额度,也有站按 ¥7.2 = 1$)。所以我们:①<b>标价保持站方原始额度单位</b>,让你在站方页面看到的数和我们的一致;②人民币<b>到手价</b>只在站方声明了充值比例时给出,未声明就写「不给人民币价」,绝不拿汇率猜;③跨站排序与奖牌一律用额度价(同单位才可比);④<b>汇率 1 美元 = ¥7.1 只用于官方直连</b>(它确实是美元现金支付),口径常量在 <code>weights.json → pricing_display</code>,生效日 2026-10-02。</li>
+ <li><b>比例和倍率不能单独解读</b>:充值比例(多少人民币 = 1 美元额度)与模型倍率是<b>同一笔价格的两种写法</b> —— 有站把倍率抬高一个数量级、再把充值比例写成 1¥=10$,到手价其实与同行相当。所以我们<b>不用充值比例判断贵贱或风险</b>,只比最终到手价;比例反常只作为「去核对倍率表」的线索。风险结论一律来自测得出来的量:逐笔对账偏差、模型指纹、超时率。</li>
+ <li><b>时间窗口</b>:实测数据是时点数据。渠道会换、倍率会调、号池会枯竭 —— 请看页面上标注的"最近审计"日期,充值前建议用工具箱自测一次。</li>
+ <li><b>指纹判定</b>:跨站差分基线存在少量误判可能,所以我们设"存疑"档并复检多轮取中位,而不是直接判死刑;当前基线是另一家中转站而非官方直连(置信度已按 ×0.8 折算)。</li>
+ <li><b>探针语料</b>:覆盖多种能力维度但不可能穷举你的业务场景;你的真实负载表现可能与探针不同。</li>
+ <li><b>三种空值各有含义,别混着读</b>:<b>不适用</b>(灰虚线)= 这一列对这家没有语义,永远不会有值(例:官方直连没有「中转扣费诚实」这一层);<b>未测</b>(琥珀)= 我们能测但还没测,是能力缺口(例:官方端点需要 key 才能跑付费流式探针);<b>未声明</b> = 这类数据只能由站方给出或我们人工核实,没有第三种获取途径。榜单底部的官方直连与海外聚合是<b>参照系</b>,不参与中转榜排名,只回答「要不要走中转、中转比官方贵多少」;它们的「可达率」按免鉴权探活口径统计(401 鉴权门算可达),与中转站的「可用率」(鉴权后真跑出内容才算)是<b>两把尺子,不可横向比较</b>。</li>
+ <li><b>商业信息分两档来源</b>:支付方式 / 充值比例 / 起充金额 / 发票 / 退款<b>没有任何探测路径能验证</b>(我们不替站方保管账单,也不会去访问站方后台)。因此这类字段只有两种：<b>站方入驻声明</b>(通过入驻或认领表单提交,默认视为站方承诺)与<b>人工核实</b>(我们自己在站方页面看到并记录,带核实日期,界面标 ※)。二者不可混读:标 ※ 的内容不是站方承诺,充值前请以站方收银台实时显示为准。未取得的字段一律显示「未声明」,不猜、不留灰位。</li>
+ </ul>
+ <p style="font-size:13px;color:var(--sub);margin-top:8px">我们相信披露局限本身就是可信度的一部分 —— 一个说自己没有局限的测评站,你本来也不该信。</p>
+ </div>
+ </section>
+
+ <!-- ⑤ 中立性声明 -->
+ <section class="block" id="neutrality">
+ <div class="blk-head"><h2><span class="no">⑤</span>中立性声明:钱从哪来,边界在哪</h2></div>
+ <p class="lead">测评站最大的风险不是测不准,而是"被充值方影响"。这一节说清楚我们的收入结构,以及它们各自不能碰什么。</p>
+ <div class="pledges">
+ <div class="pledge p-do"><div class="pi"></div><h4>永不做的事</h4>
+ <ul class="mini-list no" style="margin-top:8px">
+ <li>不卖排名、不卖"去黑名单"</li>
+ <li>排名混入推广内容(优惠码、主观好评)</li>
+ <li>对检测通道返回与真实用户不同的响应</li>
+ <li>收受站点"送测额度"改变计费口径(收了必须公示,只用于测试)</li>
+ </ul>
+ </div>
+ <div class="pledge p-do"><div class="pi"></div><h4>收入结构(均不触碰排名)</h4>
+ <ul class="mini-list yes" style="margin-top:8px">
+ <li><b>标注清晰的合作推荐位</b>:仅首页"编辑精选"区,卡片右上角标"含推广链接";<b>先过实测门槛</b>(标红复核中、指纹未通过的一律排除),再按 综合得分 → 佣金率 → 活动有效期 排序;佣金率与有效期只在服务端参与排序、不下发页面。没有合格合作站时该区域显示空态,不摆假优惠</li>
+ <li><b>企业定制报告</b>:按需采购维度的深度分析</li>
+ </ul>
+ </div>
+ <div class="pledge p-do"><div class="pi"></div><h4>结构性防火墙</h4>
+ <ul class="mini-list yes" style="margin-top:8px">
+ <li>推广与评分在<b>数据层物理隔离</b>:推广位读 <code>promo.yaml</code>,评分链路只读探针数据库与 <code>weights.json</code>,两者无交集 —— 佣金率不参与任何桶的计算,改推广配置不会动一个分数</li>
+ <li>原始响应归档<b>写入即不可变</b>(同名批次直接报错拒绝覆盖);人工改动一律留痕 → <a href="#audit" style="color:var(--brand);font-weight:600">⑥ 审计日志</a></li>
+ <li>我们不假装没有收入:赚推广佣金是事实,但排名买不动是机制保证的 —— <b>信任靠结构,不靠人格</b></li>
+ <li>算法每次调整公示变更日志 → <a href="#audit" style="color:var(--brand);font-weight:600">见下方 ⑥ 审计日志(机器自动补记,非手写)</a></li>
+ <li>送测额度、合作站点在每张卡片与详情页强制披露</li>
+ </ul>
+ </div>
+ <div class="pledge p-dont"><div class="pi"></div><h4>年度透明度报告</h4>
+ <p>每年发布一次:收入构成比例、合作站点清单、收到的"下架请求"及处理结果、算法变更历史。让"不卖排名"从承诺变成可审计的记录。</p>
+ </div>
+ </div>
+ </section>
+
+ <!-- ⑥ 运营变更审计日志 -->
+ <section class="block" id="audit">
+ <div class="blk-head"><h2><span class="no">⑥</span>运营变更审计日志</h2></div>
+ <p class="lead">上面写着"任何修改留痕"。这一节就是那条痕迹本身 —— 不是我们手写的 changelog,而是<b>哈希链式追加日志</b>:每条记录都包含上一条的哈希,改写或删除任意一条都会让校验立刻失败。</p>
+ <div class="card">
+ <div class="al-bar" id="al-chain">
+ <span class="al-dot"></span><span id="al-chain-txt">正在校验审计链…</span>
+ </div>
+ <div class="al-list" id="al-list">
+ <div class="al-empty">正在读取公开审计记录…</div>
+ </div>
+ <div class="al-why">
+ <div><h4>这里记录了什么</h4><p>在册站点增删与暂停、评分权重与出分门槛的每一次数值调整、CPS 推广位开关、对外数据的每次发布指纹。机器自动补记,不依赖人"记得写日志"。</p></div>
+ <div><h4>这里不记录什么</h4><p>API 密钥、账号余额、CPS 推广链接明文。推广链接只存 SHA-256 指纹,可验证"换过链接"而无法还原链接本身。</p></div>
+ </div>
+ <pre class="al-verify"><span class="cm"># 本地重放校验(探针仓库开源,任何人可跑)</span>
+git clone https://github.com/relaylens/probe.git <span class="k">&&</span> cd probe
+npx tsx cli.ts audit verify
+<span class="cm"># 输出 ✓ 审计链完整 → 与本页头部哈希一致即可采信</span></pre>
+ <p class="al-note">两条诚实的边界。① 哈希链防得住"事后篡改",防不住"当时就没记" —— 所以配置漂移与数据发布的补记写在探针代码里而非流程规范里,忘不掉才算数。② 纯哈希链有一个已知盲区:删掉<b>最新一条</b>不会留下断点(它没有后继)。我们的对策是数据库与只追加的 JSONL 归档互相对账,并把这个页面上显示的<b>链头哈希</b>当作外部锚 —— 若某天后悔记录了某条,重建的链头会与这里公开发过的值不一致,肉眼即可发现。真正的不可撤回要靠第三方存档(Git 提交 / 时间戳服务),已列入待办。</p>
+ </div>
+ </section>
+
+ <!-- ⑦ 复现指南 -->
+ <section class="block" id="repro">
+ <div class="blk-head"><h2><span class="no">⑦</span>复现指南</h2></div>
+ <p class="lead">"可信"的最高形式是"你能自己验"。三种方式,从轻到重:</p>
+ <div class="card">
+ <div class="flow">
+ <div class="flow-step"><div class="fn">A</div><div><h4>用工具箱自测你的 Key(3 分钟)</h4><p>浏览器直连你正在用的站,跑同一套四项检测(指纹/缓存/Token/首字延迟)。你的网络环境可能与我们的节点不同,结果反映你的真实体验。</p><a class="btn btn-ghost btn-sm" style="margin-top:8px" href="tools.html">前往工具箱 →</a></div></div>
+ <div class="flow-step"><div class="fn">B</div><div><h4>下载原始数据与脚本</h4><p>全部检测数据(CC BY 4.0)与探针脚本开源,含理论应扣计算器。可以逐条核对我们榜单上的每一个数字。</p>
+<pre style="margin-top:10px"><span class="cm"># 数据与脚本(开源仓库)</span>
+git clone https://github.com/relaylens/open-data.git
+<span class="cm"># 核对某站近30天批次</span>
+python verify.py --site <span class="s">"RelayAPI"</span> --since 2026-09-01</pre></div></div>
+ <div class="flow-step"><div class="fn">C</div><div><h4>成为社区探针节点</h4><p>在你自己的服务器跑开源探针,贡献你所在网络环境的检测样本(数据标注来源节点),在致谢名单中署名。检测网络越分布,数据越有代表性。</p><a class="btn btn-ghost btn-sm" style="margin-top:8px" href="#" onclick="toast('社区探针接入文档即将上线');return false">接入文档(即将上线)</a></div></div>
+ </div>
+ </div>
+ </section>
+
+ <!-- ⑧ FAQ -->
+ <section class="block" id="faq">
+ <div class="blk-head"><h2><span class="no">⑧</span>常见质疑,正面回答</h2></div>
+ <div class="card" style="padding:0">
+ <details open>
+ <summary>"你们自己也是中转站利益链的一环,凭什么信你?"</summary>
+ <div class="ans">凭结构,不凭人格。我们确实有推荐位收入,但:①收入依赖排名可买的话,产品就死了——用户来这儿就是因为不信别处;②检测数据开源可复现,榜单数字买不动,能买的只有"数据合格站里的曝光位";③黑名单站永久解除合作,这是我们砍自己收入的规定。最终判断权在你:所有数据都在,欢迎逐条验。</div>
+ </details>
+ <details>
+ <summary>"扣费偏差 1% 的红线会不会太严/太松?"</summary>
+ <div class="ans">1% 来自实测分布:计费系统的四舍五入与汇率折算自然产生 ±0.5% 以内误差,健康站点批次均值集中在 0-0.5%。超过 1% 说明计费逻辑有主动修改嫌疑;3% 以上配合"偏差同向"(只多不少)基本可排除巧合。阈值本身在年度评审时可调,调整会公示变更日志。</div>
+ </details>
+ <details>
+ <summary>"指纹相似度 85% 的阈值有依据吗?"</summary>
+ <div class="ans">来自对照实验:同一模型不同温度/采样参数的自对比相似度约 93-98%,不同代际模型(如 Opus vs Sonnet)交叉相似度约 60-75%。85% 落在两个分布之间,是"同模型不同配置"与"不同模型"的分界。70-85% 的"存疑"档就是为了承接这个灰色地带——配合能力探针复检,而不是一刀切。</div>
+ </details>
+ <details>
+ <summary>"检测会不会被站点针对性优化(检测通道给好结果,真实用户给差结果)?"</summary>
+ <div class="ans">这是已知攻击面,叫"差异化投毒"。三层防御:①检测账号与普通注册流程一致,无特殊标记;②部分批次来自社区探针节点(真实用户网络环境,站方难以区分);③用户举报通道作为交叉验证——真实用户体验与检测数据系统性不符时触发深度核查。一旦实锤差异化投毒,直接列黑名单(列入标准第 4 条)。</div>
+ </details>
+ <details>
+ <summary>"你们自己会不会哪天跑路?"</summary>
+ <div class="ans">合理的担忧。缓解措施:全部数据与脚本开源,即使本站消失,社区可以 fork 继续;算法与历史数据不依赖任何个人;也没有预付费订阅资金沉淀。评测站的生命周期应该比被评测对象更长,这是我们对自己的要求。</div>
+ </details>
+ </div>
+ </section>
+
+ <!-- CTA -->
+ <section class="block">
+ <div class="card" style="background:linear-gradient(135deg,#0f1e3d,#1e3a8a);border:none;color:#fff;text-align:center;padding:36px 24px">
+ <h3 style="font-size:19px;margin-bottom:8px">还是那句话:榜单只信账单,不信嘴</h3>
+ <p style="font-size:13.5px;opacity:.8;max-width:560px;margin:0 auto 18px">如果你发现任何数据与你的真实体验不符,那是我们最重要的事——欢迎提交举报,核实后会公开修正并记录在时间线里。</p>
+ <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+ <a class="btn btn-primary" style="background:#fff;color:var(--brand-deep)" href="ranking.html">查看实测榜单 →</a>
+ <a class="btn btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)" href="blacklist.html">黑名单档案库 →</a>
+ </div>
+ </div>
+ </section>
+</div>
+
+<footer>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">联系方式</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售或代充服务;中转服务本身存在合规与资金风险,请理性小额充值。检测方法与阈值可能随行业变化调整,调整均在页面公示并保留变更日志。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
+  <div class="icp-line" style="text-align:center;padding-top:12px;font-size:12px;color:#5d6f92"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">冀ICP备2026033332号</a></div>
+</footer>
+
+<div class="toast" id="toast">已记录</div>
+<script>
+var toastEl=document.getElementById("toast"),toastTimer;
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
+
+/* ============ ⑥ 公开审计日志(读 data/audit.json;读不到就显式说明,不编记录) ============ */
+function alEsc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function alFmtDiff(e){
+ function brief(v){
+ if(v==null)return "∅";
+ if(typeof v!=="object")return String(v);
+ var p=[];for(var k in v){p.push(k+"="+(v[k]&&typeof v[k]==="object"?JSON.stringify(v[k]):v[k]))}
+ var s=p.join(" ");return s.length>140?s.slice(0,140)+"…":s;
+ }
+ if(e.before==null&&e.after==null)return "";
+ if(e.before==null)return " <span style=\"color:var(--faint)\">新增 "+alEsc(brief(e.after))+"</span>";
+ if(e.after==null)return " <span style=\"color:var(--faint)\">移除</span>";
+ return " <span style=\"color:var(--faint)\">"+alEsc(brief(e.before))+" ⇒ "+alEsc(brief(e.after))+"</span>";
+}
+function renderAudit(a){
+ var bar=document.getElementById("al-chain"),txt=document.getElementById("al-chain-txt"),list=document.getElementById("al-list");
+ bar.className="al-bar "+(a.chain.ok?"ok":"bad");
+ txt.innerHTML=a.chain.ok
+ ?"审计链校验通过 · 累计 <b>"+a.chain.total+"</b> 条记录 · 链头(外部锚)<code>"+alEsc(a.chain.head)+"</code>"
+ :"审计链校验失败 —— 在此期间本页数据不应被采信,修复后我们会公开说明原因";
+ var rows=(a.entries||[]);
+ /* 人工操作优先展示:机器的 data.publish 会随发布频次刷屏,把「谁动了数据」挤出视野 */
+ var humans=rows.filter(function(e){return String(e.actor||"").indexOf("human:")===0});
+ var machines=rows.filter(function(e){return String(e.actor||"").indexOf("human:")!==0});
+ rows=humans.concat(machines).slice(0,12);
+ if(!rows.length){list.innerHTML='<div class="al-empty">链上暂无公开记录(探针仓库开源,可本地校验 <code>tsx cli.ts audit verify</code>)</div>';return}
+ list.innerHTML=rows.map(function(e){
+ var human=String(e.actor||"").indexOf("human:")===0;
+ var who=human?"人工操作":"自动记录";
+ var t=String(e.at||"").slice(0,16).replace("T"," ");
+ return '<div class="al-item"><div class="when">'+alEsc(t)+'</div>'+
+ '<div class="act '+(human?"human":"probe")+'">'+who+'</div>'+
+ '<div class="body"><b>'+alEsc(e.action)+'</b> → '+alEsc(e.target)+alFmtDiff(e)+
+ '<div class="why">'+alEsc(e.reason)+'</div>'+
+ '<div class="hsh">#'+alEsc(e.seq)+" · "+alEsc(e.hash)+"</div></div></div>";
+ }).join("");
+}
+fetch("data/audit.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))})
+ .then(renderAudit)
+ .catch(function(){document.getElementById("al-list").innerHTML='<div class="al-empty">公开审计摘要尚未生成。日志由开源探针自动补记,命令:<code>tsx cli.ts ops</code></div>';document.getElementById("al-chain-txt").textContent="审计链状态:暂无可校验记录";});
+</script>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>

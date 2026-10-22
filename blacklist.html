@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>避雷黑名单档案库 · RelayLens — 每一条都有证据链</title>
+<link rel="canonical" href="https://aipaihangbang.cn/relay/blacklist.html">
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="description" content="RelayLens 避雷黑名单档案库:跑路站档案、模型降级实锤、Token 虚标记录,每条含证据批次号、预警时间线与用户举报核实。跑路前的信号是可捕获的。">
+<style>
+:root{
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+ --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums}
+
+/* 导航 */
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:22px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px}
+.logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav-links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:8px;white-space:nowrap;transition:.15s}
+.nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
+.nav-links a.active{background:var(--bad-soft);color:var(--bad);font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:none;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-deep)}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn-sm{padding:7px 13px;font-size:13px;border-radius:8px}
+.btn-red{background:var(--bad);color:#fff}
+.btn-red:hover{background:#911f16}
+
+/* 页头 */
+.page-hero{background:linear-gradient(180deg,#1a0d0d,#4c0f0a 60%,#7f1d1d);color:#fff;padding:34px 0 32px}
+.crumb{font-size:12.5px;opacity:.65;margin-bottom:10px}
+.crumb a:hover{color:#fca5a5}
+.page-hero h1{font-size:clamp(23px,3.4vw,30px);font-weight:800}
+.page-hero .sub{font-size:14px;opacity:.85;margin-top:8px;max-width:740px}
+.hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.hp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:7px 14px;font-size:12.5px}
+.hp b{color:#fca5a5}
+
+/* 统计带 */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:-18px;position:relative}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 4px 16px rgba(16,24,40,.06)}
+.stat .v{font-size:24px;font-weight:800;color:var(--bad)}
+.stat .k{font-size:11.5px;color:var(--faint);margin-top:2px}
+.stat.ok .v{color:var(--ok)}
+
+/* 筛选 */
+.filter-row{display:flex;gap:8px;margin:24px 0 16px;flex-wrap:wrap;align-items:center}
+.chip{font-size:12.5px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--sub);cursor:pointer;transition:.13s;font-weight:500}
+.chip:hover{border-color:var(--bad);color:var(--bad)}
+.chip.on{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:600}
+.f-count{font-size:13px;color:var(--sub);margin-left:auto}
+.f-count b{color:var(--bad)}
+
+/* 档案卡 */
+.archives{display:grid;gap:16px}
+.arch{background:var(--card);border:1px solid #f1c7c2;border-radius:16px;overflow:hidden;transition:.15s}
+.arch:hover{box-shadow:0 8px 26px rgba(180,35,24,.08)}
+.arch-head{display:flex;align-items:center;gap:13px;padding:18px 22px;border-bottom:1px solid #f5ddd9;background:linear-gradient(90deg,#fff,#fff7f6);flex-wrap:wrap}
+.arch-logo{width:44px;height:44px;border-radius:11px;color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#991b1b}
+.arch-head h3{font-size:17px}
+.arch-head .urls{font-size:11.5px;color:var(--faint);font-family:Consolas,monospace}
+.state{font-size:11px;font-weight:800;border-radius:6px;padding:3px 11px;margin-left:auto;white-space:nowrap}
+.st-dead{background:#451a03;color:#fdba74}
+.st-black{background:var(--bad);color:#fff}
+.st-review{background:var(--warn);color:#fff}
+.arch-body{padding:18px 22px;display:grid;grid-template-columns:1.5fr 1fr;gap:24px}
+@media(max-width:860px){.arch-body{grid-template-columns:1fr}}
+.arch h4{font-size:13px;font-weight:800;color:var(--bad);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.facts{list-style:none}
+.facts li{font-size:13px;color:var(--sub);padding:5px 0 5px 20px;position:relative}
+.facts li::before{content:"▸";position:absolute;left:2px;color:var(--bad)}
+.facts li b{color:var(--ink)}
+.ev-chip{display:inline-block;font-size:11px;font-family:Consolas,monospace;color:var(--brand);background:var(--brand-soft);border-radius:5px;padding:2px 8px;margin:3px 4px 0 0}
+/* 预警时间线 */
+.tl{position:relative;padding-left:16px}
+.tl::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:2px;background:#f1c7c2;border-radius:2px}
+.tl-i{position:relative;padding:0 0 12px 12px}
+.tl-i::before{content:"";position:absolute;left:-15px;top:5px;width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid var(--bad)}
+.tl-i.t-warn::before{border-color:#f59e0b}
+.tl-i.t-info::before{border-color:var(--faint)}
+.tl-i .dt{font-size:11px;color:var(--faint);font-weight:600}
+.tl-i .tt{font-size:12.5px;font-weight:700}
+.tl-i .tx{font-size:12px;color:var(--sub)}
+.arch-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 22px;background:#fdf6f5;border-top:1px solid #f5ddd9;flex-wrap:wrap}
+.arch-foot .note{font-size:12px;color:var(--sub)}
+.arch-foot .ops{display:flex;gap:8px;flex-wrap:wrap}
+
+/* 观察名单 */
+.watch{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:16px}
+.watch-row{display:grid;grid-template-columns:1.3fr 2fr 1fr;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);font-size:13px;align-items:center}
+.watch-row:last-child{border-bottom:none}
+.watch-row .wn{font-weight:700}
+.watch-row .wn .st{font-size:10px;color:var(--warn);background:var(--warn-soft);border-radius:4px;padding:1px 7px;margin-left:6px;font-weight:700}
+.watch-row .wr{color:var(--sub);font-size:12.5px}
+@media(max-width:720px){.watch-row{grid-template-columns:1fr;gap:4px}}
+
+/* 信号科普 */
+.signals{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
+.sig{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:12px;padding:18px 20px}
+.sig h4{font-size:14.5px;display:flex;gap:8px;align-items:center}
+.sig p{font-size:13px;color:var(--sub);margin-top:7px}
+.sig .ex{margin-top:10px;font-size:12px;background:var(--warn-soft);border-radius:7px;padding:7px 11px;color:#7a4f06}
+.sig .ex b{color:var(--warn)}
+
+/* 申诉与规则 */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:860px){.rules{grid-template-columns:1fr}}
+.rule-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.rule-card h3{font-size:16px;font-weight:800;margin-bottom:10px;display:flex;gap:8px;align-items:center}
+.rule-card ol{padding-left:20px}
+.rule-card li{font-size:13.5px;color:var(--sub);padding:4px 0}
+.rule-card li b{color:var(--ink)}
+.rule-card .appeal-box{background:var(--brand-soft);border:1px solid #d4e0fb;border-radius:11px;padding:15px 17px;font-size:13px;color:#24409a;margin-top:14px}
+
+section.block{margin-top:44px}
+.blk-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+.blk-head h2{font-size:21px;font-weight:800}
+.lead{font-size:13.5px;color:var(--sub);margin-bottom:16px;max-width:780px}
+
+footer{margin-top:56px;background:#0c1633;color:#94a3c4;padding:36px 0 28px;font-size:13px}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.1)}
+@media(max-width:720px){.ft-grid{grid-template-columns:1fr}}
+footer h4{color:#fff;font-size:14px;margin-bottom:12px}
+footer a{display:block;padding:3.5px 0}
+footer a:hover{color:#fff}
+footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 举报表单弹窗(GitHub Issue 通道,无后端) */
+.modal-mask{position:fixed;inset:0;background:rgba(10,16,32,.55);z-index:120;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-mask[hidden]{display:none}
+.modal{background:var(--card);border-radius:16px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:26px 28px;box-shadow:0 18px 60px rgba(10,16,32,.35)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.modal-head h3{font-size:18px;font-weight:800}
+.modal-x{background:none;border:none;font-size:24px;line-height:1;cursor:pointer;color:var(--faint);padding:4px 8px;border-radius:8px}
+.modal-x:hover{background:var(--line)}
+.rf-note{font-size:12.5px;color:var(--sub);background:var(--warn-soft);border-radius:9px;padding:10px 13px;margin-bottom:16px;line-height:1.7}
+.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:640px){.rf-grid{grid-template-columns:1fr}}
+.modal label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px}
+.modal label b{color:var(--bad)}
+.modal input,.modal select,.modal textarea{font:inherit;font-size:13.5px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%;box-sizing:border-box}
+.modal textarea{resize:vertical}
+.rf-err{background:var(--bad-soft);color:var(--bad);font-size:12.5px;padding:8px 12px;border-radius:8px;margin-bottom:12px}
+.rf-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+</style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RelayLens">
+<meta property="og:title" content="避雷黑名单档案库 · RelayLens — 每一条都有证据链">
+<meta property="og:description" content="RelayLens 避雷黑名单档案库:跑路站档案、模型降级实锤、Token 虚标记录,每条含证据批次号、预警时间线与用户举报核实。跑路前的信号是可捕获的。">
+<meta property="og:url" content="https://aipaihangbang.cn/relay/blacklist.html">
+<meta property="og:image" content="https://aipaihangbang.cn/relay/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+<!-- 导航 -->
+<header>
+ <div class="wrap nav">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="compare.html">比价矩阵</a><a href="blacklist.html" class="active">避雷黑名单</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a>  <a href="https://aipaihangbang.cn" class="back-main">← 返回主站</a>
+    </nav>
+ <a class="btn btn-ghost btn-sm" href="#">登录</a>
+ <a class="btn btn-primary btn-sm" href="#">注册</a>
+ </div>
+</header>
+
+<!-- 页头 -->
+<div class="page-hero">
+ <div class="wrap">
+ <div class="crumb"><a href="index.html">首页</a> / 避雷黑名单档案库</div>
+ <h1>避雷黑名单档案库 · 跑路之前,信号早就出现了</h1>
+ <p class="sub">这里记录每一家确认跑路、实锤虚标、模型降级的中转站——完整证据链、预警时间线、用户受损举报核实。档案永久保留:跑路的站不该被遗忘,修复的站可以走复检流程回来。</p>
+ <div class="hero-points">
+ <span class="hp">每条档案附<b>证据批次号</b>可溯源</span>
+ <span class="hp">跑路前预警信号<b>全程留痕</b></span>
+ <span class="hp">站方可申诉,<b>复检通过可摘牌</b></span>
+ </div>
+ </div>
+</div>
+
+<div class="wrap">
+
+ <!-- 统计带 -->
+ <div class="stats">
+ <div class="stat"><div class="v num">3</div><div class="k">确认跑路 / 失联</div></div>
+ <div class="stat"><div class="v num">4</div><div class="k">黑名单在列</div></div>
+ <div class="stat"><div class="v num">2</div><div class="k">标红复核中</div></div>
+ <div class="stat"><div class="v num">¥86,400</div><div class="k">用户举报累计受损</div></div>
+ <div class="stat ok"><div class="v num">1</div><div class="k">复检通过已摘牌</div></div>
+ </div>
+
+ <!-- 筛选 -->
+ <div class="filter-row">
+ <button class="chip on" data-f="all">全部档案</button>
+ <button class="chip" data-f="dead">跑路/失联</button>
+ <button class="chip" data-f="black">计费虚标/降级</button>
+ <button class="chip" data-f="review">标红复核中</button>
+ <span class="f-count">共 <b id="fCount">7</b> 份档案</span>
+ </div>
+
+ <!-- 档案列表 -->
+ <div class="archives" id="archives"></div>
+ <div class="empty" id="empty" style="display:none;text-align:center;padding:44px;color:var(--faint);font-size:14px;background:var(--card);border:1px dashed var(--line);border-radius:12px">该分类暂无档案</div>
+
+ <!-- 观察名单 -->
+ <section class="block">
+ <div class="blk-head">
+ <h2>观察名单 <span style="font-size:12.5px;color:var(--warn);font-weight:600">/ 触发单一预警信号,未达黑名单标准</span></h2>
+ </div>
+ <p class="lead">观察名单是黑名单的前一站:出现一个可疑信号(如异常涨价、公告兑现延迟)即进入,持续 14 天;信号消除则移出,恶化则升级。这是 PixelAPI 事件后新增的机制——它的跑路信号其实提前 5 天就出现了。</p>
+ <div class="watch">
+ <div class="watch-row">
+ <div class="wn">FastHub <span class="st">新站</span></div>
+ <div class="wr">运营仅 0.3 年,首充优惠力度异常(充 100 送 60)——低价引流是典型前兆,观察充值门槛与价格波动 14 天</div>
+ <div style="text-align:right"><a class="btn btn-ghost btn-sm" href="detail.html?site=FastHub">指标</a></div>
+ </div>
+ <div class="watch-row">
+ <div class="wn">云舟 API <span class="st">连通异常</span></div>
+ <div class="wr">检测点连通性异常 72 小时,已通知站方;若 7 天内无响应转入深度核查。历史上 2 家跑路站出现过相同前兆</div>
+ <div style="text-align:right"><a class="btn btn-ghost btn-sm" href="detail.html?site=%E4%BA%91%E8%88%9FAPI">指标</a></div>
+ </div>
+ </div>
+ </section>
+
+ <!-- 预警信号科普 -->
+ <section class="block">
+ <div class="blk-head">
+ <h2>跑路前的六个信号(档案库数据验证)</h2>
+ <a class="more" href="#" style="font-size:13px;color:var(--brand);font-weight:600">完整研究报告 →</a>
+ </div>
+ <p class="lead">我们对档案库全部跑路/虚标站做了信号回溯:这些信号在事发前平均提前 4-7 天出现。看到任意两个同时出现,就该停止充值、消耗余额。</p>
+ <div class="signals">
+ <div class="sig">
+ <h4>信号① 单周涨价 &gt;15%</h4>
+ <p>跑路前常见"回光返照":趁最后一批用户充值多捞一笔。正常调价一般 ≤5% 且提前公告。</p>
+ <div class="ex"><b>档案验证:</b>PixelAPI 跑路前 5 天涨价 40%;Orbelis 当前 +22% 已触发。</div>
+ </div>
+ <div class="sig">
+ <h4>信号② 充值门槛突然提高</h4>
+ <p>从"¥10 起充"变成"¥100 起充",或推出"充得越多送得越多"的大额档位——目的都是让你把钱留在平台上。</p>
+ <div class="ex"><b>档案验证:</b>TurboRelay 跑路前 10 天起充额从 ¥10 提到 ¥200。</div>
+ </div>
+ <div class="sig">
+ <h4>信号③ 公告兑现延迟</h4>
+ <p>承诺的降价/赔付/新模型接入反复跳票,客服工单响应从小时级变成天级——团队可能已开始撤出。</p>
+ <div class="ex"><b>档案验证:</b>QuickToken 黑名单前,公告兑现率从 100% 跌到 40%。</div>
+ </div>
+ <div class="sig">
+ <h4>信号④ 换域名 / 换支付通道</h4>
+ <p>频繁更换域名、支付收款方从公司变成个人、突然只收 USDT——都是在切断可追责路径。</p>
+ <div class="ex"><b>档案验证:</b>MoonGate 跑路前 2 周连换 3 个域名,支付仅剩 TRC20。</div>
+ </div>
+ <div class="sig">
+ <h4>信号⑤ 检测数据持续恶化</h4>
+ <p>可用率连续下滑、首字延迟持续变慢但无人修复——上游账号池可能在被批量封禁,站方已放弃维护。</p>
+ <div class="ex"><b>档案验证:</b>档案库 3 家跑路站事发前可用率均连续 7 天下滑超 5 个百分点。</div>
+ </div>
+ <div class="sig">
+ <h4>信号⑥ 突然的大额促销</h4>
+ <p>远超成本的折扣(如官方 1 折)只有三种可能:逆向接口(随时连坐封号)、计费黑盒、捞最后一波。</p>
+ <div class="ex" style="color:var(--warn)"><b>这条我们尚未验证:</b>「1 元 285 万 Token」这类报价明显低于上游成本,机制上只能靠逆向号池、计费黑盒或最后一波捞金支撑 —— 这是<b>推演,不是实测结论</b>。截至 2026-10-02 我们没有跟踪满 90 天的同类样本,所以不给假数据。可直接用的判据:报价低于官方 3 折,先按可疑对待,充值前用小额自测。</div>
+ </div>
+ </div>
+ </section>
+
+ <!-- 规则与申诉 -->
+ <section class="block">
+ <div class="blk-head"><h2>列入与摘除规则</h2></div>
+ <div class="rules">
+ <div class="rule-card">
+ <h3>列入黑名单的标准(满足其一)</h3>
+ <ol>
+ <li><b>计费虚标</b>:连续 3 个批次扣费偏差 &gt;3%,站方收到质询后 72 小时内未回应或无法解释</li>
+ <li><b>模型掉包</b>:指纹检测相似度 &lt;85% 且复检确认(排除单批次网络抖动)</li>
+ <li><b>确认跑路</b>:域名停止解析 + 用户举报余额受损 ≥3 例 + 15 天无恢复</li>
+ <li><b>数据造假</b>:向本站检测通道返回与真实用户不同的响应(差异化投毒)</li>
+ </ol>
+ </div>
+ <div class="rule-card">
+ <h3>站方申诉流程</h3>
+ <ol>
+ <li>站方通过公示渠道提交申诉,说明问题原因与整改措施</li>
+ <li>本站以 <b>加倍频率</b>(每 3 小时)复检 7 天,费用由本站承担</li>
+ <li>连续 7 天达标 → 摘牌并公示时间线;不达标 → 维持原判,申诉记录留档</li>
+ <li>全程公开:申诉、复检、结论都在档案页更新,用户可监督</li>
+ </ol>
+ <div class="appeal-box"><b>复检通过案例:</b>塞尔达传说曾因缓存计费异常被标红,站方 48 小时内响应修复,7 天复检全通过,已摘牌并在档案库保留完整时间线——<a href="reports.html?id=zelda-cache-fix" style="color:var(--brand);font-weight:600">查看复检时间线 →</a></div>
+ </div>
+ </div>
+ </section>
+
+ <!-- 举报入口 -->
+ <section class="block">
+ <div class="rule-card" style="background:linear-gradient(135deg,#1a0d0d,#3f1210);border:none;color:#fff">
+ <div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap">
+ <div style="font-size:34px"></div>
+ <div style="flex:1;min-width:240px">
+ <h3 style="color:#fff;font-size:17px;margin-bottom:6px">你被坑过?提交举报,补全证据链</h3>
+ <p style="font-size:13px;opacity:.8">充值未到账、跑路失联、扣费异常——带上面板流水截图和充值记录提交。举报以 GitHub Issue 公开提交、公开核实,核实后计入档案库受损统计;你的经历能帮下一个人避开这个坑。</p>
+ </div>
+ <button class="btn btn-red" onclick="openReport()">提交举报</button>
+ </div>
+ </div>
+ </section>
+</div>
+
+<footer>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="https://github.com/jinchaoqiang0311/relaylens/issues" target="_blank" rel="noopener">联系方式(Issue)</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售或代充服务。黑名单档案基于公开付费实测与用户举报核实,站方可按公示流程申诉;档案记录不构成对任何主体的事实认定,仅供决策参考。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
+  <div class="icp-line" style="text-align:center;padding-top:12px;font-size:12px;color:#5d6f92"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">冀ICP备2026033332号</a></div>
+</footer>
+
+<!-- 举报表单弹窗:提交到 GitHub Issue(公开可追踪,无需后端) -->
+<div class="modal-mask" id="reportMask" hidden>
+ <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rfTitle">
+ <div class="modal-head">
+ <h3 id="rfTitle">提交举报</h3>
+ <button class="modal-x" id="rfClose" type="button" aria-label="关闭">×</button>
+ </div>
+ <p class="rf-note">举报通过 <b>GitHub Issue</b> 公开提交与跟踪——与本站「证据公开」原则一致,也便于站方回应。请勿在内容中包含 API Key、密码等敏感信息;流水截图、充值记录等附件在 Issue 页面补充上传。</p>
+ <div class="rf-grid">
+ <label>站点名称 / 域名 <b>*</b><input id="rfSite" placeholder="如:ExampleAI(example.com)"></label>
+ <label>事件类型
+ <select id="rfType">
+ <option>充值未到账</option><option>跑路失联</option><option>扣费异常</option>
+ <option>模型掉包</option><option>虚假宣传</option><option>站方申诉</option><option>其他</option>
+ </select>
+ </label>
+ <label>发生时间<input type="date" id="rfDate"></label>
+ <label>涉及金额(元,选填)<input id="rfAmount" type="number" min="0" step="0.01" placeholder="如 199.00"></label>
+ </div>
+ <label>事件描述 <b>*</b><textarea id="rfDesc" rows="5" placeholder="时间线、充值/扣费记录、与站方沟通经过……越具体越有力"></textarea></label>
+ <label>联系方式(选填,仅用于核实)<input id="rfContact" placeholder="邮箱或微信"></label>
+ <div class="rf-err" id="rfErr" hidden></div>
+ <div class="rf-actions">
+ <button class="btn btn-ghost" id="rfCancel" type="button">取消</button>
+ <button class="btn btn-red" id="rfSubmit" type="button">前往 GitHub 提交 →</button>
+ </div>
+ </div>
+</div>
+
+<div class="toast" id="toast">已记录</div>
+
+<script>
+/* ============ 档案数据(示例,接审核后台后替换) ============ */
+var ARCHIVES=[
+ {name:"PixelAPI",ab:"PX",state:"dead",stateText:"确认跑路",listed:"2026-09-15",
+ facts:["2026-03 收录,运营 0.8 年,此前指标正常(偏差 0.9%)","<b>跑路前 5 天单周涨价 40%</b>(典型回光返照信号)","跑路前 10 天起充门槛从 ¥10 提高到 ¥100","09-13 域名停止解析,09-15 确认跑路","用户举报受损 23 例,累计约 ¥31,200"],
+ evidence:["RL-EV-0908-011 涨价预警","RL-EV-0913-013 失联记录","RL-EV-0915-002 跑路确认"],
+ timeline:[
+ ["t-warn","2026-09-08","价格异常波动预警","单周 +40%,远超 15% 红线,发布高风险提示"],
+ ["t-warn","2026-09-10","充值门槛异常","起充额 ¥10 → ¥100,观察名单升级"],
+ ["t-info","2026-09-13","域名停止解析","检测点全部超时,尝试联系站方无回应"],
+ ["t-bad","2026-09-15","确认跑路","用户举报受损 23 例,正式列入黑名单档案"]],
+ note:"本档案促成了「观察名单」机制上线——它的信号提前 5 天就出现了。"},
+ {name:"TurboRelay",ab:"TR",state:"dead",stateText:"确认跑路",listed:"2026-08-02",
+ facts:["2026-01 收录,主打 GPT 系低价","跑路前 10 天起充额 ¥10 → ¥200,并推「充 500 送 300」大额档","08-01 官网 404,社群解散,仅剩充值页","用户举报受损 17 例,累计约 ¥28,800"],
+ evidence:["RL-EV-0722-007 门槛异常","RL-EV-0801-004 失联记录","RL-EV-0802-001 跑路确认"],
+ timeline:[
+ ["t-warn","2026-07-22","充值门槛与大额促销","¥200 起充 + 充 500 送 300,远超成本线"],
+ ["t-warn","2026-07-29","客服响应消失","工单通道关闭,社群禁言"],
+ ["t-bad","2026-08-01","官网 404","仅充值页存活 6 小时后也下线"],
+ ["t-bad","2026-08-02","确认跑路","列入黑名单档案"]],
+ note:"「充得越多送得越多」跑路前促销的标准剧本。"},
+ {name:"MoonGate",ab:"MG",state:"dead",stateText:"失联观察",listed:"2026-07-18",
+ facts:["2026-04 收录,Claude 系报价低于市场 40%","跑路前 2 周连换 3 个域名,官方口径「升级迁移」","支付通道从支付宝+微信缩减为仅 TRC20-USDT","07-17 全部域名失联,07-18 列入档案","用户举报受损 9 例,累计约 ¥19,400"],
+ evidence:["RL-EV-0703-006 域名变更","RL-EV-0712-009 支付通道变更","RL-EV-0718-003 失联确认"],
+ timeline:[
+ ["t-warn","2026-07-03","首次换域名","公告称「服务器升级」,无迁移说明文档"],
+ ["t-warn","2026-07-10","二次换域名 + 支付收缩","仅剩 TRC20 收款,可追责路径被切断"],
+ ["t-bad","2026-07-17","全部域名失联","含主站、文档站、状态页"],
+ ["t-bad","2026-07-18","列入黑名单档案","等待 15 天观察期后确认跑路"]],
+ note:"低价 Claude + 频繁换域名,是档案库识别出的高危组合。"},
+ {name:"QuickToken",ab:"QT",state:"black",stateText:"计费虚标",listed:"2026-09-21",
+ facts:["<b>Token 统计虚标 12%</b>:面板 usage 与理论值系统性偏差,用户实际成本约为标价 1.9 倍","30 天对账流水 86 条,偏差全部同向(只多不少)——排除网络抖动,判定系统性虚标","站方收到质询后 72 小时无回应,符合列入标准","缓存命中统计也造假:声称命中 55%,实测 8%"],
+ evidence:["RL-EV-0918-005 30天对账报告","RL-EV-0921-002 列入决定"],
+ timeline:[
+ ["t-warn","2026-09-10","用户举报扣费异常","3 位用户独立举报月账单高于理论值"],
+ ["t-info","2026-09-18","对账复核启动","调取 30 天全部批次流水逐条核对"],
+ ["t-bad","2026-09-21","确认系统性虚标","偏差同向 + 缓存造假,列入黑名单"]],
+ note:"同向偏差是关键证据:网络问题会导致随机偏差,只有刻意修改计费才会「只多不少」。"},
+ {name:"Site-X",ab:"SX",state:"black",stateText:"模型降级实锤",listed:"2026-09-28",
+ facts:["付费请求 Claude Opus 5,<b>3 个批次实际返回 Sonnet 内容</b>","model 字段被篡改回 opus-5,但响应特征指纹相似度仅 71%","复杂推理探针得分断崖式下降(与 Sonnet 水平一致)","掺假收益估算:Opus-Sonnet 差价约 ¥12/M,按其流量月收益超万元"],
+ evidence:["RL-EV-0926-031 指纹未通过","RL-EV-0927-018 复检确认","RL-EV-0928-007 列入决定"],
+ timeline:[
+ ["t-warn","2026-09-26","指纹检测未通过","相似度 71%,触发复检流程"],
+ ["t-info","2026-09-27","复检 + 探针验证","推理能力与 Sonnet 水平吻合,排除误判"],
+ ["t-bad","2026-09-28","列入黑名单","「信息溢价」型掉包,影响用户预估 300+"]],
+ note:"掉包的识别不能靠问模型「你是谁」——指纹对比才是硬证据。用工具箱可自测你正在用的站。"},
+ {name:"Orbelis",ab:"OR",state:"review",stateText:"标红复核中",listed:"2026-09-27",
+ facts:["连续 5 批次扣费偏差 >4%,累计触发虚标嫌疑(黑名单标准:3 批次 >3%)","GPT-5.5 指纹相似度 79%(阈值 85%)","单周涨价 22%,跑路风险指数「高」","缓存计费策略从「按缓存价」变为「不算缓存」","站方已收到质询,48 小时未回应;72 小时无回应将正式列入黑名单"],
+ evidence:["RL-EV-0920-041 涨价预警","RL-EV-0924-047 指纹未通过","RL-EV-0927-058 偏差连续超标"],
+ timeline:[
+ ["t-warn","2026-09-20","单周涨价 22%","30 天波动率超阈值"],
+ ["t-warn","2026-09-24","指纹检测未通过","相似度 79%,进入复核"],
+ ["t-bad","2026-09-27","偏差连续超标","标红复核中,等待站方回应"]],
+ note:"复核期 = 申诉窗口。整改并复检通过可摘牌,持续恶化则升级为黑名单。"},
+ {name:"NovaToken",ab:"NT",state:"review",stateText:"标红复核中",listed:"2026-09-26",
+ facts:["2 个批次指纹相似度 84%(临界值,未达确认标准)","站方主动公告「上游渠道切换中」,承诺 10-01 完成迁移","未出现虚标与涨价信号,复核以观察为主","按规则需连续 3 批次确认才列入黑名单,当前样本不足"],
+ evidence:["RL-EV-0925-044 指纹临界","RL-EV-0926-046 复核启动"],
+ timeline:[
+ ["t-warn","2026-09-25","指纹临界","84% 贴近阈值,启动复核而非直接列入"],
+ ["t-info","2026-09-26","站方主动说明","渠道迁移公告,设 10-01 观察截止点"]],
+ note:"临界值不武断列入——这是「不冤枉好站」原则的体现,与黑名单的「不放过坏站」同等重要。"}
+];
+var stateCls={dead:"st-dead",black:"st-black",review:"st-review"};
+var filterState="all";
+var toastEl=document.getElementById("toast"),toastTimer;
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
+function esc(s){return String(s).replace(/&/g,"&amp;")}
+
+function render(){
+ var list=ARCHIVES.filter(function(a){return filterState==="all"||a.state===filterState});
+ document.getElementById("fCount").textContent=list.length;
+ document.getElementById("empty").style.display=list.length?"none":"block";
+ var box=document.getElementById("archives");box.innerHTML="";
+ list.forEach(function(a){
+ var d=document.createElement("div");
+ d.className="arch";
+ d.innerHTML=
+ '<div class="arch-head">'+
+ '<div class="arch-logo">'+a.ab+'</div>'+
+ '<div><h3>'+esc(a.name)+'</h3><div class="urls">列入日期:'+a.listed+'</div></div>'+
+ '<span class="state '+stateCls[a.state]+'">'+a.stateText+'</span>'+
+ '</div>'+
+ '<div class="arch-body">'+
+ '<div>'+
+ '<h4>档案事实</h4>'+
+ '<ul class="facts">'+a.facts.map(function(f){return '<li>'+f+'</li>'}).join("")+'</ul>'+
+ '<div style="margin-top:10px">'+a.evidence.map(function(e){return '<span class="ev-chip">'+e+'</span>'}).join("")+'</div>'+
+ '<p style="font-size:12.5px;color:var(--faint);margin-top:10px;border-left:3px solid #f1c7c2;padding-left:10px">'+esc(a.note)+'</p>'+
+ '</div>'+
+ '<div>'+
+ '<h4>预警时间线</h4>'+
+ '<div class="tl">'+a.timeline.map(function(t){
+ return '<div class="tl-i '+t[0]+'"><div class="dt">'+t[1]+'</div><div class="tt">'+esc(t[2])+'</div><div class="tx">'+esc(t[3])+'</div></div>';
+ }).join("")+'</div>'+
+ '</div>'+
+ '</div>'+
+ '<div class="arch-foot">'+
+ '<span class="note">档案永久保留 · 每次更新记录在案</span>'+
+ '<div class="ops">'+
+ (a.state==="review"?'<button class="btn btn-ghost btn-sm" onclick="openReport(\''+a.name+'\',\'站方申诉\')">站方申诉入口</button>':"")+
+ '<button class="btn btn-ghost btn-sm" onclick="toast(\'原始证据包下载:可溯源到证据批次号\')">证据包 ⬇</button>'+
+ '<button class="btn btn-ghost btn-sm" onclick="openReport(\''+a.name+'\')">补充举报</button>'+
+ '</div>'+
+ '</div>';
+ box.appendChild(d);
+ });
+}
+document.querySelectorAll("[data-f]").forEach(function(c){
+ c.addEventListener("click",function(){
+ document.querySelectorAll("[data-f]").forEach(function(x){x.classList.remove("on")});
+ c.classList.add("on");
+ filterState=c.getAttribute("data-f");
+ render();
+ });
+});
+render();
+
+/* ============ 举报表单:GitHub Issue 通道(无后端,公开可追踪) ============ */
+var RL_ISSUE_URL="https://github.com/jinchaoqiang0311/relaylens/issues/new";
+function openReport(site,type){
+ document.getElementById("reportMask").hidden=false;
+ document.body.style.overflow="hidden";
+ if(site)document.getElementById("rfSite").value=site;
+ if(type){
+ document.getElementById("rfType").value=type;
+ document.getElementById("rfTitle").textContent=(type==="站方申诉"?"站方申诉":"提交举报");
+ }
+ document.getElementById("rfErr").hidden=true;
+}
+function closeReport(){
+ document.getElementById("reportMask").hidden=true;
+ document.body.style.overflow="";
+}
+document.getElementById("rfClose").addEventListener("click",closeReport);
+document.getElementById("rfCancel").addEventListener("click",closeReport);
+document.getElementById("reportMask").addEventListener("click",function(e){if(e.target===this)closeReport()});
+function rfErr(msg){var el=document.getElementById("rfErr");if(msg){el.textContent=msg;el.hidden=false}else{el.hidden=true}}
+document.getElementById("rfSubmit").addEventListener("click",function(){
+ var site=document.getElementById("rfSite").value.trim();
+ var type=document.getElementById("rfType").value;
+ var date=document.getElementById("rfDate").value;
+ var amount=document.getElementById("rfAmount").value.trim();
+ var desc=document.getElementById("rfDesc").value.trim();
+ var contact=document.getElementById("rfContact").value.trim();
+ if(!site){rfErr("请填写站点名称或域名");return}
+ if(desc.length<20){rfErr("事件描述至少 20 字——太简略无法核实,请补充时间线与依据");return}
+ rfErr("");
+ var L=[];
+ L.push("- **站点**: "+site);
+ L.push("- **类型**: "+type);
+ if(date)L.push("- **发生时间**: "+date);
+ if(amount)L.push("- **涉及金额**: ¥"+amount);
+ if(contact)L.push("- **联系方式**: "+contact);
+ L.push("");
+ L.push("**事件描述**");
+ L.push(desc);
+ L.push("");
+ L.push("---");
+ L.push("_经 blacklist.html 举报表单提交。附件(流水截图/充值记录)请在本 Issue 补充上传;内容公开可见,请勿包含 Key/密码。_");
+ var title="["+type+"] "+site+(date?" ("+date+")":"");
+ var url=RL_ISSUE_URL+"?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(L.join("\n"));
+ window.open(url,"_blank","noopener");
+ closeReport();
+ toast("已打开 GitHub 提交页,补充附件后发送即可");
+});
+</script>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>

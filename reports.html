@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实测报告 · RelayLens — 每个结论都有证据链的深度分析</title>
+<link rel="canonical" href="https://aipaihangbang.cn/relay/reports.html">
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="description" content="RelayLens 实测报告:模型降级实锤、Token 虚标取证、跑路事件复盘、缓存计费陷阱分析。每篇报告附证据批次号、复现方法与时间线,持续更新。">
+<style>
+:root{
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+ --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums}
+
+/* 导航 */
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:22px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px}
+.logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav-links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:8px;white-space:nowrap;transition:.15s}
+.nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
+.nav-links a.active{background:var(--brand-soft);color:var(--brand);font-weight:700}
+.nav-links a.hot{color:var(--bad);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:none;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-deep)}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn-sm{padding:7px 13px;font-size:13px;border-radius:8px}
+
+/* 页头 */
+.page-hero{background:linear-gradient(180deg,#0c1633,#16308f);color:#fff;padding:36px 0 34px}
+.crumb{font-size:12.5px;opacity:.65;margin-bottom:10px}
+.crumb a:hover{color:#8fd0ff}
+.ph-row{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.page-hero h1{font-size:clamp(23px,3.4vw,30px);font-weight:800}
+.page-hero .sub{font-size:14px;opacity:.82;margin-top:8px;max-width:680px}
+.hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.hp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:7px 14px;font-size:12.5px}
+.hp b{color:#8fd0ff}
+
+/* 筛选 */
+.filter-row{display:flex;gap:8px;margin:24px 0 18px;flex-wrap:wrap;align-items:center}
+.chip{font-size:12.5px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--sub);cursor:pointer;transition:.13s;font-weight:500}
+.chip:hover{border-color:var(--brand);color:var(--brand)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+.f-count{font-size:13px;color:var(--sub);margin-left:auto}
+.f-count b{color:var(--brand)}
+
+/* 列表页文章卡 */
+.posts{display:grid;gap:16px}
+.post{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;transition:.15s;cursor:pointer;display:block}
+.post:hover{border-color:#c9d4f5;box-shadow:0 8px 26px rgba(16,24,40,.07)}
+.post .p-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.badge{font-size:11px;font-weight:800;border-radius:6px;padding:2px 10px}
+.bg-bad{background:var(--bad-soft);color:var(--bad)}
+.bg-warn{background:var(--warn-soft);color:var(--warn)}
+.bg-ok{background:var(--ok-soft);color:var(--ok)}
+.bg-info{background:var(--brand-soft);color:var(--brand)}
+.bg-real{background:#0c1633;color:#8fd0ff;border:1px solid #2b5cf0}
+.demo-chip{font-size:10.5px;color:var(--faint);border:1px dashed var(--line);border-radius:5px;padding:1px 7px}
+.real-banner{background:linear-gradient(135deg,#0f1e3d,#1e3a8a);color:#fff;border-radius:11px;padding:13px 18px;font-size:13px;margin-bottom:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.real-banner b{color:#8fd0ff}
+.post .p-date{font-size:12px;color:var(--faint)}
+.post h2{font-size:18.5px;line-height:1.45;margin-bottom:8px}
+.post:hover h2{color:var(--brand)}
+.post p{font-size:13.5px;color:var(--sub)}
+.post .p-foot{display:flex;gap:16px;margin-top:14px;font-size:12px;color:var(--faint);flex-wrap:wrap;align-items:center}
+.ev-chip{font-family:Consolas,monospace;font-size:11px;color:var(--brand);background:var(--brand-soft);border-radius:5px;padding:2px 8px}
+.post .p-impact{font-size:11.5px;color:var(--bad);font-weight:700}
+.read-more{font-size:13px;color:var(--brand);font-weight:600;margin-left:auto}
+
+/* ================= 详情视图 ================= */
+#articleView{display:none}
+.art-head{padding:34px 0 8px}
+.art-head .crumb a:hover{color:var(--brand)}
+.art-badges{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.art-head h1{font-size:clamp(22px,3.2vw,28px);line-height:1.45;margin-bottom:12px}
+.art-info{display:flex;gap:16px;font-size:12.5px;color:var(--faint);flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.art-info b{color:var(--ink)}
+/* 正文排版 */
+.article{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:34px 38px;margin-top:18px}
+@media(max-width:720px){.article{padding:24px 20px}}
+.article .summary{background:var(--brand-soft);border-left:4px solid var(--brand);border-radius:0 10px 10px 0;padding:16px 20px;font-size:14px;margin-bottom:26px}
+.article .summary b{color:var(--brand-deep)}
+.article h2{font-size:19px;margin:30px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.article h3{font-size:15.5px;margin:20px 0 8px}
+.article p{font-size:14.5px;color:#333c4a;margin:12px 0}
+.article p b{color:var(--ink)}
+.article ul,.article ol{padding-left:22px;margin:12px 0}
+.article li{font-size:14px;color:#333c4a;padding:4px 0}
+/* 证据面板 */
+.panel{background:#0d1424;border-radius:12px;color:#dbe4f3;font-family:Consolas,monospace;font-size:12px;box-shadow:0 10px 28px rgba(13,20,36,.25);overflow:hidden;margin:16px 0}
+.panel .pbar{display:flex;justify-content:space-between;padding:10px 15px;border-bottom:1px solid rgba(255,255,255,.1);font-family:"PingFang SC",sans-serif;font-size:12.5px}
+.prow{display:flex;justify-content:space-between;gap:10px;padding:6px 15px;border-bottom:1px dashed rgba(255,255,255,.07)}
+.prow .k{color:#8ea3c4}
+.prow .v{text-align:right}
+.vg{color:#4ade80;font-weight:700}
+.vr{color:#f87171;font-weight:700}
+.prow.hd{background:rgba(255,255,255,.05);font-family:"PingFang SC",sans-serif;font-size:11px;color:#8ea3c4;border-bottom-style:solid}
+.cap{font-size:12px;color:var(--faint);text-align:center;margin:8px 0 20px}
+/* 引用块 */
+.article blockquote{background:#f7f9fc;border-left:4px solid var(--faint);border-radius:0 8px 8px 0;padding:12px 18px;font-size:13.5px;color:var(--sub);margin:14px 0}
+.article blockquote b{color:var(--ink)}
+/* 提示框 */
+.callout{border-radius:11px;padding:15px 19px;font-size:13.5px;margin:16px 0;display:flex;gap:11px;align-items:flex-start}
+.co-bad{background:var(--bad-soft);border:1px solid #f1c7c2;color:#7a1f1f}
+.co-warn{background:var(--warn-soft);border:1px solid #f3dcb7;color:#7a4f06}
+.co-ok{background:var(--ok-soft);border:1px solid #b8e6d2;color:var(--ok)}
+/* 数据表 */
+.dtbl{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+.dtbl th{background:#f0f3f8;text-align:left;padding:9px 12px;font-size:12px;font-weight:700;color:var(--sub);border-bottom:2px solid var(--line)}
+.dtbl td{padding:9px 12px;border-bottom:1px solid var(--line)}
+.tm-g{color:var(--ok);font-weight:600}.tm-y{color:var(--warn);font-weight:600}.tm-r{color:var(--bad);font-weight:600}
+.tbl-scroll{overflow-x:auto}
+/* 文末 */
+.art-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+.art-tags{display:flex;gap:7px;flex-wrap:wrap}
+.art-tag{font-size:11.5px;background:#f2f4f8;color:var(--sub);border-radius:6px;padding:3px 11px;font-weight:600}
+/* 相关报告 */
+.rel-posts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:14px}
+.rel-post{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:17px 19px;transition:.15s;cursor:pointer}
+.rel-post:hover{border-color:#c9d4f5}
+.rel-post h4{font-size:14.5px;line-height:1.5}
+.rel-post:hover h4{color:var(--brand)}
+.rel-post .m{font-size:11.5px;color:var(--faint);margin-top:7px}
+/* 返回列表 */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--brand);font-weight:600;margin-top:6px;cursor:pointer}
+.back-btn:hover{text-decoration:underline}
+
+/* 订阅条 */
+.subscribe{background:linear-gradient(135deg,#0f1e3d,#1e3a8a);border-radius:16px;color:#fff;padding:26px 28px;margin-top:40px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.subscribe h3{font-size:17px;margin-bottom:6px}
+.subscribe p{font-size:13px;opacity:.8}
+.subscribe .in-row{display:flex;gap:9px;flex:1;min-width:260px}
+.subscribe input{flex:1;border:none;border-radius:10px;padding:11px 15px;font-size:13.5px;font-family:inherit;outline:none}
+
+footer{margin-top:56px;background:#0c1633;color:#94a3c4;padding:36px 0 28px;font-size:13px}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.1)}
+@media(max-width:720px){.ft-grid{grid-template-columns:1fr}}
+footer h4{color:#fff;font-size:14px;margin-bottom:12px}
+footer a{display:block;padding:3.5px 0}
+footer a:hover{color:#fff}
+footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RelayLens">
+<meta property="og:title" content="实测报告 · RelayLens — 每个结论都有证据链的深度分析">
+<meta property="og:description" content="RelayLens 实测报告:模型降级实锤、Token 虚标取证、跑路事件复盘、缓存计费陷阱分析。每篇报告附证据批次号、复现方法与时间线,持续更新。">
+<meta property="og:url" content="https://aipaihangbang.cn/relay/reports.html">
+<meta property="og:image" content="https://aipaihangbang.cn/relay/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+<!-- 导航 -->
+<header>
+ <div class="wrap nav" style="max-width:1160px">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="compare.html">比价矩阵</a><a href="blacklist.html">避雷黑名单</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a>  <a href="https://aipaihangbang.cn" class="back-main">← 返回主站</a>
+    </nav>
+ <a class="btn btn-ghost btn-sm" href="#">登录</a>
+ <a class="btn btn-primary btn-sm" href="#">注册</a>
+ </div>
+</header>
+
+<!-- ============ 列表视图 ============ -->
+<div id="listView">
+ <div class="page-hero">
+ <div class="wrap">
+ <div class="crumb"><a href="index.html">首页</a> / 实测报告</div>
+ <div class="ph-row">
+ <div>
+ <h1>实测报告 · 证据先于结论</h1>
+ <p class="sub">降级实锤、虚标取证、跑路复盘、缓存陷阱分析——每篇报告从检测数据出发,附证据批次号与复现方法。没有"亲测好用"式的软文。</p>
+ </div>
+ </div>
+ <div class="hero-points">
+ <span class="hp">每篇附 <b>证据批次号</b>,可溯源复现</span>
+ <span class="hp"><b>持续更新</b>,复检结果同步修正</span>
+ <span class="hp"><b>不接软文</b>,报告不接受任何站点付费</span>
+ </div>
+ </div>
+ </div>
+
+ <div class="wrap">
+ <div class="filter-row">
+ <button class="chip on" data-cat="all">全部</button>
+ <button class="chip" data-cat="bad">降级/虚标实锤</button>
+ <button class="chip" data-cat="risk">跑路/风险复盘</button>
+ <button class="chip" data-cat="recheck">复检与修复</button>
+ <button class="chip" data-cat="guide">深度分析</button>
+ <button class="chip" data-cat="real">真实实测</button>
+ <span class="f-count">共 <b id="fCount">7</b> 篇</span>
+ </div>
+ <div class="posts" id="postList"></div>
+
+ <!-- 订阅 -->
+ <div class="subscribe">
+ <div style="flex:1;min-width:220px">
+ <h3>订阅实测报告</h3>
+ <p>新报告发布 / 站点标红摘牌 / 重大价格变动,第一时间推送。不发广告,随时退订。</p>
+ </div>
+ <div class="in-row">
+ <input type="email" placeholder="you@example.com" id="subEmail">
+ <button class="btn btn-primary" onclick="toast('订阅成功(演示):新报告将发送至 '+document.getElementById('subEmail').value)">订阅</button>
+ </div>
+ </div>
+ </div>
+</div>
+
+<!-- ============ 详情视图 ============ -->
+<div id="articleView">
+ <div class="wrap">
+ <div class="art-head">
+ <div class="crumb"><a href="reports.html">实测报告</a> / <span id="artCrumb"></span></div>
+ <div class="art-badges" id="artBadges"></div>
+ <h1 id="artTitle"></h1>
+ <div class="art-info" id="artInfo"></div>
+ <div id="artBanner"></div>
+ </div>
+ <div class="article" id="artBody"></div>
+ <div class="art-foot" id="artFoot"></div>
+
+ <div style="margin-top:40px">
+ <div style="font-size:16px;font-weight:800;margin-bottom:4px">相关报告</div>
+ <div class="rel-posts" id="relPosts"></div>
+ </div>
+ <span class="back-btn" onclick="showList()">← 返回全部报告</span>
+ </div>
+</div>
+
+<footer>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">隐私政策</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售或代充服务。实测报告基于公开付费检测数据,反映检测时点状态;涉事站点可按公示流程申诉,复检通过将公开修正。报告不接受任何形式的付费撰写。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
+  <div class="icp-line" style="text-align:center;padding-top:12px;font-size:12px;color:#5d6f92"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">冀ICP备2026033332号</a></div>
+</footer>
+
+<div class="toast" id="toast">已记录</div>
+
+<script>
+/* ============ 报告数据 ============ */
+var POSTS=[
+ {id:"real-audit-injection-2026-09-29",cat:"real",real:true,badge:["bg-real","真实实测"],date:"2026-09-29",read:"10 分钟",
+ title:"首批真实实测:计费 100% 诚实的两家低价中转站,为何综合分只有 81 和 76",
+ excerpt:"2026-09-29 我们对 aixoras 与 aicost 完成首次全链路实测:逐笔对账 139 笔、注入开销对照实验、SSE 流式检测、跨站指纹。结论:扣费完全诚实(68 个同内容请求对 0% 偏差),但号池注入让 30 字短请求被按 4427 token 计费(放大 147 倍),两家还都是 100% 伪流式。",
+ impact:"两家均为真实付费账号实测",
+ evidence:["RL-RC-20260929-039","RL-RC-20260929-040","RL-RC-20260929-149","RL-RC-20260929-168"],
+ tags:["注入开销","伪流式","逐笔对账","号池"],
+ body:`<div class="summary"><b>结论先行:</b>aixoras 与 aicost 的扣费与其公示参数<b>逐笔完全一致</b>(98/98、40/41 匹配,含 119,742 token 长上下文请求)——「计费诚实」这个最难的关卡,两家都过了。但账单之外还有三件事标价签上永远看不到:<b>①号池注入</b>每请求 +4398 token,30 字短请求被放大 147 倍计费,电商场景真实成本反超官方直连;<b>②100% 伪流式</b>,SSE 缓冲后一次性下发,Claude Code / Cursor 的逐 token 渲染完全失效;<b>③渠道行为不稳定</b>,同一模型不同时刻指纹相似度在 60-89% 之间跳。综合分 aixoras 81 / aicost 76:钱没问题,体验有坑。</div>
+
+<h2>一、我们做了什么</h2>
+<p>用两个真实注册账号(用户提供 Key,已提醒轮换)跑完整探针链路,单日样本:</p>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>检测项</th><th>方法</th><th>aixoras</th><th>aicost</th></tr>
+<tr><td>逐笔对账</td><td>消费日志重算应扣 vs 实扣 quota</td><td class="tm-g">98/98 · 100%</td><td class="tm-g">40/41 · 100%</td></tr>
+<tr><td>计量一致性</td><td>同内容请求对的 quota 偏差</td><td class="tm-g">0% 偏差</td><td class="tm-g">68 对全 0%</td></tr>
+<tr><td>注入开销</td><td>已知长度文本对照实验</td><td class="tm-r">+4398 tok/请求</td><td class="tm-r">+4398 tok/请求</td></tr>
+<tr><td>伪流式率</td><td>SSE 首末 chunk 间隔检测</td><td class="tm-r">100%</td><td class="tm-r">100%</td></tr>
+<tr><td>模型指纹</td><td>跨站差分(8 题 × 3 轮)</td><td class="tm-g">91.1% 通过</td><td class="tm-y">74.9% 存疑</td></tr>
+<tr><td>7 天可用率</td><td>每 5 小时探活一次(起算当日)</td><td>92.3%(26 次)</td><td>92.6%(26 次)</td></tr>
+</table></div>
+
+<h2>二、先说好消息:计费是真的诚实</h2>
+<p>new-api 系站点的消费日志会在 other 字段里自带全部计费参数(model_ratio / group_ratio / cache_ratio / cache_tokens)。我们用这些参数独立重算每一笔应扣,与站点实扣比对:</p>
+<div class="panel">
+<div class="pbar"><span>aixoras · 逐笔对账样例</span><span>批次 RL-RC-20260929-039</span></div>
+<div class="prow hd"><span>模型 / token</span><span>实扣 vs 重算</span></div>
+<div class="prow"><span class="k">gpt-5.5 · in 4401 / cache 3840 / out 19</span><span class="v vg">477 = 476.6 ✓</span></div>
+<div class="prow"><span class="k">gpt-5.5 · in 4935 / cache 3610 / out 137</span><span class="v vg">1129 = 1128.6 ✓</span></div>
+<div class="prow"><span class="k">gpt-5.6-sol · 阶梯计费(tiered_expr)</span><span class="v vg">477 = 477 ✓</span></div>
+<div class="prow"><span class="k">最长一笔 · 119,742 tokens 长上下文</span><span class="v vg">2974 = 2974 ✓</span></div>
+</div>
+<p class="cap">139 笔可验证请求全部精确匹配;500000 quota = 1 美元额度的换算下,合计两侧完全相等($1.36240 额度 = $1.36240 额度;aixoras 充值比例 ¥1=1$,约等于 ¥1.36)</p>
+<p>更难得的是<b>计量一致性</b>:aicost 日志里 68 个「同模型+同 token 计数」的请求对,quota 偏差全部为 0%。我们一度怀疑它 usage 展示有问题(同文本两次上报 1004 vs 1319,差 23%),对账证明:<b>展示层可能脏,扣费层是干净的</b>——这比很多「看起来正常但账单对不上」的站强。</p>
+
+<h2>三、坏消息:你在为 4398 个看不见的 token 付费</h2>
+<p>对照实验:发送已知长度的唯一中文文本,看站点上报的 prompt_tokens。拟合结果——</p>
+<blockquote>fresh ≈ 0.99 × 汉字数 + <b>558</b>;另有 <b>3840</b> 以「缓存命中」价计费。即每请求固定注入 ≈ 4398 tokens,与你的输入无关。</blockquote>
+<p>边际计量是准的(每汉字约 1 token,符合 BPE 规律),<b>这不是虚标,是号池渠道把你看不见的上游脚手架(系统提示词+工具定义)转嫁给你</b>:</p>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>请求内容</th><th>真实 token</th><th>计费 token</th><th>放大倍数</th></tr>
+<tr><td>30 字短任务</td><td>~30</td><td>4427</td><td class="tm-r">147.6×</td></tr>
+<tr><td>200 字</td><td>~200</td><td>4602</td><td class="tm-r">23.0×</td></tr>
+<tr><td>1000 字</td><td>~1000</td><td>5384</td><td class="tm-y">5.4×</td></tr>
+<tr><td>4000 字长上下文</td><td>~4000</td><td>8364</td><td class="tm-g">2.1×</td></tr>
+</table></div>
+<div class="callout co-bad"><span style="font-size:17px"></span><div><b>最反直觉的结论:</b>把注入计入「场景参考负载」后,aixoras 在<b>电商短请求场景的有效成本反超官方直连</b>(比价引擎 EP 得分触底 20 分)。额度价 $0.9/M 的「低价」渠道,批量短任务实际比官方还贵——这是任何价格对比页都算不出来的账。</div></div>
+
+<h2>四、更隐蔽的问题:100% 伪流式</h2>
+<p>两家站都接受 stream: true 参数,但 SSE 流式检测显示:<b>首个与末个内容 chunk 几乎同时到达</b>(间隔 &lt;50ms)——响应被缓冲到生成完毕才一次性下发。对普通 API 调用无感,但对 Claude Code / Cursor 这类逐 token 渲染的客户端,体验等价于非流式:你要盯着空白的终端等完整回复。这就是编程榜新增「流式真实性」独立桶的原因——它和首字延迟是两个正交缺陷,合并计分互相稀释。</p>
+
+<h2>五、渠道在抖:同一站点,三种面孔</h2>
+<ul>
+<li><b>503 波动</b>:aicost 的 gpt-5.5 在 20 分钟内从 62.5% 成功率跌到 12.5%(7/8 请求返回 service busy)</li>
+<li><b>注入随路由变化</b>:同一模型同一 prompt,多数请求 in=4392(带脚手架),偶发 in=23(干净渠道)——你被路由到哪条,账单差 190 倍 token 量</li>
+<li><b>指纹跳变</b>:aicost 三轮跨站差分 60.4% → 74.9% → 89%,中位 74.9%「存疑」。行为不稳定与 503、路由波动同源:号池上游本来就不是一个东西</li>
+</ul>
+
+<h2>六、彩蛋:两家站的账单数字逐位相同</h2>
+<p>30 字请求, aixoras 报 4427 / cache 3840;aicost 报 4427 / cache 3840。200 字请求,两家都报 4602。<b>两家不同公司,token 计数精确到个位一致</b>——合理解释只有一个:上游接的是同一批号池渠道。这个「同源指纹」未来可以做成渠道溯源指标。</p>
+
+<h2>七、那它们到底值不值?</h2>
+<p>同一模型 claude-opus-5 的标价对比:</p>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>渠道</th><th>输入价 $/M(额度价)</th><th>vs 官方</th><th>代价</th></tr>
+<tr><td>aicost · kiro 渠道</td><td class="tm-g">$0.55</td><td class="tm-g">便宜 9×</td><td>注入+伪流式+渠道波动</td></tr>
+<tr><td>aixoras · 特价 Claude 组</td><td class="tm-g">$1.75</td><td class="tm-g">便宜 3×</td><td>注入+伪流式</td></tr>
+<tr><td>OpenRouter 官方路由</td><td>$5.00</td><td>基准</td><td>国内支付不便</td></tr>
+</table></div>
+<p><b>按场景选:</b>长上下文为主(编程/文档/剧本)→ 注入被稀释,低价渠道真实惠,但要接受伪流式;批量短任务(分类/打标/客服)→ 先算 EP,「低价」号池大概率反超官方;对逐 token 渲染有刚需 → 两家的 SR 都是 0 分,慎入编程工作流主链路。</p>
+
+<h2>八、方法论自曝:我们差点冤枉两家站</h2>
+<p>两个真实教训,写出来供所有做测评的人参考:</p>
+<p><b>① 中文数字假阳性。</b>首轮指纹比对里,陷阱题(「树上 10 只鸟开枪打死 1 还剩几只」)被测站实际答对,但它返回了中文「零」字,而我们的答案抽取正则只认阿拉伯数字 → 判 0% 不匹配 → 综合分被拉到 74.8「存疑」。修复中文数字归一化后同一批次变 91.1「通过」。<b>如果直接采信分数,就冤枉了一家好站。</b>从此所有指纹批次强制存档 300 字原始响应节选,任何异常分数必须人工回看原文。</p>
+<p><b>② 差分不区分谁对谁错。</b>aicost 补测那轮,math 题基线 aixoras 答了 1170(错),被测 aicost 答 1192(对),相似度照样判「不一致」扣被测的分。跨站差分是「行为一致性」检测,不是「正确性」检测——基线自身不稳时必须多轮取中位数,且官方基线(需 OpenRouter Key)上线前,所有差分结论只标「存疑/通过」不定「掉包」。</p>
+
+<h2>九、样本与局限(诚实声明)</h2>
+<ul class="mini-list" style="padding-left:0;list-style:none">
+<li>· 单日样本(2026-09-29),可用率 7 天窗口刚起算,结论会随多日数据修正</li>
+<li>· 站点 N=2,「同源渠道」观察需要更多站验证</li>
+<li>· 指纹基线为跨站差分(置信度 ×0.8),官方直连基线待接入</li>
+<li>· 价格为采集时点快照,号池渠道价格与分组随时调整</li>
+<li>· 两家均无利益合作,推荐位与本报告无关</li>
+</ul>
+
+<div class="callout co-ok"><span style="font-size:17px"></span><div><b>证据可复现:</b>全部原始数据(139 笔对账明细、注入实验逐轮记录、SSE chunk 时间线、3 轮指纹响应原文)以批次号存档,可通过数据导出 API 获取。对结论有异议,欢迎拿原始证据来驳。</div></div>`},
+
+
+ {id:"site-x-opus-downgrade",cat:"bad",badge:["bg-bad","实锤降级"],date:"2026-09-28",read:"6 分钟",
+ title:"Site-X Opus 模型降级实锤:3 批次返回 Sonnet 内容,指纹相似度仅 71%",
+ excerpt:"付费请求 Claude Opus 5,响应的 model 字段显示 opus-5,但指纹比对与能力探针都指向 Sonnet。这是「信息溢价」型掉包的教科书案例——本文完整还原取证过程。",
+ impact:"影响用户预估 300+",evidence:["RL-EV-0926-031","RL-EV-0927-018","RL-EV-0928-007"],tags:["模型指纹","Opus","黑名单"],
+ body:`<div class="summary"><b>结论先行:</b>Site-X 的 claude-opus-5 端点在 09-26 至 09-28 的 3 个检测批次中,响应特征与官方 Sonnet 5 的相似度(89-92%)远高于与官方 Opus 5 的相似度(69-71%),且复杂推理探针得分断崖式下降。判定为付费旗舰、实跑次旗舰的「信息溢价」掉包,已列入黑名单。</div>
+
+<h2>一、异常是怎么被发现的</h2>
+<p>09-26 的例行批次中,Site-X 的指纹检测首次未通过(相似度 71%,阈值 85%)。单次未通过不足以定论——网络抖动、模型版本更新都可能造成偏差,所以我们启动了标准复检流程:48 小时内加密采样 2 个批次,并叠加能力探针交叉验证。</p>
+
+<h2>二、三层证据链</h2>
+<h3>证据 1:模型指纹比对</h3>
+<p>同一组 20 道探针问题(复杂推理、代码生成、知识边界、拒答模式),分别发给 Site-X 与官方直连,对响应特征做向量比对:</p>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>比对对象</th><th>相似度</th><th>判定</th></tr>
+<tr><td>Site-X vs 官方 Opus 5</td><td class="tm-r">69-71%</td><td>疑似非同源</td></tr>
+<tr><td>Site-X vs 官方 Sonnet 5</td><td class="tm-r">89-92%</td><td>高度吻合 </td></tr>
+<tr><td>官方 Opus 5 vs 官方 Sonnet 5(基线)</td><td>62-75%</td><td>不同模型分布区间</td></tr>
+</table></div>
+<p>Site-X 的响应落在「Sonnet 分布」而非「Opus 分布」内——这是最直接的信号。</p>
+
+<h3>证据 2:能力探针得分</h3>
+<p>旗舰与次旗舰模型在复杂推理题上的得分应有明显分层(我们维护着各模型的官方直连基线)。Site-X 端点的探针得分与 Sonnet 基线重合,与 Opus 基线差距显著。</p>
+
+<h3>证据 3:计费口径未变</h3>
+<p>最关键的一点:掉包期间,Site-X 仍按 Opus 单价(¥9.9/M)扣费。Opus 与 Sonnet 的输入单价差约 ¥5/M——按其公开流量估算,月度掺假收益超过万元。</p>
+
+<h2>三、为什么「问模型你是谁」没用</h2>
+<blockquote>我们在测试中直接询问模型身份,它回答「我是 Claude Opus 5」——但这不能作为证据。中转站可以在请求链路注入系统提示词,让任何模型谎报身份。只有<b>响应特征级别的比对</b>(指纹 + 能力分层)无法被简单伪造。</blockquote>
+
+<h2>四、面板流水取证(节选)</h2>
+<div class="panel">
+<div class="pbar"><span>Site-X · 控制台-流水</span><span>批次 #0927-018</span></div>
+<div class="prow hd"><span>项目</span><span>面板显示</span></div>
+<div class="prow"><span class="k">调用模型</span><span class="v">claude-opus-5</span></div>
+<div class="prow"><span class="k">扣费单价</span><span class="v vr">¥9.9/M(Opus 价)</span></div>
+<div class="prow"><span class="k">指纹相似度(vs Opus)</span><span class="v vr">71%</span></div>
+<div class="prow"><span class="k">指纹相似度(vs Sonnet)</span><span class="v vr">91%</span></div>
+<div class="prow"><span class="k">探针得分对应档位</span><span class="v vr">Sonnet 基线</span></div>
+<div class="prow"><span class="k">判定</span><span class="v vr">信息溢价掉包 </span></div>
+</div>
+<p class="cap">完整流水存档编号 RL-EV-0927-018,可通过 API /v1/receipts 端点获取原始文件</p>
+
+<h2>五、你该做什么</h2>
+<div class="callout co-bad"><span style="font-size:17px"></span><div><b>如果你正在使用 Site-X:</b>立即停止充值,按需消耗现有余额;对历史账单,可用工具箱的 Token 自测估算多付金额。掉包期的差价争议可向站方主张;发现同类问题可在黑名单页的举报入口提交线索。</div></div>
+<div class="callout co-ok"><span style="font-size:17px"></span><div><b>如果你在用其他站:</b>用工具箱的 API Key 自测跑一次指纹检测(3 分钟),不要等下一次事故。</div></div>`},
+
+ {id:"orbelis-price-surge",cat:"risk",badge:["bg-warn","价格异常"],date:"2026-09-27",read:"4 分钟",
+ title:"Orbelis 单周涨价 22% 触发预警:复盘一家站点从「正常」滑向「高危」的 12 天",
+ excerpt:"09-15 还在正常区间,09-27 已被标红复核。涨价 22%、缓存计费策略变更、偏差连续超标——三个信号在 12 天内接连出现。这是我们观察到的典型恶化路径。",
+ impact:"在充用户建议控制余额",evidence:["RL-EV-0920-041","RL-EV-0924-047","RL-EV-0927-058"],tags:["价格波动","风险预警","复核中"],
+ body:`<div class="summary"><b>结论先行:</b>Orbelis 的 30 天价格波动率突破阈值(单周 +22%),叠加缓存计费策略从「按缓存价」变为「不算缓存」、扣费偏差连续 5 批次 >4%。三项风险信号叠加,跑路风险指数上调至「高」,已标红复核。本文复盘完整时间线,演示风险信号如何依次亮起。</div>
+
+<h2>一、12 天恶化时间线</h2>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>日期</th><th>事件</th><th>信号类型</th></tr>
+<tr><td>09-15</td><td>例行批次正常,偏差 0.8%</td><td class="tm-g">基线正常</td></tr>
+<tr><td>09-18</td><td>GPT-5.5 报价 +8%(公告「上游调价」)</td><td class="tm-y">信号①轻微涨价</td></tr>
+<tr><td>09-20</td><td>单周累计涨幅 22%,突破 15% 红线</td><td class="tm-r">信号②异常涨价</td></tr>
+<tr><td>09-22</td><td>缓存计费策略变更:不再区分缓存命中</td><td class="tm-r">信号③隐性涨价</td></tr>
+<tr><td>09-24</td><td>指纹检测未通过(相似度 79%)</td><td class="tm-r">信号④疑似降级</td></tr>
+<tr><td>09-27</td><td>连续 5 批次扣费偏差 >4%</td><td class="tm-r">信号⑤计费异常</td></tr>
+</table></div>
+
+<h2>二、三个信号的组合意味着什么</h2>
+<p>单独看,每个信号都有无辜解释:涨价可能是上游成本传导,缓存策略变更可能是系统重构,偏差可能是计费 bug。但组合出现的概率完全不同——我们回溯了黑名单档案库的全部跑路站,<b>「异常涨价 + 缓存策略恶化 + 偏差超标」三者共存</b>的历史样本中,83% 在 90 天内跑路或列黑。</p>
+<blockquote>档案库数据:PixelAPI(跑路)、TurboRelay(跑路)、QuickToken(虚标黑名单)在事发前都出现过至少两项相同组合。<b>跑路前的信号是可捕获的,只是没人持续盯着。</b></blockquote>
+
+<h2>三、成本视角:不算缓存意味着什么</h2>
+<p>以月 100M 输入、60% 缓存命中、输入价 ¥4.2/M 计:</p>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>计费策略</th><th>月输入成本</th><th>变化</th></tr>
+<tr><td>按缓存价(变更前)</td><td class="tm-g">¥236</td><td>—</td></tr>
+<tr><td>不算缓存(变更后)</td><td class="tm-r">¥420</td><td>+78%</td></tr>
+</table></div>
+<p>这本质上是一次<b>不改标价的涨价</b>——普通用户看单价没变,账单却涨了 78%。这也是为什么我们的比价页把「缓存计费」单独作为一列,而不是只看标价。</p>
+
+<h2>四、当前状态与建议</h2>
+<div class="callout co-warn"><span style="font-size:17px"></span><div><b>Orbelis 已标红复核中:</b>站方收到质询,72 小时无回应将正式列入黑名单(截至发稿已 48 小时)。在充用户建议控制余额、关闭自动充值;观察名单与风险指数已在详情页实时更新。</div></div>`},
+
+ {id:"zelda-cache-fix",cat:"recheck",badge:["bg-ok","复检通过"],date:"2026-09-26",read:"5 分钟",
+ title:"塞尔达传说缓存计费修复复检:从标红到摘牌的完整 7 天",
+ excerpt:"09-16 因缓存命中统计异常被标红,站方 48 小时内响应,7 天复检全通过,09-26 正式摘牌。这是申诉机制跑通的首个完整案例——也证明「不冤枉好站」和「不放过坏站」可以并存。",
+ impact:"已恢复推荐资格",evidence:["RL-EV-0916-022","RL-EV-0919-030","RL-EV-0926-044"],tags:["复检","缓存","摘牌"],
+ body:`<div class="summary"><b>结论先行:</b>塞尔达传说的缓存计费问题(命中统计虚高、实扣不符)经站方修复后,连续 7 天 21 个复检批次全部达标,09-26 正式摘牌并恢复推荐资格。全文记录「发现 → 质询 → 修复 → 复检 → 摘牌」完整流程,作为申诉机制的公开范本。</div>
+
+<h2>一、问题是什么</h2>
+<p>09-16 例行批次发现异常:塞尔达传说的 usage 字段显示缓存命中 57%,但面板扣费金额与「57% 命中 + 缓存价」的理论值不符——实际按约 30% 的命中率计费。也就是说,<b>统计上给你看好数字,账单上按坏情况收钱</b>。</p>
+
+<h2>二、质询与响应(48 小时)</h2>
+<p>09-16 20:00 我们通过公示渠道发出质询,附 3 个批次的对账明细。站方 09-17 下午回复:问题出在其计费系统的「缓存命中判定模块」——usage 统计与实际计费走的是两套缓存判定逻辑,升级时的版本错位导致统计虚高。<b>站方没有辩解,直接承认并给出修复时间表。</b></p>
+
+<h2>三、7 天 × 21 批次复检</h2>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>复检阶段</th><th>批次</th><th>结果</th></tr>
+<tr><td>09-19 至 09-21(修复验证)</td><td>9 批</td><td class="tm-y">统计与计费一致性恢复中,偶发偏差 ≤1.5%</td></tr>
+<tr><td>09-22 至 09-24(稳定观察)</td><td>9 批</td><td class="tm-g">全部达标,偏差 ≤0.5%,命中统计与扣费一致</td></tr>
+<tr><td>09-25 至 09-26(摘牌评审)</td><td>3 批</td><td class="tm-g">全部达标</td></tr>
+</table></div>
+<p>按申诉流程规则:连续 7 天达标即摘牌。09-26 我们移除红色标记,恢复推荐资格,黑名单档案库保留完整时间线(永久可查)。</p>
+
+<h2>四、这个案例说明什么</h2>
+<div class="callout co-ok"><span style="font-size:17px"></span><div><b>对用户:</b>申诉机制不是摆设。站点被标红不等于被判死刑——响应快、真修复、复检过的站能回来。<b>对站方:</b>被质询时最好的策略是坦白 + 修复,而不是沉默或公关。对沉默的站(对比 Orbelis),规则只会走向另一端。</div></div>
+<blockquote>「不冤枉好站」与「不放过坏站」不是取舍关系,而是同一套规则的两面:量化标准 + 公开流程 + 申诉通道。缺任何一角,测评平台自己就会变成它想治理的东西。</blockquote>`},
+
+ {id:"quicktoken-token-inflation",cat:"bad",badge:["bg-bad","虚标取证"],date:"2026-09-22",read:"7 分钟",
+ title:"QuickToken 虚标取证全记录:86 条流水如何证明「Token 只多不少」不是巧合",
+ excerpt:"单条账单多扣 4% 可能是误差,86 条流水的偏差全部同向、且与理论值的离散度极小——只能得出一个结论:计费被系统性修改。本文展示完整的统计取证方法。",
+ impact:"用户实际成本约 1.9 倍于标价",evidence:["RL-EV-0918-005","RL-EV-0921-002"],tags:["Token虚标","统计取证","黑名单"],
+ body:`<div class="summary"><b>结论先行:</b>QuickToken 的面板 usage 与理论值的偏差在 30 天 86 条流水中<b>全部为正</b>(只多不少),均值 +12%,标准差极小。排除网络抖动与四舍五入后,唯一合理解释是计费端被系统性修改。已列黑名单,本文完整公开统计取证过程。</div>
+
+<h2>一、为什么单条证据不够</h2>
+<p>用户举报「账单比理论值高」时,最常见的反驳是:token 计数有自然误差(分词器差异、四舍五入、上下文拼接),单条流水多几个百分点完全正常。<b>这个反驳在统计上是成立的——所以我们不用单条证据定案。</b></p>
+
+<h2>二、取证设计:让数据自己说话</h2>
+<p>我们调取 30 天内全部 86 个检测批次的对账流水,做三项统计检验:</p>
+<h3>检验 1:偏差方向性</h3>
+<p>网络问题导致的偏差应当<b>随机分布</b>(正负各半)。QuickToken 的 86 条偏差:<b>正偏差 86 条,负偏差 0 条</b>。在「无系统性修改」的零假设下,86 次独立观测全部同向的概率约 2⁻⁸⁶(≈10⁻²⁶)——低于任何合理显著性水平。</p>
+<h3>检验 2:偏差幅度分布</h3>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>统计量</th><th>QuickToken 实测</th><th>健康站基线</th></tr>
+<tr><td>偏差均值</td><td class="tm-r">+12.3%</td><td class="tm-g">+0.2%</td></tr>
+<tr><td>偏差标准差</td><td class="tm-r">1.1%</td><td class="tm-g">0.4%</td></tr>
+<tr><td>正偏差占比</td><td class="tm-r">100%</td><td class="tm-g">52%</td></tr>
+</table></div>
+<p>标准差小说明这不是随机误差,而是一个<b>被精确控制的加成系数</b>(约 ×1.12)。</p>
+<h3>检验 3:缓存命中造假交叉验证</h3>
+<p>面板声称缓存命中 55%,但按「55% 命中 + 公示缓存价」反推的理论扣费,与实扣的对不上;按「8% 命中」反推反而吻合——<b>统计口径和计费口径都在造假,且互相矛盾</b>。</p>
+
+<h2>三、结论与成本测算</h2>
+<p>综合三项检验,判定:系统性 Token 虚标(+12%)+ 缓存命中造假。对用户的实际影响:</p>
+<blockquote>标价 ¥2.0/M 的站,虚标后实际 ¥2.24/M;再叠加「声称命中 55%、实际 8%」的缓存差,重度用户月账单约为标价口径的 <b>1.9 倍</b>。</blockquote>
+
+<h2>四、你如何自测</h2>
+<div class="callout co-ok"><span style="font-size:17px"></span><div><b>工具箱的 Token 核对</b>就是这套方法的简化版:发送已知长度的固定文本,比对返回 usage 与理论值。单次偏差 >5% 就值得警惕;连续多次同向偏差,基本可以实锤。3 分钟出结果。</div></div>`},
+
+ {id:"pixelapi-postmortem",cat:"risk",badge:["bg-bad","跑路复盘"],date:"2026-09-16",read:"8 分钟",
+ title:"PixelAPI 跑路复盘:信号提前 5 天出现,为什么没人行动",
+ excerpt:"涨价 40%、充值门槛 10 倍提升、域名迁移——三个信号在跑路前 5 天内依次亮起。本文复盘时间线,并说明观察名单机制如何因此而生。¥31,200 的用户损失,本可以更小。",
+ impact:"23 例举报 · 损失约 ¥31,200",evidence:["RL-EV-0908-011","RL-EV-0913-013","RL-EV-0915-002"],tags:["跑路","观察名单","风控"],
+ body:`<div class="summary"><b>结论先行:</b>PixelAPI 于 09-15 确认跑路,用户举报受损 23 例、约 ¥31,200。回溯数据,<b>全部关键信号在 09-08 就已出现</b>——涨价 40%(09-08)、充值门槛 ¥10→¥100(09-10)、域名停止解析(09-13)。问题不是信号不可见,而是缺少一个「信号 → 行动」的机制。观察名单机制因此而生。</div>
+
+<h2>一、完整时间线(数据留痕)</h2>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>日期</th><th>事件</th><th>当时的系统响应</th><th>应有的响应</th></tr>
+<tr><td>09-08</td><td>单周涨价 40%,远超 15% 红线</td><td class="tm-y">发布高风险提示</td><td class="tm-r">升级观察名单 + 推送告警</td></tr>
+<tr><td>09-10</td><td>起充门槛 ¥10 → ¥100,推大额档</td><td class="tm-y">记录风险指标</td><td class="tm-r">标红 + 提醒在充用户</td></tr>
+<tr><td>09-12</td><td>社群管理员禁言,工单停摆</td><td class="tm-y">(未监控到)</td><td class="tm-r">社群活跃度纳入检测</td></tr>
+<tr><td>09-13</td><td>域名停止解析</td><td class="tm-r">检测全部超时</td><td class="tm-r">已晚</td></tr>
+<tr><td>09-15</td><td>确认跑路,列黑名单</td><td class="tm-r">事后处理</td><td class="tm-r">—</td></tr>
+</table></div>
+
+<h2>二、三个信号组合的预警价值</h2>
+<h3>信号 1:回光返照式涨价</h3>
+<p>正常调价 ≤5% 且提前公告;跑路前的涨价往往幅度大、无公告或公告敷衍——目的是趁最后一批充值多捞一笔。PixelAPI 的 +40% 无任何预告。</p>
+<h3>信号 2:充值门槛 10 倍提升</h3>
+<p>「¥10 起充」改「¥100 起充」+「充 500 送 300」大额档,方向非常明确:让用户把钱留在平台上。正常运营的站没有动机这么做——支付通道成本是按笔而非按档收费的。</p>
+<h3>信号 3:切断可追责路径</h3>
+<p>域名迁移 + 支付通道收窄 + 社群禁言,三件事的共同点是切断用户的追责与聚集渠道。单看每一件都有无辜解释,组合出现的意图只有一个。</p>
+
+<h2>三、机制改进:观察名单的诞生</h2>
+<div class="callout co-warn"><span style="font-size:17px"></span><div><b>PixAPI 事件直接催生了三个改进:</b>①观察名单(单一信号即进入,14 天窗口);②Webhook 告警(信号亮起时即推送,而不是跑路后);③社群活跃度纳入风险指标。全部已上线。</div></div>
+
+<h2>四、写在最后</h2>
+<blockquote>¥31,200 里,有相当一部分是在 09-08 信号亮起之后充进去的。我们无法替用户做决定,但<b>把信号在第一时间送到用户面前</b>,是测评平台存在的全部意义。这次没做到,以后要做到。</blockquote>`},
+
+ {id:"cache-price-trap-2026",cat:"guide",badge:["bg-info","深度分析"],date:"2026-09-20",read:"9 分钟",
+ title:"2026 缓存计费陷阱全景:同一标价,月成本差 2.2 倍的数学原理",
+ excerpt:"官方缓存价约为输入价的 10%,这是中转站最隐蔽的加价位:不改标价,只改缓存策略。本文拆解原理并给出三步自查法;实测结论只有文末那 2 家(逐笔对账样本),不足以谈行业分布。",
+ impact:"编程场景成本差可达 2.2 倍(数学推导)",evidence:["RL-RC-20260929-039","RL-RC-20260929-040"],tags:["缓存","成本","比价"],
+ body:`<div class="summary"><b>结论先行:</b>缓存计费是中转站最隐蔽的加价手段——不改标价,只改缓存策略,月成本就能差 2.2 倍。但本文的<b>数学部分是推导,不是实测</b>:截至 2026-10-02 我们只对 2 家做过账单级逐笔对账(见第三节),不足以给出任何行业分布。原理与自查法照用,分布结论请等实测样本攒够。</div>
+
+<h2>一、为什么缓存是成本的第一变量</h2>
+<p>写代码、长对话、Agent 场景中,每次请求都会重复发送之前的上下文。主流模型支持「缓存计费」:重复前缀按缓存价收费,官方约为输入价的 <b>10%</b>。在这些场景下,缓存命中通常占输入量的 50-80%——也就是说,<b>你大部分的输入 token,本应按 1 折计费</b>。</p>
+
+<h2>二、同一标价,四种成本</h2>
+<p>以月输入 100M、缓存命中 60%、标价 ¥10/M 的站为例:</p>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>缓存策略</th><th>缓存读价</th><th>月输入成本</th><th>vs 诚实站</th></tr>
+<tr><td>诚实(官方 10% 基准)</td><td class="tm-g">¥1.0/M</td><td class="tm-g">¥460</td><td>—</td></tr>
+<tr><td>超标(30%)</td><td class="tm-y">¥3.0/M</td><td class="tm-y">¥580</td><td>+26%</td></tr>
+<tr><td>超标(50%)</td><td class="tm-r">¥5.0/M</td><td class="tm-r">¥700</td><td>+52%</td></tr>
+<tr><td>完全不算缓存</td><td class="tm-r">=输入价</td><td class="tm-r">¥1,000</td><td class="tm-r">+117%</td></tr>
+</table></div>
+<p>标价完全相同,账单差 2.2 倍。这就是比价页把「缓存读价」和「缓存计费」单独成列的原因——<b>只看标价选站,等于只看菜单封面点菜</b>。</p>
+
+<h2>三、实测样本:目前只有两家</h2>
+<div class="tbl-scroll"><table class="dtbl">
+<tr><th>站点 / 实测分组</th><th>缓存读价与公示</th><th>批次缓存占比(探针口径)</th><th>逐笔对账</th></tr>
+<tr><td>aixoras · 特价 Claude 组</td><td class="tm-g">按公示缓存价扣</td><td>94.4%</td><td class="tm-g">100%(98 笔)</td></tr>
+<tr><td>aicost · claude-kiro 渠道</td><td class="tm-g">按公示缓存价扣</td><td>87.3%</td><td class="tm-g">100%(41 笔)</td></tr>
+</table></div>
+<p><b>样本量说明(重要):</b>两家都做了缓存写入且读价与公示一致,没出现「公示缓存价却按输入价扣」。但两家就是两家,<b>推不出「多数中转站缓存计费诚实」</b>,也推不出反向结论。<b>本文更早版本里的「16 家分布:诚实 4 / 部分 7 / 超标 3 / 不算 2」是编写时造的示例数字,没有对应证据,已于 2026-10-02 撤下并换成上表。</b></p>
+<blockquote>为什么仍要自查:上表两家都<b>在账本上承认了缓存</b>(有写入、读价与公示一致)。最难查的是「命中统计看得到、扣费却按全价」这种,只能靠逐笔对账发现 —— 这也是我们把「计费测试」放最高权重的原因。<s>原文此处为「不算缓存的两家中有一家标价全站最低」,属编造示例,已于 2026-10-02 删除。</s></blockquote>
+
+<h2>四、三步自查法(3 分钟)</h2>
+<h3>第 1 步:看公示</h3>
+<p>站点是否公示缓存读价?不公示的直接降低信任等级——技术上没有任何理由不公示。</p>
+<h3>第 2 步:看 usage 明细</h3>
+<p>连续发两轮相同的长 Prompt,检查第二轮响应的 usage 中缓存命中字段(prompt_tokens_cached)是否显著上升。没有缓存明细的站,写代码场景建议直接排除。</p>
+<h3>第 3 步:看扣费</h3>
+<p>第二轮的实扣是否按缓存价(≈输入价 10%)计算?对不上就是「统计给你看、计费按原价」——塞尔达传说案例(已修复)就是这个形态。</p>
+<div class="callout co-ok"><span style="font-size:17px"></span><div><b>不想手动测?</b>工具箱的「缓存验证」就是这三步的自动化版本,你的浏览器直连目标站,3 分钟出结果;比价页的「诚实最优 」徽章也已经把缓存策略纳入筛选。</div></div>`}
+];
+
+/* ============ 视图切换与渲染 ============ */
+var toastEl=document.getElementById("toast"),toastTimer;
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+var filterCat="all";
+
+function renderList(){
+ var list=POSTS.filter(function(p){return filterCat==="all"||p.cat===filterCat});
+ document.getElementById("fCount").textContent=list.length;
+ var box=document.getElementById("postList");box.innerHTML="";
+ list.forEach(function(p){
+ var d=document.createElement("a");
+ d.className="post";
+ d.href="reports.html?id="+p.id;
+ d.innerHTML=
+ '<div class="p-meta"><span class="badge '+p.badge[0]+'">'+p.badge[1]+'</span><span class="p-date">'+p.date+' · '+p.read+'阅读</span></div>'+
+ '<h2>'+esc(p.title)+'</h2>'+
+ '<p>'+esc(p.excerpt)+'</p>'+
+ '<div class="p-foot">'+(p.real?'<span class="badge bg-real" style="font-size:10px">真实实测</span>':'<span class="demo-chip">示例数据</span>')+p.evidence.slice(0,2).map(function(e){return '<span class="ev-chip">'+e+'</span>'}).join("")+
+ '<span class="p-impact">'+esc(p.impact)+'</span><span class="read-more">阅读全文 →</span></div>';
+ d.addEventListener("click",function(e){e.preventDefault();showArticle(p.id)});
+ box.appendChild(d);
+ });
+}
+document.querySelectorAll("[data-cat]").forEach(function(c){
+ c.addEventListener("click",function(){
+ document.querySelectorAll("[data-cat]").forEach(function(x){x.classList.remove("on")});
+ c.classList.add("on");
+ filterCat=c.getAttribute("data-cat");
+ renderList();
+ });
+});
+
+function showArticle(id){
+ var p=POSTS.find(function(x){return x.id===id});
+ if(!p){showList();return}
+ document.getElementById("listView").style.display="none";
+ document.getElementById("articleView").style.display="block";
+ document.getElementById("artCrumb").textContent=p.badge[1];
+ document.getElementById("artBadges").innerHTML='<span class="badge '+p.badge[0]+'">'+p.badge[1]+'</span>';
+ document.getElementById("artTitle").textContent=p.title;
+ document.getElementById("artInfo").innerHTML='<span><b>'+p.date+'</b></span><span>'+p.read+' 阅读</span><span>证据批次:<b>'+p.evidence.join(" · ")+'</b></span><span>'+esc(p.impact)+'</span>';
+ document.getElementById("artBanner").innerHTML=p.real
+ ?'<div class="real-banner"><b>真实实测报告</b> · 数据来自探针系统当日实测,全部结论可溯源到证据批次;站点均无利益合作、无推广位</div>'
+ :'<div class="real-banner" style="background:#f2f4f8;color:var(--sub);border:1px dashed var(--line)">本页为<b style="color:var(--ink)">示例数据</b>演示稿(站点与数字均为虚构),用于展示报告版式;真实实测报告带「真实实测」徽章</div>';
+ document.getElementById("artBody").innerHTML=p.body;
+ document.getElementById("artFoot").innerHTML=
+ '<div class="art-tags">'+p.tags.map(function(t){return '<span class="art-tag"># '+esc(t)+'</span>'}).join("")+'</div>'+
+ '<div style="display:flex;gap:9px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="toast(\'原始证据包下载:可溯源到证据批次号\')">证据包 ⬇</button><a class="btn btn-primary btn-sm" href="blacklist.html">相关档案库 →</a></div>';
+ /* 相关报告:同类别的其他2篇 */
+ var rel=POSTS.filter(function(x){return x.id!==p.id&&(x.cat===p.cat||p.tags.some(function(t){return x.tags.indexOf(t)>-1}))}).slice(0,2);
+ if(rel.length<2){POSTS.forEach(function(x){if(rel.length<2&&x.id!==p.id&&rel.indexOf(x)<0)rel.push(x)})}
+ document.getElementById("relPosts").innerHTML=rel.map(function(x){
+ return '<div class="rel-post" data-id="'+x.id+'"><span class="badge '+x.badge[0]+'" style="font-size:10px">'+x.badge[1]+'</span><h4 style="margin-top:8px">'+esc(x.title)+'</h4><div class="m">'+x.date+' · '+x.read+'阅读</div></div>';
+ }).join("");
+ document.querySelectorAll(".rel-post").forEach(function(el){
+ el.addEventListener("click",function(){showArticle(el.getAttribute("data-id"));window.scrollTo(0,0)});
+ });
+ window.scrollTo(0,0);
+}
+function showList(){
+ document.getElementById("articleView").style.display="none";
+ document.getElementById("listView").style.display="block";
+ if(history.replaceState)history.replaceState(null,"","reports.html");
+ window.scrollTo(0,0);
+}
+
+/* URL 参数 ?id= 直达文章 */
+(function(){
+ var m=location.search.match(/[?&]id=([a-z0-9-]+)/i);
+ renderList();
+ if(m&&POSTS.find(function(x){return x.id===m[1]})){
+ showArticle(m[1]);
+ }
+})();
+</script>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模型价格对比 · RelayLens</title>
+<link rel="canonical" href="https://aipaihangbang.cn/relay/price.html">
+<style>
+:root{--ink:#1d2939;--sub:#667085;--faint:#98a2b3;--line:#e4e7ec;--card:#fff;--brand:#2b5cf0;--brand-deep:#1f47c9;--brand-soft:#f0f5ff;--ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef0c7;--bad:#b42318}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:#f7f8fa;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+header{background:#0c1633;padding:14px 0}
+header .wrap{display:flex;align-items:center;gap:18px}
+.logo{color:#fff;font-weight:800;text-decoration:none;font-size:16px}
+.logo .mark{color:#7ef0b0}
+header nav a{color:#94a3c4;text-decoration:none;font-size:13px;margin-right:14px}
+header nav a:hover{color:#fff}
+.page-hero{background:linear-gradient(135deg,#0c1633,#1e3a8a);color:#fff;padding:26px 0 22px}
+.page-hero h1{font-size:26px;font-weight:800;margin:0 0 8px}
+.page-hero .sub{font-size:13px;opacity:.85;margin:0}
+/* 2026-10-21:官方锚 / 全网最低 / 有报价家数是这页最该被一眼看到的信息。
+ theme-relaypick.css 把 .page-hero 拍平为浅灰底(--bg = rgb(242,242,243))并对 .sub 强制 color:var(--sub),
+ 所以这里必须自带 !important,且按「浅底深字 + 白卡片承托」配色,否则浅色字压在浅灰底上完全看不见。 */
+#pSub{display:inline-block;font-size:17px!important;line-height:1.7!important;font-weight:700!important;opacity:1!important;
+ color:var(--ink)!important;margin:0;background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand);
+ border-radius:10px;padding:10px 16px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+#pSub .anchor{color:var(--sub);font-weight:600}
+/* 「全网最低 ¥x/M」整段进深绿胶囊 —— 词与数字一起,不再割裂 */
+#pSub .floor{display:inline-block;background:#0b6b45;color:#fff;font-weight:800;border-radius:8px;padding:3px 12px;margin:0 2px}
+#pSub .cnt{color:#9a5b00;font-weight:800}
+.hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.hp{font-size:12px;background:rgba(255,255,255,.12);border-radius:999px;padding:5px 12px}
+.hp b{color:#8fd0ff}
+.view-bar{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin:16px 0 4px}
+.fam-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 8px}
+.fam-chip{font:inherit;font-size:13px;font-weight:700;padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;color:var(--sub)}
+.fam-chip:hover{border-color:var(--brand);color:var(--brand)}
+.fam-chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.fam-n{font-size:10px;background:var(--brand-soft);border-radius:5px;padding:1px 6px;color:var(--brand);margin-left:4px}
+.fam-chip.on .fam-n{background:rgba(255,255,255,.25);color:#fff}
+.fam-models{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.fam-models a{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;text-decoration:none}
+.fam-models a:hover{border-color:var(--brand);color:var(--brand)}
+.fam-models a.on{background:var(--brand-soft);border:2px solid var(--brand);color:var(--brand-deep);padding:6px 12px}
+.mx-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card)}
+.mx-table th,.mx-table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.mx-table thead th{position:sticky;top:0;background:var(--card);font-weight:700;font-size:12px;color:var(--sub);z-index:2}
+.mx-table thead th.mx-grp{text-align:center;letter-spacing:.02em;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.mx-table thead tr:nth-child(2) th{top:35px}
+.mx-table tbody tr:hover{background:#fafbff}
+.site-nm{font-weight:800;color:var(--ink);text-decoration:none}
+.site-nm:hover{color:var(--brand)}
+.chip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-right:4px}
+.chip-low{background:var(--ok-soft);color:var(--ok)}
+.chip-high{background:var(--warn-soft);color:var(--warn)}
+.ratio{font-variant-numeric:tabular-nums;font-weight:700}
+.price{font-variant-numeric:tabular-nums;font-weight:800;color:var(--ink);font-size:14px}
+.price.best{color:var(--ok)}
+.sub-v{font-size:11px;color:var(--faint);margin-top:2px}
+.com-v{font-size:11.5px;color:var(--sub);line-height:1.7}
+/* 分组明细(按站聚合视图,2026-10-21) */
+.ch-cell{cursor:pointer;transition:background-color .15s ease-out}
+.ch-table tr.ch-best td{background:rgba(5,150,105,.06)}
+.ch-table tr.ch-best td:first-child{font-weight:700}
+.ch-cell:hover{background:rgba(29,31,32,.04)}
+.ch-toggle{font-size:11.5px;color:var(--brand);cursor:pointer;margin-left:6px;white-space:nowrap}
+.ch-toggle:hover{color:var(--brand-deep)}
+.ch-box{background:var(--bg);border:1px solid var(--line-soft);border-radius:6px;padding:10px 12px}
+.ch-head{font-size:12px;color:var(--sub);margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+.ch-head b{color:var(--ink)}
+.ch-note{color:var(--faint);font-size:11px}
+.ch-table{width:100%;font-size:12.5px;border-collapse:collapse}
+.ch-table th{font-size:11px;color:var(--faint);font-weight:500;text-align:left;padding:5px 8px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.ch-table td{padding:6px 8px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums;color:var(--ink)}
+.ch-table tr:last-child td{border-bottom:none}
+.ch-tag{display:inline-block;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;color:var(--sub);margin-right:3px;white-space:nowrap}
+.ch-tag.head{border-color:var(--brand);color:var(--brand)}
+.ch-tag.low{border-color:var(--ok);color:var(--ok)}
+.ch-tag.warn{border-color:var(--warn);color:var(--warn)}
+.legend{font-size:12px;color:var(--faint);padding:10px 0 40px;line-height:1.8}
+footer{background:#0c1633;color:#94a3c4;padding:26px 0;font-size:12.5px;text-align:center}
+</style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RelayLens">
+<meta property="og:title" content="模型价格对比 · RelayLens">
+<meta property="og:description" content="AI 中转站账单级实测">
+<meta property="og:url" content="https://aipaihangbang.cn/relay/price.html">
+<meta property="og:image" content="https://aipaihangbang.cn/relay/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<header><div class="wrap">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="price.html" class="active">模型比价</a><a href="compare.html">比价矩阵</a><a href="blacklist.html">避雷黑名单</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a>  <a href="https://aipaihangbang.cn" class="back-main">← 返回主站</a>
+    </nav>
+</div></header>
+<div class="page-hero"><div class="wrap">
+ <h1 id="pTitle">模型价格对比</h1>
+ <p class="sub" id="pSub"></p>
+ <p class="sub" style="margin-top:6px!important;opacity:1!important;color:var(--sub)!important;font-size:13.5px">模型比价主页:每站一行(特价组 = 最低倍率组),按输入价从低到高;想看「模型 × 站点」交叉表请进 <a href="compare.html" style="color:var(--brand);font-weight:700">比价矩阵 →</a></p>
+ <div class="hero-points">
+ <span class="hp">单价 = <b>标价(美元额度) × 站方声明充值比例</b>,各站按实际比例换算</span>
+ <span class="hp">缓存价来自 <b>逐轮实测对账</b></span>
+ <span class="hp">价格更新 <b>每 6 小时</b></span>
+ </div>
+</div></div>
+<div class="wrap">
+ <div class="view-bar">
+ <b style="font-size:13px">按站聚合</b>
+ <span style="font-size:12px;color:var(--faint)">每站特价组(最低倍率组)一行,按输入价从低到高;点分组名可摊开该站全部分组(2026-10-21 起渠道平铺视图已下线,渠道明细并入分组展开行)</span>
+ </div>
+ <div class="fam-row" id="famRow"></div>
+ <div class="fam-models" id="modelRow"></div>
+ <div id="tableBox" style="overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:8px"></div>
+ <div class="legend" id="pLegend"></div>
+</div>
+<footer><div class="wrap">RelayLens · 第三方实测平台,不售卖任何 API 转售服务 · 价格仅供参考,以中转站官网最新报价为准</div>  <div class="icp-line" style="text-align:center;padding-top:12px;font-size:12px;color:#5d6f92"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">冀ICP备2026033332号</a></div>
+</footer>
+<script>"use strict";
+/* 单模型价格页(2026-10-11):单价=标价(美元额度)x站方声明充值比例。
+ 2026-10-21 起只保留「按站聚合」单一视图:每站一行 = 特价组(最低倍率组),点分组名摊开全部分组;
+ 原渠道平铺视图已下线(它的信息完整保留在分组展开行里,不再单独开视图)。 */
+var MODELS=[],mCur=null,EFF={},SITES=[],SITE_BY_NAME={},CUR_FAM=null;
+var FAM_PREFIXES=[["gpt","OpenAI"],["o1","OpenAI"],["o3","OpenAI"],["o4","OpenAI"],["chatgpt","OpenAI"],
+ ["claude","Anthropic"],["gemini","Google"],["gemma","Google"],["deepseek","DeepSeek"],
+ ["glm","Zhipu"],["chatglm","Zhipu"],["kimi","Moonshot"],["moonshot","Moonshot"],["qwen","Qwen"],["qwq","Qwen"],
+ ["grok","xAI"],["doubao","ByteDance"],["hunyuan","Tencent"],["minimax","MiniMax"],["llama","Meta"],
+ ["mistral","Mistral"],["ernie","Baidu"],["spark","iFlytek"],["step-","StepFun"],["yi-","01.AI"],["mimo","Xiaomi"]];
+function famOf(name){var n=String(name==null?"":name).toLowerCase();for(var i=0;i<FAM_PREFIXES.length;i++){if(n.indexOf(FAM_PREFIXES[i][0])===0)return FAM_PREFIXES[i][1];}return"其他";}
+function esc(s){return String(s==null?"":s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE00}-\u{FE0F}]\uFE0F?[ \t]?/gu,"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function fmtY(v){return v==null?"—":"¥"+(Math.round(v*1000)/1000)}
+function ratioTag(r){if(r==null)return"";if(r<=0.4)return'<span class="chip chip-low">低价档</span>';if(r>=1.2)return'<span class="chip chip-high">加价档</span>';return""}
+function commerceLines(s){var c=(s&&s.commerce)?s.commerce:{},o=[];if(c.min_top_up)o.push("起充:"+c.min_top_up);if(c.invoice)o.push("可开票");if(c.refund)o.push("退款:"+c.refund);return o.length?'<div class="com-v">'+esc(o.join(" · "))+"</div>":""}
+function siteUrl(name){return"detail.html?site="+encodeURIComponent(name)}
+/* 站方源货币口径(2026-10-21):
+ src=USD → 站方标价是美元额度价,到手价 = 标价 × 站方声明充值比例;
+ src=CNY → 站方价格页直接公示人民币单价(如 heyroute 的 ¥ CNY 视图),那个数就是用户真花的钱,不乘任何比例。 */
+function rowCur(r){return (r&&r.src==="CNY")?"CNY":"USD"}
+function handVal(r,v){
+ if(v==null)return null;
+ var s=EFF[r.site];
+ if(s!=null)return Math.round(v*s*1000)/1000;
+ if(rowCur(r)==="CNY")return Math.round(v*1000)/1000;
+ return null;
+}
+function quoteSym(r){return rowCur(r)==="CNY"?"¥":"$"}
+
+function render(){
+ var m=mCur;if(!m)return;
+ var ratios={},min=null;
+ /* 每站先算出「特价组(最低倍率组)」的输入到手价,供全网最低值与排序使用 */
+ var sitePick={};
+ m.rows.forEach(function(r){
+ var chs=(r.channels&&r.channels.length)?r.channels:null,pick=null;
+ if(chs)chs.forEach(function(c){ if(c.inP==null)return; if(!pick||c.inP<pick.inP)pick=c; });
+ sitePick[r.site]={pick:pick,in:(pick?pick.inP:r.inP),out:(pick?pick.outP:r.outP),cr:(pick?pick.cacheP:r.cacheP)};
+ var v=handVal(r,sitePick[r.site].in);
+ if(v==null)return;
+ ratios[r.site]=v;if(min==null||v<min)min=v;
+ });
+ document.getElementById("pTitle").textContent=m.name+" 中转站价格对比";
+ var ocur = m.officialCur === "CNY" ? "¥" : "$";
+ var osrc = m.officialCur === "CNY" ? "千问AI平台标价" : "OpenRouter 锚";
+ document.getElementById("pSub").innerHTML=
+ '<span class="anchor">官方锚('+osrc+') 输入 '+ocur+m.official.in+" / 输出 "+ocur+m.official.out+' 每百万 tokens</span> · '+
+ (min==null?'全网最低 —':'<span class="floor">全网最低 '+fmtY(min)+"/M</span>")+
+ ' · <span class="cnt">'+m.rows.length+" 家有报价</span>";
+ var box=document.getElementById("tableBox");
+ {
+ /* 按站聚合(唯一视图):每站一行 = 特价组(最低倍率组)价 ——
+ 同一站在同一模型下的最低输入价分组;全部分组仍在展开行里,绝不隐藏更贵的组。
+ 行序按该特价组输入到手价从低到高(无价/无法折算的站排最后)。 */
+ var rows=m.rows.slice().sort(function(a,b){
+ var va=ratios[a.site],vb=ratios[b.site];
+ if(va==null&&vb==null)return a.site.localeCompare(b.site);
+ if(va==null)return 1;
+ if(vb==null)return -1;
+ return va-vb||a.site.localeCompare(b.site);
+ });
+ var h='<table class="mx-table"><thead><tr><th rowspan="2">站点</th><th rowspan="2" style="text-align:center" title="综合评分 = 全场景加权分(详见全站榜单);样本不足或未入榜则不显示">综合评分</th><th rowspan="2">特价组(最低倍率组)</th><th rowspan="2">倍率</th><th colspan="3" class="mx-grp" title="Token 单价 = 站方公示额度价 × 站方声明充值比例(站方直公示人民币的站取页面价);单位 ¥/百万 tokens">Token 价格(¥/M)</th><th rowspan="2">商业信息</th><th rowspan="2"></th></tr><tr><th>输入 <span title="默认按输入到手价从低到高排序" style="color:var(--brand)">▲</span></th><th>输出</th><th>缓存</th></tr></thead><tbody>';
+ rows.forEach(function(r,ri){
+ var s=SITE_BY_NAME[r.site]||{};
+ var sc=(s.score&&s.score.all!=null)?s.score.all:null;
+ var chs=(r.channels&&r.channels.length)?r.channels:null;
+ /* 特价组 = 该站此模型下输入价最低的分组(倍率最低);无分组明细时退回主口径行 */
+ var pick=sitePick[r.site].pick;
+ var gName=pick?pick.group:r.group;
+ var gIn=sitePick[r.site].in, gOut=sitePick[r.site].out, gCr=sitePick[r.site].cr;
+ var gRatio=(pick&&pick.grpRatio!=null)?pick.grpRatio:((gIn!=null&&m.official.in)?Math.round(gIn/m.official.in*100)/100:null);
+ var eff=ratios[r.site],best=(eff!=null&&eff===min);
+ h+="<tr><td>"+'<a class="site-nm" href="'+siteUrl(r.site)+'">'+esc(r.site)+"</a></td>"+
+ '<td style="text-align:center" title="综合评分 = 全场景加权分(详见全站榜单);样本不足或未入榜则不显示">'+(sc==null?'<span style="color:var(--faint)">—</span>':'<b style="color:'+(sc>=85?"var(--ok)":sc>=70?"var(--ink)":"var(--warn)")+'">'+sc+'</b>')+'</td>'+
+ (chs&&chs.length>1
+ ? '<td class="ch-cell" data-ch="chd'+ri+'" data-n="'+chs.length+'" title="点击展开该站在此模型下的全部分组与价格(含更贵的组)">'+
+ esc(gName||"—")+
+ '<span class="ch-toggle">全部 '+chs.length+' 组</span></td>'
+ : "<td>"+esc(gName||"—")+' <span style="color:var(--faint);font-size:11px">单分组</span></td>')+
+ '<td><span class="ratio">'+(gRatio==null?"—":gRatio+"x")+"</span>"+ratioTag(gRatio)+"</td>"+
+ '<td><span class="price'+(best?" best":"")+'">'+(eff==null?"—":fmtY(eff))+'</span></td>'+
+ "<td>"+(gOut==null?"—":fmtY(handVal(r,gOut)))+"</td>"+
+ "<td>"+(gCr==null?"—":fmtY(handVal(r,gCr)))+"</td>"+
+ "<td>"+commerceLines(s)+"</td>"+
+ '<td><a class="site-nm" href="'+siteUrl(r.site)+'">详情 →</a></td></tr>';
+ /* 2026-10-21:把该站在此模型下的全部分组摊开(分组名/组倍率/相对官方倍数/输入输出缓存到手价/标价) */
+ if(chs&&chs.length>1)h+=chGroupRows(m,r,chs,ri);
+ });
+ box.innerHTML=h+"</tbody></table>";
+ }
+ /* 分组明细展开/收起:事件委托挂在容器上,只绑一次,重渲染(innerHTML 覆盖)也不丢;
+ 可点区域是整个「特价组(最低倍率组)」单元格,不用精确点那行小字 */
+ if(!box._chBound){
+ box._chBound=true;
+ box.addEventListener("click",function(ev){
+ var el=ev.target;
+ while(el&&el!==box&&!(el.getAttribute&&el.getAttribute("data-ch")))el=el.parentNode;
+ if(!el||el===box)return;
+ var tr=document.getElementById(el.getAttribute("data-ch"));
+ if(!tr)return;
+ var opened=tr.style.display!=="none";
+ tr.style.display=opened?"none":"";
+ var hint=el.querySelector?el.querySelector(".ch-toggle"):null;
+ if(hint)hint.textContent=(opened?"":"▸ ")+"全部 "+el.getAttribute("data-n")+" 组";
+ });
+ }
+ document.getElementById("pLegend").innerHTML="口径:单价 = 站方公示额度价 × 站方声明充值比例,各站按实际比例换算(wolfai ¥2=1$,jiuqingyun ¥1=10$,其余 ¥1=1$);站方价格页直接公示人民币单价的站(如 heyroute 的 ¥ CNY 视图)以页面价为准,不乘比例;倍率 = 相对官方锚的倍数;档位:倍率≤0.4 低价档、≥1.2 加价档。主表为各站<span data-tip=\"2026-10-21 起按站聚合主表改按「特价组 = 最低倍率组」计价,即该站在此模型下输入价最低的分组;默认组(主口径)与其余更贵分组仍在展开行里完整列出。\">特价组(最低倍率组)</span>价,行序按输入到手价从低到高,点击分组名右侧「全部 N 组」可摊开该站在此模型下的全部分组与价格;价格仅供参考,以中转站官网最新报价为准。";
+}
+/* 分组明细行:某站在此模型下的全部价格分组(2026-10-21)
+ 口径与主表一致 —— 单价 = 站方公示额度价 × 该站声明充值比例;组倍率与相对官方倍数分列,不混算 */
+function chGroupRows(m,r,chs,idx){
+ var s=EFF[r.site];
+ var priced=chs.filter(function(c){return c.inP!=null;});
+ var minIn=priced.length?Math.min.apply(null,priced.map(function(c){return c.inP;})):null;
+ /* 到手价口径同主表:美元额度价 × 充值比例;站方直接公示人民币单价(heyroute)时取值本身 */
+ var y=function(v){return (v==null||s==null)?(rowCur(r)==="CNY"&&v!=null?Math.round(v*1000)/1000:null):Math.round(v*s*1000)/1000;};
+ var h='<tr class="ch-row" id="chd'+idx+'" style="display:none"><td colspan="9"><div class="ch-box">'+
+ '<div class="ch-head"><b>'+esc(r.site)+'</b> · 该模型全部 '+chs.length+' 个分组(按输入价升序)'+
+ '<span class="ch-note">到手价口径同主表(美元额度价 × 充值比例;站方公示人民币单价的站直接取值);组倍率 = 站方公示分组倍率;相对官方 = 该组输入价 ÷ 官方锚输入价;最低输入价分组即主表展示的特价组</span></div>'+
+ '<table class="ch-table"><thead><tr><th>分组名</th><th>标记</th><th>组倍率</th><th>相对官方</th><th>输入 ¥/M</th><th>输出 ¥/M</th><th>缓存 ¥/M</th><th>标价/M</th></tr></thead><tbody>';
+ chs.slice().sort(function(a,b){return (a.inP==null?1e9:a.inP)-(b.inP==null?1e9:b.inP);}).forEach(function(ch){
+ var inP=(ch.inP!=null)?ch.inP:r.inP, outP=(ch.outP!=null)?ch.outP:r.outP;
+ var rel=(inP!=null&&m.official.in)?Math.round(inP/m.official.in*100)/100:null;
+ var tags=[];
+ if(ch.head)tags.push('<span class="ch-tag head">主口径</span>');
+ if(inP!=null&&inP===minIn)tags.push('<span class="ch-tag low">特价组</span>');
+ if(ch.grpRatio!=null&&ch.grpRatio<=0.6)tags.push('<span class="ch-tag warn">低价组</span>');
+ h+="<tr"+(inP!=null&&inP===minIn?' class="ch-best"':"")+">"+
+ "<td>"+esc(ch.group||"—")+"</td>"+
+ "<td>"+(tags.length?tags.join(" "):"—")+"</td>"+
+ '<td><span class="ratio">'+(ch.grpRatio==null?"—":ch.grpRatio+"x")+"</span></td>"+
+ "<td>"+(rel==null?"—":rel+"x")+"</td>"+
+ "<td>"+(y(inP)==null?"—":fmtY(y(inP)))+"</td>"+
+ "<td>"+(y(outP)==null?"—":fmtY(y(outP)))+"</td>"+
+ "<td>"+(y(ch.cacheP)==null?"—":fmtY(y(ch.cacheP)))+"</td>"+
+ "<td>"+quoteSym(r)+inP+"</td></tr>";
+ });
+ return h+"</tbody></table></div></td></tr>";
+}
+function renderFamRow(){
+ var fams={},order=[];
+ MODELS.forEach(function(m){var f=m.family||"其他";if(!fams[f])fams[f]=[];fams[f].push(m);if(order.indexOf(f)<0)order.push(f);});
+ var fr=document.getElementById("famRow");
+ fr.innerHTML=order.map(function(f){return'<button class="fam-chip'+(f===CUR_FAM?" on":"")+'" data-fam="'+esc(f)+'" type="button">'+esc(f)+'<span class="fam-n">'+fams[f].length+"</span></button>"}).join("");
+ Array.prototype.forEach.call(fr.querySelectorAll(".fam-chip"),function(chip){
+ chip.onclick=function(){CUR_FAM=this.getAttribute("data-fam");renderFamRow();renderModelRow();};
+ });
+}
+function renderModelRow(){
+ var mr=document.getElementById("modelRow");
+ mr.innerHTML=MODELS.filter(function(m){return(m.family||"其他")===CUR_FAM})
+ .map(function(m){return'<a class="'+(mCur&&m.key===mCur.key?"on":"")+'" href="price.html?model='+encodeURIComponent(m.key)+'">'+esc(m.name)+"</a>"}).join("");
+}
+fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))}).then(function(j){
+ SITES=j.realSites||[];EFF={};SITE_BY_NAME={};
+ SITES.forEach(function(s){EFF[s.name]=s.effRatio;SITE_BY_NAME[s.name]=s;});
+ MODELS=(j.compare&&j.compare.tabs)||[];
+ var want=new URLSearchParams(location.search).get("model");
+ mCur=MODELS.filter(function(m){return m.key===want})[0]||MODELS[0]||null;
+ if(!mCur){document.getElementById("tableBox").innerHTML='<div style="padding:30px;color:var(--faint)">暂无价格数据</div>';return;}
+ CUR_FAM=mCur.family||"其他";
+ renderFamRow();renderModelRow();render();
+}).catch(function(e){document.getElementById("tableBox").innerHTML='<div style="padding:30px;color:var(--faint)">数据加载失败:'+e.message+"</div>";});
+</script>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>站长入驻 · RelayLens — 让实测数据替你说话</title>
+<link rel="canonical" href="https://aipaihangbang.cn/relay/onboarding.html">
+<meta name="description" content="AI 中转站入驻申请:声明主攻方向与分组,我们按声明定制检测矩阵,实测与声明一致即公开背书。两阶段接入,测试额度仅向指定账号充值。">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+:root{
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+/* 导航 */
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:22px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px}
+.logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav-links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:8px;white-space:nowrap}
+.nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
+.nav-links a.active{background:var(--brand-soft);color:var(--brand);font-weight:700}
+.nav-links a.hot{color:var(--bad);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:none;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-deep)}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn-sm{padding:7px 13px;font-size:13px;border-radius:8px}
+
+.hero{text-align:center;padding:44px 0 8px}
+.hero h1{font-size:26px;margin-bottom:10px}
+.hero .sub{color:var(--sub);font-size:14.5px;max-width:620px;margin:0 auto}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:26px 0 8px}
+.pillar{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-align:left}
+.pillar .t{font-weight:800;font-size:14px;margin-bottom:4px}
+.pillar .d{font-size:12.5px;color:var(--sub)}
+
+section{margin:26px 0}
+.blk-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.blk-head h2{font-size:19px}
+.blk-head .more{font-size:13px;color:var(--brand);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px}
+
+/* 步骤条 */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0;margin:18px 0 6px;counter-reset:st}
+.step{position:relative;padding:12px 10px 12px 38px;border:1px solid var(--line);background:var(--card);font-size:13px}
+.step::before{counter-increment:st;content:counter(st);position:absolute;left:10px;top:12px;width:20px;height:20px;border-radius:50%;background:var(--brand-soft);color:var(--brand-deep);font-weight:800;font-size:11.5px;display:flex;align-items:center;justify-content:center}
+.step b{display:block;font-size:13px}
+.step .d{color:var(--faint);font-size:11.5px;line-height:1.5}
+
+/* 表单 */
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.f-grid .full{grid-column:1/-1}
+label.fl{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+label.fl .req{color:var(--bad)}
+.hint{font-size:11.5px;color:var(--faint);margin-top:4px}
+input[type=text],input[type=url],input[type=email],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:14px;background:#fff}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(43,92,240,.12)}
+textarea{min-height:88px;resize:vertical;font-family:inherit}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:13px;background:var(--warn-soft);border:1px solid #f5d0a9;border-radius:10px;padding:12px 14px}
+.check input{margin-top:3px}
+.dirs{display:flex;gap:8px;flex-wrap:wrap}
+.dirs label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;background:#fff}
+.dirs input{accent-color:var(--brand)}
+.dirs label:has(input:checked){border-color:var(--brand);background:var(--brand-soft);color:var(--brand-deep);font-weight:700}
+.f-err{display:none;color:var(--bad);font-size:12.5px;margin-top:10px}
+.f-err.show{display:block}
+
+/* 产出 JSON */
+.out{display:none;margin-top:16px}
+.out.show{display:block}
+.out pre{background:#0d1424;color:#dbe4f3;border-radius:10px;padding:14px 16px;font-size:11.5px;line-height:1.7;overflow-x:auto;max-height:260px}
+.out .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.out .hint{margin:0 0 8px}
+
+/* 阶段二预览 */
+.p2{border-left:4px solid var(--brand)}
+.p2 .li{display:flex;gap:10px;font-size:13.5px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.p2 .li:last-child{border-bottom:none}
+.p2 .li .no{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--brand-soft);color:var(--brand-deep);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+.p2 .li b{font-size:13.5px}
+.p2 .li .d{color:var(--sub);font-size:12.5px}
+.quota{background:var(--warn-soft);border:1px solid #f5d0a9;border-radius:10px;padding:12px 15px;font-size:13px;color:var(--warn);margin-top:12px}
+
+.fine{font-size:12px;color:var(--faint);margin-top:16px}
+footer{border-top:1px solid var(--line);background:var(--card);padding:20px 0;margin-top:34px;font-size:12px;color:var(--sub)}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:20px}
+footer h4{font-size:13px;margin-bottom:8px;color:var(--ink)}
+footer a{display:block;font-size:12.5px;color:var(--sub);padding:2.5px 0}
+footer a:hover{color:var(--brand)}
+.fine{padding-top:14px;border-top:1px solid var(--line);margin-top:16px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;transition:.25s;opacity:0}
+.toast.show{transform:translateX(-50%);opacity:1}
+@media(max-width:700px){.f-grid{grid-template-columns:1fr}.ft-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}}
+</style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RelayLens">
+<meta property="og:title" content="站长入驻 · RelayLens — 让实测数据替你说话">
+<meta property="og:description" content="AI 中转站入驻申请:声明主攻方向与分组,我们按声明定制检测矩阵,实测与声明一致即公开背书。两阶段接入,测试额度仅向指定账号充值。">
+<meta property="og:url" content="https://aipaihangbang.cn/relay/onboarding.html">
+<meta property="og:image" content="https://aipaihangbang.cn/relay/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+<header>
+ <div class="wrap nav">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="compare.html">比价矩阵</a><a href="blacklist.html">避雷黑名单</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a>  <a href="https://aipaihangbang.cn" class="back-main">← 返回主站</a>
+    </nav>
+ <a class="btn btn-ghost btn-sm" href="claim.html">认领站点</a>
+ </div>
+</header>
+
+<div class="wrap">
+
+ <div class="hero">
+ <h1>站长入驻:声明什么,我们就按什么测</h1>
+ <p class="sub">我们不会拿你的特价分组当主力来打分,也不会用你没承诺的方向考你。<b>你声明主攻方向与分组 → 我们按声明定制检测矩阵 → 实测与声明一致,就是公开背书。</b></p>
+ <div class="pillars">
+ <div class="pillar"><div class="t">按声明检测</div><div class="d">文本站考对账/指纹/流式,生图站考图验真——不混着考,对站方和用户都公平</div></div>
+ <div class="pillar"><div class="t">一致即背书</div><div class="d">实测与你的公示倍率、声明模型逐笔一致,详情页就是给用户的信任凭证</div></div>
+ <div class="pillar"><div class="t">反证通道</div><div class="d">对结论有异议可申诉并提交日志,复测结论无论接受与否都公开记录</div></div>
+ </div>
+ </div>
+
+ <section>
+ <div class="card" style="padding:18px 24px">
+ <div class="steps">
+ <div class="step"><b>提交申请</b><div class="d">填阶段一基本信息,5 分钟</div></div>
+ <div class="step"><b>我方受理</b><div class="d">72 小时内邮件答复,发放测试账号注册入口</div></div>
+ <div class="step"><b>充值测试额度</b><div class="d">向我方指定账号充值</div></div>
+ <div class="step"><b>补全接入信息</b><div class="d">API 端点 / 倍率表(阶段二)</div></div>
+ <div class="step"><b>检测与收录</b><div class="d">首轮对账通过后进榜单</div></div>
+ </div>
+ </div>
+ </section>
+
+ <section>
+ <div class="blk-head">
+ <h2>阶段一 · 申请表</h2>
+ <span class="more">仅此 6 项,受理后才需要阶段二信息</span>
+ </div>
+ <div class="card">
+ <div class="f-grid">
+ <div>
+ <label class="fl">站点名称 <span class="req">*</span></label>
+ <input type="text" id="fName" maxlength="40" placeholder="如:XX Cloud">
+ </div>
+ <div>
+ <label class="fl">站点域名 <span class="req">*</span></label>
+ <input type="url" id="fDomain" placeholder="https://example.com">
+ <div class="hint">主站域名,全站唯一;黑名单在册域名不予受理</div>
+ </div>
+ <div class="full">
+ <label class="fl">主攻方向 <span class="req">*</span> <span style="font-weight:400;color:var(--faint);font-size:12px">(多选,决定我们用什么方法测你)</span></label>
+ <div class="dirs" id="fDirs">
+ <label><input type="checkbox" value="text">大语言文本(GPT / Claude 等)</label>
+ <label><input type="checkbox" value="image">图片生成</label>
+ <label><input type="checkbox" value="video">视频生成</label>
+ <label><input type="checkbox" value="audio">语音</label>
+ <label><input type="checkbox" value="hybrid">混合</label>
+ </div>
+ </div>
+ <div class="full">
+ <label class="fl">主力分组(进主榜全量检测)<span class="req">*</span></label>
+ <textarea id="fPrimary" placeholder="每行一组:分组名 | 模型列表 | 计费模式(倍率/阶梯)&#10;示例:claude-kiro渠道 | claude-opus-5, claude-sonnet-5 | 倍率"></textarea>
+ <div class="hint">主力分组 = 你愿意被当作用户首选来检测的分组,进主榜</div>
+ </div>
+ <div class="full">
+ <label class="fl">特价分组(如有,进特价榜)</label>
+ <textarea id="fSpecial" placeholder="同上格式;特价分组用小样本只测「可用率 + 模型真实性」,不进主评分"></textarea>
+ <div class="hint">特价便宜但偶发不稳是行业常态,单独成榜呈现,不拖累主评分 —— 不填则视为无</div>
+ </div>
+ <div class="full">
+ <label class="fl">商业信息(选填,但强烈建议 —— 直接展示在榜单「其他」列)</label>
+ <div class="f-grid" style="margin-top:2px">
+ <div><input type="text" id="fPay" placeholder="支付方式:支付宝 / 微信 / USDT"><div class="hint">多种用 / 分隔</div></div>
+ <div><input type="text" id="fRatio" placeholder="充值比例:如 ¥7.2 = 1 美元额度"><div class="hint">用户充值时每 1$ 实付人民币</div></div>
+ <div><input type="text" id="fMinTopUp" placeholder="起充金额:如 ¥10"></div>
+ <div><input type="text" id="fInvoice" placeholder="发票政策:可开票类型或「不支持」"></div>
+ <div><input type="text" id="fRefund" placeholder="退款政策:未消费余额可退 / 不可退"></div>
+ </div>
+ </div>
+ <div>
+ <label class="fl">联系邮箱 <span class="req">*</span></label>
+ <input type="email" id="fEmail" placeholder="ops@example.com">
+ </div>
+ <div>
+ <label class="fl">Telegram / 其他</label>
+ <input type="text" id="fTg" placeholder="@yourhandle(选填)">
+ </div>
+ <div class="full">
+ <label class="check"><input type="checkbox" id="fQuota">
+ <span>我接受测试额度规则:<b>只向贵方指定的测试账号充值;每月固定额度或不低于 ¥10;该额度仅用于公开评测,不用于生产。</b>并知悉:检测数据与判定结论(含复测)均公开记录。</span>
+ </label>
+ </div>
+ <div class="full">
+ <label class="fl">备注(选填)</label>
+ <input type="text" id="fNotes" maxlength="500" placeholder="如:晚高峰限流说明、新站上线时间等">
+ </div>
+ </div>
+ <div class="f-err" id="fErr"></div>
+ <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+ <button class="btn btn-primary" id="fSubmit">生成申请并提交</button>
+ <span class="hint" style="align-self:center">提交后进入我方受理队列,72 小时内答复</span>
+ </div>
+ <div class="out" id="fOut">
+ <div class="hint" id="fOutHint"></div>
+ <pre id="fJson"></pre>
+ <div class="row">
+ <button class="btn btn-primary btn-sm" id="fCopy">复制申请内容</button>
+ <a class="btn btn-ghost btn-sm" id="fMail" href="#">通过邮件发送 →</a>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <section>
+ <div class="blk-head">
+ <h2>阶段二 · 受理后需要什么</h2>
+ <span class="more">先看清全流程,再决定要不要申请</span>
+ </div>
+ <div class="card p2">
+ <div class="li"><span class="no">1</span><div><b>API 端点(base_url)</b><div class="d">OpenAI 兼容格式,用于探针接入</div></div></div>
+ <div class="li"><span class="no">2</span><div><b>按分组各一个测试 Key</b><div class="d">一个 API Key 只能绑一个分组 —— 你声明了几个待测分组,就需要提供几个对应分组的测试 token,否则我们只能测到一个分组、分数口径就不成立。Key 仅通过安全通道提交,明文存放在与代码隔离的密钥文件,永不入库、永不公开</div></div></div>
+ <div class="li"><span class="no">3</span><div><b>分组倍率表</b><div class="d">管理后台导出或截图;阶梯计费需附计费表达式。这是逐笔对账的"应扣"依据 —— 你公示什么,我们就按什么核对</div></div></div>
+ <div class="li"><span class="no">4</span><div><b>开票 / 对公信息(选填)</b><div class="d">企业场景评分维度</div></div></div>
+ <div class="quota">额度规则(受理前请确认):只向<b>我方指定测试账号</b>充值;每月固定额度或<b>不低于 ¥10</b>;额度<b>仅用于公开评测</b>。检测产生的一切数据(含原始响应存档)按开源协议公开。</div>
+ </div>
+ <p class="fine">已收录站点的站长无需重复申请,前往 <a href="claim.html" style="color:var(--brand);font-weight:600">认领我的站点</a> 即可获得申诉权、变更通知与 CPS 合作资格。</p>
+ </section>
+
+</div>
+
+<footer>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="tools.html">自测工具箱</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>站长</h4>
+ <a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a>
+ <h4 style="margin-top:10px">关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="reports.html">实测报告</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售或代充服务。检测数据与结论按开源协议公开,站方对结论享有申诉与反证权利。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
+  <div class="icp-line" style="text-align:center;padding-top:12px;font-size:12px;color:#5d6f92"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">冀ICP备2026033332号</a></div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="assets/auth.js"></script>
+<script>window.RELAYLENS_FORM_ENDPOINT=(typeof RL_API_BASE!=="undefined"&&RL_API_BASE)?RL_API_BASE+"/submit/onboarding":"";</script>
+<script>
+/* ============ 入驻表单:校验 → 生成 schema v1.0.0 合规 payload → 提交 ============ */
+var SCHEMA_VERSION="1.0.0";
+var toastEl=document.getElementById("toast"),toastTimer;
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
+function val(id){return document.getElementById(id).value.trim()}
+function fail(msg){var e=document.getElementById("fErr");e.textContent=msg;e.classList.add("show");return null}
+
+/* 分组行解析:「分组名 | 模型列表 | 计费模式」→ 结构化 */
+function parseGroups(text,tier){
+ return text.split(/\r?\n/).map(function(l){return l.trim()}).filter(Boolean).map(function(line){
+ var parts=line.split("|").map(function(p){return p.trim()});
+ return {name:parts[0]||"",models:parts[1]?parts[1].split(/[,，、\s]+/).filter(Boolean):[],tier:tier,billing:/阶梯/.test(line)?"tiered":/倍率/.test(line)?"ratio":"unknown"};
+ }).filter(function(g){return g.name});
+}
+
+function buildPayload(){
+ document.getElementById("fErr").classList.remove("show");
+ var name=val("fName"),domain=val("fDomain");
+ if(!name)return fail("请填写站点名称");
+ if(!/^https?:\/\/[^\s\/]+\.[^\s\/]+/.test(domain))return fail("域名格式应为 https://example.com");
+ var dirs=[].slice.call(document.querySelectorAll("#fDirs input:checked")).map(function(c){return c.value});
+ if(!dirs.length)return fail("请至少选择一个主攻方向");
+ var primary=parseGroups(val("fPrimary"),"primary");
+ if(!primary.length)return fail("主力分组至少一行,格式:分组名 | 模型列表 | 计费模式");
+ if(!val("fPrimary")||primary.some(function(g){return !g.models.length}))return fail("主力分组每行需含模型列表(用 | 分隔)");
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("fEmail")))return fail("联系邮箱格式不正确");
+ if(!document.getElementById("fQuota").checked)return fail("请确认接受测试额度规则(仅指定账号/每月额度或不低于¥10/仅用于测试)");
+ return {
+ schema:"relaylens-onboarding/"+SCHEMA_VERSION,
+ phase:1, status:"applied", submittedAt:new Date().toISOString(),
+ site_name:name, domain:domain.replace(/\/+$/,""),
+ directions:dirs,
+ declared_groups:primary.concat(parseGroups(val("fSpecial"),"special")),
+ contact:{email:val("fEmail"),tg:val("fTg")||null},
+ commerce:(function(){
+ var pay=val("fPay"),o={pay_methods:pay?pay.split(/\s*\/\s*/).filter(Boolean):null,
+ recharge_ratio:val("fRatio")||null,min_top_up:val("fMinTopUp")||null,
+ invoice:val("fInvoice")||null,refund:val("fRefund")||null};
+ return (o.pay_methods||o.recharge_ratio||o.min_top_up||o.invoice||o.refund)?o:null;
+ })(),
+ accept_quota_rules:true,
+ notes:val("fNotes")||null
+ };
+}
+
+document.getElementById("fSubmit").addEventListener("click",function(){
+ var p=buildPayload();if(!p)return;
+ var json=JSON.stringify(p,null,2);
+ document.getElementById("fJson").textContent=json;
+ document.getElementById("fOut").classList.add("show");
+ /* 优先 POST 到配置的受理端点(WordPress 表单);失败/未配置 → 复制 + 邮件降级 */
+ var ep=(window.RELAYLENS_FORM_ENDPOINT||"").trim();
+ if(ep){
+ fetch(ep,{method:"POST",headers:{"Content-Type":"application/json"},body:json})
+ .then(function(r){if(!r.ok)throw 0;toast("已提交,72 小时内邮件答复");document.getElementById("fOutHint").textContent="✓ 已送达受理队列;以下为你的申请存档(建议留存):"})
+ .catch(function(){showFallback(json)});
+ }else showFallback(json);
+});
+function showFallback(json){
+ document.getElementById("fOutHint").textContent="↓ 受理队列接入中,请复制以下内容发送至入驻邮箱(申请存档,建议留存):";
+ var m=document.getElementById("fMail");
+ m.href="mailto:onboarding@relaylens.example?subject="+encodeURIComponent("[入驻申请] "+val("fName"))+"&body="+encodeURIComponent(json);
+}
+document.getElementById("fCopy").addEventListener("click",function(){
+ var t=document.getElementById("fJson").textContent;
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast("已复制")},function(){toast("复制失败,请手动选择")})}
+ else toast("请手动选择复制");
+});
+</script>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>
