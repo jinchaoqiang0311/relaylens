@@ -59,14 +59,17 @@ check("到手价 = 额度价 × 充值比例(严格公式)", aic && aic.ratio !=
 check("主口径组只允许 default/median/key(规则#3:永不许取最低组)", aic && ["default", "median", "key"].includes(aic.groupKind), aic ? aic.groupKind : "无");
 check("非 default/key 时主口径=中位组,且不是最低倍率组(防号池/特价组冒充主价)", aic && (aic.groupKind === "default" || aic.groupKind === "key" || (aic.groupKind === "median" && (aic.channels || []).length > 0 && aic.grpRatio > Math.min.apply(null, (aic.channels || []).map(c => c.grpRatio).filter(x => x != null)))), aic ? "主口径 " + aic.grpRatio + "x / 最低组 " + Math.min.apply(null, (aic.channels || []).map(c => c.grpRatio).filter(x => x != null)) + "x" : "无");
 check("key 归位必带 match(校准契约;当前无 key 行则 vacuously 真)", !aic || aic.groupKind !== "key" || aic.calibStatus === "match", aic ? aic.groupKind + "/" + aic.calibStatus : "无");
+/* 2026-10-23:路径改相对 —— 原先硬编码 c:/Users/Administrator/Desktop/relaylens/...,
+   换台机器就静默 return false(而且 catch 吞掉异常,看起来像数据不达标,其实是路径不存在)。
+   现在与本套件其它断言一样走 __dirname。 */
 check("该校验可追溯:最新 aicost 价格批次 raw 归档含 tiered_expr 来源标记", (() => {
   try {
-    const fs2 = require("fs"), D2 = require("node:sqlite");
-    const db = new D2.DatabaseSync("c:/Users/Administrator/Desktop/relaylens/relaylens/probe/store/relaylens.sqlite");
+    const D2 = require("node:sqlite");
+    const db = new D2.DatabaseSync(path.join(__dirname, "relaylens/probe/store/relaylens.sqlite"));
     const row = db.prepare("SELECT raw_path FROM batches WHERE site='aicost' AND task='price' ORDER BY started_at DESC LIMIT 1").get();
     db.close();
     if (!row || !row.raw_path) return false;
-    const raw = JSON.parse(fs2.readFileSync("c:/Users/Administrator/Desktop/relaylens/relaylens/probe/" + row.raw_path.replace(/\\/g, "/"), "utf8"));
+    const raw = JSON.parse(fs.readFileSync(path.join(__dirname, "relaylens/probe", row.raw_path.replace(/\\/g, "/")), "utf8"));
     const m = (raw.result && raw.result.models || []).find(x => /5\.6/.test(x.model || ""));
     return !!m && /tiered_expr/.test(m.source || "");
   } catch (e) { return false; }
