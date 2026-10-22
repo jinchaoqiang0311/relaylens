@@ -44,8 +44,12 @@ for (const file of pages) {
   // ①'' 统一顶部导航(构建期集中注入,避免各页手写导航不一致 —— 曾出现 price/pitfalls/404 项偏少、切页按钮移位)。
   // 每次都从源文件重注,幂等;**含首页**(此前豁免 index 导致首页用自带 .nav、几何与注入的 .nav-links 不同,切页即移位)。
   // 要改全站导航只改这里即可;样式统一由 assets/theme-relayindex.css 的 .nav-links 提供。
+  //
+  // ⚠ NAV = 全站唯一的跨页入链来源:不在清单里的页面,除非正文有别处链到,否则构建后就是孤立页
+  //   (爬不到、用户也进不去)。test_nav_integrity.js 对构建产物做全站入链分析,少一项就红 —— 改这里前先看它。
+  //   2026-10-23 曾漏掉 选型顾问/避坑指南,两页直接 0 入链,已加回。
   {
-    const NAV = [["index.html","选站比价"],["ranking.html","全站榜单"],["price.html","模型比价"],["compare.html","比价矩阵"],["blacklist.html","避雷黑名单"],["method.html","方法论"],["tools.html","自测工具箱"]];
+    const NAV = [["index.html","选站比价"],["ranking.html","全站榜单"],["price.html","模型比价"],["compare.html","比价矩阵"],["selector.html","选型顾问"],["blacklist.html","避雷黑名单"],["pitfalls.html","避坑指南"],["method.html","方法论"],["tools.html","自测工具箱"]];
     const nav = '<nav class="nav-links">' + NAV.map(([h,l]) => '<a href="'+h+'"'+(h===file?' class="active"':'')+'>'+l+'</a>').join("") + '</nav>';
     html = html.replace(/<nav\b[^>]*>[\s\S]*?<\/nav>/, nav);
   }
