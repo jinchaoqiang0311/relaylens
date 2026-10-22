@@ -165,10 +165,11 @@ sites:
     commerce:
       min_top_up: "¥0"
       recharge_ratio: "¥1 = 4 美元额度"        # 用户 2026-10-17 表格:1¥=4$
-      ratio_cny_per_usd: 0.25                  # 数值口径:买 1 美元额度只要 ¥0.25
+      ratio_cny_per_usd: 0.25                  # 充值口径数值(仅参考,**不参与模型标价折算**)
+      ratio_applies_to_price: false            # 2026-10-21 用户钉死:heyroute 价格页直接公示人民币单价(¥ CNY 开关),模型价格以页面 CNY 值为准,不再乘充值比例
       source: "manual"
-      verified: "2026-10-17"
-    notes: "2026-10-17 新入册(用户提供 key);价格页 https://heyroute.ai/pricing;比例 1¥=4$ 与别家不同,到手价以标价×0.25 算,横向比价不受比例写法影响"
+      verified: "2026-10-21"
+    notes: "2026-10-17 新入册(用户提供 key);2026-10-21 复核:价格页 https://heyroute.ai/pricing 需登录态(补 HeyRoute-User 头),切 ¥ CNY 后页面明示人民币单价,用户钉死以该 CNY 价为模型价格口径,充值比例(¥10→$40 灵活充值 ¥0.25/$1、周包 ¥0.22-0.24、月卡 ¥0.187-0.20)只作成本参考不参与折算;图片/视频按张/秒计价不进 token 口径"
 
   - name: "infistar"
     base_url: "https://infistar.cc"           # 无限星河
@@ -200,10 +201,14 @@ schedules:
   price: "0 */6 * * *"
   # billing 自动对账(2026-10-15 用户授权接通,P2):每轮从有 key 的站轮转 2 站,真实扣费分/厘级;
   # 轮后自动刷新 ops 看板并推企微摘要。删掉本行即停用自动对账(回退 CLI 手动模式)。
-  billing: "30 */6 * * *"
+  billing: "30 */12 * * *"
   # perf 双窗口(2026-10-10.1 口径):忙时/闲时各一轮,PF 取两桶较差值;有余额的站才产生费用(厘级/天)
   perf_work: "30 10 * * 1-5"
   perf_off:  "30 22 * * *"
+  # fingerprint 模型指纹验真(2026-10-22 纳入调度,替代纯手动):跨站差分基线查掉包/降级,仅对有 key 的站;成本中(8+4 题 x 2 站)
+  fingerprint: "0 9 * * 1"
+  # tokens 注入开销检测(2026-10-22 纳入调度,替代纯手动):3 段已知文本拟合注入脚手架;成本极低,仅对有 key 的站
+  tokens: "0 8 * * 4"
 
 # 评分权重(与 web/method.html 同源)
 score_weights:

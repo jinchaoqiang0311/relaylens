@@ -25,7 +25,7 @@ export interface ProbeConfig {
   sites: SiteConfig[];
   models: { flagship: string[]; standard: string[]; budget: string[] };
   /** billing 为真实扣费任务:配置了节拍才启用自动对账(与 perf 双窗口同一策略);未配置则只能 CLI 手动触发 */
-  schedules: { health: string; price: string; billing?: string; perf_work?: string; perf_off?: string };
+  schedules: { health: string; price: string; billing?: string; perf_work?: string; perf_off?: string; fingerprint?: string; tokens?: string };
   score_weights: Record<string, Record<string, number>>;
   thresholds: {
     dev_warn: number;

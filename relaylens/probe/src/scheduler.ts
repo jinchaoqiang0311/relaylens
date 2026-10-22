@@ -181,6 +181,16 @@ export function startScheduler(cfg: ProbeConfig) {
     cron.schedule(cfg.schedules.perf_off, () => { void runPerfRound(cfg); });
     console.log("⏱️ perf 双窗口已启用:" + cfg.schedules.perf_work + "(忙) / " + cfg.schedules.perf_off + "(闲)");
   }
+  // fingerprint 模型指纹验真(2026-10-22 纳入调度,替代纯手动):跨站差分基线查掉包/降级,仅对有 key 的站
+  if (cfg.schedules.fingerprint) {
+    cron.schedule(cfg.schedules.fingerprint, () => { void runFingerprintRound(cfg); });
+    console.log("⏱️ fingerprint 指纹验真已启用:" + cfg.schedules.fingerprint);
+  }
+  // tokens 注入开销检测(2026-10-22 纳入调度,替代纯手动):3 段已知文本拟合注入脚手架,成本极低,仅对有 key 的站
+  if (cfg.schedules.tokens) {
+    cron.schedule(cfg.schedules.tokens, () => { void runTokensRound(cfg); });
+    console.log("⏱️ tokens 注入检测已启用:" + cfg.schedules.tokens);
+  }
 }
 
 /** perf 轮:全站主模型 8 次 + 推理档加测(与 cli perf 同一套探针;单站失败不传染) */
@@ -208,4 +218,57 @@ async function runPerfRound(cfg: ProbeConfig): Promise<void> {
     }
   }
   console.log(`▸ perf round 完成 · ${done}/${targets.length} 站`);
+}
+
+/** fingerprint 轮:对有 key 的站跑跨站差分指纹(基线取另一家 keyed 站),查掉包/降级;落库供 MA 桶与前端指纹列。 */
+async function runFingerprintRound(cfg: ProbeConfig) {
+  const { runFingerprint, persistFingerprint } = await import("./probes/fingerprint.js");
+  const { listModels } = await import("./probes/perf.js");
+  const keyed = enabledSites(cfg).filter(s => !!s.key_env);
+  console.log(`▸ fingerprint round 开始 · ${keyed.length} 站 · ${new Date().toLocaleTimeString()}`);
+  let done = 0, skip = 0;
+  for (const cand of keyed) {
+    try {
+      // 跨站差分基线:取另一家 keyed 站(官方基线需 OPENROUTER_API_KEY,没有就用跨站,置信 ×0.8)
+      const base = keyed.find(s => s.name !== cand.name);
+      if (!base) { console.log(`  ✗ [fingerprint] ${cand.name} — 无可用基线站(需 ≥2 家 keyed 站做跨站差分)`); skip++; continue; }
+      const [a, b] = await Promise.all([listModels(cand), listModels(base)]);
+      const common = a.filter(x => b.includes(x));
+      if (!common.length) { console.log(`  ✗ [fingerprint] ${cand.name} — 与基线 ${base.name} 无共同模型`); skip++; continue; }
+      const model = ["gpt-5.5", "gpt-5.6-sol", "deepseek-v4.1-flash", "claude-sonnet-5"].find(m => common.includes(m)) || common[0];
+      const res = await runFingerprint(cand, base, model);
+      persistFingerprint(res);
+      done++;
+      console.log(`  ${res.similarity === null ? "⚠" : "✓"} [fingerprint] ${cand.name}/${model} vs ${base.name} · 相似度 ${res.similarity ?? "—"}% · 有效 ${res.validProbes}/${res.probes.length} → ${res.verdict}`);
+      res.notes.forEach(n => console.log("     注:" + n));
+      if (res.verdict === "fail") logEvent(cand.name, "fp_fail", { batchId: res.batchId, similarity: res.similarity, model, baseline: base.name });
+    } catch (e) {
+      logEvent(cand.name, "task_failed", { task: "fingerprint", err: (e as Error).message });
+      console.log(`  ✗ [fingerprint] ${cand.name} — ${(e as Error).message}`);
+    }
+  }
+  console.log(`▸ fingerprint round 完成 · ${done}/${keyed.length} 站(跳过 ${skip})`);
+  if (done) rebuild(enabledSites(cfg).map(s => s.name));
+}
+
+/** tokens 轮:对有 key 的站跑注入检测(递增长度唯一文本拟合注入脚手架);落库供 EP 计价与前端「注入开销」列。 */
+async function runTokensRound(cfg: ProbeConfig) {
+  const { runTokenProbe, persistTokens } = await import("./probes/tokenprobe.js");
+  const keyed = enabledSites(cfg).filter(s => !!s.key_env);
+  console.log(`▸ tokens round 开始 · ${keyed.length} 站 · ${new Date().toLocaleTimeString()}`);
+  let done = 0;
+  for (const site of keyed) {
+    try {
+      const model = "gpt-5.6-sol";
+      const rows = await runTokenProbe(site, model);
+      const est = persistTokens(site.name, model, rows);
+      done++;
+      console.log(`  ✓ [tokens] ${site.name} · 注入 ${est.inject ?? "—"} tok/请求 · ${est.note}`);
+    } catch (e) {
+      logEvent(site.name, "task_failed", { task: "tokens", err: (e as Error).message });
+      console.log(`  ✗ [tokens] ${site.name} — ${(e as Error).message}`);
+    }
+  }
+  console.log(`▸ tokens round 完成 · ${done}/${keyed.length} 站`);
+  if (done) rebuild(enabledSites(cfg).map(s => s.name));
 }

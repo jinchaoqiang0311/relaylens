@@ -90,9 +90,9 @@ export function assembleMetrics(site: string, opts: { inject?: number } = {}): S
   }
   const ST: SiteMetrics["ST"] = { avail: h.avail7d, timeoutPct, checks: h.checks, spanMinutes };
 
-  // PF:近 7 天 perf 轮按忙/闲桶(本地 9–18 点=work)分别取中位数,PF = 较差桶(悲观值口径,2026-10-10.1)。
+  // PF:近 7 天 perf 轮按忙/闲桶(本地 9–18 点=work)分别取中位数,PF = 两桶中位数的均值(2026-10-22 用户拍板,由悲观较差值改均值)。
   // 之前取"最近一批"中位数 —— 同一站闲时 2.5s / 高峰 12s,采样时点决定分数,波动完全由运气主导。
-  // 悲观值 = 最坏常用时段的承诺;单桶缺样本时用另一桶并标 partialBucket(前端如实标注,不假装完整)。
+  // 均值 = 忙/闲两个常用时段的平均承诺;单桶缺样本时用另一桶并标 partialBucket(前端如实标注,不假装完整)。
   const perfRounds = d.prepare(`
     SELECT r.ttft_ms, b.started_at FROM rounds r JOIN batches b ON b.id=r.batch_id
     WHERE b.site=? AND b.task='perf' AND r.ttft_ms>0 AND r.ttft_ms<30000
@@ -105,7 +105,7 @@ export function assembleMetrics(site: string, opts: { inject?: number } = {}): S
   const offMs = bucketMedian(buckets.off);
   let pfMs: number | null = null;
   let partialBucket: "work" | "off" | null = null;
-  if (workMs !== null && offMs !== null) pfMs = Math.max(workMs, offMs);
+  if (workMs !== null && offMs !== null) pfMs = Math.round((workMs + offMs) / 2);
   else if (workMs !== null) { pfMs = workMs; partialBucket = "work"; }
   else if (offMs !== null) { pfMs = offMs; partialBucket = "off"; }
   const PF: SiteMetrics["PF"] = {

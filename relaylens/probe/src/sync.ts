@@ -121,7 +121,7 @@ export interface FrontendSite {
   probe?: ProbePayload | null;
   /** 行内富信息:近 72 小时(6h/格)可用率走势、流式探针详情、指纹详情、健康检查次数 */
   slaSeries?: Array<{ h: string; pct: number | null; n: number }>;
-  perf?: { p95: number | null; successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null };
+  perf?: { successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null };
   fpDetail?: { similarity: number | null; verdict: string | null; baseline: string | null; runs: number | null; at?: string | null; note?: string | null };
   checks?: number;
 }
@@ -166,7 +166,7 @@ export interface ProbePayload {
   /** 档案口径:最近一次 perf 批次;浏览器探测是实时的,这部分不是 */
   archived: null | {
     batchId: string; probedAt: string; model: string | null;
-    medianTtftMs: number | null; p95TtftMs: number | null;
+    medianTtftMs: number | null;
     successRate: number | null; timeoutRate: number | null;
     bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; rounds: ProbeRound[];
   };
@@ -201,7 +201,7 @@ function probePayload(site: string, baseUrl: string | undefined): ProbePayload |
     origin, endpoint,
     archived: {
       batchId: row.id, probedAt: row.started_at, model: sm.model ?? null,
-      medianTtftMs: sm.medianTtftMs ?? null, p95TtftMs: sm.p95TtftMs ?? null,
+      medianTtftMs: sm.medianTtftMs ?? null,
       successRate: sm.successRate ?? null, timeoutRate: sm.timeoutRate ?? null,
       bufferedRate: streamDisplayRate(sm), streamVerdict: sm.streamVerdict ?? null, streamCheck: sm.streamCheck ?? null, iters: sm.iters ?? null, rounds,
     },
@@ -621,6 +621,22 @@ export function calibOf(site: string): { factor: number; at: string; models: str
   return out;
 }
 
+/** 千问AI平台定价页(platform.qianwenai.com)官方价第二来源,单位元/百万 Token。
+ * 仅作「国产模型官方锚」的覆盖源:命中 canon 的模型改用它的标价(CNY),不再乘汇率。
+ * 文件缺失或损坏时返回空 Map —— 退化回 OpenRouter 美元锚,不影响其余模型。 */
+function loadQianwenOfficial(): Map<string, { input: number; output: number; cacheRead: number | null }> {
+  const m = new Map<string, { input: number; output: number; cacheRead: number | null }>();
+  const file = path.join(PROBE_ROOT, "store", "manual-imports", "qianwen-official-prices.json");
+  if (!fs.existsSync(file)) return m;
+  try {
+    const data = JSON.parse(fs.readFileSync(file, "utf8")) as Record<string, { in: number; out: number; cr: number | null }>;
+    for (const [canon, v] of Object.entries(data)) {
+      if (v && isFinite(v.in) && isFinite(v.out)) m.set(canon, { input: v.in, output: v.out, cacheRead: v.cr == null ? null : v.cr });
+    }
+  } catch { /* 退化回 OpenRouter 锚 */ }
+  return m;
+}
+
 export function buildCompare(sites: string[], injectOf: (site: string) => number | null): CompareTab[] {
   const d = getDb();
   const snap = (site: string): Array<{ model: string; input: number; output: number; cacheRead: number | null; group: string | null; groupKind?: string | null; grpRatio?: number | null; base?: { input: number; output: number; cacheRead: number | null } | null; groups?: Array<{ group: string; ratio: number; input: number; output: number; cacheRead: number | null }> }> => {
@@ -633,6 +649,11 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
    * (claude-sonnet-5-5)、thinkai 的 deepseek-v4-1-flash 等在此收敛到同一 canon */
   const offMap = new Map<string, any>();
   for (const m of snap("openrouter")) { const c = matchCanon(m.model); if (c && !offMap.has(c.canon)) offMap.set(c.canon, m); }
+  /* 国产官方价第二来源:千问AI平台定价页(platform.qianwenai.com)。
+   * 该页文本大模型表列出 Qwen 全系与 DeepSeek 转售价,单位元/百万 Token。
+   * 用户决定:该站列出的国产模型一律以它的标价作官方锚(含 DeepSeek 转售价),接受「对比官方价」实为「对比该站标价」的口径。
+   * 仅对命中该表的模型覆盖 OpenRouter 美元锚,并标记 CNY(不再乘汇率)。 */
+  const qwMap = loadQianwenOfficial();
 
   /* 逐站预算:源货币、站方声明的充值比例、实扣校准因子(仅用于验证,不改价格) */
   const cfgCache = loadSiteConfigs();
@@ -655,14 +676,16 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
       if (!entry) continue;                     // 不在 17 模型登记表 → 不进比价(裁掉旧代 gpt-5.5/claude-opus-5/glm-5.2 与派生名)
       /* 因子只作用于验证批次实测覆盖的模型:站方对不同模型可配不同倍率组,把 GPT 轮次的因子外推到 deepseek 行是错的 */
       const calForModel = cal && (cal.models === null || cal.models.includes(entry.canon)) ? cal : null;
-      const off = offMap.get(entry.canon);
+      const qw = qwMap.get(entry.canon);
+      const off = qw ?? offMap.get(entry.canon);
       if (!off) continue;                        // 无官方锚,不进比价
+      const offCur = qw ? "CNY" : (curOf("openrouter") ?? "USD");
       if (seen.has(entry.canon)) continue;
       seen.add(entry.canon);
       const key = entry.canon;
       let tab = byModel.get(key);
       if (!tab) {
-        tab = { key, name: entry.disp, family: entry.fam, official: { in: off.input, out: off.output, cr: off.cacheRead ?? null }, rows: [] };
+        tab = { key, name: entry.disp, family: entry.fam, official: { in: off.input, out: off.output, cr: off.cacheRead ?? null }, officialCur: offCur, rows: [] };
         byModel.set(key, tab);
       }
       /** 到手价严格三因子:官方价格(base,$/M) × 倍率(组倍率) × 充值比例。
@@ -691,8 +714,9 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
         const lower = m.groups.filter(g => g.group !== finalGroup && g.input < quotaIn - 1e-9);
         if (lower.length) {
           const min = lower.reduce((a, b) => (a.input <= b.input ? a : b));
-          // 特价组到手 = 官方价 × 该组倍率 × 充值比例(与主口径同公式,只换倍率)
-          special = { group: min.group, ratio: min.ratio, inP: r2(min.input), outP: r2(min.output), effIn: (rc === "USD" && rn != null) ? r2(min.input * rn) : null };
+          // 特价组到手 = 官方价 × 该组倍率 × 充值比例(与主口径同公式,只换倍率);
+          // 站方直接公示人民币单价时(heyroute),页面价即到手价,不碰充值比例
+          special = { group: min.group, ratio: min.ratio, inP: r2(min.input), outP: r2(min.output), effIn: rc === "CNY" ? r2(min.input) : (rc === "USD" && rn != null) ? r2(min.input * rn) : null };
         }
       }
       /* 实扣验证:标价公式算出的应扣与真金白银一致吗(±5%) */
@@ -730,14 +754,19 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
    * OpenRouter / new-api 系是 USD,智谱官方定价页是 CNY —— 对 CNY 再乘一次汇率会把 ¥2/M 报成 ¥14.2/M。
    */
   for (const t of tabs) {
-    t.officialCur = curOf("openrouter") ?? "USD";   // 官方锚保持美元原价(真美元现金支付)
     for (const r of t.rows) {
       const rc = curOf(r.site), rn = ratioOf(r.site);
-      /** 到手价 = 额度价(= 官方价 × 倍率) × 充值比例。比例只能由站方声明;未声明留 null,前端如实显示「无法折算」。 */
+      /** 到手价 = 额度价(= 官方价 × 倍率) × 充值比例。比例只能由站方声明;未声明留 null,前端如实显示「无法折算」。
+       *  例外:站方价格页直接公示人民币单价(heyroute,¥ CNY 视图)—— 那个数就是用户真花的钱,
+       *  再乘充值比例(¥0.25/$1)会把网页明写的 ¥2.80/M 改小 4 倍。 */
       if (rn !== null && rc === "USD") {
         r.ratio = rn;
         r.effIn = r2((r.inP as number) * rn); r.effOut = r2((r.outP as number) * rn);
         r.effCr = r.cacheP == null ? null : r2((r.cacheP as number) * rn);
+      } else if (rc === "CNY") {
+        r.ratio = null;
+        r.effIn = r2(r.inP as number); r.effOut = r2(r.outP as number);
+        r.effCr = r.cacheP == null ? null : r2(r.cacheP as number);
       } else { r.ratio = null; }
       r.src = `${rc ?? "USD"}`;
     }
@@ -822,15 +851,15 @@ function slaSeries(site: string, rule: "up" | "alive" = "up"): Array<{ h: string
   return out;
 }
 
-/** 流式探针的逐轮明细与 P95(行内「延迟·口径」与链路质检用) */
-function perfDetail(site: string): { p95: number | null; successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null } {
+/** 流式探针逐轮明细(行内「延迟·口径」与链路质检用;首字延迟口径统一为 P50 中位数,不取 P95,2026-10-22) */
+function perfDetail(site: string): { successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null } {
   const row = getDb().prepare(`SELECT started_at, summary FROM batches WHERE site=? AND task='perf' ORDER BY started_at DESC LIMIT 1`)
     .get(site) as { started_at: string; summary: string | null } | undefined;
-  const empty = { p95: null, successRate: null, timeoutRate: null, bufferedRate: null, streamVerdict: null, streamCheck: null, iters: null, model: null, at: null };
+  const empty = { successRate: null, timeoutRate: null, bufferedRate: null, streamVerdict: null, streamCheck: null, iters: null, model: null, at: null };
   if (!row?.summary) return empty;
   try {
     const s = JSON.parse(row.summary) as any;
-    return { p95: s.p95TtftMs ?? null, successRate: s.successRate ?? null, timeoutRate: s.timeoutRate ?? null, bufferedRate: s.bufferedRate ?? null, streamVerdict: s.streamVerdict ?? null, streamCheck: s.streamCheck ?? null, iters: s.iters ?? null, model: s.model ?? null, at: row.started_at };
+    return { successRate: s.successRate ?? null, timeoutRate: s.timeoutRate ?? null, bufferedRate: s.bufferedRate ?? null, streamVerdict: s.streamVerdict ?? null, streamCheck: s.streamCheck ?? null, iters: s.iters ?? null, model: s.model ?? null, at: row.started_at };
   } catch { return empty; }
 }
 
@@ -973,9 +1002,12 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
       r.fpDetail = fpDetail(s);
       r.checks = siteHealth(s).checks;
       r.commerce = commerceInfo(cfg);
-      /** 到手价只在「标价按美元额度记账 + 充值比例已声明」两个条件都满足时才算。
-       *  缺一个就留 null,前端显示「充值比例未声明,无法折算」——  assumption 1:1 会让价格差 7 倍。 */
-      const rn = r.commerce?.ratioNum ?? null;
+      /** 到手价只在「标价按美元额度记账 + 充值比例已声明 + 该比例确实作用于标价」三条件都满足时才算。
+       *  缺一个就留 null,前端显示「充值比例未声明,无法折算」——  assumption 1:1 会让价格差 7 倍。
+       *  ratio_applies_to_price: false(如 heyroute)表示站方价格页直接公示人民币单价,
+       *  充值比例只是买额度的成本,再乘一次会把网页明写的 ¥2.80/M 改小 4 倍。 */
+      const ratioApplies = (cfg as any)?.commerce?.ratio_applies_to_price !== false;
+      const rn = ratioApplies ? (r.commerce?.ratioNum ?? null) : null;
       if (rn !== null && r.priceBase !== null && r.priceBase !== undefined) {
         r.effRatio = rn;
         r.effPrice = Math.round(r.priceBase * rn * 100) / 100;
@@ -1003,6 +1035,7 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
     compare: {
       unit: "站方公示价 /M tokens(new-api 系为美元额度价,智谱为人民币)",
       fx: "到手价 = 站方额度价 × 站方声明的充值比例;比例未声明的站不给人民币价。"
+        + " 站方价格页直接公示人民币单价的站(如 heyroute 的 ¥ CNY 视图)以页面价为准,不乘比例。"
         + " 官方直连(OpenRouter)按美元现金支付,参考汇率 1 美元 = ¥" + fx.usdCny + "(" + fx.asOf + ")仅适用于它",
       officialAnchor: "openrouter",
       note: "仅收录有官方锚(OpenRouter)的模型;价格为各站最新价格快照,计费列为该站最近一次逐笔对账实测。",

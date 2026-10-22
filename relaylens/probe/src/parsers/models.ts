@@ -24,6 +24,8 @@ export const CANON: CanonModel[] = [
   { canon: "grok-4-7",          disp: "Grok 4.7",           fam: "xAI" },
   { canon: "deepseek-v4-pro",       disp: "DeepSeek V4 Pro",       fam: "DeepSeek" },
   { canon: "deepseek-v4-1-flash",   disp: "DeepSeek V4.1 Flash",   fam: "DeepSeek" },
+  { canon: "qwen3-7-max",           disp: "Qwen3.7 Max",          fam: "Qwen" },
+  { canon: "qwen3-8-max",           disp: "Qwen3.8 Max",          fam: "Qwen" },
   { canon: "kimi-k3",           disp: "Kimi K3",            fam: "Moonshot" },
   { canon: "glm-5-3",           disp: "GLM-5.3",            fam: "Zhipu" },
 ];

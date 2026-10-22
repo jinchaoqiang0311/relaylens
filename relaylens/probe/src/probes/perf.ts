@@ -4,7 +4,7 @@
  * 中位数 21s 被当成 TTFT → PF 恒为 0 分,是测量缺陷不是站点问题。
  *
  * 方法:SSE 流式请求 + 固定极短 prompt,测「首个内容 token 到达时间」= 真 TTFT。
- *      同一模型重复 N 次取中位数/P95,顺带产出超时率(此前未持久化的 D3 指标)。
+ *      同一模型重复 N 次取中位数(P50),顺带产出超时率(此前未持久化的 D3 指标)。
  * 公平性:跨站比较必须用同一 --model(两站共有的模型,默认 gpt-5.5)。
  */
 import type { SiteConfig } from "../../../shared/types.js";
@@ -91,7 +91,7 @@ export interface PerfResult {
    *  供分模型锚点校准——推理首 token 含思考调度,与普通模型混测互污染)。 */
   category?: "normal" | "reasoning";
   samples: PerfSample[];
-  medianTtftMs: number | null; p95TtftMs: number | null;
+  medianTtftMs: number | null;
   successRate: number | null; timeoutRate: number | null;
   medianThroughput: number | null;
   /** 伪流式样本占比%(仅统计输出≥30 token 的可判样本;无资格样本时为 null) */
@@ -291,11 +291,6 @@ function median(xs: number[]): number | null {
   const s = [...xs].sort((a, b) => a - b);
   return s[Math.floor(s.length / 2)];
 }
-function pctl(xs: number[], q: number): number | null {
-  if (!xs.length) return null;
-  const s = [...xs].sort((a, b) => a - b);
-  return s[Math.min(s.length - 1, Math.ceil(q / 100 * s.length) - 1)];
-}
 
 export async function runPerf(
   site: SiteConfig, model: string,
@@ -313,7 +308,7 @@ export async function runPerf(
     task: "perf", site: site.name, model, batchId: nextBatchId(),
     category,
     startedAt: new Date().toISOString(), finishedAt: "", samples: [],
-    medianTtftMs: null, p95TtftMs: null, successRate: null, timeoutRate: null,
+    medianTtftMs: null, successRate: null, timeoutRate: null,
     medianThroughput: null, bufferedRate: null, streamCheck: null, iters, timeoutMs, notes,
   };
   if (!key) { notes.push("缺少 API key,无法测延迟"); result.finishedAt = new Date().toISOString(); return result; }
@@ -335,7 +330,6 @@ export async function runPerf(
   const ttfts = ok.map(s => s.ttftMs!).filter(Number.isFinite);
   const tps = ok.map(s => s.throughputTps!).filter(x => x && Number.isFinite(x));
   result.medianTtftMs = median(ttfts);
-  result.p95TtftMs = pctl(ttfts, 95);
   result.medianThroughput = median(tps);
   // 伪流式率只统计「输出够长、可判真伪」的样本;短答案(2 字)一律不算
   const judgeable = ok.filter(s => s.buffered !== null && s.buffered !== undefined);
@@ -369,7 +363,7 @@ export function persistPerf(res: PerfResult): void {
   const d = getDb();
   d.prepare(`INSERT INTO batches(id, site, task, started_at, ok, raw_path, summary) VALUES(?,?,?,?,?,?,?)`)
     .run(res.batchId, res.site, task, res.startedAt, batch.ok ? 1 : 0, rawPath,
-      JSON.stringify({ perf: true, category: res.category ?? "normal", model: res.model, medianTtftMs: res.medianTtftMs, p95TtftMs: res.p95TtftMs, successRate: res.successRate, timeoutRate: res.timeoutRate, medianThroughput: res.medianThroughput, bufferedRate: res.bufferedRate, streamVerdict: res.streamCheck?.verdict ?? null, streamCheck: res.streamCheck, iters: res.iters }));
+      JSON.stringify({ perf: true, category: res.category ?? "normal", model: res.model, medianTtftMs: res.medianTtftMs, successRate: res.successRate, timeoutRate: res.timeoutRate, medianThroughput: res.medianThroughput, bufferedRate: res.bufferedRate, streamVerdict: res.streamCheck?.verdict ?? null, streamCheck: res.streamCheck, iters: res.iters }));
   const ins = d.prepare(`INSERT OR REPLACE INTO rounds(batch_id, seq, model, in_tok, cached_tok, out_tok, should_cost, actual_cost, ttft_ms) VALUES(?,?,?,?,?,?,?,?,?)`);
   for (const s of res.samples) ins.run(res.batchId, s.seq, res.model, s.inTok, null, s.outTok, null, null, s.ttftMs);
   if ((res.timeoutRate ?? 0) > 20) logEvent(res.site, "high_timeout_rate", { batchId: res.batchId, timeoutRate: res.timeoutRate, model: res.model });
