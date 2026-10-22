@@ -982,6 +982,14 @@ function buildReferenceSite(site: string, cfg: any): ReferenceSite | null {
   };
 }
 
+/** 剥掉数据字符串里的 emoji/装饰符号(站点分组名等爬取字段常带 🔥🚀 等),保持界面简洁;仅清字符串值,不动键名/数字。 */
+function stripEmojiDeep(v: any): any {
+  if (typeof v === "string") return v.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE00}-\u{FE0F}]/gu, "").replace(/[ \t]{2,}/g, " ").replace(/[ \t]+([,;:、，。）)】」])/g, "$1").trim();
+  if (Array.isArray(v)) return v.map(stripEmojiDeep);
+  if (v && typeof v === "object") { const o: any = {}; for (const k of Object.keys(v)) o[k] = stripEmojiDeep((v as any)[k]); return o; }
+  return v;
+}
+
 export function syncData(sites: string[], opts: { inject?: Record<string, number>; reference?: string[] } = {}): string {
   const promo = loadPromo();
   /** 注入开销:显式覆盖(沙盘)→ 最近一次 tokens 批次实测 → null(未测,前端显示「未测」) */
@@ -1086,6 +1094,6 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
   };
   fs.mkdirSync(DATA_DIR, { recursive: true });
   const file = path.join(DATA_DIR, "sites.json");
-  fs.writeFileSync(file, JSON.stringify(out, null, 2), "utf8");
+  fs.writeFileSync(file, JSON.stringify(stripEmojiDeep(out), null, 2), "utf8");
   return file;
 }
