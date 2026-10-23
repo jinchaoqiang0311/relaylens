@@ -527,7 +527,10 @@ document.querySelectorAll("[data-f]").forEach(function(c){
  fillStats();
  });
 });
+/* ⚠ 初始化也要调:统计带不随筛选变化,只算一次即可。漏掉这一行的话,
+   首屏五个数永远是「—」,得点一下筛选按钮才出来 —— 2026-10-23 实际漏过一次。 */
 render();
+fillStats();
 
 /* ============ 举报表单:GitHub Issue 通道(无后端,公开可追踪) ============ */
 var RL_ISSUE_URL="https://github.com/jinchaoqiang0311/relaylens/issues/new";
