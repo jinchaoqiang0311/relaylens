@@ -10,8 +10,8 @@ import { getDb, nextBatchId, saveRaw, recordBatch, logEvent } from "../store.js"
 const TIMEOUT_MS = 90_000;
 const UA = "RelayLens-Probe/0.1";
 
-/** 生成唯一中文填充文本(数字打散避免缓存与压缩) */
-function cjkText(chars: number, salt: number): string {
+/** 生成唯一中文填充文本(数字打散避免缓存与压缩)。供 context 探针复用,别各写一份生成器 */
+export function cjkText(chars: number, salt: number): string {
   const pool = "系统架构分布式一致性可用性分区容错工程实践数据分片哈希范围列表热点降级策略容量吞吐延迟抖动监控告警链路追踪熔断限流灰度发布回滚配置服务治理注册发现";
   let s = "";
   let i = salt;

@@ -6,6 +6,7 @@
 import { getDb, siteHealth } from "./store.js";
 import { meteringConsistency, loadEntries } from "./reconcile.js";
 import { latestInjection, latestInjectionDetail } from "./probes/tokenprobe.js";
+import { timeBucket } from "./probes/perf.js";
 import type { SiteMetrics } from "./score.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -72,7 +73,7 @@ export function assembleMetrics(site: string, opts: { inject?: number } = {}): S
   let SR: SiteMetrics["SR"] = { bufferedRate: null, samples: 0 };
   if (perfRow?.summary) {
     try {
-      const p = JSON.parse(perfRow.summary) as { timeoutRate: number | null; bufferedRate: number | null; streamVerdict?: "stream" | "buffered" | "mixed" | "unknown" | null; streamCheck?: { bufferedPct?: number | null } | null; iters?: number };
+      const p = JSON.parse(perfRow.summary) as { timeoutRate: number | null; bufferedRate: number | null; streamVerdict?: "stream" | "buffered" | "mixed" | "unknown" | null; streamCheck?: { bufferedPct?: number | null; trials?: number } | null; iters?: number };
       timeoutPct = p.timeoutRate ?? null;
       // 流式真伪:优先取长输出专项(3 次)的结论;没有专项的老批次退回短循环 bufferedRate
       const verdictRate = p.streamVerdict === "stream" ? 0
@@ -80,17 +81,37 @@ export function assembleMetrics(site: string, opts: { inject?: number } = {}): S
           : p.streamVerdict === "mixed" ? (p.streamCheck?.bufferedPct ?? null)
             : null;
       const rate = verdictRate !== null ? verdictRate : (p.bufferedRate ?? null);
-      SR = { bufferedRate: rate, samples: rate !== null ? 1 : 0 };
+      /** 样本数:流式真伪专项每批跑 STREAM_CHECK_TRIALS(3) 次长输出请求,有结论即有 3 个真实样本
+       *  (此前恒记 1,而 score.ts 要求 ≥3 → SR 桶永远不计分,覆盖率被结构性压低,L2 永不可达);
+       *  退回短循环 bufferedRate 的老批次只有 1 个可判观测 —— 保持 1,宁保守不注水。 */
+      const scTrials = p.streamCheck && typeof p.streamCheck.trials === "number" ? p.streamCheck.trials : 0;
+      SR = { bufferedRate: rate, samples: verdictRate !== null && scTrials > 0 ? scTrials : (rate !== null ? 1 : 0) };
     } catch { /* */ }
   }
   const ST: SiteMetrics["ST"] = { avail: h.avail7d, timeoutPct, checks: h.checks, spanMinutes };
 
-  // PF:专用 perf 探针的流式真 TTFT 中位数(不再借用 billing 长请求耗时)
-  const tts = (d.prepare(`
-    SELECT r.ttft_ms FROM rounds r JOIN batches b ON b.id=r.batch_id
+  // PF:近 7 天 perf 轮按忙/闲桶(本地 9–18 点=work)分别取中位数,PF = 两桶中位数的均值(2026-10-22 用户拍板,由悲观较差值改均值)。
+  // 之前取"最近一批"中位数 —— 同一站闲时 2.5s / 高峰 12s,采样时点决定分数,波动完全由运气主导。
+  // 均值 = 忙/闲两个常用时段的平均承诺;单桶缺样本时用另一桶并标 partialBucket(前端如实标注,不假装完整)。
+  const perfRounds = d.prepare(`
+    SELECT r.ttft_ms, b.started_at FROM rounds r JOIN batches b ON b.id=r.batch_id
     WHERE b.site=? AND b.task='perf' AND r.ttft_ms>0 AND r.ttft_ms<30000
-      AND b.started_at = (SELECT MAX(b2.started_at) FROM batches b2 WHERE b2.site=? AND b2.task='perf')`).all(site, site) as Array<{ ttft_ms: number }>).map(r => r.ttft_ms).sort((a, b) => a - b);
-  const PF: SiteMetrics["PF"] = { ttftMs: tts.length ? tts[Math.floor(tts.length / 2)] : null, samples: tts.length };
+      AND b.started_at >= datetime('now','-7 days')`).all(site) as Array<{ ttft_ms: number; started_at: string }>;
+  const buckets: Record<"work" | "off", number[]> = { work: [], off: [] };
+  for (const r of perfRounds) buckets[timeBucket(r.started_at)].push(r.ttft_ms);
+  const bucketMedian = (xs: number[]): number | null =>
+    xs.length ? [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)] : null;
+  const workMs = bucketMedian(buckets.work);
+  const offMs = bucketMedian(buckets.off);
+  let pfMs: number | null = null;
+  let partialBucket: "work" | "off" | null = null;
+  if (workMs !== null && offMs !== null) pfMs = Math.round((workMs + offMs) / 2);
+  else if (workMs !== null) { pfMs = workMs; partialBucket = "work"; }
+  else if (offMs !== null) { pfMs = offMs; partialBucket = "off"; }
+  const PF: SiteMetrics["PF"] = {
+    ttftMs: pfMs, samples: buckets.work.length + buckets.off.length,
+    workMs, offMs, partialBucket,
+  };
 
   // EP:站点价 × 官方锚(openrouter 快照),按裸模型名 join
   const siteSnap = latestPriceSnap(site);

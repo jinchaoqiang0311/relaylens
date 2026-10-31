@@ -30,8 +30,16 @@ function runPass(payload, search) {
   ["all", "code", "office", "ecom", "drama", "image", "biz", "risk"].forEach(s => {
     tabs[s] = { _scene: s, classList: { add() {}, remove() {} }, addEventListener() {}, getAttribute: k => k === "data-scene" ? s : "" };
   });
+  /* 三态 Tab(PRD §2):记录 click 监听,测试可驱动切换 L2/L1/L0 */
+  const tierTabs = {};
+  ["L2", "L1", "L0"].forEach(t => {
+    const listeners = [];
+    tierTabs[t] = { _tier: t, classList: { add() {}, remove() {} },
+      addEventListener(ev, f) { if (ev === "click") listeners.push(f); },
+      getAttribute: k => k === "data-tier" ? t : "", _click: () => listeners.forEach(f => f()) };
+  });
   const doc = { getElementById: el,
-    querySelectorAll: sel => sel.includes("sceneTabs") ? Object.values(tabs) : [],
+    querySelectorAll: sel => sel.includes("sceneTabs") ? Object.values(tabs) : sel.includes("tierTabs") ? Object.values(tierTabs) : [],
     querySelector: s => { const m = /data-scene="([a-z]+)"/.exec(s); return m ? tabs[m[1]] : el(String(s).replace(/\W/g, "_")); },
     createElement: () => mkEl("_c" + Math.random()), addEventListener() {}, title: "" };
   const ctx = { document: doc, location: { search: search || "", href: "" }, navigator: { clipboard: null },
@@ -44,7 +52,8 @@ function runPass(payload, search) {
   vm.runInContext(script, vm.createContext(ctx));
   const rowsOf = () => (elems["tbody"] ? elems["tbody"].children : []).map(c => String(c._innerHTML));
   const cardsOf = () => (elems["mCards"] ? elems["mCards"].children : []).map(c => String(c._innerHTML));
-  return { elems, pending, rowsOf, cardsOf, drain: () => pending.splice(0).forEach(f => { try { f(); } catch (e) { console.log("  ⚠ 定时器回调抛错:" + e.message); } }) };
+  return { elems, pending, rowsOf, cardsOf, drain: () => pending.splice(0).forEach(f => { try { f(); } catch (e) { console.log("  ⚠ 定时器回调抛错:" + e.message); } }),
+    clickTier: t => tierTabs[t]._click() };
 }
 const tick = () => new Promise(r => setImmediate(() => setImmediate(r)));
 const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
@@ -63,27 +72,89 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
   all &= check("兜底态脚注标明「内置快照·非实时」而不是装作实时数据",
     /2 行中转站/.test(footA) && /页面内置快照/.test(footA) && /非实时/.test(footA), footA.slice(0, 70));
 
-  /* ============ B. 真实数据态 ============ */
-  console.log("\n【B 真实数据态】");
-  const B = runPass(SITES);
+  /* ============ B0. 三态默认态(真实数据,不强制分层) ============
+     PRD §2:默认落在实测榜;L1 站不给分只给信号卡;实测榜<5 行时观察榜预告条出现 */
+  console.log("\n【B0 三态默认态(真实数据)】");
+  const nL2 = SITES.realSites.filter(r => r.level !== "passive" && ((r.tier && r.tier.all) || "L2") === "L2").length;
+  const nL1 = SITES.realSites.filter(r => r.level !== "passive" && r.tier && r.tier.all === "L1").length;
+  const nL0 = SITES.realSites.filter(r => r.level === "passive").length;
+  const B0 = runPass(SITES);
+  await tick(); B0.drain();
+  const b0r = B0.rowsOf();
+  const b0relay = b0r.filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r)).length;
+  all &= check("默认落在实测榜:中转行 = L2 站数", b0relay === nL2, `${b0relay} 行 vs L2=${nL2}`);
+  all &= check("L1 站绝不在默认实测榜出现(不给分是铁律)", !/观察中|已验证 \d+\/\d+ 项/.test(b0r.join("")));
+  const ws = B0.elems["watchStrip"] ? B0.elems["watchStrip"]._innerHTML : "";
+  /* 预告条只在「实测榜不足 5 行 且 存在观察榜站」时出现;没有观察站时正确地不渲染 */
+  const wsExpected = nL1 > 0 && nL2 < 5;
+  all &= check(wsExpected ? "实测榜<5 行且有观察站:预告条出现并列出完成度" : "无观察站或实测榜充足:预告条不出现",
+    wsExpected ? (/正在攒数据/.test(ws) && /\d+%/.test(ws)) : ws === "");
+  all &= check("三态 Tab 计数与数据同源",
+    String(B0.elems["cntL2"].textContent) === String(nL2) && String(B0.elems["cntL1"].textContent) === String(nL1) && String(B0.elems["cntL0"].textContent) === String(nL0),
+    `L2=${B0.elems["cntL2"].textContent}/L1=${B0.elems["cntL1"].textContent}/L0=${B0.elems["cntL0"].textContent} vs ${nL2}/${nL1}/${nL0}`);
+  B0.clickTier("L1");
+  const b0l1 = B0.rowsOf().filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r));
+  all &= check("观察榜 Tab:每行 L1 站都渲染信号卡(观察中,评分列无分数大字;其余列的 ok/bad 大字不受限)",
+    b0l1.length === nL1 && b0l1.every(r => /观察中/.test(r) && /已验证 \d+\/\d+ 项/.test(r)) &&
+    b0l1.every(r => !/rc-big s-/.test(r)),
+    `${b0l1.length} 行`);
+  if (nL1 > 0) {
+    const l1row = rowWith(b0l1, />aicost<|>aixoras</);
+    all &= check("信号卡样本进度 = 真实 n/need 且给出差距", /\d+\/\d+/.test(l1row) && /距出分还差/.test(l1row));
+  }
+  B0.clickTier("L0");
+  const b0l0 = B0.rowsOf().filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r));
+  all &= check("监测中 Tab:行数 = passive 站数,徽章为监测中",
+    b0l0.length === nL0 && b0l0.every(r => /bf-passive/.test(r) && !/bf-real|bf-l1/.test(r)), `${b0l0.length} 行`);
+
+  /* ============ B. 真实数据态(L2 行级断言,forceL2 保证 L2 分支可测) ============ */
+  console.log("\n【B 真实数据态(L2 视图)】");
+  const forceL2 = p => { const c = JSON.parse(JSON.stringify(p)); c.realSites.forEach(r => { if (r.tier) r.tier.all = "L2"; }); return c; };
+  const B = runPass(forceL2(SITES));
   await tick(); B.drain();
   const br = B.rowsOf();
   const relay = br.filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r)).length;
   const anchor = br.filter(r => /rk-anchor/.test(r)).length;
   const sep = br.filter(r => /以下为参照系/.test(r)).length;
-  all &= check("中转行 = realSites 数", relay === SITES.realSites.length, `${relay} vs ${SITES.realSites.length}`);
+  all &= check("实测榜中转行 = 非 passive 站数(已强制 L2)", relay === SITES.realSites.filter(x => x.level !== "passive").length, `${relay} 行`);
   all &= check("参照行 = referenceSites 数", anchor === SITES.referenceSites.length, `${anchor} vs ${SITES.referenceSites.length}`);
   all &= check("参照系前有一条分隔说明", sep === 1);
+  /* 场景权重文案必须与 weights.json 同源(2026-10-23 纠偏):
+     此前 ranking.html 手写了一份公式,和 weights.json 完全对不上,还写出了「长上下文完整率 30%」
+     这种代码里根本不存在的指标。现在只许从 payload.meta.scenes 渲染,这里逐字比对。 */
+  {
+    const sw = (SITES.meta.scenes || {}).all, lab = SITES.meta.metricLabels || {};
+    const wantNote = sw && sw.weights
+      ? "<b>综合榜</b> = " + Object.keys(sw.weights).map(k => (lab[k] || k) + " " + sw.weights[k] + "%").join(" + ")
+      : "";
+    const noteHtml = (B.elems["tabNote"] || {})._innerHTML || "";
+    all &= check("tabNote 权重与 meta.scenes 同源(不许手写公式)",
+      !!wantNote && noteHtml.includes(wantNote) && noteHtml.includes(String(SITES.meta.weightsVersion)),
+      noteHtml.replace(/<[^>]+>/g, "").slice(0, 90));
+  }
   const ax = rowWith(br, />aixoras</), aic = rowWith(br, />aicost</);
   all &= check("aixoras 亮出微信+支付宝两枚 logo", /aria-label="微信支付"/.test(ax) && /aria-label="支付宝"/.test(ax));
+  const axAt = (SITES.realSites.find(r => r.name === "aixoras") || {}).commerce?.at;   // 核实日期随 commerce.verified 变,从 payload 推导
   all &= check("aixoras logo 悬浮标人工核实+日期且不自称站方声明",
-    /人工核实\(2026-10-02\)/.test((ax.match(/<div class="paylogos"[^>]*>/) || [""])[0]) &&
+    axAt && new RegExp("人工核实\\(" + axAt + "\\)").test((ax.match(/<div class="paylogos"[^>]*>/) || [""])[0]) &&
     !/站方入驻声明/.test((ax.match(/<div class="paylogos"[^>]*>/) || [""])[0]) && /pay-src/.test(ax));
   all &= check("aicost 卡密降级为文字芯片(不硬凑品牌 logo)",
     /class="paylogos"[\s\S]{0,300}?rc-chip[^>]*>卡密</.test(aic) && !/aria-label="微信支付"/.test(aic));
-  all &= check("真实数据:72h 走势带样本格数(6h/格,不再写死 24 小时)", /\d+\/12 段有样本\(6h\/格\)/.test(ax));
+  all &= check("真实数据:72h 走势如实标注样本覆盖(2026-10-30 起样本说明悬浮在走势图 title 上,不足则明说)",
+    /段有样本,区间 \d+–\d+%/.test(ax) || /走势样本不足\(\d+\/12 段\)/.test(ax));
   all &= check("走势列标题已随采样密度改口径", /72H 可用率 \/ 趋势/.test(html) && !/24H 可用率/.test(html));
-  all &= check("真实数据:P95 / 逐笔 / 容差口径", /P95 \d+(\.\d)?s/.test(ax) && /逐笔 \d+ 笔/.test(ax) && /max\(2 quota, 1%\)/.test(ax));
+  /* 2026-10-22 起 PF 只留 P50 中位数(P95 已移除,见 f238257),并展示忙/闲双桶值 ——
+     期望串按 payload 现算(与页面 ttftDual 同构),不写死数字;同时守住「均值口径」的页面披露。 */
+  const axS = SITES.realSites.find(r => r.name === "aixoras") || {};
+  const fmtB = ms => ms == null ? null : (ms < 1000 ? Math.round(ms) + "ms" : (ms / 1000).toFixed(1) + "s");
+  const wantDual = (axS.ttftWorkMs == null && axS.ttftOffMs == null) ? null
+    : (axS.ttftOffMs == null ? "忙 " + fmtB(axS.ttftWorkMs) + " · 闲未测"
+      : axS.ttftWorkMs == null ? "忙未测 · 闲 " + fmtB(axS.ttftOffMs)
+        : "忙 " + fmtB(axS.ttftWorkMs) + " · 闲 " + fmtB(axS.ttftOffMs));
+  all &= check("真实数据:首字延迟忙/闲双桶 · 逐笔芯片(容差口径改为悬停可见,2026-10-30 列表去解释文字)",
+    (!wantDual || ax.includes(wantDual)) && /max\(2 quota, 1%\)/.test(ax) && !/>逐笔判定 </.test(ax),
+    wantDual || "无双桶样本");
+  all &= check("首字延迟列公示「忙/闲中位数均值」口径(P95 已下线)", /忙\/闲两时段中位数的均值/.test(ax));
   all &= check("真实数据:分组口径可见(分数仅代表实测分组)", /分数仅代表实测分组/.test(ax));
   const opTd = (ax.match(/<td class="rich"><div class="op-col">([\s\S]*?)<\/div><\/td>\s*$/) || ["", ""])[1]
     || (ax.slice(ax.lastIndexOf("op-col")) );
@@ -103,10 +174,19 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
     !!declared[0].priceModel && !!declared[0].priceGroup &&
     dRow.includes(declared[0].priceModel) && dRow.includes(declared[0].priceGroup),
     `${declared[0].priceModel} · ${declared[0].priceGroup}`);
-  const noPriceNoRatio = SITES.realSites.filter(r => r.price && r.effPrice == null);
-  all &= check("有标价但比例未声明的站明说「不给人民币价」(无此类站时校验代码分支)",
-    noPriceNoRatio.length ? noPriceNoRatio.every(r => /充值比例未声明 · 不给人民币价/.test(rowWith(br, new RegExp(">" + r.name + "<"))))
-      : /充值比例未声明 · 不给人民币价/.test(html));
+  /* 两种「未声明」必须分开判(2026-10-21 用户拍板):
+     CNY 公示价站(heyroute 价格页直接写 ¥ 单价)→ 页面上的 ¥ 就是到手价,说「不给人民币价」是自相矛盾的假话;
+     只给美元额度价又没声明比例的站 → 才说「不给人民币价」。未进入当前视图时用源码分支兜底。 */
+  const isCny = r => !!(r.priceSrc && r.priceSrc.src === "CNY");
+  const cnyDirect = SITES.realSites.filter(r => r.price && r.effPrice == null && isCny(r));
+  const usdNoRatio = SITES.realSites.filter(r => r.price && r.effPrice == null && !isCny(r));
+  const rowOrSrc = r => rowWith(br, new RegExp(">" + r.name + "<")) || html;
+  all &= check("CNY 公示价站明说「即到手价 · 不乘充值比例」(2026-10-30 起在价格大字悬停提示里,不在列表内)",
+    cnyDirect.length ? cnyDirect.every(r => /页面价即到手价/.test(rowOrSrc(r)))
+      : /页面价即到手价/.test(html), cnyDirect.map(r => r.name).join(","));
+  all &= check("有标价但比例未声明的站明说「不给人民币价」(悬停提示;无此类站时校验代码分支)",
+    usdNoRatio.length ? usdNoRatio.every(r => /未声明充值比例,不给人民币价/.test(rowOrSrc(r)))
+      : /未声明充值比例,不给人民币价/.test(html), usdNoRatio.map(r => r.name).join(","));
   all &= check("全表不出现按 1$=¥7.1 乘出来的假主价", !/¥(6\.39|12\.43|4\.97|53\.25|79\.88)/.test(br.join("")));
   const jq = rowWith(br, />jiuqingyun</);
   all &= check("不用充值比例做风险判断(比例风险标已撤,只看测得出的量)", !/⚠ 比例/.test(jq) && !/⚠ 比例/.test(html));
@@ -134,12 +214,19 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
     return td === (html.match(/<th[ >]/g) || []).length || /colspan=/.test(r);   // 参照系分隔行就是 colspan=10
   }));
   const footB = foot.replace(/<[^>]+>/g, "");
-  all &= check("脚注区分实测 / 监测中 / 参照系三类",
-    /2 行走过账单级逐笔实测/.test(footB) && /10 行监测中/.test(footB) && /另有 3 行官方\/聚合参照系/.test(footB), footB.slice(0, 100));
-  const wolf = rowWith(br, />WO</), passiveRow = wolf || rowWith(br, /监测中/);
+  const nBilling = SITES.realSites.filter(x => x.level !== "passive").length;
+  const nPassive = SITES.realSites.filter(x => x.level === "passive").length;
+  all &= check("脚注三态计数与 Tab 同源(实测榜/观察榜/监测中/参照系)",
+    new RegExp("实测榜 " + nBilling + " 行").test(footB) && new RegExp("监测中 " + nPassive + " 行").test(footB) &&
+    /另有 3 行官方\/聚合参照系/.test(footB), footB.slice(0, 110));
+  /* 监测中的站在 L0 Tab 里:切过去断言 */
+  B.clickTier("L0");
+  const brL0 = B.rowsOf();
+  const wolf = rowWith(brL0, />WO</), passiveRow = wolf || rowWith(brL0, /监测中/);
   all &= check("监测中的站:徽章写「监测中」且不谎称实测", /badge-flag bf-passive"[^>]*>监测中</.test(passiveRow) && !/badge-flag bf-real/.test(passiveRow));
   all &= check("监测中的站:计费测试列说人话,不出现「逐笔判定 未测 / 容差」账单行话",
     !/逐笔判定/.test(passiveRow) && !/容差 max/.test(passiveRow) && /未做账单级实测/.test(passiveRow));
+  B.clickTier("L2");   // 复位,后续演示模式断言在新 pass 里,互不影响
   const visible = html.replace(/\/\*[\s\S]*?\*\//g, "").replace(/<!--[\s\S]*?-->/g, "");
   all &= check("页面对外文案里没有写死的家数(注释除外)", !/18 家|47 家/.test(visible));
   /* 移动卡片也覆盖到参照行 */
@@ -150,9 +237,9 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
   const C = runPass(SITES, "?demo=1");
   await tick(); C.drain();
   const cr = C.rowsOf();
-  all &= check("演示模式补回 16 家虚构站(真实行 + 演示行并存)",
-    cr.filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r)).length === SITES.realSites.length + 16,
-    `${cr.filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r)).length} 行 vs ${SITES.realSites.length + 16}`);
+  all &= check("演示模式补回 16 家虚构站(L2 真实行 + 演示行并存)",
+    cr.filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r)).length === nL2 + 16,
+    `${cr.filter(r => /class="nm"/.test(r) && !/rk-anchor/.test(r)).length} 行 vs ${nL2 + 16}`);
   all &= check("演示横幅 class 点亮", C.elems["demoBanner"] && C.elems["demoBanner"].className === "on");
   const banner = (html.match(/id="demoBanner"[^>]*>([\s\S]*?)<\/div>/) || ["", ""])[1];
   all &= check("横幅明说这些站是虚构的、不可据此充值", /虚构/.test(banner) && /不要据此做任何充值决策/.test(banner));
@@ -167,6 +254,8 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
   WITHPAY.realSites.forEach((r, i) => { if (i === 0) r.commerce = { pay: "支付宝 / 微信 / USDT / 对公转账", ratio: "¥7.2 = 1 美元额度", minTopUp: "¥10", invoice: null, refund: null, src: "declared", at: "2026-10-01" }; });
   const D = runPass(WITHPAY);
   await tick(); D.drain();
+  const d0 = SITES.realSites[0];
+  D.clickTier(d0.level === "passive" ? "L0" : ((d0.tier && d0.tier.all) || "L2"));   // 切到 realSites[0] 实际所在层(它可能已升 L2)
   const dr = D.rowsOf();
   const withPay = rowWith(dr, /aria-label="支付宝"/);
   all &= check("声明后渲染微信+支付宝+USDT 三枚 SVG", /aria-label="微信支付"/.test(withPay) && /aria-label="USDT"/.test(withPay));
@@ -182,6 +271,13 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
     ["计费测试", "72H 可用率 / 趋势", "流式 · 首字延迟", "注入 · 指纹验真"].every(x => s.includes(x)) &&
     !["\>计费诚实 <span", "24H SLA", "24H 可用率", "\>延迟 · 流式 <span", "\>注入 · 指纹 <span"].some(x => s.includes(x)));
   t("不得存在「其他」整列", !/>其他<\/th>/.test(s));
+  /* 虚构指标名必须绝迹(注释除外):这些词曾出现在手写的场景公式里,但代码里没有对应探针/指标。
+     注释里保留这些词是为了给后来者解释"为什么不能这么写",不算对外文案。 */
+  const userText = s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/<!--[\s\S]*?-->/g, "");
+  t("无虚构指标名(长上下文完整率/缓存命中真实性/客户端兼容性/隐私条款)",
+    !/长上下文完整率|缓存命中真实性|客户端兼容性|隐私条款/.test(userText));
+  t("场景权重不由页面手写:tabNote 走 sceneNoteText + meta.scenes",
+    /function sceneNoteText/.test(s) && /payload\.meta\.scenes|m\.scenes/.test(s) && !/var sceneNote=\{/.test(s));
   t("商业信息独立成列 + 芯片仍服务移动卡片", /commerceCell\(s\)/.test(s) && /commerceChips\(s\)/.test(s));
   t("详情页 basic 读 commerce 并标未声明",
     /det\.commerce/.test(fs.readFileSync("relaylens-home/detail.html", "utf8")) &&
@@ -193,6 +289,9 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
   t("测试详情按钮不复用 .sp-btn 类(避免被测速脚本捕获阶段吞掉)", /class=\"op-btn op-detail\"/.test(s) && !/class=\"sp-btn op-detail\"/.test(s));
   t("详情为直接跳转(抽屉已回退)", !/RLDrawer|dr-scrim|详情抽屉/.test(s) && /location\.href="detail\.html\?site="\+encodeURIComponent\(s\.name\)/.test(s));
   t("「不适用」与「未测」样式色不同", /\.rc-na\{[^}]*var\(--faint\)/.test(s) && /\.rc-un\{[^}]*var\(--warn\)/.test(s));
+  t("三态 Tab / 信号卡 / 预告条组件齐备(PRD §2)",
+    /id="tierTabs"/.test(s) && /scoreCell\(s,sc\)/.test(s) && /renderWatchStrip/.test(s) && /bf-l1/.test(s));
+  t("信号卡文案不含编造的批次概念(只有真实 n/need)", /距出分还差/.test(s) && !/距出分还差 \d+ 批/.test(s));
   t("参照行不进排序列表(SITES 与 REFS 全程分离)", /var REFS=\[\]/.test(s) && /REFS=payload\.referenceSites/.test(s) && !/concat\(REFS\)/.test(s) && /REFS\.filter\(/.test(s));
   t("演示模式默认关且只由 URL/按钮开启", /var DEMO_ON=.*demo=1/.test(s) && !/DEMO_ON\s*=\s*true/.test(s));
   t("测速按钮为主操作样式", /background:#0d9488;color:#fff/.test(fs.readFileSync("relaylens-home/assets/speedprobe.css", "utf8")));

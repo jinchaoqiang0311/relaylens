@@ -63,6 +63,16 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   check("人工核实档明确「不是站方承诺」并给出充值前动作", /标 ※ 的内容不是站方承诺/.test(page) && /收银台实时显示为准/.test(page));
   check("未取得字段一律未声明,不猜不占位", /不猜、不留灰位/.test(page));
 
+  console.log("\n【权重版本与证据类指标披露】");
+  const W = JSON.parse(fs.readFileSync(__dirname + "/relaylens/shared/weights.json", "utf8"));
+  /* 方法页写的版本号必须等于 weights.json 的版本 —— 页面说"网页说什么代码就算什么",
+     那就不能一边升到 .2 一边页头还挂着 .1 */
+  check("方法页权重版本 = weights.json 版本", new RegExp("权重版本\\s*" + W.version.replace(/\./g, "\\.")).test(page), W.version);
+  check("TLS 证书标注「证据 · 不入分」并说明不扣分理由",
+    /TLS 证书[\s\S]{0,200}证据 · 不入分/.test(page) && /与「计费是否诚实」无关/.test(page));
+  check("长上下文完整性标注「证据 · 不入分」且说明未测就是未测",
+    /长上下文完整性[\s\S]{0,200}证据 · 不入分/.test(page) && /未测就是未测/.test(page));
+
   console.log(`\n${fail === 0 ? "✓ 全部通过" : "✗ 有失败"} · ${pass} 通过 / ${fail} 失败`);
   process.exit(fail ? 1 : 0);
 })();

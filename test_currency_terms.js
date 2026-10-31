@@ -7,7 +7,7 @@
  */
 const fs = require("fs");
 const DIR = __dirname+"/relaylens-home/";
-const DECISION = ["index.html", "ranking.html", "compare.html", "detail.html", "selector.html",
+const DECISION = ["index.html", "ranking.html", "detail.html", "selector.html",
   "tools.html", "reports.html", "blacklist.html", "onboarding.html", "claim.html", "404.html", "ops.html"];
 const TECH = ["method.html", "api.html"];
 let pass = 0, fail = 0;
@@ -32,12 +32,12 @@ check("ranking 保留了唯一一处技术口径括注", (fs.readFileSync(DIR + 
 
 console.log("\n【决策页:正向文案确实改了】");
 check("ranking 列头与筛选项说「首字延迟」", /首字延迟 ≤ 2s/.test(fs.readFileSync(DIR + "ranking.html", "utf8")));
-check("compare 场景说明说「首字延迟」", /晚高峰首字延迟/.test(fs.readFileSync(DIR + "compare.html", "utf8")));
+/* compare.html 已于 2026-10-28 下线(变重定向壳,场景说明文案随页退役) */
 check("selector 维度名说「首字延迟」", /speed:"首字延迟"/.test(fs.readFileSync(DIR + "selector.html", "utf8")));
 check("detail 指标条说「首字延迟」", /首字延迟·晚高峰/.test(fs.readFileSync(DIR + "detail.html", "utf8")));
-check("index 的 quota 换算输出额度价,比例已知才补 ¥",
-  /function q2cny/.test(fs.readFileSync(DIR + "index.html", "utf8")) &&
-  /额度/.test(fs.readFileSync(DIR + "index.html", "utf8")) && !/q2usd/.test(fs.readFileSync(DIR + "index.html", "utf8")));
+check("index 价格列以人民币到手价呈现并说明额度价口径",
+  /到手价/.test(fs.readFileSync(DIR + "index.html", "utf8")) &&
+  /额度价/.test(fs.readFileSync(DIR + "index.html", "utf8")) && !/q2usd/.test(fs.readFileSync(DIR + "index.html", "utf8")));
 
 console.log("\n【技术页:保留 TTFT 但必须先给大白话】");
 const meth = fs.readFileSync(DIR + "method.html", "utf8");

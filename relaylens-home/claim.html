@@ -11,10 +11,10 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
 :root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--r:14px;
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75}
@@ -84,119 +84,112 @@ footer a:hover{color:var(--brand)}
 .toast.show{transform:translateX(-50%);opacity:1}
 @media(max-width:700px){.ft-grid{grid-template-columns:1fr}.vflow{grid-template-columns:1fr}}
 </style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
 
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
-    <nav class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="ranking.html">全站榜单</a>
-      <a href="compare.html">模型比价</a>
-      <a href="selector.html">选型顾问</a>
-      <a href="tools.html">自测工具箱</a>
-      <a href="blacklist.html" class="hot">⚠ 避雷黑名单</a>
-      <a href="method.html">方法论</a>
-      <a href="reports.html">实测报告</a>
-      <a href="onboarding.html">站长入驻</a>
-      <a href="claim.html" class="active">认领站点</a>
-    </nav>
-  </div>
+ <div class="wrap nav">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
+ </div>
 </header>
 
 <div class="wrap">
 
-  <div class="hero">
-    <h1>认领你的站点</h1>
-    <p class="sub">你的站点已经在我们的榜单上?认领后你将获得<b>对每一个结论的申诉权</b> —— 我们不认为检测者永远正确,程序正义比结论更值得公开。</p>
-    <div class="benefits">
-      <div class="benefit"><div class="t">⚖️ 结论申诉权</div><div class="d">对偏差/指纹结论有异议,提交日志证据,我们复测;接受与驳回都公开记录</div></div>
-      <div class="benefit"><div class="t">📢 变更提交通道</div><div class="d">调价、新增分组、维护公告 —— 提前告知可避免被误判为「价格异常」</div></div>
-      <div class="benefit"><div class="t">🤝 CPS 合作资格</div><div class="d">认证站长可申请合作推荐位(带明确「含推广链接」标注,不影响评分)</div></div>
-      <div class="benefit"><div class="t">📊 数据周报</div><div class="d">可用率、对账、指纹的周期报告与异常告警推送</div></div>
-    </div>
-  </div>
+ <div class="hero">
+ <h1>认领你的站点</h1>
+ <p class="sub">你的站点已经在我们的榜单上?认领后你将获得<b>对每一个结论的申诉权</b> —— 我们不认为检测者永远正确,程序正义比结论更值得公开。</p>
+ <div class="benefits">
+ <div class="benefit"><div class="t">结论申诉权</div><div class="d">对偏差/指纹结论有异议,提交日志证据,我们复测;接受与驳回都公开记录</div></div>
+ <div class="benefit"><div class="t">变更提交通道</div><div class="d">调价、新增分组、维护公告 —— 提前告知可避免被误判为「价格异常」</div></div>
+ <div class="benefit"><div class="t">CPS 合作资格</div><div class="d">认证站长可申请合作推荐位(带明确「含推广链接」标注,不影响评分)</div></div>
+ <div class="benefit"><div class="t">数据周报</div><div class="d">可用率、对账、指纹的周期报告与异常告警推送</div></div>
+ </div>
+ </div>
 
-  <section>
-    <div class="blk-head"><h2>验证流程</h2><span class="more">全程无需提供账号密码</span></div>
-    <div class="card">
-      <div class="vflow">
-        <div class="vstep"><b>提交认领</b><div class="d">填下方表单,提供站点域名与联系方式</div></div>
-        <div class="vstep"><b>获取 token</b><div class="d">我们向你的邮箱发送随机验证 token(24 小时有效)</div></div>
-        <div class="vstep"><b>放置验证</b><div class="d">二选一:官网放 <code>/relaylens-verify.txt</code>(正文仅 token),或首页 <code>&lt;meta name="relaylens-verify"&gt;</code></div></div>
-        <div class="vstep"><b>复核绑定</b><div class="d">我们抓取验证,通过即绑定站长身份,进入站长工作台</div></div>
-      </div>
-      <div class="whybox">🛡 <b>为什么必须域名验证:</b>认领意味着获得申诉权与官方对话通道,冒领者可以替竞争对手"承认问题"。域名所有权是唯一可靠的防冒领门槛 —— 邮箱后缀可以伪造,文件放不上别人的服务器。</div>
-    </div>
-  </section>
+ <section>
+ <div class="blk-head"><h2>验证流程</h2><span class="more">全程无需提供账号密码</span></div>
+ <div class="card">
+ <div class="vflow">
+ <div class="vstep"><b>提交认领</b><div class="d">填下方表单,提供站点域名与联系方式</div></div>
+ <div class="vstep"><b>获取 token</b><div class="d">我们向你的邮箱发送随机验证 token(24 小时有效)</div></div>
+ <div class="vstep"><b>放置验证</b><div class="d">二选一:官网放 <code>/relaylens-verify.txt</code>(正文仅 token),或首页 <code>&lt;meta name="relaylens-verify"&gt;</code></div></div>
+ <div class="vstep"><b>复核绑定</b><div class="d">我们抓取验证,通过即绑定站长身份,进入站长工作台</div></div>
+ </div>
+ <div class="whybox"><b>为什么必须域名验证:</b>认领意味着获得申诉权与官方对话通道,冒领者可以替竞争对手"承认问题"。域名所有权是唯一可靠的防冒领门槛 —— 邮箱后缀可以伪造,文件放不上别人的服务器。</div>
+ </div>
+ </section>
 
-  <section>
-    <div class="blk-head"><h2>认领申请</h2></div>
-    <div class="card">
-      <div style="display:grid;gap:14px">
-        <div>
-          <label class="fl">站点域名 <span class="req">*</span></label>
-          <input type="url" id="cDomain" placeholder="https://example.com(须已在收录列表或提交过自测报告)">
-          <div class="hint">尚未收录?请先走<a href="onboarding.html" style="color:var(--brand)">入驻申请</a></div>
-        </div>
-        <div>
-          <label class="fl">联系邮箱 <span class="req">*</span></label>
-          <input type="email" id="cEmail" placeholder="验证 token 将发送至此邮箱(须为站点域名后缀或可验证的官方邮箱)">
-        </div>
-        <div>
-          <label class="fl">Telegram / 其他(选填)</label>
-          <input type="text" id="cTg" placeholder="@yourhandle">
-        </div>
-        <div>
-          <label class="fl">认领说明(选填)</label>
-          <textarea id="cReason" placeholder="如:对 09-29 批次的偏差结论有异议,希望提交上游日志申诉"></textarea>
-        </div>
-      </div>
-      <div class="f-err" id="cErr"></div>
-      <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-        <button class="btn btn-primary" id="cSubmit">生成认领申请</button>
-      </div>
-      <div class="out" id="cOut">
-        <div class="hint" id="cOutHint"></div>
-        <pre id="cJson"></pre>
-        <div class="row">
-          <button class="btn btn-primary btn-sm" id="cCopy">复制申请内容</button>
-          <a class="btn btn-ghost btn-sm" id="cMail" href="#">通过邮件发送 →</a>
-        </div>
-      </div>
-    </div>
-    <p class="fine">认领不改变任何检测口径与评分 —— 站长身份只影响「谁能对话」,不影响「数字是多少」。</p>
-  </section>
+ <section>
+ <div class="blk-head"><h2>认领申请</h2></div>
+ <div class="card">
+ <div style="display:grid;gap:14px">
+ <div>
+ <label class="fl">站点域名 <span class="req">*</span></label>
+ <input type="url" id="cDomain" placeholder="https://example.com(须已在收录列表或提交过自测报告)">
+ <div class="hint">尚未收录?请先走<a href="onboarding.html" style="color:var(--brand)">入驻申请</a></div>
+ </div>
+ <div>
+ <label class="fl">联系邮箱 <span class="req">*</span></label>
+ <input type="email" id="cEmail" placeholder="验证 token 将发送至此邮箱(须为站点域名后缀或可验证的官方邮箱)">
+ </div>
+ <div>
+ <label class="fl">Telegram / 其他(选填)</label>
+ <input type="text" id="cTg" placeholder="@yourhandle">
+ </div>
+ <div>
+ <label class="fl">认领说明(选填)</label>
+ <textarea id="cReason" placeholder="如:对 09-29 批次的偏差结论有异议,希望提交上游日志申诉"></textarea>
+ </div>
+ </div>
+ <div class="f-err" id="cErr"></div>
+ <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+ <button class="btn btn-primary" id="cSubmit">生成认领申请</button>
+ </div>
+ <div class="out" id="cOut">
+ <div class="hint" id="cOutHint"></div>
+ <pre id="cJson"></pre>
+ <div class="row">
+ <button class="btn btn-primary btn-sm" id="cCopy">复制申请内容</button>
+ <a class="btn btn-ghost btn-sm" id="cMail" href="#">通过邮件发送 →</a>
+ </div>
+ </div>
+ </div>
+ <p class="fine">认领不改变任何检测口径与评分 —— 站长身份只影响「谁能对话」,不影响「数字是多少」。</p>
+ </section>
 
 </div>
 
 <footer>
-  <div class="wrap">
-    <div class="ft-grid">
-      <div>
-        <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
-        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位与 Pro 订阅维持运营。</p>
-      </div>
-      <div>
-        <h4>站点</h4>
-        <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="compare.html">模型比价</a><a href="tools.html">自测工具箱</a><a href="blacklist.html">避雷黑名单</a>
-      </div>
-      <div>
-        <h4>站长</h4>
-        <a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a>
-        <h4 style="margin-top:10px">关于</h4>
-        <a href="method.html">检测方法与开源数据</a><a href="reports.html">实测报告</a>
-      </div>
-    </div>
-    <div class="fine">
-      免责声明:本站为第三方测评平台,不提供 API 转售或代充服务。检测数据与结论按开源协议公开,站方对结论享有申诉与反证权利。<br>
-      © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="tools.html">自测工具箱</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>站长</h4>
+ <a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a>
+ <h4 style="margin-top:10px">关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="reports.html">实测报告</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售或代充服务。检测数据与结论按开源协议公开,站方对结论享有申诉与反证权利。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
 </footer>
 
 <div class="toast" id="toast"></div>
+<script src="assets/auth.js"></script>
+<script>window.RELAYLENS_FORM_ENDPOINT=(typeof RL_API_BASE!=="undefined"&&RL_API_BASE)?RL_API_BASE+"/submit/claim":"";</script>
 <script>
 /* ============ 认领表单:校验 → schema v1.0.0 合规 payload → 提交 ============ */
 var SCHEMA_VERSION="1.0.0";
@@ -206,40 +199,40 @@ function val(id){return document.getElementById(id).value.trim()}
 function fail(msg){var e=document.getElementById("cErr");e.textContent=msg;e.classList.add("show");return null}
 
 function buildPayload(){
-  document.getElementById("cErr").classList.remove("show");
-  var domain=val("cDomain");
-  if(!/^https?:\/\/[^\s\/]+\.[^\s\/]+/.test(domain))return fail("域名格式应为 https://example.com");
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("cEmail")))return fail("联系邮箱格式不正确");
-  return {
-    schema:"relaylens-claim/"+SCHEMA_VERSION,
-    status:"claim_requested", submittedAt:new Date().toISOString(),
-    site_domain:domain.replace(/\/+$/,""),
-    contact:{email:val("cEmail"),tg:val("cTg")||null},
-    claim_reason:val("cReason")||null
-  };
+ document.getElementById("cErr").classList.remove("show");
+ var domain=val("cDomain");
+ if(!/^https?:\/\/[^\s\/]+\.[^\s\/]+/.test(domain))return fail("域名格式应为 https://example.com");
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("cEmail")))return fail("联系邮箱格式不正确");
+ return {
+ schema:"relaylens-claim/"+SCHEMA_VERSION,
+ status:"claim_requested", submittedAt:new Date().toISOString(),
+ site_domain:domain.replace(/\/+$/,""),
+ contact:{email:val("cEmail"),tg:val("cTg")||null},
+ claim_reason:val("cReason")||null
+ };
 }
 
 document.getElementById("cSubmit").addEventListener("click",function(){
-  var p=buildPayload();if(!p)return;
-  var json=JSON.stringify(p,null,2);
-  document.getElementById("cJson").textContent=json;
-  document.getElementById("cOut").classList.add("show");
-  var ep=(window.RELAYLENS_FORM_ENDPOINT||"").trim();
-  if(ep){
-    fetch(ep,{method:"POST",headers:{"Content-Type":"application/json"},body:json})
-      .then(function(r){if(!r.ok)throw 0;toast("已提交,token 将发送至你的邮箱");document.getElementById("cOutHint").textContent="✓ 已送达;以下为你的申请存档(建议留存):"})
-      .catch(function(){showFallback(json)});
-  }else showFallback(json);
+ var p=buildPayload();if(!p)return;
+ var json=JSON.stringify(p,null,2);
+ document.getElementById("cJson").textContent=json;
+ document.getElementById("cOut").classList.add("show");
+ var ep=(window.RELAYLENS_FORM_ENDPOINT||"").trim();
+ if(ep){
+ fetch(ep,{method:"POST",headers:{"Content-Type":"application/json"},body:json})
+ .then(function(r){if(!r.ok)throw 0;toast("已提交,token 将发送至你的邮箱");document.getElementById("cOutHint").textContent="✓ 已送达;以下为你的申请存档(建议留存):"})
+ .catch(function(){showFallback(json)});
+ }else showFallback(json);
 });
 function showFallback(json){
-  document.getElementById("cOutHint").textContent="↓ 受理队列接入中,请复制以下内容发送至认领邮箱(申请存档,建议留存):";
-  var m=document.getElementById("cMail");
-  m.href="mailto:claim@relaylens.example?subject="+encodeURIComponent("[认领申请] "+val("cDomain"))+"&body="+encodeURIComponent(json);
+ document.getElementById("cOutHint").textContent="↓ 受理队列接入中,请复制以下内容发送至认领邮箱(申请存档,建议留存):";
+ var m=document.getElementById("cMail");
+ m.href="mailto:claim@relaylens.example?subject="+encodeURIComponent("[认领申请] "+val("cDomain"))+"&body="+encodeURIComponent(json);
 }
 document.getElementById("cCopy").addEventListener("click",function(){
-  var t=document.getElementById("cJson").textContent;
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast("已复制")},function(){toast("复制失败,请手动选择")})}
-  else toast("请手动选择复制");
+ var t=document.getElementById("cJson").textContent;
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast("已复制")},function(){toast("复制失败,请手动选择")})}
+ else toast("请手动选择复制");
 });
 </script>
 </body>

@@ -19,9 +19,10 @@ import { rebuild } from "./src/publisher.js";
 import { getDb, siteHealth, batchCount } from "./src/store.js";
 import { reconcile, persistReconcile, meteringConsistency, loadEntries } from "./src/reconcile.js";
 import { runTokenProbe, persistTokens, latestInjection } from "./src/probes/tokenprobe.js";
+import { runContextProbe, judgeContextLabel } from "./src/probes/context.js";
 import { runFingerprint, persistFingerprint, PROBES, PROBE_BANK_VERSION } from "./src/probes/fingerprint.js";
 import { assembleMetrics } from "./src/assemble.js";
-import { runPerf, persistPerf, pickModel, listModels } from "./src/probes/perf.js";
+import { runPerf, persistPerf, pickModel, pickReasoningModel, listModels } from "./src/probes/perf.js";
 import { syncData, referenceSiteNames } from "./src/sync.js";
 import { syncOps } from "./src/ops.js";
 import { auditConfigDrift, auditAppend, auditPublish, auditVerify, auditList, currentActor } from "./src/audit.js";
@@ -119,6 +120,28 @@ async function main() {
         console.log(`     当前生效值:${prev ?? "—"} tok/请求(EP 桶与前端「注入开销」列均读此值;重跑 sync 即更新)`);
       }
       console.log("");
+      break;
+    }
+    /**
+     * 长上下文完整性(标记码法)。⚠ 真实扣费:默认两档 8k / 32k 字符,
+     * 显式站点 + 显式命令才跑,不进 schedule、不进 once 的默认任务集(与 billing 同级约束)。
+     */
+    case "context": {
+      const name = args.site;
+      if (!name) { console.error("必须指定 --site=<name>(该任务产生真实 token 消耗)"); process.exit(1); }
+      const site = enabledSites(cfg).find(s => s.name === name);
+      if (!site) { console.error(`站点未找到: ${name}`); process.exit(1); }
+      const model = (process.argv.find(a => a.startsWith("--model=")) || "").split("=")[1] || "gpt-5.6-sol";
+      const charsArg = (process.argv.find(a => a.startsWith("--chars=")) || "").split("=")[1];
+      const charsList = (charsArg ? charsArg.split(",") : ["8000", "32000"]).map(Number).filter(n => n > 0);
+      console.log(`\n🔎 长上下文完整性 · ${name} · ${model} · 档位 ${charsList.join(" / ")} 字符\n`);
+      const r = await runContextProbe(site, model, charsList);
+      for (const c of r.cases) {
+        console.log(`  ${String(c.targetChars).padStart(6)} 字符 · 上报 prompt ${String(c.reportedPromptTokens ?? "—").padStart(6)} tok · `
+          + `命中 ${c.returned}/${c.canaries}(${c.hitPct}%) · ${c.verdict}${c.missing.length ? " · 缺失 " + c.missing.join(",") : ""}`);
+      }
+      console.log(`\n  🧾 结论:${judgeContextLabel(r).label}`);
+      console.log(`     已归档进 batches(task=context)+ raw 原文;重跑 sync 即下发到详情页\n`);
       break;
     }
     case "sync": {
@@ -251,6 +274,18 @@ async function main() {
         for (const s of errs) console.log(`   ✗ #${s.seq} ${s.failureType}: ${String(s.error).slice(0, 90)}`);
         console.log(`   中位 TTFT ${res.medianTtftMs ?? "—"}ms · P95 ${res.p95TtftMs ?? "—"}ms · 成功 ${res.successRate ?? "—"}% · 超时 ${res.timeoutRate ?? "—"}% · 伪流式 ${res.bufferedRate ?? "—"}% · 吞吐 ${res.medianThroughput ?? "—"} tok/s  (${res.batchId})`);
         res.notes.forEach(n => console.log("   注:" + n));
+        // 分模型类别加测:自动选模模式下,站内有推理档模型(≠主模型)时补一组纯 TTFT 短循环。
+        // 用途:分模型锚点校准的数据入口(method.html 待办);task=perf_reasoning,不入 PF。
+        // 成本:每组 ≤6 次短请求(厘级);显式 --model 时视为专项复测,不加测。
+        if (!modelArg) {
+          const rmodel = await pickReasoningModel(site, model);
+          if (rmodel) {
+            const rres = await runPerf(site, rmodel, { iters: Math.min(iters, 6), category: "reasoning" });
+            persistPerf(rres);
+            console.log(`   🧠 推理档 ${rmodel}: 中位 TTFT ${rres.medianTtftMs ?? "—"}ms · 样本 ${rres.samples.filter(s => s.ok).length}/${rres.iters} (${rres.batchId} · task=perf_reasoning · 不入 PF)`);
+            rres.notes.forEach(n => console.log("   注:" + n));
+          }
+        }
       }
       console.log(`\n📊 延迟探针汇总:测了 ${done} 站,跳过 ${skipped} 站,失败 ${failed} 站\n`);
       break;

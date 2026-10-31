@@ -29,7 +29,11 @@ export interface SiteMetrics {
   BH: { match: number | null; consistency: number | null; entries: number };
   MA: { similarity: number | null; baseline: string | null };
   ST: { avail: number | null; timeoutPct: number | null; checks: number; spanMinutes: number };
-  PF: { ttftMs: number | null; samples: number };
+  PF: {
+    ttftMs: number | null; samples: number;
+    /** 双窗口分桶(2026-10-10.1 口径):忙/闲桶各自中位数与单桶缺样本标注 */
+    workMs?: number | null; offMs?: number | null; partialBucket?: "work" | "off" | null;
+  };
   /** SR 流式真实性:伪流式率(%),null=未测 */
   SR: { bufferedRate: number | null; samples: number };
   /** 每模型:站点价(USD/M)与官方锚定价,及注入开销 */
@@ -150,7 +154,53 @@ export function computeSceneScore(m: SiteMetrics, scene: string): SceneScore {
   return out;
 }
 
+// ---------- 三态判定(v1 PRD §2) ----------
+// 原则:现有阈值一个字不动,只是把"给不给分"变成显式的层(L2 实测榜 / L1 观察榜)。
+// L0(监测中)不在这判 —— 它是 level="passive"(没做过账单对账),由 sync.ts 的 level 字段表达。
+
+/** L2 = 出分且置信达标;L1 = 有过对账但未达标(覆盖率不足或低置信),前端不给分只给信号卡 */
+export function tierOf(r: SceneScore): "L2" | "L1" {
+  return r.score !== null && r.confidence >= 0.8 ? "L2" : "L1";
+}
+
+export interface SampleProgress { key: string; label: string; n: number; need: number; ok: boolean }
+
+/**
+ * 观察榜信号卡的样本进度:各指标样本量 vs 官方阈值(weights.json)。
+ * n 是真实累计样本数,need 是同评分引擎完全相同的门槛 —— 前端只渲染,不得自己发明门槛。
+ */
+export function sampleProgress(m: SiteMetrics): SampleProgress[] {
+  const c = W.confidence;
+  const minSpan = (c as { min_health_span_minutes?: number }).min_health_span_minutes ?? 45;
+  return [
+    { key: "BH", label: "扣费对账", n: m.BH.entries, need: c.min_reconcile_entries, ok: m.BH.match !== null && m.BH.entries >= c.min_reconcile_entries },
+    { key: "ST", label: "稳定性", n: m.ST.checks, need: c.min_health_checks, ok: m.ST.checks >= c.min_health_checks && (m.ST.spanMinutes ?? 0) >= minSpan },
+    { key: "PF", label: "首字延迟", n: m.PF.samples, need: c.min_ttft_samples, ok: m.PF.ttftMs !== null && m.PF.samples >= c.min_ttft_samples },
+    { key: "MA", label: "模型指纹", n: m.MA.similarity !== null ? 1 : 0, need: 1, ok: m.MA.similarity !== null },
+    { key: "SR", label: "流式真实性", n: m.SR.samples, need: 3, ok: m.SR.bufferedRate !== null && m.SR.samples >= 3 },
+  ];
+}
+
 export function weightsVersion(): string { return W.version; }
+/**
+ * 场景权重与指标名的**只读出口**,给前端渲染「本榜怎么算的」用。
+ * 存在理由:此前 ranking.html 手写了一份权重公式,和 weights.json 完全脱节
+ * (页面写「剧本创作榜 = 长上下文完整率 30%」,而 weights.json 里根本没有这项指标),
+ * 卖「网页说什么、代码就算什么」的站不能有第二个口径。以后前端只许从这份数据渲染。
+ */
+export function sceneWeights(): Record<string, { label: string; weights: Record<string, number> }> {
+  const out: Record<string, { label: string; weights: Record<string, number> }> = {};
+  for (const [scene, v] of Object.entries(W.scenes)) {
+    const { label, separate, note, ...weights } = v as Record<string, number> & { label?: string; separate?: boolean; note?: string };
+    if (separate) continue;                 // 风险指数独立展示,不占场景榜位
+    out[scene] = { label: label ?? scene, weights };
+  }
+  return out;
+}
+/** 指标键 → 中文名(BH=计费诚实度 …),与权重同源 */
+export function metricLabels(): Record<string, string> {
+  return Object.fromEntries(Object.entries(W.metrics).map(([k, v]) => [k, (v as { name: string }).name]));
+}
 /** 展示层汇率口径(pricing_display)。缺省兜底:配置缺失时退回 1 USD = 7.1 ¥ 并在页面标注日期未知 —— 宁可显式兜底也不让价格静默变成美元 */
 export function pricingDisplay() {
   const p = W.pricing_display;

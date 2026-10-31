@@ -12,11 +12,11 @@
 <meta name="description" content="RelayLens 自测工具箱:免费自测 API Key 是否掉包/降智/Token 虚标,一键生成 Cherry Studio / Cursor / Claude Code 配置,充值比例换算与月成本计算器。">
 <style>
 :root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
-  --r:14px;
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+ --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -138,270 +138,262 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
 
 <!-- 导航 -->
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
-    <nav class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="ranking.html">全站榜单</a>
-      <a href="compare.html">模型比价</a>
-      <a href="selector.html">选型顾问</a>
-      <a href="tools.html" class="active">自测工具箱</a>
-      <a href="blacklist.html" class="hot">⚠ 避雷黑名单</a>
-      <a href="method.html">方法论</a>
-      <a href="api.html">API</a>
-      <a href="reports.html">实测报告</a>
-    </nav>
-    <a class="btn btn-ghost btn-sm" href="#">登录</a>
-    <a class="btn btn-primary btn-sm" href="#">注册</a>
-  </div>
+ <div class="wrap nav">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html" class="active" aria-current="page">自测工具箱</a></nav>
+ <a class="btn btn-ghost btn-sm" href="#">登录</a>
+ <a class="btn btn-primary btn-sm" href="#">注册</a>
+ </div>
 </header>
 
 <!-- 页头 -->
 <div class="page-hero">
-  <div class="wrap">
-    <div class="crumb"><a href="index.html">首页</a> / 自测工具箱</div>
-    <h1>自测工具箱 · 把检测能力交到你手里</h1>
-    <p class="sub">平台每 6 小时批量实测,但你的 Key、你的分组、你的网络环境可能不同。用同一套检测逻辑,免费验证你正在用的站。</p>
-  </div>
+ <div class="wrap">
+ <div class="crumb"><a href="index.html">首页</a> / 自测工具箱</div>
+ <h1>自测工具箱 · 把检测能力交到你手里</h1>
+ <p class="sub">平台每 6 小时批量实测,但你的 Key、你的分组、你的网络环境可能不同。用同一套检测逻辑,免费验证你正在用的站。</p>
+ </div>
 </div>
 
 <div class="wrap">
 
-  <!-- 工具导航 -->
-  <div class="tool-nav">
-    <a href="#selftest"><span class="ic">🩺</span><div><b>API Key 自测</b><span>掉包 / 降智 / Token 虚标检测</span></div></a>
-    <a href="#cfggen"><span class="ic">⚙️</span><div><b>配置生成器</b><span>Cherry Studio / Cursor / Claude Code</span></div></a>
-    <a href="#costcalc"><span class="ic">🧮</span><div><b>真实成本计算器</b><span>含缓存策略的月账单估算</span></div></a>
-    <a href="compare.html"><span class="ic">💱</span><div><b>模型比价</b><span>47 站横向价格对比</span></div></a>
-  </div>
+ <!-- 工具导航 -->
+ <div class="tool-nav">
+ <a href="#selftest"><span class="ic"></span><div><b>API Key 自测</b><span>掉包 / 降智 / Token 虚标检测</span></div></a>
+ <a href="#cfggen"><span class="ic"></span><div><b>配置生成器</b><span>Cherry Studio / Cursor / Claude Code</span></div></a>
+ <a href="#costcalc"><span class="ic"></span><div><b>真实成本计算器</b><span>含缓存策略的月账单估算</span></div></a>
+ <a href="/price/"><span class="ic"></span><div><b>模型比价</b><span>多站横向价格对比看板</span></div></a>
+ </div>
 
-  <!-- ============ API Key 自测(真实检测) ============ -->
-  <section class="block" id="selftest">
-    <div class="blk-head"><h2>🩺 API Key 自测</h2></div>
-    <p class="lead">对你自己的 Key 跑 <b>5 项真实检测</b>:①Token 计量线性度(查注入脚手架)②假流式检测(SSE 是否缓冲后一次下发)③首字延迟 ④缓存明细是否上报 ⑤返回模型名一致性。约 8 次请求,消耗计入你在目标站的账单。测完可一键<b>保存为分享图片</b>(带 aipaihangbang.cn 水印),也可回传报告触发我们复测。</p>
-    <div class="card">
-      <div class="privacy"><span style="font-size:16px">🔒</span><span><b>隐私边界:</b>Key 只在你浏览器内存里,请求直连你填的地址,<b>不经过 RelayLens 服务器</b>。生成的控制台脚本含你的 Key,用完请清掉剪贴板与 DevTools 历史。回传报告(可选)自动剔除 Key。</span></div>
-      <div class="test-grid">
-        <div>
-          <div class="f-grid">
-            <div>
-              <label>API Base URL</label>
-              <input type="url" id="tUrl" placeholder="https://api.example.com/v1">
-              <div class="hint">一般以 /v1 结尾,见站方文档</div>
-            </div>
-            <div>
-              <label>API Key</label>
-              <input type="text" id="tKey" placeholder="sk-..." autocomplete="off">
-              <div class="hint">本地使用,不经过我们服务器</div>
-            </div>
-            <div>
-              <label>检测模型</label>
-              <input type="text" id="tModel" placeholder="如 gpt-5.6-sol / claude-opus-5" autocomplete="off">
-              <div class="hint">填你实际在用的模型名(可先问站方要 /v1/models)</div>
-            </div>
-            <div>
-              <label>通道</label>
-              <select id="tMode">
-                <option value="console" selected>② 生成控制台脚本(绕过 CORS,推荐)</option>
-                <option value="auto">① 页内直测(站方允许跨域时)</option>
-              </select>
-              <div class="hint">多数中转站未开放浏览器跨域,选②</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-big" id="runTest">▶ 开始检测</button>
-            <button class="btn btn-ghost" id="genScript">生成控制台脚本</button>
-          </div>
-          <p class="hint" style="margin-top:12px">浏览器直连若报 <code>Failed to fetch</code> / CORS,不是站点坏了,是它不允许网页跨域调用 —— 改用「生成控制台脚本」:打开<b>目标站自己的页面</b>按 F12 粘贴运行,同源无限制,检测逻辑与页内版同一份代码。</p>
-        </div>
-        <div class="result" id="resultBox">
-          <div class="ph">检测结果</div>
-          <div class="idle">填写上方信息后点「开始检测」<br><br>5 项检测 · 约 6 次请求 · 全程直连你自己的 Key</div>
-        </div>
-      </div>
-      <div id="scriptOut" style="display:none;margin-top:14px">
-        <div class="ph" style="font-size:12.5px;color:var(--sub);margin-bottom:6px">↓ 复制这段,在<b>目标站域名下的任意页面</b>按 F12 → Console 粘贴运行</div>
-        <textarea id="scriptText" readonly style="width:100%;min-height:150px;font-family:Consolas,monospace;font-size:11.5px"></textarea>
-        <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" id="copyScript">复制脚本</button>
-          <span class="hint" style="align-self:center">⚠ 脚本内含你的 Key,勿截图外发;跑完把输出的 JSON 报告贴回来即可</span>
-        </div>
-        <div style="margin-top:12px">
-          <label class="ph" style="font-size:12.5px;color:var(--sub);display:block;margin-bottom:6px">③ 把脚本输出的 <b>{“schema”:“relaylens-selftest/…”}</b> 那行 JSON 粘贴到这里 → 出报告卡片与分享图片</label>
-          <textarea id="pasteReportBox" placeholder='{"schema":"relaylens-selftest/1.0.0","base":"https://api.xxx.com/v1","model":"gpt-5.5","checks":[…]}' style="width:100%;min-height:70px;font-family:Consolas,monospace;font-size:11.5px;border:1px solid var(--line);border-radius:8px;padding:8px 10px"></textarea>
-          <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" id="loadPasted">载入报告 →</button>
-            <span class="hint">只校验结构与数字,全程在你浏览器本地完成,JSON 里本来也不含 Key</span>
-          </div>
-        </div>
-      </div>
-      <div id="reportBox" style="display:none;margin-top:14px">
-        <div class="ph" style="font-size:12.5px;color:var(--sub);margin-bottom:6px">🖼 生成分享图片 · 把结果转发出去（含 aipaihangbang.cn 水印与宣传语）</div>
-        <p class="hint" style="margin-bottom:8px">点击下方按钮,把这份报告渲染成一张竖版卡片图并下载到本地,可直接发到群里/朋友圈。<b>图片只含站点地址、模型与检测结论,绝不含你的 API Key。</b></p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
-          <button class="btn btn-primary btn-sm" id="makeImage">🖼 生成分享图片</button>
-          <span class="hint" id="imgHint"></span>
-        </div>
-        <canvas id="shareCanvas" style="display:none"></canvas>
-        <div id="imgPreview" style="display:none;margin-bottom:14px;text-align:center">
-          <img id="imgPreviewTag" alt="自测报告分享图" style="max-width:340px;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 24px rgba(16,24,40,.12)">
-          <div style="margin-top:8px"><a class="btn btn-ghost btn-sm" id="downloadImg" download="relaylens-selftest.png">下载图片 ↓</a></div>
-        </div>
-        <div class="ph" style="font-size:12.5px;color:var(--sub);margin-bottom:6px">📤 可选：回传报告（自动剔除 Key）</div>
-        <p class="hint" style="margin-bottom:8px">回传的数据<b>不会直接改动任何评分</b> —— 结构性指标(注入/假流式)与网络无关,可采信为<b>复核触发器</b>:我们收到后会用自己的探针复测,复测结论才进榜单。首字延迟等网络相关项只作你本地参考。</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" id="submitReport">提交报告</button>
-          <button class="btn btn-ghost btn-sm" id="copyReport">复制报告 JSON</button>
-          <a class="btn btn-ghost btn-sm" id="mailReport" href="#">邮件发送 →</a>
-        </div>
-      </div>
-    </div>
-    <div class="mini-faq" style="margin-top:14px">
-      <div class="mq"><h4>问模型「你是谁」能防掉包吗?</h4><p>不能。中转站可注入系统提示词让模型谎报身份。本工具因此<b>不测</b>「你叫什么」,而是测可验证的结构:Token 计量是否随输入线性变化、SSE 是否真流式、返回的 model 字段与请求是否一致。判定掉包需要官方基线对照,那部分由我们服务端做。</p></div>
-      <div class="mq"><h4>Token 虚标怎么发现?</h4><p>发 3 段<b>长度已知的唯一中文文本</b>(每次随机打散,防缓存),读 usage.prompt_tokens 做线性拟合。斜率应约等于 1 token/汉字;若截距远大于 0,或短文本也报出数千 cached,说明存在固定注入脚手架。我们实测两家站注入约 <b>+4858 / +3959 tok/请求</b>(2026-09-30 口径)。</p></div>
-      <div class="mq"><h4>假流式是什么?</h4><p>协议层看着像流式(SSE、分块),实际把上游完整回复缓冲后一次下发,首字要等全文生成完。判定必须用<b>长输出</b>(约 200-300 字):看内容块是逐 token 到达还是一次性倾泻 —— 短答案(两三个字)单块到齐是真流式的常态,不能作为判据。后果是 Cursor / Claude Code 的逐字渲染失效、无法中途打断。部分站还呈现<b>混合行为</b>:同一模型,有的请求流式、有的被缓冲(多渠道路由所致),工具会如实标注。</p></div>
-      <div class="mq"><h4>检测会暴露我的数据吗?</h4><p>探针文本是随机生成的公开测试语料,不含你的业务数据与任何个人信息;请求从你浏览器直连目标站,RelayLens 不经手。回传报告是可选动作,且不含 Key。</p></div>
-    </div>
-  </section>
+ <!-- ============ API Key 自测(真实检测) ============ -->
+ <section class="block" id="selftest">
+ <div class="blk-head"><h2>API Key 自测</h2></div>
+ <p class="lead">对你自己的 Key 跑 <b>5 项真实检测</b>:①Token 计量线性度(查注入脚手架)②假流式检测(SSE 是否缓冲后一次下发)③首字延迟 ④缓存明细是否上报 ⑤返回模型名一致性。约 8 次请求,消耗计入你在目标站的账单。测完可一键<b>保存为分享图片</b>(带 aipaihangbang.cn 水印),也可回传报告触发我们复测。</p>
+ <div class="card">
+ <div class="privacy"><span style="font-size:16px"></span><span><b>隐私边界:</b>Key 只在你浏览器内存里,请求直连你填的地址,<b>不经过 RelayLens 服务器</b>。生成的控制台脚本含你的 Key,用完请清掉剪贴板与 DevTools 历史。回传报告(可选)自动剔除 Key。</span></div>
+ <div class="test-grid">
+ <div>
+ <div class="f-grid">
+ <div>
+ <label>API Base URL</label>
+ <input type="url" id="tUrl" placeholder="https://api.example.com/v1">
+ <div class="hint">一般以 /v1 结尾,见站方文档</div>
+ </div>
+ <div>
+ <label>API Key</label>
+ <input type="text" id="tKey" placeholder="sk-..." autocomplete="off">
+ <div class="hint">本地使用,不经过我们服务器</div>
+ </div>
+ <div>
+ <label>检测模型</label>
+ <input type="text" id="tModel" placeholder="如 gpt-5.6-sol / claude-opus-5" autocomplete="off">
+ <div class="hint">填你实际在用的模型名(可先问站方要 /v1/models)</div>
+ </div>
+ <div>
+ <label>通道</label>
+ <select id="tMode">
+ <option value="console" selected>② 生成控制台脚本(绕过 CORS,推荐)</option>
+ <option value="auto">① 页内直测(站方允许跨域时)</option>
+ </select>
+ <div class="hint">多数中转站未开放浏览器跨域,选②</div>
+ </div>
+ </div>
+ <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+ <button class="btn btn-primary btn-big" id="runTest">▶ 开始检测</button>
+ <button class="btn btn-ghost" id="genScript">生成控制台脚本</button>
+ </div>
+ <p class="hint" style="margin-top:12px">浏览器直连若报 <code>Failed to fetch</code> / CORS,不是站点坏了,是它不允许网页跨域调用 —— 改用「生成控制台脚本」:打开<b>目标站自己的页面</b>按 F12 粘贴运行,同源无限制,检测逻辑与页内版同一份代码。</p>
+ </div>
+ <div class="result" id="resultBox">
+ <div class="ph">检测结果</div>
+ <div class="idle">填写上方信息后点「开始检测」<br><br>5 项检测 · 约 6 次请求 · 全程直连你自己的 Key</div>
+ </div>
+ </div>
+ <div id="scriptOut" style="display:none;margin-top:14px">
+ <div class="ph" style="font-size:12.5px;color:var(--sub);margin-bottom:6px">↓ 复制这段,在<b>目标站域名下的任意页面</b>按 F12 → Console 粘贴运行</div>
+ <textarea id="scriptText" readonly style="width:100%;min-height:150px;font-family:Consolas,monospace;font-size:11.5px"></textarea>
+ <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+ <button class="btn btn-primary btn-sm" id="copyScript">复制脚本</button>
+ <span class="hint" style="align-self:center">脚本内含你的 Key,勿截图外发;跑完把输出的 JSON 报告贴回来即可</span>
+ </div>
+ <div style="margin-top:12px">
+ <label class="ph" style="font-size:12.5px;color:var(--sub);display:block;margin-bottom:6px">③ 把脚本输出的 <b>{“schema”:“relaylens-selftest/…”}</b> 那行 JSON 粘贴到这里 → 出报告卡片与分享图片</label>
+ <textarea id="pasteReportBox" placeholder='{"schema":"relaylens-selftest/1.0.0","base":"https://api.xxx.com/v1","model":"gpt-5.5","checks":[…]}' style="width:100%;min-height:70px;font-family:Consolas,monospace;font-size:11.5px;border:1px solid var(--line);border-radius:8px;padding:8px 10px"></textarea>
+ <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap">
+ <button class="btn btn-primary btn-sm" id="loadPasted">载入报告 →</button>
+ <span class="hint">只校验结构与数字,全程在你浏览器本地完成,JSON 里本来也不含 Key</span>
+ </div>
+ </div>
+ </div>
+ <div id="reportBox" style="display:none;margin-top:14px">
+ <div class="ph" style="font-size:12.5px;color:var(--sub);margin-bottom:6px">生成分享图片 · 把结果转发出去（含 aipaihangbang.cn 水印与宣传语）</div>
+ <p class="hint" style="margin-bottom:8px">点击下方按钮,把这份报告渲染成一张竖版卡片图并下载到本地,可直接发到群里/朋友圈。<b>图片只含站点地址、模型与检测结论,绝不含你的 API Key。</b></p>
+ <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+ <button class="btn btn-primary btn-sm" id="makeImage">生成分享图片</button>
+ <span class="hint" id="imgHint"></span>
+ </div>
+ <canvas id="shareCanvas" style="display:none"></canvas>
+ <div id="imgPreview" style="display:none;margin-bottom:14px;text-align:center">
+ <img id="imgPreviewTag" alt="自测报告分享图" style="max-width:340px;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 24px rgba(16,24,40,.12)">
+ <div style="margin-top:8px"><a class="btn btn-ghost btn-sm" id="downloadImg" download="relaylens-selftest.png">下载图片 ↓</a></div>
+ </div>
+ <div class="ph" style="font-size:12.5px;color:var(--sub);margin-bottom:6px">可选：回传报告（自动剔除 Key）</div>
+ <p class="hint" style="margin-bottom:8px">回传的数据<b>不会直接改动任何评分</b> —— 结构性指标(注入/假流式)与网络无关,可采信为<b>复核触发器</b>:我们收到后会用自己的探针复测,复测结论才进榜单。首字延迟等网络相关项只作你本地参考。</p>
+ <div style="display:flex;gap:10px;flex-wrap:wrap">
+ <button class="btn btn-primary btn-sm" id="submitReport">提交报告</button>
+ <button class="btn btn-ghost btn-sm" id="copyReport">复制报告 JSON</button>
+ <a class="btn btn-ghost btn-sm" id="mailReport" href="#">邮件发送 →</a>
+ </div>
+ </div>
+ </div>
+ <div class="mini-faq" style="margin-top:14px">
+ <div class="mq"><h4>问模型「你是谁」能防掉包吗?</h4><p>不能。中转站可注入系统提示词让模型谎报身份。本工具因此<b>不测</b>「你叫什么」,而是测可验证的结构:Token 计量是否随输入线性变化、SSE 是否真流式、返回的 model 字段与请求是否一致。判定掉包需要官方基线对照,那部分由我们服务端做。</p></div>
+ <div class="mq"><h4>Token 虚标怎么发现?</h4><p>发 3 段<b>长度已知的唯一中文文本</b>(每次随机打散,防缓存),读 usage.prompt_tokens 做线性拟合。斜率应约等于 1 token/汉字;若截距远大于 0,或短文本也报出数千 cached,说明存在固定注入脚手架。我们实测两家站注入约 <b>+4858 / +3959 tok/请求</b>(2026-09-30 口径)。</p></div>
+ <div class="mq"><h4>假流式是什么?</h4><p>协议层看着像流式(SSE、分块),实际把上游完整回复缓冲后一次下发,首字要等全文生成完。判定必须用<b>长输出</b>(约 200-300 字):看内容块是逐 token 到达还是一次性倾泻 —— 短答案(两三个字)单块到齐是真流式的常态,不能作为判据。后果是 Cursor / Claude Code 的逐字渲染失效、无法中途打断。部分站还呈现<b>混合行为</b>:同一模型,有的请求流式、有的被缓冲(多渠道路由所致),工具会如实标注。</p></div>
+ <div class="mq"><h4>检测会暴露我的数据吗?</h4><p>探针文本是随机生成的公开测试语料,不含你的业务数据与任何个人信息;请求从你浏览器直连目标站,RelayLens 不经手。回传报告是可选动作,且不含 Key。</p></div>
+ </div>
+ </section>
 
-  <!-- ============ 配置生成器 ============ -->
-  <section class="block" id="cfggen">
-    <div class="blk-head"><h2>⚙️ 客户端配置生成器</h2></div>
-    <p class="lead">选好站点,一键生成主流客户端配置,复制即用。配置中的站点按实测排名排序,你也可以手动填入任意站点。</p>
-    <div class="card">
-      <div class="cfg-grid">
-        <div>
-          <label class="fl">选择站点(按综合分排序)</label>
-          <select id="cfgSite" style="margin-top:6px">
-            <option value="relayapi">RelayAPI(综合 94 · 扣费偏差 0%)</option>
-            <option value="topapi">TopAPI(综合 91 · 支持开票)</option>
-            <option value="zapi">Z-API(综合 89 · 国产低价)</option>
-            <option value="custom">自定义站点…</option>
-          </select>
-          <div id="customFields" style="display:none;margin-top:14px">
-            <label class="fl" style="margin-top:12px">站点名称</label>
-            <input type="text" id="cName" placeholder="MySite" style="margin-top:6px">
-            <label class="fl" style="margin-top:12px">Base URL</label>
-            <input type="url" id="cUrl" placeholder="https://api.example.com/v1" style="margin-top:6px">
-          </div>
-          <label class="fl" style="margin-top:16px">API Key(仅本地拼接,不上传)</label>
-          <input type="text" id="cfgKey" placeholder="sk-...(可留空,复制后自行填入)" style="margin-top:6px">
-          <label class="fl" style="margin-top:16px">默认模型</label>
-          <select id="cfgModel" style="margin-top:6px">
-            <option value="claude-opus-5">claude-opus-5</option>
-            <option value="claude-sonnet-5">claude-sonnet-5</option>
-            <option value="gpt-5.6-sol">gpt-5.6-sol</option>
-            <option value="deepseek-v4">deepseek-v4</option>
-          </select>
-        </div>
-        <div>
-          <div class="tabs" id="cfgTabs">
-            <button class="tab on" data-t="cherry">Cherry Studio</button>
-            <button class="tab" data-t="cursor">Cursor</button>
-            <button class="tab" data-t="claude">Claude Code</button>
-            <button class="tab" data-t="raw">原始 JSON</button>
-          </div>
-          <pre id="cfgOut"></pre>
-          <div style="display:flex;gap:10px;margin-top:12px">
-            <button class="btn btn-primary btn-sm" onclick="copyCfg()">📋 复制配置</button>
-            <span style="font-size:11.5px;color:var(--faint);align-self:center">配置含 Key 时请注意保管,不要截图分享</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+ <!-- ============ 配置生成器 ============ -->
+ <section class="block" id="cfggen">
+ <div class="blk-head"><h2>客户端配置生成器</h2></div>
+ <p class="lead">选好站点,一键生成主流客户端配置,复制即用。配置中的站点按实测排名排序,你也可以手动填入任意站点。</p>
+ <div class="card">
+ <div class="cfg-grid">
+ <div>
+ <label class="fl">选择站点(按综合分排序)</label>
+ <select id="cfgSite" style="margin-top:6px">
+ <option value="relayapi">RelayAPI(综合 94 · 扣费偏差 0%)</option>
+ <option value="topapi">TopAPI(综合 91 · 支持开票)</option>
+ <option value="zapi">Z-API(综合 89 · 国产低价)</option>
+ <option value="custom">自定义站点…</option>
+ </select>
+ <div id="customFields" style="display:none;margin-top:14px">
+ <label class="fl" style="margin-top:12px">站点名称</label>
+ <input type="text" id="cName" placeholder="MySite" style="margin-top:6px">
+ <label class="fl" style="margin-top:12px">Base URL</label>
+ <input type="url" id="cUrl" placeholder="https://api.example.com/v1" style="margin-top:6px">
+ </div>
+ <label class="fl" style="margin-top:16px">API Key(仅本地拼接,不上传)</label>
+ <input type="text" id="cfgKey" placeholder="sk-...(可留空,复制后自行填入)" style="margin-top:6px">
+ <label class="fl" style="margin-top:16px">默认模型</label>
+ <select id="cfgModel" style="margin-top:6px">
+ <option value="claude-opus-5">claude-opus-5</option>
+ <option value="claude-sonnet-5">claude-sonnet-5</option>
+ <option value="gpt-5.6-sol">gpt-5.6-sol</option>
+ <option value="deepseek-v4">deepseek-v4</option>
+ </select>
+ </div>
+ <div>
+ <div class="tabs" id="cfgTabs">
+ <button class="tab on" data-t="cherry">Cherry Studio</button>
+ <button class="tab" data-t="cursor">Cursor</button>
+ <button class="tab" data-t="claude">Claude Code</button>
+ <button class="tab" data-t="raw">原始 JSON</button>
+ </div>
+ <pre id="cfgOut"></pre>
+ <div style="display:flex;gap:10px;margin-top:12px">
+ <button class="btn btn-primary btn-sm" onclick="copyCfg()">复制配置</button>
+ <span style="font-size:11.5px;color:var(--faint);align-self:center">配置含 Key 时请注意保管,不要截图分享</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
 
-  <!-- ============ 成本计算器 ============ -->
-  <section class="block" id="costcalc">
-    <div class="blk-head"><h2>🧮 真实成本计算器</h2></div>
-    <p class="lead">两种使用模式分开算:长任务(编程/长对话)看缓存价;批量短任务(分类/打标/客服)看<b>注入开销</b>——号池类渠道每请求额外注入数千 token,短请求成本可被放大百倍,这是标价完全看不出的。</p>
-    <div class="card">
-      <div class="tabs" style="margin-bottom:16px">
-        <button class="tab on" data-mode="long">⌨️ 长任务(编程/长对话)</button>
-        <button class="tab" data-mode="short">⚡ 批量短任务(分类/打标/客服)</button>
-      </div>
-      <div class="calc-grid">
-        <div>
-          <div id="longInputs">
-            <label class="fl">每日输入 tokens(M/天)</label>
-            <div class="in-row"><input type="range" id="cIn" min="1" max="200" value="20"><span class="in-val" id="cInV">20 M/天</span></div>
-            <label class="fl">缓存命中率</label>
-            <div class="in-row"><input type="range" id="cHit" min="0" max="90" value="60"><span class="in-val" id="cHitV">60%</span></div>
-            <label class="fl">输出 / 输入比</label>
-            <div class="in-row"><input type="range" id="cOut" min="5" max="50" value="12"><span class="in-val" id="cOutV">12%</span></div>
-          </div>
-          <div id="shortInputs" style="display:none">
-            <label class="fl">每日请求数</label>
-            <div class="in-row"><input type="range" id="sReq" min="100" max="20000" step="100" value="2000"><span class="in-val" id="sReqV">2000 次/天</span></div>
-            <label class="fl">平均每请求字符数(中文 ≈ 1字=1token)</label>
-            <div class="in-row"><input type="range" id="sChars" min="20" max="1000" step="10" value="100"><span class="in-val" id="sCharsV">100 字</span></div>
-            <label class="fl">每请求输出 tokens</label>
-            <div class="in-row"><input type="range" id="sOutTok" min="10" max="500" step="10" value="50"><span class="in-val" id="sOutTokV">50 tok</span></div>
-            <label class="chk" style="margin-top:14px"><input type="checkbox" id="sUseInject" checked> 计入号池注入开销</label>
-            <div class="f-grid" style="margin-top:8px">
-              <div><label class="fl">注入 tokens/请求</label><input type="text" id="sInject" value="4858" style="margin-top:6px"></div>
-            </div>
-            <p class="hint">实测(token 计量对照实验,每批 6 个已知长度用例):号池类渠道每请求固定注入 <b>aixoras ≈4858 / aicost ≈3959 tokens</b>(09-30 复测,保守口径;两站均存在渠道混合,部分路径无脚手架),与输入内容无关;官方直连/干净渠道为 0。最新值以探针 tokens 批次为准(<code>tsx cli.ts tokens</code>)。</p>
-          </div>
-          <div class="f-grid" style="margin-top:8px">
-            <div><label class="fl">输入价 ¥/M</label><input type="text" id="pIn" value="6" style="margin-top:6px"></div>
-            <div><label class="fl">输出价 ¥/M</label><input type="text" id="pOut" value="30" style="margin-top:6px"></div>
-            <div><label class="fl">缓存读价 ¥/M</label><input type="text" id="pCr" value="0.6" style="margin-top:6px"></div>
-            <div><label class="fl">充值比例(¥ = 1 美元额度)</label><input type="text" id="pRatio" value="1.0" style="margin-top:6px"></div>
-          </div>
-        </div>
-        <div>
-          <div class="r-box">
-            <div id="longRes">
-              <div class="r-line"><span class="k">日消耗(新输入)</span><span class="v" id="rFresh">—</span></div>
-              <div class="r-line"><span class="k">日消耗(缓存命中)</span><span class="v" id="rCache">—</span></div>
-              <div class="r-line"><span class="k">日消耗(输出)</span><span class="v" id="rOut">—</span></div>
-              <div class="r-line"><span class="k">若站点不算缓存</span><span class="v" id="rNoCache" style="color:var(--bad)">—</span></div>
-              <div class="r-line total"><span class="k">预估月账单(诚实缓存价)</span><span class="v" id="rMonth">—</span></div>
-            </div>
-            <div id="shortRes" style="display:none">
-              <div class="r-line"><span class="k">每请求真实内容</span><span class="v" id="sRealTok">—</span></div>
-              <div class="r-line"><span class="k">每请求计费 tokens</span><span class="v" id="sBilledTok">—</span></div>
-              <div class="r-line"><span class="k">每请求成本:内容 → 实付</span><span class="v" id="sReqCost">—</span></div>
-              <div class="r-line"><span class="k">短请求放大倍数</span><span class="v" id="sAmp" style="color:var(--bad)">—</span></div>
-              <div class="r-line total"><span class="k">预估月账单(实付)</span><span class="v" id="sMonth">—</span></div>
-              <div class="r-line"><span class="k">若无注入开销</span><span class="v" id="sMonthClean" style="color:var(--ok)">—</span></div>
-            </div>
-            <p style="font-size:11.5px;color:#24409a;margin-top:12px" id="rGap"></p>
-            <a href="compare.html" class="btn btn-ghost btn-sm" style="margin-top:12px">用各站实测价格横向比 →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+ <!-- ============ 成本计算器 ============ -->
+ <section class="block" id="costcalc">
+ <div class="blk-head"><h2>真实成本计算器</h2></div>
+ <p class="lead">两种使用模式分开算:长任务(编程/长对话)看缓存价;批量短任务(分类/打标/客服)看<b>注入开销</b>——号池类渠道每请求额外注入数千 token,短请求成本可被放大百倍,这是标价完全看不出的。</p>
+ <div class="card">
+ <div class="tabs" style="margin-bottom:16px">
+ <button class="tab on" data-mode="long">长任务(编程/长对话)</button>
+ <button class="tab" data-mode="short">批量短任务(分类/打标/客服)</button>
+ </div>
+ <div class="calc-grid">
+ <div>
+ <div id="longInputs">
+ <label class="fl">每日输入 tokens(M/天)</label>
+ <div class="in-row"><input type="range" id="cIn" min="1" max="200" value="20"><span class="in-val" id="cInV">20 M/天</span></div>
+ <label class="fl">缓存命中率</label>
+ <div class="in-row"><input type="range" id="cHit" min="0" max="90" value="60"><span class="in-val" id="cHitV">60%</span></div>
+ <label class="fl">输出 / 输入比</label>
+ <div class="in-row"><input type="range" id="cOut" min="5" max="50" value="12"><span class="in-val" id="cOutV">12%</span></div>
+ </div>
+ <div id="shortInputs" style="display:none">
+ <label class="fl">每日请求数</label>
+ <div class="in-row"><input type="range" id="sReq" min="100" max="20000" step="100" value="2000"><span class="in-val" id="sReqV">2000 次/天</span></div>
+ <label class="fl">平均每请求字符数(中文 ≈ 1字=1token)</label>
+ <div class="in-row"><input type="range" id="sChars" min="20" max="1000" step="10" value="100"><span class="in-val" id="sCharsV">100 字</span></div>
+ <label class="fl">每请求输出 tokens</label>
+ <div class="in-row"><input type="range" id="sOutTok" min="10" max="500" step="10" value="50"><span class="in-val" id="sOutTokV">50 tok</span></div>
+ <label class="chk" style="margin-top:14px"><input type="checkbox" id="sUseInject" checked> 计入号池注入开销</label>
+ <div class="f-grid" style="margin-top:8px">
+ <div><label class="fl">注入 tokens/请求</label><input type="text" id="sInject" value="4858" style="margin-top:6px"></div>
+ </div>
+ <p class="hint">实测(token 计量对照实验,每批 6 个已知长度用例):号池类渠道每请求固定注入 <b>aixoras ≈4858 / aicost ≈3959 tokens</b>(09-30 复测,保守口径;两站均存在渠道混合,部分路径无脚手架),与输入内容无关;官方直连/干净渠道为 0。最新值以探针 tokens 批次为准(<code>tsx cli.ts tokens</code>)。</p>
+ </div>
+ <div class="f-grid" style="margin-top:8px">
+ <div><label class="fl">输入价 ¥/M</label><input type="text" id="pIn" value="6" style="margin-top:6px"></div>
+ <div><label class="fl">输出价 ¥/M</label><input type="text" id="pOut" value="30" style="margin-top:6px"></div>
+ <div><label class="fl">缓存读价 ¥/M</label><input type="text" id="pCr" value="0.6" style="margin-top:6px"></div>
+ <div><label class="fl">充值比例(¥ = 1 美元额度)</label><input type="text" id="pRatio" value="1.0" style="margin-top:6px"></div>
+ </div>
+ </div>
+ <div>
+ <div class="r-box">
+ <div id="longRes">
+ <div class="r-line"><span class="k">日消耗(新输入)</span><span class="v" id="rFresh">—</span></div>
+ <div class="r-line"><span class="k">日消耗(缓存命中)</span><span class="v" id="rCache">—</span></div>
+ <div class="r-line"><span class="k">日消耗(输出)</span><span class="v" id="rOut">—</span></div>
+ <div class="r-line"><span class="k">若站点不算缓存</span><span class="v" id="rNoCache" style="color:var(--bad)">—</span></div>
+ <div class="r-line total"><span class="k">预估月账单(诚实缓存价)</span><span class="v" id="rMonth">—</span></div>
+ </div>
+ <div id="shortRes" style="display:none">
+ <div class="r-line"><span class="k">每请求真实内容</span><span class="v" id="sRealTok">—</span></div>
+ <div class="r-line"><span class="k">每请求计费 tokens</span><span class="v" id="sBilledTok">—</span></div>
+ <div class="r-line"><span class="k">每请求成本:内容 → 实付</span><span class="v" id="sReqCost">—</span></div>
+ <div class="r-line"><span class="k">短请求放大倍数</span><span class="v" id="sAmp" style="color:var(--bad)">—</span></div>
+ <div class="r-line total"><span class="k">预估月账单(实付)</span><span class="v" id="sMonth">—</span></div>
+ <div class="r-line"><span class="k">若无注入开销</span><span class="v" id="sMonthClean" style="color:var(--ok)">—</span></div>
+ </div>
+ <p style="font-size:11.5px;color:#24409a;margin-top:12px" id="rGap"></p>
+ <a href="/price/" class="btn btn-ghost btn-sm" style="margin-top:12px">用各站实测价格横向比 →</a>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
 </div>
 
 <footer>
-  <div class="wrap">
-    <div class="ft-grid">
-      <div>
-        <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
-        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位与 Pro 订阅维持运营。</p>
-      </div>
-      <div>
-        <h4>站点</h4>
-        <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="compare.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
-      </div>
-      <div>
-        <h4>关于</h4>
-        <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">联系方式</a><a href="#">隐私政策</a><a href="#">服务条款</a>
-      </div>
-    </div>
-    <div class="fine">
-      免责声明:自测工具从你的浏览器直连目标站点,检测结果反映你本地网络环境下的表现;工具消耗的 tokens 计入你在目标站的账单,由你自行承担。本站不售卖任何 API 转售服务。<br>
-      © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">联系方式</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:自测工具从你的浏览器直连目标站点,检测结果反映你本地网络环境下的表现;工具消耗的 tokens 计入你在目标站的账单,由你自行承担。本站不售卖任何 API 转售服务。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
 </footer>
 
 <div class="toast" id="toast">已复制</div>
@@ -417,352 +409,352 @@ function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeo
  * 5 项检测全部是可验证的结构量,不做「问模型你是谁」这类可被提示词操纵的伪检测。
  */
 function RL_ENGINE(base, key, model, log) {
-  log = log || function () { };
-  var B = String(base).replace(/\/+$/, "");
-  if (!/\/v\d+$/.test(B)) B += "/v1";
-  var t0 = Date.now();
+ log = log || function () { };
+ var B = String(base).replace(/\/+$/, "");
+ if (!/\/v\d+$/.test(B)) B += "/v1";
+ var t0 = Date.now();
 
-  /* 唯一中文文本:数字打散,既防跨轮缓存也防压缩 */
-  function cjk(n, salt) {
-    var pool = "系统架构分布式一致性可用性分区容错工程实践数据分片哈希范围列表热点降级策略容量吞吐延迟抖动监控告警链路追踪熔断限流灰度发布回滚配置服务治理注册发现";
-    var s = "", i = salt;
-    while (s.length < n) {
-      s += pool[i % pool.length];
-      i = (i * 1103515245 + 12345) & 0x7fffffff;
-      if (s.length % 37 === 0) s += String(i % 97) + "，";
-    }
-    return s.slice(0, n);
-  }
-  function post(body, stream) {
-    return fetch(B + "/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
-      body: JSON.stringify(body),
-    }).then(function (r) {
-      if (stream) return r;
-      return r.json().then(function (j) { return { status: r.status, json: j }; });
-    });
-  }
-  function ask(text, maxTok) {
-    return post({ model: model, messages: [{ role: "user", content: text }], max_tokens: maxTok || 8, stream: false })
-      .then(function (r) {
-        var u = (r.json && r.json.usage) || {};
-        return {
-          prompt: u.prompt_tokens || 0,
-          cached: (u.prompt_tokens_details && u.prompt_tokens_details.cached_tokens) ?? u.cached_tokens ?? 0,
-          reportedModel: (r.json && r.json.model) || "",
-          err: r.json && r.json.error ? String(r.json.error.message || "").slice(0, 90) : "",
-        };
-      });
-  }
+ /* 唯一中文文本:数字打散,既防跨轮缓存也防压缩 */
+ function cjk(n, salt) {
+ var pool = "系统架构分布式一致性可用性分区容错工程实践数据分片哈希范围列表热点降级策略容量吞吐延迟抖动监控告警链路追踪熔断限流灰度发布回滚配置服务治理注册发现";
+ var s = "", i = salt;
+ while (s.length < n) {
+ s += pool[i % pool.length];
+ i = (i * 1103515245 + 12345) & 0x7fffffff;
+ if (s.length % 37 === 0) s += String(i % 97) + "，";
+ }
+ return s.slice(0, n);
+ }
+ function post(body, stream) {
+ return fetch(B + "/chat/completions", {
+ method: "POST",
+ headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
+ body: JSON.stringify(body),
+ }).then(function (r) {
+ if (stream) return r;
+ return r.json().then(function (j) { return { status: r.status, json: j }; });
+ });
+ }
+ function ask(text, maxTok) {
+ return post({ model: model, messages: [{ role: "user", content: text }], max_tokens: maxTok || 8, stream: false })
+ .then(function (r) {
+ var u = (r.json && r.json.usage) || {};
+ return {
+ prompt: u.prompt_tokens || 0,
+ cached: (u.prompt_tokens_details && u.prompt_tokens_details.cached_tokens) ?? u.cached_tokens ?? 0,
+ reportedModel: (r.json && r.json.model) || "",
+ err: r.json && r.json.error ? String(r.json.error.message || "").slice(0, 90) : "",
+ };
+ });
+ }
 
-  /* T1 Token 计量线性度 → 注入脚手架 */
-  function t1() {
-    var lens = [30, 200, 1000], rows = [];
-    return lens.reduce(function (p, n, i) {
-      return p.then(function () {
-        return ask("请仅回复\"收到\"二字。资料:" + cjk(n, i * 7 + Date.now() % 9973)).then(function (r) {
-          rows.push({ chars: n, prompt: r.prompt, cached: r.cached, fresh: Math.max(0, r.prompt - r.cached), err: r.err });
-        });
-      });
-    }, Promise.resolve()).then(function () {
-      var ok = rows.filter(function (r) { return !r.err && r.prompt > 0; });
-      if (ok.length < 3) return { id: "token", name: "Token 计量线性度", state: "unknown", detail: "有效样本不足(" + ok.length + "/3),无法拟合", rows: rows };
-      var n = ok.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
-      ok.forEach(function (r) { sx += r.chars; sy += r.fresh; sxx += r.chars * r.chars; sxy += r.chars * r.fresh; });
-      var den = n * sxx - sx * sx, slope = den === 0 ? 0 : (n * sxy - sx * sy) / den, intercept = (sy - slope * sx) / n;
-      var nz = ok.map(function (r) { return r.cached; }).filter(function (c) { return c > 0; }).sort(function (a, b) { return a - b; });
-      var scaffold = nz.length ? nz[Math.floor(nz.length / 2)] : 0;
-      var inject = Math.max(0, Math.round(intercept)) + scaffold;
-      return {
-        id: "token", name: "Token 计量线性度(查注入)",
-        state: inject > 200 ? "bad" : inject > 50 ? "warn" : "ok",
-        detail: inject > 200
-          ? "检出固定注入 ≈ " + inject + " tok/请求(截距 " + Math.round(intercept) + " + 缓存脚手架 " + scaffold + ");斜率 " + slope.toFixed(2) + " tok/字符 —— 你的短请求被多算了这么多 token"
-          : (inject > 50 ? "轻度注入 ≈ " + inject + " tok/请求" : "未检出注入(fresh 随输入线性变化,斜率 " + slope.toFixed(2) + " tok/字符)"),
-        slope: Math.round(slope * 100) / 100, intercept: Math.round(intercept), scaffold: scaffold, inject: inject, rows: rows,
-      };
-    });
-  }
+ /* T1 Token 计量线性度 → 注入脚手架 */
+ function t1() {
+ var lens = [30, 200, 1000], rows = [];
+ return lens.reduce(function (p, n, i) {
+ return p.then(function () {
+ return ask("请仅回复\"收到\"二字。资料:" + cjk(n, i * 7 + Date.now() % 9973)).then(function (r) {
+ rows.push({ chars: n, prompt: r.prompt, cached: r.cached, fresh: Math.max(0, r.prompt - r.cached), err: r.err });
+ });
+ });
+ }, Promise.resolve()).then(function () {
+ var ok = rows.filter(function (r) { return !r.err && r.prompt > 0; });
+ if (ok.length < 3) return { id: "token", name: "Token 计量线性度", state: "unknown", detail: "有效样本不足(" + ok.length + "/3),无法拟合", rows: rows };
+ var n = ok.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
+ ok.forEach(function (r) { sx += r.chars; sy += r.fresh; sxx += r.chars * r.chars; sxy += r.chars * r.fresh; });
+ var den = n * sxx - sx * sx, slope = den === 0 ? 0 : (n * sxy - sx * sy) / den, intercept = (sy - slope * sx) / n;
+ var nz = ok.map(function (r) { return r.cached; }).filter(function (c) { return c > 0; }).sort(function (a, b) { return a - b; });
+ var scaffold = nz.length ? nz[Math.floor(nz.length / 2)] : 0;
+ var inject = Math.max(0, Math.round(intercept)) + scaffold;
+ return {
+ id: "token", name: "Token 计量线性度(查注入)",
+ state: inject > 200 ? "bad" : inject > 50 ? "warn" : "ok",
+ detail: inject > 200
+ ? "检出固定注入 ≈ " + inject + " tok/请求(截距 " + Math.round(intercept) + " + 缓存脚手架 " + scaffold + ");斜率 " + slope.toFixed(2) + " tok/字符 —— 你的短请求被多算了这么多 token"
+ : (inject > 50 ? "轻度注入 ≈ " + inject + " tok/请求" : "未检出注入(fresh 随输入线性变化,斜率 " + slope.toFixed(2) + " tok/字符)"),
+ slope: Math.round(slope * 100) / 100, intercept: Math.round(intercept), scaffold: scaffold, inject: inject, rows: rows,
+ };
+ });
+ }
 
-  /* T2+T3 流式真伪 + 首字延迟
-   * 口径 v2(2026-10-03,与云端探针/测速直达同源):短答案(2 字)单 chunk 是真流式的常态,
-   * 「首末内容块 <50ms」对短答案必然成立,会把真流式站误判成假流式 ——
-   * 真伪判定必须用长输出(~200-300 字,内容 ≥80 字):chunks≥10 且跨度 ≥800ms → 真流式;
-   * chunks≤5 且跨度 <200ms → 假流式。TTFT 用短答案单独测(那才是"首字"的真实等待)。
-   */
-  var STREAM_PROBES = ["写一段大约200字的短文,介绍河流的成因,直接开始正文。", "写一篇大约300字的短文,介绍河流的成因。"];
-  function streamOnce(prompt, maxTok) {
-    var start = 0, first = 0, last = 0, chunks = 0, contentChunks = 0, chars = 0;
-    start = Date.now();
-    return post({ model: model, messages: [{ role: "user", content: prompt }], max_tokens: maxTok, stream: true }, true)
-      .then(function (r) {
-        if (!r.ok || !r.body) return { fail: "HTTP " + r.status };
-        var rd = r.body.getReader(), dec = new TextDecoder(), buf = "", err = "";
-        function pump() {
-          return rd.read().then(function (res) {
-            if (res.done) return;
-            buf += dec.decode(res.value, { stream: true });
-            var lines = buf.split("\n"); buf = lines.pop();
-            lines.forEach(function (ln) {
-              ln = ln.trim();
-              if (ln.indexOf("data:") !== 0) return;
-              var payload = ln.slice(5).trim();
-              if (payload === "[DONE]") return;
-              chunks++;
-              var o; try { o = JSON.parse(payload); } catch (e) { return; }
-              var d = (o.choices && o.choices[0] && o.choices[0].delta) || {};
-              if ((d.content && d.content.length) || (d.reasoning_content && d.reasoning_content.length)) {
-                var now = Date.now();
-                if (!first) first = now;
-                last = now; contentChunks++;
-                if (d.content) chars += d.content.length;
-              }
-            });
-            return pump();
-          }).catch(function (e) { err = String(e.message || e).slice(0, 80); });
-        }
-        return pump().then(function () {
-          if (err) return { fail: "读取中断:" + err };
-          return {
-            ttftMs: first ? first - start : null,
-            spanMs: last - first,
-            contentChunks: contentChunks, chars: chars,
-          };
-        });
-      });
-  }
-  function streamVerdict(t) {
-    if (!t || t.fail || t.chars < 80) return "unknown";
-    if (t.contentChunks >= 10 && t.spanMs >= 800) return "stream";
-    if (t.contentChunks <= 5 && t.spanMs < 200) return "buffered";
-    return "unknown";
-  }
-  function t2() {
-    /* TTFT:短答案(真首字等待) */
-    var shortP = streamOnce("只回复两个字:收到", 16);
-    /* 真伪:2 次换措辞长输出(措辞 A 常规 / 措辞 B 已知会触发部分站缓冲),交叉出现如实报混合 */
-    var longA = shortP.then(function () { return streamOnce(STREAM_PROBES[0], 600); });
-    var longB = longA.then(function () { return streamOnce(STREAM_PROBES[1], 600); });
-    return Promise.all([shortP, longA, longB]).then(function (rs) {
-      var sh = rs[0], la = rs[1], lb = rs[2];
-      var va = streamVerdict(la), vb = streamVerdict(lb);
-      var verdict = (va === "unknown" && vb === "unknown") ? "unknown"
-        : (va === "stream" && vb === "stream") ? "stream"
-          : (va === "buffered" && (vb === "buffered" || vb === "unknown")) || (vb === "buffered" && (va === "buffered" || va === "unknown")) ? "buffered"
-            : "mixed";
-      var state = verdict === "stream" ? "ok" : verdict === "buffered" ? "bad" : verdict === "mixed" ? "warn" : "unknown";
-      var detail = verdict === "stream"
-        ? "真流式:两次长输出取样均逐 token 下发(" + la.contentChunks + "块/" + la.spanMs + "ms、" + lb.contentChunks + "块/" + lb.spanMs + "ms),Cursor/Claude Code 逐字渲染可用"
-        : verdict === "buffered"
-          ? "假流式:长输出被整段缓冲后一次性下发(" + la.chars + "字挤在 " + la.contentChunks + " 块、" + lb.chars + "字挤在 " + lb.contentChunks + " 块),首字要等全文生成完,逐字渲染与中途打断均失效"
-          : verdict === "mixed"
-            ? "混合行为:措辞A " + (va === "stream" ? "逐块流式" : "整段缓冲") + "、措辞B " + (vb === "stream" ? "逐块流式" : "整段缓冲") + " —— 同站不同请求行为不一致(疑似多渠道路由),体验取决于命中的渠道"
-            : "长输出取样不足以判定(" + ((la.fail || lb.fail) ? "请求失败:" + (la.fail || lb.fail) : "输出不足 80 字") + "),首字延迟数值仍有效";
-      return {
-        id: "stream", name: "流式真伪 + 首字延迟",
-        state: state,
-        detail: detail + "。首字延迟 " + (sh.ttftMs != null ? sh.ttftMs + "ms" : "未能测得") + "(短答案口径)",
-        ttftMs: sh.ttftMs != null ? sh.ttftMs : null, contentChunks: la.contentChunks, spanMs: la.spanMs,
-        verdict: verdict, trials: [{ v: va, chunks: la.contentChunks, span: la.spanMs, chars: la.chars }, { v: vb, chunks: lb.contentChunks, span: lb.spanMs, chars: lb.chars }],
-      };
-    });
-  }
+ /* T2+T3 流式真伪 + 首字延迟
+ * 口径 v2(2026-10-03,与云端探针/测速直达同源):短答案(2 字)单 chunk 是真流式的常态,
+ * 「首末内容块 <50ms」对短答案必然成立,会把真流式站误判成假流式 ——
+ * 真伪判定必须用长输出(~200-300 字,内容 ≥80 字):chunks≥10 且跨度 ≥800ms → 真流式;
+ * chunks≤5 且跨度 <200ms → 假流式。TTFT 用短答案单独测(那才是"首字"的真实等待)。
+ */
+ var STREAM_PROBES = ["写一段大约200字的短文,介绍河流的成因,直接开始正文。", "写一篇大约300字的短文,介绍河流的成因。"];
+ function streamOnce(prompt, maxTok) {
+ var start = 0, first = 0, last = 0, chunks = 0, contentChunks = 0, chars = 0;
+ start = Date.now();
+ return post({ model: model, messages: [{ role: "user", content: prompt }], max_tokens: maxTok, stream: true }, true)
+ .then(function (r) {
+ if (!r.ok || !r.body) return { fail: "HTTP " + r.status };
+ var rd = r.body.getReader(), dec = new TextDecoder(), buf = "", err = "";
+ function pump() {
+ return rd.read().then(function (res) {
+ if (res.done) return;
+ buf += dec.decode(res.value, { stream: true });
+ var lines = buf.split("\n"); buf = lines.pop();
+ lines.forEach(function (ln) {
+ ln = ln.trim();
+ if (ln.indexOf("data:") !== 0) return;
+ var payload = ln.slice(5).trim();
+ if (payload === "[DONE]") return;
+ chunks++;
+ var o; try { o = JSON.parse(payload); } catch (e) { return; }
+ var d = (o.choices && o.choices[0] && o.choices[0].delta) || {};
+ if ((d.content && d.content.length) || (d.reasoning_content && d.reasoning_content.length)) {
+ var now = Date.now();
+ if (!first) first = now;
+ last = now; contentChunks++;
+ if (d.content) chars += d.content.length;
+ }
+ });
+ return pump();
+ }).catch(function (e) { err = String(e.message || e).slice(0, 80); });
+ }
+ return pump().then(function () {
+ if (err) return { fail: "读取中断:" + err };
+ return {
+ ttftMs: first ? first - start : null,
+ spanMs: last - first,
+ contentChunks: contentChunks, chars: chars,
+ };
+ });
+ });
+ }
+ function streamVerdict(t) {
+ if (!t || t.fail || t.chars < 80) return "unknown";
+ if (t.contentChunks >= 10 && t.spanMs >= 800) return "stream";
+ if (t.contentChunks <= 5 && t.spanMs < 200) return "buffered";
+ return "unknown";
+ }
+ function t2() {
+ /* TTFT:短答案(真首字等待) */
+ var shortP = streamOnce("只回复两个字:收到", 16);
+ /* 真伪:2 次换措辞长输出(措辞 A 常规 / 措辞 B 已知会触发部分站缓冲),交叉出现如实报混合 */
+ var longA = shortP.then(function () { return streamOnce(STREAM_PROBES[0], 600); });
+ var longB = longA.then(function () { return streamOnce(STREAM_PROBES[1], 600); });
+ return Promise.all([shortP, longA, longB]).then(function (rs) {
+ var sh = rs[0], la = rs[1], lb = rs[2];
+ var va = streamVerdict(la), vb = streamVerdict(lb);
+ var verdict = (va === "unknown" && vb === "unknown") ? "unknown"
+ : (va === "stream" && vb === "stream") ? "stream"
+ : (va === "buffered" && (vb === "buffered" || vb === "unknown")) || (vb === "buffered" && (va === "buffered" || va === "unknown")) ? "buffered"
+ : "mixed";
+ var state = verdict === "stream" ? "ok" : verdict === "buffered" ? "bad" : verdict === "mixed" ? "warn" : "unknown";
+ var detail = verdict === "stream"
+ ? "真流式:两次长输出取样均逐 token 下发(" + la.contentChunks + "块/" + la.spanMs + "ms、" + lb.contentChunks + "块/" + lb.spanMs + "ms),Cursor/Claude Code 逐字渲染可用"
+ : verdict === "buffered"
+ ? "假流式:长输出被整段缓冲后一次性下发(" + la.chars + "字挤在 " + la.contentChunks + " 块、" + lb.chars + "字挤在 " + lb.contentChunks + " 块),首字要等全文生成完,逐字渲染与中途打断均失效"
+ : verdict === "mixed"
+ ? "混合行为:措辞A " + (va === "stream" ? "逐块流式" : "整段缓冲") + "、措辞B " + (vb === "stream" ? "逐块流式" : "整段缓冲") + " —— 同站不同请求行为不一致(疑似多渠道路由),体验取决于命中的渠道"
+ : "长输出取样不足以判定(" + ((la.fail || lb.fail) ? "请求失败:" + (la.fail || lb.fail) : "输出不足 80 字") + "),首字延迟数值仍有效";
+ return {
+ id: "stream", name: "流式真伪 + 首字延迟",
+ state: state,
+ detail: detail + "。首字延迟 " + (sh.ttftMs != null ? sh.ttftMs + "ms" : "未能测得") + "(短答案口径)",
+ ttftMs: sh.ttftMs != null ? sh.ttftMs : null, contentChunks: la.contentChunks, spanMs: la.spanMs,
+ verdict: verdict, trials: [{ v: va, chunks: la.contentChunks, span: la.spanMs, chars: la.chars }, { v: vb, chunks: lb.contentChunks, span: lb.spanMs, chars: lb.chars }],
+ };
+ });
+ }
 
-  /* T4 缓存明细是否上报 */
-  function t4() {
-    var text = "请仅回复\"收到\"。资料:" + cjk(400, 991);
-    return ask(text, 8).then(function (a) {
-      return ask(text, 8).then(function (b) {
-        var reported = (a.cached > 0 || b.cached > 0);
-        return {
-          id: "cache", name: "缓存明细",
-          state: reported ? (b.cached > 0 ? "ok" : "warn") : "unknown",
-          detail: b.cached > 0
-            ? "第二轮 cached_tokens=" + b.cached + "(首轮 " + a.cached + ")—— 站方上报缓存命中,可按缓存价核对"
-            : (reported ? "仅首轮上报 cached=" + a.cached + ",重复请求未见命中,缓存策略存疑" : "两轮均未上报 cached_tokens —— 无法判定是否真给缓存价(部分站不计缓存)"),
-          first: a.cached, second: b.cached, reported: reported,
-        };
-      });
-    });
-  }
+ /* T4 缓存明细是否上报 */
+ function t4() {
+ var text = "请仅回复\"收到\"。资料:" + cjk(400, 991);
+ return ask(text, 8).then(function (a) {
+ return ask(text, 8).then(function (b) {
+ var reported = (a.cached > 0 || b.cached > 0);
+ return {
+ id: "cache", name: "缓存明细",
+ state: reported ? (b.cached > 0 ? "ok" : "warn") : "unknown",
+ detail: b.cached > 0
+ ? "第二轮 cached_tokens=" + b.cached + "(首轮 " + a.cached + ")—— 站方上报缓存命中,可按缓存价核对"
+ : (reported ? "仅首轮上报 cached=" + a.cached + ",重复请求未见命中,缓存策略存疑" : "两轮均未上报 cached_tokens —— 无法判定是否真给缓存价(部分站不计缓存)"),
+ first: a.cached, second: b.cached, reported: reported,
+ };
+ });
+ });
+ }
 
-  /* T5 返回模型名一致性 */
-  function t5() {
-    return ask("只回复两个字:收到", 4).then(function (r) {
-      var got = r.reportedModel;
-      var same = !!got && (got === model || got.indexOf(model) === 0 || model.indexOf(got) === 0);
-      return {
-        id: "identity", name: "返回模型名一致性",
-        state: !got ? "unknown" : same ? "ok" : "warn",
-        detail: !got ? "响应未返回 model 字段" : (same
-          ? "返回 " + got + " 与请求一致 —— 但这只能说明字段没撒谎,判定是否掉包需官方基线指纹对照(我们服务端做)"
-          : "⚠ 请求 " + model + " 但返回 " + got + " —— 字段不一致,是渠道映射或降级的直接信号"),
-        requested: model, reported: got,
-      };
-    });
-  }
+ /* T5 返回模型名一致性 */
+ function t5() {
+ return ask("只回复两个字:收到", 4).then(function (r) {
+ var got = r.reportedModel;
+ var same = !!got && (got === model || got.indexOf(model) === 0 || model.indexOf(got) === 0);
+ return {
+ id: "identity", name: "返回模型名一致性",
+ state: !got ? "unknown" : same ? "ok" : "warn",
+ detail: !got ? "响应未返回 model 字段" : (same
+ ? "返回 " + got + " 与请求一致 —— 但这只能说明字段没撒谎,判定是否掉包需官方基线指纹对照(我们服务端做)"
+ : "请求 " + model + " 但返回 " + got + " —— 字段不一致,是渠道映射或降级的直接信号"),
+ requested: model, reported: got,
+ };
+ });
+ }
 
-  log("开始检测 " + B + " · " + model);
-  return t1().then(function (a) { log(a.name + ":" + a.state); return t2().then(function (b) {
-    log(b.name + ":" + b.state); return t4().then(function (c) {
-      log(c.name + ":" + c.state); return t5().then(function (d) {
-        log(d.name + ":" + d.state);
-        return {
-          schema: "relaylens-selftest/1.0.0",
-          ranAt: new Date().toISOString(),
-          base: B, model: model, elapsedMs: Date.now() - t0,
-          checks: [a, b, c, d],
-          summary: (function () {
-            var bad = [a, b, c, d].filter(function (x) { return x.state === "bad"; }).map(function (x) { return x.name; });
-            var warn = [a, b, c, d].filter(function (x) { return x.state === "warn"; }).map(function (x) { return x.name; });
-            return bad.length ? "发现 " + bad.length + " 项异常:" + bad.join("、") : (warn.length ? "有 " + warn.length + " 项待观察:" + warn.join("、") : "四项检测均在正常范围");
-          })(),
-        };
-      });
-    });
-  }); });
+ log("开始检测 " + B + " · " + model);
+ return t1().then(function (a) { log(a.name + ":" + a.state); return t2().then(function (b) {
+ log(b.name + ":" + b.state); return t4().then(function (c) {
+ log(c.name + ":" + c.state); return t5().then(function (d) {
+ log(d.name + ":" + d.state);
+ return {
+ schema: "relaylens-selftest/1.0.0",
+ ranAt: new Date().toISOString(),
+ base: B, model: model, elapsedMs: Date.now() - t0,
+ checks: [a, b, c, d],
+ summary: (function () {
+ var bad = [a, b, c, d].filter(function (x) { return x.state === "bad"; }).map(function (x) { return x.name; });
+ var warn = [a, b, c, d].filter(function (x) { return x.state === "warn"; }).map(function (x) { return x.name; });
+ return bad.length ? "发现 " + bad.length + " 项异常:" + bad.join("、") : (warn.length ? "有 " + warn.length + " 项待观察:" + warn.join("、") : "四项检测均在正常范围");
+ })(),
+ };
+ });
+ });
+ }); });
 }
 
 /* ---- 页内渲染与提交 ---- */
 var LAST_REPORT = null;
 function pillCls(st) { return st === "ok" ? "p-ok" : st === "warn" ? "p-warn" : st === "bad" ? "p-bad" : "p-info"; }
-function pillTxt(st) { return st === "ok" ? "通过" : st === "warn" ? "待观察" : st === "bad" ? "异常 ⚠" : "无法判定"; }
+function pillTxt(st) { return st === "ok" ? "通过" : st === "warn" ? "待观察" : st === "bad" ? "异常 " : "无法判定"; }
 
 function renderReport(rep) {
-  LAST_REPORT = rep;
-  var pv = document.getElementById("imgPreview"); if (pv) pv.style.display = "none";  /* 新报告进来先收起旧图 */
-  var box = document.getElementById("resultBox");
-  var items = rep.checks.map(function (c) {
-    return '<div class="r-item"><div class="rh"><span>' + esc(c.name) + '</span><span class="pill ' + pillCls(c.state) + '">' + pillTxt(c.state) + '</span></div><div class="rd">' + esc(c.detail) + '</div></div>';
-  }).join("");
-  var worst = rep.checks.some(function (c) { return c.state === "bad"; }) ? "bad" : (rep.checks.some(function (c) { return c.state === "warn"; }) ? "warn" : "ok");
-  var verdict = worst === "bad"
-    ? '<div class="verdict"><div class="vb vb-bad"><b style="color:#fca5a5">⛔ 有检测项异常</b>' + esc(rep.summary) + '。建议停止大额充值、先小额验证;若你正在用 Cursor / Claude Code,假流式会直接废掉逐字输出。</div></div>'
-    : worst === "warn"
-      ? '<div class="verdict"><div class="vb vb-ok"><b style="color:#fde68a">△ 基本正常,有 ' + rep.checks.filter(function (c) { return c.state === "warn"; }).length + ' 项待观察</b>' + esc(rep.summary) + '</div></div>'
-      : '<div class="verdict"><div class="vb vb-ok"><b style="color:#6ee7b7">✓ 你的使用环境下表现正常</b>建议保持「少量多次充值」习惯。注意:本检测反映你本地网络与当前时刻的渠道状态,不代表该站其他分组。</div></div>';
-  box.innerHTML = '<div class="ph">检测结果 · ' + esc(rep.model) + ' · ' + (rep.elapsedMs / 1000).toFixed(1) + 's</div>' + items + verdict;
-  document.getElementById("reportBox").style.display = "block";
+ LAST_REPORT = rep;
+ var pv = document.getElementById("imgPreview"); if (pv) pv.style.display = "none"; /* 新报告进来先收起旧图 */
+ var box = document.getElementById("resultBox");
+ var items = rep.checks.map(function (c) {
+ return '<div class="r-item"><div class="rh"><span>' + esc(c.name) + '</span><span class="pill ' + pillCls(c.state) + '">' + pillTxt(c.state) + '</span></div><div class="rd">' + esc(c.detail) + '</div></div>';
+ }).join("");
+ var worst = rep.checks.some(function (c) { return c.state === "bad"; }) ? "bad" : (rep.checks.some(function (c) { return c.state === "warn"; }) ? "warn" : "ok");
+ var verdict = worst === "bad"
+ ? '<div class="verdict"><div class="vb vb-bad"><b style="color:#fca5a5">有检测项异常</b>' + esc(rep.summary) + '。建议停止大额充值、先小额验证;若你正在用 Cursor / Claude Code,假流式会直接废掉逐字输出。</div></div>'
+ : worst === "warn"
+ ? '<div class="verdict"><div class="vb vb-ok"><b style="color:#fde68a">△ 基本正常,有 ' + rep.checks.filter(function (c) { return c.state === "warn"; }).length + ' 项待观察</b>' + esc(rep.summary) + '</div></div>'
+ : '<div class="verdict"><div class="vb vb-ok"><b style="color:#6ee7b7">✓ 你的使用环境下表现正常</b>建议保持「少量多次充值」习惯。注意:本检测反映你本地网络与当前时刻的渠道状态,不代表该站其他分组。</div></div>';
+ box.innerHTML = '<div class="ph">检测结果 · ' + esc(rep.model) + ' · ' + (rep.elapsedMs / 1000).toFixed(1) + 's</div>' + items + verdict;
+ document.getElementById("reportBox").style.display = "block";
 }
 
 function readInputs() {
-  var url = document.getElementById("tUrl").value.trim();
-  var key = document.getElementById("tKey").value.trim();
-  var model = document.getElementById("tModel").value.trim();
-  if (!/^https?:\/\//.test(url)) { toast("请填写完整 API Base URL(含 https://)"); return null; }
-  if (!key) { toast("请填写 API Key(仅在本地使用)"); return null; }
-  if (!model) { toast("请填写检测模型名"); return null; }
-  return { url: url, key: key, model: model };
+ var url = document.getElementById("tUrl").value.trim();
+ var key = document.getElementById("tKey").value.trim();
+ var model = document.getElementById("tModel").value.trim();
+ if (!/^https?:\/\//.test(url)) { toast("请填写完整 API Base URL(含 https://)"); return null; }
+ if (!key) { toast("请填写 API Key(仅在本地使用)"); return null; }
+ if (!model) { toast("请填写检测模型名"); return null; }
+ return { url: url, key: key, model: model };
 }
 
 document.getElementById("runTest").addEventListener("click", function () {
-  var v = readInputs(); if (!v) return;
-  /* 通道真正生效:默认「控制台脚本」——直接生成脚本(多数中转站不开浏览器跨域,页内直测常被 CORS 拦) */
-  var mode = (document.getElementById("tMode") || {}).value || "console";
-  if (mode === "console") {
-    document.getElementById("genScript").click();
-    toast("已生成控制台脚本:复制到目标站页面 F12 运行,再把输出的 JSON 粘回来");
-    return;
-  }
-  var btn = this; btn.disabled = true; btn.textContent = "⏳ 检测中…";
-  var box = document.getElementById("resultBox");
-  box.innerHTML = '<div class="ph">检测结果 · ' + esc(v.model) + '</div><div id="rLog" class="rd" style="min-height:60px">正在发起请求…</div>';
-  var lg = document.getElementById("rLog");
-  RL_ENGINE(v.url, v.key, v.model, function (m) { lg.textContent += "\n" + m; }).then(function (rep) {
-    renderReport(rep);
-    btn.disabled = false; btn.textContent = "▶ 开始检测";
-    toast("检测完成 · 真实结果");
-  }).catch(function (e) {
-    var msg = String(e && e.message || e);
-    var isCors = /Failed to fetch|NetworkError|Load failed|CORS/i.test(msg);
-    box.innerHTML = '<div class="ph">检测未完成</div><div class="rd">' +
-      (isCors
-        ? '<b>浏览器跨域被拒(CORS)</b><br>这不是站点坏了 —— 多数中转站不为浏览器开放跨域。请改点「<b>生成控制台脚本</b>」,在<b>目标站自己的页面</b>里按 F12 运行,同源无限制。'
-        : "检测中断:" + esc(msg)) + '</div>';
-    btn.disabled = false; btn.textContent = "▶ 开始检测";
-    if (isCors) toast("该站不允许浏览器直连,请用控制台脚本");
-  });
+ var v = readInputs(); if (!v) return;
+ /* 通道真正生效:默认「控制台脚本」——直接生成脚本(多数中转站不开浏览器跨域,页内直测常被 CORS 拦) */
+ var mode = (document.getElementById("tMode") || {}).value || "console";
+ if (mode === "console") {
+ document.getElementById("genScript").click();
+ toast("已生成控制台脚本:复制到目标站页面 F12 运行,再把输出的 JSON 粘回来");
+ return;
+ }
+ var btn = this; btn.disabled = true; btn.textContent = "检测中…";
+ var box = document.getElementById("resultBox");
+ box.innerHTML = '<div class="ph">检测结果 · ' + esc(v.model) + '</div><div id="rLog" class="rd" style="min-height:60px">正在发起请求…</div>';
+ var lg = document.getElementById("rLog");
+ RL_ENGINE(v.url, v.key, v.model, function (m) { lg.textContent += "\n" + m; }).then(function (rep) {
+ renderReport(rep);
+ btn.disabled = false; btn.textContent = "▶ 开始检测";
+ toast("检测完成 · 真实结果");
+ }).catch(function (e) {
+ var msg = String(e && e.message || e);
+ var isCors = /Failed to fetch|NetworkError|Load failed|CORS/i.test(msg);
+ box.innerHTML = '<div class="ph">检测未完成</div><div class="rd">' +
+ (isCors
+ ? '<b>浏览器跨域被拒(CORS)</b><br>这不是站点坏了 —— 多数中转站不为浏览器开放跨域。请改点「<b>生成控制台脚本</b>」,在<b>目标站自己的页面</b>里按 F12 运行,同源无限制。'
+ : "检测中断:" + esc(msg)) + '</div>';
+ btn.disabled = false; btn.textContent = "▶ 开始检测";
+ if (isCors) toast("该站不允许浏览器直连,请用控制台脚本");
+ });
 });
 
 /* 控制台脚本:序列化同一份引擎,杜绝两套逻辑 */
 document.getElementById("genScript").addEventListener("click", function () {
-  var v = readInputs(); if (!v) return;
-  var snippet = "// RelayLens 自测脚本 · 请在目标站域名下的页面按 F12 → Console 粘贴运行\n" +
-    "// ⚠ 本片段含你的 API Key,运行后请清空剪贴板与 DevTools 输入历史\n" +
-    RL_ENGINE.toString() + "\n" +
-    "RL_ENGINE(" + JSON.stringify(v.url) + "," + JSON.stringify(v.key) + "," + JSON.stringify(v.model) + ",function(m){console.log('[RL]',m)})" +
-    ".then(function(rep){console.log('%c报告 JSON(复制这段回传给 RelayLens):','font-weight:bold');console.log(JSON.stringify(rep));" +
-    "if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(JSON.stringify(rep)).then(function(){console.log('[RL] 报告已复制到剪贴板')});})" +
-    ".catch(function(e){console.error('[RL] 失败:',e)});";
-  document.getElementById("scriptOut").style.display = "block";
-  document.getElementById("scriptText").value = snippet;
-  toast("脚本已生成,复制到目标站页面的 Console 运行");
+ var v = readInputs(); if (!v) return;
+ var snippet = "// RelayLens 自测脚本 · 请在目标站域名下的页面按 F12 → Console 粘贴运行\n" +
+ "// 本片段含你的 API Key,运行后请清空剪贴板与 DevTools 输入历史\n" +
+ RL_ENGINE.toString() + "\n" +
+ "RL_ENGINE(" + JSON.stringify(v.url) + "," + JSON.stringify(v.key) + "," + JSON.stringify(v.model) + ",function(m){console.log('[RL]',m)})" +
+ ".then(function(rep){console.log('%c报告 JSON(复制这段回传给 RelayLens):','font-weight:bold');console.log(JSON.stringify(rep));" +
+ "if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(JSON.stringify(rep)).then(function(){console.log('[RL] 报告已复制到剪贴板')});})" +
+ ".catch(function(e){console.error('[RL] 失败:',e)});";
+ document.getElementById("scriptOut").style.display = "block";
+ document.getElementById("scriptText").value = snippet;
+ toast("脚本已生成,复制到目标站页面的 Console 运行");
 });
 document.getElementById("copyScript").addEventListener("click", function () {
-  var t = document.getElementById("scriptText");
-  t.select(); try { document.execCommand("copy"); toast("已复制(含 Key,用完请清理)") } catch (e) { toast("请手动全选复制") }
+ var t = document.getElementById("scriptText");
+ t.select(); try { document.execCommand("copy"); toast("已复制(含 Key,用完请清理)") } catch (e) { toast("请手动全选复制") }
 });
 
 /* 粘回脚本输出的 JSON:校验结构后走同一套卡片渲染(图片/回传按钮自然复用) */
 document.getElementById("loadPasted").addEventListener("click", function () {
-  var raw = document.getElementById("pasteReportBox").value.trim();
-  if (!raw) { toast("先粘贴脚本输出的 JSON 报告"); return; }
-  var rep = null;
-  try { rep = JSON.parse(raw); } catch (e) { toast("不是合法 JSON —— 请粘贴脚本 console.log 输出的那一整行"); return; }
-  if (!rep || typeof rep !== "object" || String(rep.schema || "").indexOf("relaylens-selftest") !== 0 || !Array.isArray(rep.checks) || !rep.checks.length) {
-    toast("结构不对:需要 schema=relaylens-selftest/… 且含 checks 数组的报告 JSON");
-    return;
-  }
-  /* 卫生:截断长字段、剔除一切名为 key 的键(双保险,脚本输出本来就不含 Key) */
-  delete rep.key;
-  rep.base = String(rep.base || "").slice(0, 200);
-  rep.model = String(rep.model || "").slice(0, 100);
-  rep.ranAt = String(rep.ranAt || "").slice(0, 40);
-  rep.elapsedMs = typeof rep.elapsedMs === "number" ? rep.elapsedMs : 0;
-  rep.checks = rep.checks.slice(0, 8).map(function (c) {
-    return {
-      name: String((c && c.name) || "检测项").slice(0, 60),
-      state: ["ok", "warn", "bad", "unknown"].indexOf(c && c.state) >= 0 ? c.state : "unknown",
-      detail: String((c && c.detail) || "").slice(0, 300),
-      ttftMs: c && typeof c.ttftMs === "number" ? c.ttftMs : (c && c.id === "stream" && typeof c.ttftMs !== "number" ? null : c && c.ttftMs),
-    };
-  });
-  renderReport(rep);
-  toast("报告已载入,可点「生成分享图片」");
-  document.getElementById("resultBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
+ var raw = document.getElementById("pasteReportBox").value.trim();
+ if (!raw) { toast("先粘贴脚本输出的 JSON 报告"); return; }
+ var rep = null;
+ try { rep = JSON.parse(raw); } catch (e) { toast("不是合法 JSON —— 请粘贴脚本 console.log 输出的那一整行"); return; }
+ if (!rep || typeof rep !== "object" || String(rep.schema || "").indexOf("relaylens-selftest") !== 0 || !Array.isArray(rep.checks) || !rep.checks.length) {
+ toast("结构不对:需要 schema=relaylens-selftest/… 且含 checks 数组的报告 JSON");
+ return;
+ }
+ /* 卫生:截断长字段、剔除一切名为 key 的键(双保险,脚本输出本来就不含 Key) */
+ delete rep.key;
+ rep.base = String(rep.base || "").slice(0, 200);
+ rep.model = String(rep.model || "").slice(0, 100);
+ rep.ranAt = String(rep.ranAt || "").slice(0, 40);
+ rep.elapsedMs = typeof rep.elapsedMs === "number" ? rep.elapsedMs : 0;
+ rep.checks = rep.checks.slice(0, 8).map(function (c) {
+ return {
+ name: String((c && c.name) || "检测项").slice(0, 60),
+ state: ["ok", "warn", "bad", "unknown"].indexOf(c && c.state) >= 0 ? c.state : "unknown",
+ detail: String((c && c.detail) || "").slice(0, 300),
+ ttftMs: c && typeof c.ttftMs === "number" ? c.ttftMs : (c && c.id === "stream" && typeof c.ttftMs !== "number" ? null : c && c.ttftMs),
+ };
+ });
+ renderReport(rep);
+ toast("报告已载入,可点「生成分享图片」");
+ document.getElementById("resultBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
 });
 
 /* 报告回传:剔除 Key,只回结构指标 */
 function cleanReport() {
-  if (!LAST_REPORT) return null;
-  var c = JSON.parse(JSON.stringify(LAST_REPORT));
-  delete c.key;
-  c.checks.forEach(function (x) { delete x.raw; });
-  return c;
+ if (!LAST_REPORT) return null;
+ var c = JSON.parse(JSON.stringify(LAST_REPORT));
+ delete c.key;
+ c.checks.forEach(function (x) { delete x.raw; });
+ return c;
 }
 function submitReport() {
-  var c = cleanReport(); if (!c) { toast("先完成一次检测"); return; }
-  var json = JSON.stringify(c);
-  var ep = (window.RELAYLENS_REPORT_ENDPOINT || "").trim();
-  if (ep) {
-    fetch(ep, { method: "POST", headers: { "Content-Type": "application/json" }, body: json })
-      .then(function (r) { if (!r.ok) throw 0; toast("已提交,感谢!我们会用自己的探针复测") })
-      .catch(function () { fallbackReport(json) });
-  } else fallbackReport(json);
+ var c = cleanReport(); if (!c) { toast("先完成一次检测"); return; }
+ var json = JSON.stringify(c);
+ var ep = (window.RELAYLENS_REPORT_ENDPOINT || "").trim();
+ if (ep) {
+ fetch(ep, { method: "POST", headers: { "Content-Type": "application/json" }, body: json })
+ .then(function (r) { if (!r.ok) throw 0; toast("已提交,感谢!我们会用自己的探针复测") })
+ .catch(function () { fallbackReport(json) });
+ } else fallbackReport(json);
 }
 function fallbackReport(json) {
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(json);
-  toast("受理端点未接入,报告已复制 —— 请连同你的站点/模型一起反馈");
+ if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(json);
+ toast("受理端点未接入,报告已复制 —— 请连同你的站点/模型一起反馈");
 }
 document.getElementById("submitReport").addEventListener("click", submitReport);
 document.getElementById("copyReport").addEventListener("click", function () {
-  var c = cleanReport(); if (!c) { toast("先完成一次检测"); return; }
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(JSON.stringify(c)).then(function () { toast("报告已复制(不含 Key)") }, function () { toast("复制失败") });
+ var c = cleanReport(); if (!c) { toast("先完成一次检测"); return; }
+ if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(JSON.stringify(c)).then(function () { toast("报告已复制(不含 Key)") }, function () { toast("复制失败") });
 });
 document.getElementById("mailReport").addEventListener("click", function () {
-  var c = cleanReport(); if (!c) { toast("先完成一次检测"); return; }
-  this.href = "mailto:selftest@relaylens.example?subject=" + encodeURIComponent("[自测报告] " + c.model) + "&body=" + encodeURIComponent(JSON.stringify(c));
+ var c = cleanReport(); if (!c) { toast("先完成一次检测"); return; }
+ this.href = "mailto:selftest@relaylens.example?subject=" + encodeURIComponent("[自测报告] " + c.model) + "&body=" + encodeURIComponent(JSON.stringify(c));
 });
 
 /* ============ 分享图片:报告 → canvas 卡片 → PNG(纯前端,不出网;绝不绘制 Key) ============ */
@@ -770,112 +762,112 @@ var BRAND_DOMAIN = "aipaihangbang.cn";
 var BRAND_SLOGAN = "中转站花没花冤枉钱 · 一测就知道";
 /* cardModel(rep):把报告整理成"绘制指令"(纯数据),绘制与测试共用同一份,杜绝两口径 */
 function cardModel(rep) {
-  var stateTxt = { ok: "通过", warn: "待观察", bad: "异常", unknown: "无法判定" };
-  var worst = rep.checks.some(function (c) { return c.state === "bad"; }) ? "bad"
-    : rep.checks.some(function (c) { return c.state === "warn"; }) ? "warn" : "ok";
-  var verdictTxt = worst === "bad" ? "⛔ 有检测项异常 · 建议停止大额充值"
-    : worst === "warn" ? "△ 基本正常,有项待观察"
-      : "✓ 检测时刻表现正常";
-  var host = "";
-  try { host = new URL(rep.base).host; } catch (e) { host = String(rep.base).replace(/^https?:\/\//, "").split("/")[0]; }
-  return {
-    domain: BRAND_DOMAIN, slogan: BRAND_SLOGAN,
-    site: host, model: rep.model,
-    time: String(rep.ranAt || "").replace("T", " ").slice(0, 16),
-    worst: worst, verdict: verdictTxt,
-    checks: rep.checks.map(function (c) {
-      return { name: c.name, state: c.state, stateTxt: stateTxt[c.state] || c.state, detail: String(c.detail || "").slice(0, 150) };
-    }),
-    note: "RelayLens 自测工具箱 · 结果仅代表检测时点/检测者网络 · 不含 API Key",
-  };
+ var stateTxt = { ok: "通过", warn: "待观察", bad: "异常", unknown: "无法判定" };
+ var worst = rep.checks.some(function (c) { return c.state === "bad"; }) ? "bad"
+ : rep.checks.some(function (c) { return c.state === "warn"; }) ? "warn" : "ok";
+ var verdictTxt = worst === "bad" ? "有检测项异常 · 建议停止大额充值"
+ : worst === "warn" ? "△ 基本正常,有项待观察"
+ : "✓ 检测时刻表现正常";
+ var host = "";
+ try { host = new URL(rep.base).host; } catch (e) { host = String(rep.base).replace(/^https?:\/\//, "").split("/")[0]; }
+ return {
+ domain: BRAND_DOMAIN, slogan: BRAND_SLOGAN,
+ site: host, model: rep.model,
+ time: String(rep.ranAt || "").replace("T", " ").slice(0, 16),
+ worst: worst, verdict: verdictTxt,
+ checks: rep.checks.map(function (c) {
+ return { name: c.name, state: c.state, stateTxt: stateTxt[c.state] || c.state, detail: String(c.detail || "").slice(0, 150) };
+ }),
+ note: "RelayLens 自测工具箱 · 结果仅代表检测时点/检测者网络 · 不含 API Key",
+ };
 }
 function drawReportCard(rep, canvas, done) {
-  var m = cardModel(rep);
-  var W = 750, S = 2; /* 2x 导出更清晰 */
-  var ctx0 = canvas.getContext("2d");
-  /* 先离屏量文字行数,再定高 */
-  var probe = document.createElement("canvas").getContext("2d");
-  probe.font = "13px 'PingFang SC','Microsoft YaHei',sans-serif";
-  function wrap(text, maxW) {
-    var lines = [], cur = "";
-    for (var i = 0; i < text.length; i++) {
-      cur += text[i];
-      if (probe.measureText(cur).width > maxW) { lines.push(cur.slice(0, -1)); cur = text[i]; }
-    }
-    if (cur) lines.push(cur);
-    return lines.length ? lines : [""];
-  }
-  var checkBlocks = m.checks.map(function (c) { return { c: c, lines: wrap(c.detail, W - 100) }; });
-  var H = 168 + checkBlocks.reduce(function (s, b) { return s + 34 + b.lines.length * 19; }, 0) + 118;
-  canvas.width = W * S; canvas.height = H * S;
-  canvas.style.width = W + "px";
-  var x = ctx0; x.scale(S, S);
-  /* 背景 */
-  x.fillStyle = "#f6f8fb"; x.fillRect(0, 0, W, H);
-  /* 头部渐变带 */
-  var g = x.createLinearGradient(0, 0, W, 120); g.addColorStop(0, "#2b5cf0"); g.addColorStop(1, "#16308f");
-  x.fillStyle = g; x.fillRect(0, 0, W, 120);
-  x.fillStyle = "#fff"; x.font = "bold 26px 'PingFang SC','Microsoft YaHei',sans-serif";
-  x.fillText("◎ RelayLens 自测报告", 36, 48);
-  x.font = "14px 'PingFang SC','Microsoft YaHei',sans-serif"; x.fillStyle = "rgba(255,255,255,.85)";
-  x.fillText(m.site + "  ·  " + m.model + "  ·  " + m.time, 36, 78);
-  var badge = m.worst === "bad" ? "#fda29b" : m.worst === "warn" ? "#fedf89" : "#6ce9a6";
-  x.fillStyle = badge; x.font = "bold 15px 'PingFang SC','Microsoft YaHei',sans-serif";
-  x.fillText(m.verdict, 36, 104);
-  /* 检测项卡片 */
-  var y = 148;
-  checkBlocks.forEach(function (b) {
-    var h = 34 + b.lines.length * 19 + 8;
-    x.fillStyle = "#fff"; x.strokeStyle = "#e4e7ec"; x.lineWidth = 1;
-    x.beginPath(); x.roundRect ? x.roundRect(28, y, W - 56, h, 10) : x.rect(28, y, W - 56, h); x.fill(); x.stroke();
-    x.fillStyle = "#101828"; x.font = "bold 15px 'PingFang SC','Microsoft YaHei',sans-serif";
-    x.fillText(b.c.name, 46, y + 24);
-    var pill = b.c.state === "ok" ? "#067647" : b.c.state === "warn" ? "#b54708" : b.c.state === "bad" ? "#b42318" : "#98a2b3";
-    x.fillStyle = pill; x.font = "bold 13px 'PingFang SC','Microsoft YaHei',sans-serif";
-    x.fillText(b.c.stateTxt, W - 46 - x.measureText(b.c.stateTxt).width, y + 24);
-    x.fillStyle = "#475467"; x.font = "13px 'PingFang SC','Microsoft YaHei',sans-serif";
-    b.lines.forEach(function (ln, i) { x.fillText(ln, 46, y + 46 + i * 19); });
-    y += h + 10;
-  });
-  /* 底部品牌带(域名 + 宣传语) */
-  y += 6;
-  x.fillStyle = "#0c1633"; x.fillRect(0, H - 96, W, 96);
-  x.fillStyle = "#fff"; x.font = "bold 24px 'PingFang SC','Microsoft YaHei',sans-serif";
-  x.fillText(m.domain, 36, H - 56);
-  x.fillStyle = "#94a3c4"; x.font = "14px 'PingFang SC','Microsoft YaHei',sans-serif";
-  x.fillText(m.slogan, 36, H - 28);
-  x.fillText(m.note, 36, H - 8, W - 72);
-  /* 导出 */
-  if (canvas.toBlob) {
-    canvas.toBlob(function (blob) {
-      if (!blob) { done(null, canvas.toDataURL("image/png")); return; }
-      done(URL.createObjectURL(blob), null);
-    }, "image/png");
-  } else done(null, canvas.toDataURL("image/png"));
+ var m = cardModel(rep);
+ var W = 750, S = 2; /* 2x 导出更清晰 */
+ var ctx0 = canvas.getContext("2d");
+ /* 先离屏量文字行数,再定高 */
+ var probe = document.createElement("canvas").getContext("2d");
+ probe.font = "13px 'PingFang SC','Microsoft YaHei',sans-serif";
+ function wrap(text, maxW) {
+ var lines = [], cur = "";
+ for (var i = 0; i < text.length; i++) {
+ cur += text[i];
+ if (probe.measureText(cur).width > maxW) { lines.push(cur.slice(0, -1)); cur = text[i]; }
+ }
+ if (cur) lines.push(cur);
+ return lines.length ? lines : [""];
+ }
+ var checkBlocks = m.checks.map(function (c) { return { c: c, lines: wrap(c.detail, W - 100) }; });
+ var H = 168 + checkBlocks.reduce(function (s, b) { return s + 34 + b.lines.length * 19; }, 0) + 118;
+ canvas.width = W * S; canvas.height = H * S;
+ canvas.style.width = W + "px";
+ var x = ctx0; x.scale(S, S);
+ /* 背景 */
+ x.fillStyle = "#f6f8fb"; x.fillRect(0, 0, W, H);
+ /* 头部渐变带 */
+ var g = x.createLinearGradient(0, 0, W, 120); g.addColorStop(0, "#2b5cf0"); g.addColorStop(1, "#16308f");
+ x.fillStyle = g; x.fillRect(0, 0, W, 120);
+ x.fillStyle = "#fff"; x.font = "bold 26px 'PingFang SC','Microsoft YaHei',sans-serif";
+ x.fillText("◎ RelayLens 自测报告", 36, 48);
+ x.font = "14px 'PingFang SC','Microsoft YaHei',sans-serif"; x.fillStyle = "rgba(255,255,255,.85)";
+ x.fillText(m.site + " · " + m.model + " · " + m.time, 36, 78);
+ var badge = m.worst === "bad" ? "#fda29b" : m.worst === "warn" ? "#fedf89" : "#6ce9a6";
+ x.fillStyle = badge; x.font = "bold 15px 'PingFang SC','Microsoft YaHei',sans-serif";
+ x.fillText(m.verdict, 36, 104);
+ /* 检测项卡片 */
+ var y = 148;
+ checkBlocks.forEach(function (b) {
+ var h = 34 + b.lines.length * 19 + 8;
+ x.fillStyle = "#fff"; x.strokeStyle = "#e4e7ec"; x.lineWidth = 1;
+ x.beginPath(); x.roundRect ? x.roundRect(28, y, W - 56, h, 10) : x.rect(28, y, W - 56, h); x.fill(); x.stroke();
+ x.fillStyle = "#101828"; x.font = "bold 15px 'PingFang SC','Microsoft YaHei',sans-serif";
+ x.fillText(b.c.name, 46, y + 24);
+ var pill = b.c.state === "ok" ? "#067647" : b.c.state === "warn" ? "#b54708" : b.c.state === "bad" ? "#b42318" : "#98a2b3";
+ x.fillStyle = pill; x.font = "bold 13px 'PingFang SC','Microsoft YaHei',sans-serif";
+ x.fillText(b.c.stateTxt, W - 46 - x.measureText(b.c.stateTxt).width, y + 24);
+ x.fillStyle = "#475467"; x.font = "13px 'PingFang SC','Microsoft YaHei',sans-serif";
+ b.lines.forEach(function (ln, i) { x.fillText(ln, 46, y + 46 + i * 19); });
+ y += h + 10;
+ });
+ /* 底部品牌带(域名 + 宣传语) */
+ y += 6;
+ x.fillStyle = "#0c1633"; x.fillRect(0, H - 96, W, 96);
+ x.fillStyle = "#fff"; x.font = "bold 24px 'PingFang SC','Microsoft YaHei',sans-serif";
+ x.fillText(m.domain, 36, H - 56);
+ x.fillStyle = "#94a3c4"; x.font = "14px 'PingFang SC','Microsoft YaHei',sans-serif";
+ x.fillText(m.slogan, 36, H - 28);
+ x.fillText(m.note, 36, H - 8, W - 72);
+ /* 导出 */
+ if (canvas.toBlob) {
+ canvas.toBlob(function (blob) {
+ if (!blob) { done(null, canvas.toDataURL("image/png")); return; }
+ done(URL.createObjectURL(blob), null);
+ }, "image/png");
+ } else done(null, canvas.toDataURL("image/png"));
 }
 document.getElementById("makeImage").addEventListener("click", function () {
-  if (!LAST_REPORT) { toast("先完成一次检测"); return; }
-  var btn = this, hint = document.getElementById("imgHint");
-  btn.disabled = true; btn.textContent = "绘制中…";
-  try {
-    drawReportCard(LAST_REPORT, document.getElementById("shareCanvas"), function (blobUrl, dataUrl) {
-      btn.disabled = false; btn.textContent = "🖼 生成分享图片";
-      var src = blobUrl || dataUrl;
-      if (!src) { toast("图片生成失败,请换浏览器重试"); return; }
-      document.getElementById("imgPreviewTag").src = src;
-      var dl = document.getElementById("downloadImg");
-      dl.href = src;
-      var host = ""; try { host = new URL(LAST_REPORT.base).host; } catch (e) { host = "relay"; }
-      dl.download = "relaylens-自测报告-" + host + ".png";
-      document.getElementById("imgPreview").style.display = "block";
-      hint.textContent = "已生成 ↓ 右键另存或点下载";
-      document.getElementById("imgPreview").scrollIntoView({ behavior: "smooth", block: "nearest" });
-      if (blobUrl) setTimeout(function () { URL.revokeObjectURL(blobUrl); }, 60000);
-    });
-  } catch (e) {
-    btn.disabled = false; btn.textContent = "🖼 生成分享图片";
-    toast("图片生成失败:" + (e && e.message || e));
-  }
+ if (!LAST_REPORT) { toast("先完成一次检测"); return; }
+ var btn = this, hint = document.getElementById("imgHint");
+ btn.disabled = true; btn.textContent = "绘制中…";
+ try {
+ drawReportCard(LAST_REPORT, document.getElementById("shareCanvas"), function (blobUrl, dataUrl) {
+ btn.disabled = false; btn.textContent = "生成分享图片";
+ var src = blobUrl || dataUrl;
+ if (!src) { toast("图片生成失败,请换浏览器重试"); return; }
+ document.getElementById("imgPreviewTag").src = src;
+ var dl = document.getElementById("downloadImg");
+ dl.href = src;
+ var host = ""; try { host = new URL(LAST_REPORT.base).host; } catch (e) { host = "relay"; }
+ dl.download = "relaylens-自测报告-" + host + ".png";
+ document.getElementById("imgPreview").style.display = "block";
+ hint.textContent = "已生成 ↓ 右键另存或点下载";
+ document.getElementById("imgPreview").scrollIntoView({ behavior: "smooth", block: "nearest" });
+ if (blobUrl) setTimeout(function () { URL.revokeObjectURL(blobUrl); }, 60000);
+ });
+ } catch (e) {
+ btn.disabled = false; btn.textContent = "生成分享图片";
+ toast("图片生成失败:" + (e && e.message || e));
+ }
 });
 function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;") }
 
@@ -889,133 +881,133 @@ var SITES_CFG={
 var cfgTab="cherry";
 function esc2(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 function renderCfg(){
-  var sel=document.getElementById("cfgSite").value;
-  document.getElementById("customFields").style.display=sel==="custom"?"block":"none";
-  var name,url;
-  if(sel==="custom"){
-    name=document.getElementById("cName").value.trim()||"MySite";
-    url=document.getElementById("cUrl").value.trim()||"https://api.example.com/v1";
-  }else{
-    var cfg=SITES_CFG[sel]||SITES_CFG.relayapi;
-    name=cfg.name;url=cfg.url;
-  }
-  var key=document.getElementById("cfgKey").value.trim()||"sk-你的Key";
-  var model=document.getElementById("cfgModel").value;
-  var base=url.replace(/\/v1\/?$/,"");
-  var out="";
-  if(cfgTab==="cherry"){
-    out='<span class="cm"># Cherry Studio → 设置 → 模型服务 → 添加(OpenAI 兼容)</span>\n'+
-    '{\n  <span class="ky">"name"</span>: <span class="st">"'+esc2(name)+'"</span>,\n  <span class="ky">"apiUrl"</span>: <span class="st">"'+esc2(url)+'"</span>,\n  <span class="ky">"apiKey"</span>: <span class="st">"'+esc2(key)+'"</span>,\n  <span class="ky">"model"</span>: <span class="st">"'+esc2(model)+'"</span>,\n  <span class="ky">"protocol"</span>: <span class="st">"OpenAI"</span>\n}';
-  }else if(cfgTab==="cursor"){
-    out='<span class="cm"># Cursor → Settings → Models → OpenAI API Key 区块</span>\n'+
-    '<span class="ky">Override Base URL:</span> <span class="st">'+esc2(url)+'</span>\n'+
-    '<span class="ky">API Key:</span> <span class="st">'+esc2(key)+'</span>\n\n'+
-    '<span class="cm"># 然后在模型列表 → Add model 填入:</span>\n'+
-    '<span class="ky">Model ID:</span> <span class="st">'+esc2(model)+'</span>\n\n'+
-    '<span class="cm"># 注意:Cursor 对第三方 Base URL 支持有限,\n# 若模型不出现在列表,检查站方是否支持 OpenAI 协议完整度。</span>';
-  }else if(cfgTab==="claude"){
-    out='<span class="cm"># Claude Code(设为环境变量或写入 ~/.claude/settings.json)</span>\n'+
-    'export <span class="ky">ANTHROPIC_BASE_URL</span>=<span class="st">"'+esc2(base)+'"</span>\n'+
-    'export <span class="ky">ANTHROPIC_AUTH_TOKEN</span>=<span class="st">"'+esc2(key)+'"</span>\n\n'+
-    '<span class="cm"># 指定模型</span>\n'+
-    'export <span class="ky">ANTHROPIC_MODEL</span>=<span class="st">"'+esc2(model)+'"</span>\n\n'+
-    '<span class="cm"># 校验是否生效:</span>\n'+
-    'claude /model   <span class="cm"># 应显示你设置的模型</span>';
-  }else{
-    out='<span class="cm">// 原始请求示例(curl)</span>\n'+
-    'curl <span class="st">'+esc2(url)+'/chat/completions</span> \\\n'+
-    '  -H <span class="st">"Content-Type: application/json"</span> \\\n'+
-    '  -H <span class="st">"Authorization: Bearer '+esc2(key)+'"</span> \\\n'+
-    '  -d \'{\n'+
-    '    <span class="ky">"model"</span>: <span class="st">"'+esc2(model)+'"</span>,\n'+
-    '    <span class="ky">"messages"</span>: [{<span class="ky">"role"</span>:<span class="st">"user"</span>,<span class="ky">"content"</span>:<span class="st">"Hi"</span>}],\n'+
-    '    <span class="ky">"stream"</span>: true\n'+
-    '  }\'';
-  }
-  document.getElementById("cfgOut").innerHTML=out;
+ var sel=document.getElementById("cfgSite").value;
+ document.getElementById("customFields").style.display=sel==="custom"?"block":"none";
+ var name,url;
+ if(sel==="custom"){
+ name=document.getElementById("cName").value.trim()||"MySite";
+ url=document.getElementById("cUrl").value.trim()||"https://api.example.com/v1";
+ }else{
+ var cfg=SITES_CFG[sel]||SITES_CFG.relayapi;
+ name=cfg.name;url=cfg.url;
+ }
+ var key=document.getElementById("cfgKey").value.trim()||"sk-你的Key";
+ var model=document.getElementById("cfgModel").value;
+ var base=url.replace(/\/v1\/?$/,"");
+ var out="";
+ if(cfgTab==="cherry"){
+ out='<span class="cm"># Cherry Studio → 设置 → 模型服务 → 添加(OpenAI 兼容)</span>\n'+
+ '{\n <span class="ky">"name"</span>: <span class="st">"'+esc2(name)+'"</span>,\n <span class="ky">"apiUrl"</span>: <span class="st">"'+esc2(url)+'"</span>,\n <span class="ky">"apiKey"</span>: <span class="st">"'+esc2(key)+'"</span>,\n <span class="ky">"model"</span>: <span class="st">"'+esc2(model)+'"</span>,\n <span class="ky">"protocol"</span>: <span class="st">"OpenAI"</span>\n}';
+ }else if(cfgTab==="cursor"){
+ out='<span class="cm"># Cursor → Settings → Models → OpenAI API Key 区块</span>\n'+
+ '<span class="ky">Override Base URL:</span> <span class="st">'+esc2(url)+'</span>\n'+
+ '<span class="ky">API Key:</span> <span class="st">'+esc2(key)+'</span>\n\n'+
+ '<span class="cm"># 然后在模型列表 → Add model 填入:</span>\n'+
+ '<span class="ky">Model ID:</span> <span class="st">'+esc2(model)+'</span>\n\n'+
+ '<span class="cm"># 注意:Cursor 对第三方 Base URL 支持有限,\n# 若模型不出现在列表,检查站方是否支持 OpenAI 协议完整度。</span>';
+ }else if(cfgTab==="claude"){
+ out='<span class="cm"># Claude Code(设为环境变量或写入 ~/.claude/settings.json)</span>\n'+
+ 'export <span class="ky">ANTHROPIC_BASE_URL</span>=<span class="st">"'+esc2(base)+'"</span>\n'+
+ 'export <span class="ky">ANTHROPIC_AUTH_TOKEN</span>=<span class="st">"'+esc2(key)+'"</span>\n\n'+
+ '<span class="cm"># 指定模型</span>\n'+
+ 'export <span class="ky">ANTHROPIC_MODEL</span>=<span class="st">"'+esc2(model)+'"</span>\n\n'+
+ '<span class="cm"># 校验是否生效:</span>\n'+
+ 'claude /model <span class="cm"># 应显示你设置的模型</span>';
+ }else{
+ out='<span class="cm">// 原始请求示例(curl)</span>\n'+
+ 'curl <span class="st">'+esc2(url)+'/chat/completions</span> \\\n'+
+ ' -H <span class="st">"Content-Type: application/json"</span> \\\n'+
+ ' -H <span class="st">"Authorization: Bearer '+esc2(key)+'"</span> \\\n'+
+ ' -d \'{\n'+
+ ' <span class="ky">"model"</span>: <span class="st">"'+esc2(model)+'"</span>,\n'+
+ ' <span class="ky">"messages"</span>: [{<span class="ky">"role"</span>:<span class="st">"user"</span>,<span class="ky">"content"</span>:<span class="st">"Hi"</span>}],\n'+
+ ' <span class="ky">"stream"</span>: true\n'+
+ ' }\'';
+ }
+ document.getElementById("cfgOut").innerHTML=out;
 }
 document.querySelectorAll("#cfgTabs .tab").forEach(function(t){
-  t.addEventListener("click",function(){
-    document.querySelectorAll("#cfgTabs .tab").forEach(function(x){x.classList.remove("on")});
-    t.classList.add("on");cfgTab=t.getAttribute("data-t");renderCfg();
-  });
+ t.addEventListener("click",function(){
+ document.querySelectorAll("#cfgTabs .tab").forEach(function(x){x.classList.remove("on")});
+ t.classList.add("on");cfgTab=t.getAttribute("data-t");renderCfg();
+ });
 });
 ["cfgSite","cfgKey","cfgModel","cName","cUrl"].forEach(function(id){
-  document.getElementById(id).addEventListener("input",renderCfg);
-  document.getElementById(id).addEventListener("change",renderCfg);
+ document.getElementById(id).addEventListener("input",renderCfg);
+ document.getElementById(id).addEventListener("change",renderCfg);
 });
 function copyCfg(){
-  var txt=document.getElementById("cfgOut").innerText;
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(function(){toast("配置已复制")},function(){toast("请手动选择复制")});
-  }else{toast("请手动选择复制")}
+ var txt=document.getElementById("cfgOut").innerText;
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+ navigator.clipboard.writeText(txt).then(function(){toast("配置已复制")},function(){toast("请手动选择复制")});
+ }else{toast("请手动选择复制")}
 }
 renderCfg();
 
 /* ============ 成本计算器(双模式) ============ */
 var calcMode="long";
 document.querySelectorAll("[data-mode]").forEach(function(b){
-  b.addEventListener("click",function(){
-    document.querySelectorAll("[data-mode]").forEach(function(x){x.classList.remove("on")});
-    b.classList.add("on");
-    calcMode=b.getAttribute("data-mode");
-    document.getElementById("longInputs").style.display=calcMode==="long"?"block":"none";
-    document.getElementById("shortInputs").style.display=calcMode==="short"?"block":"none";
-    document.getElementById("longRes").style.display=calcMode==="long"?"block":"none";
-    document.getElementById("shortRes").style.display=calcMode==="short"?"block":"none";
-    calc();
-  });
+ b.addEventListener("click",function(){
+ document.querySelectorAll("[data-mode]").forEach(function(x){x.classList.remove("on")});
+ b.classList.add("on");
+ calcMode=b.getAttribute("data-mode");
+ document.getElementById("longInputs").style.display=calcMode==="long"?"block":"none";
+ document.getElementById("shortInputs").style.display=calcMode==="short"?"block":"none";
+ document.getElementById("longRes").style.display=calcMode==="long"?"block":"none";
+ document.getElementById("shortRes").style.display=calcMode==="short"?"block":"none";
+ calc();
+ });
 });
 function P(id){return parseFloat(document.getElementById(id).value)||0}
 function calc(){
-  var pIn=P("pIn"),pOut=P("pOut"),pCr=P("pCr"),ratio=P("pRatio")||1;
-  if(calcMode==="long"){
-    var inM=+document.getElementById("cIn").value;
-    var hit=+document.getElementById("cHit").value/100;
-    var outR=+document.getElementById("cOut").value/100;
-    document.getElementById("cInV").textContent=inM+" M/天";
-    document.getElementById("cHitV").textContent=Math.round(hit*100)+"%";
-    document.getElementById("cOutV").textContent=Math.round(outR*100)+"%";
-    var fresh=inM*(1-hit)*pIn*ratio;
-    var cached=inM*hit*pCr*ratio;
-    var outC=inM*outR*pOut*ratio;
-    var perDay=fresh+cached+outC;
-    var perDayNo=inM*pIn*ratio+outC;
-    document.getElementById("rFresh").textContent="¥"+fresh.toFixed(2);
-    document.getElementById("rCache").textContent="¥"+cached.toFixed(2);
-    document.getElementById("rOut").textContent="¥"+outC.toFixed(2);
-    document.getElementById("rNoCache").textContent="¥"+perDayNo.toFixed(2)+"/天(多付 "+((perDayNo/perDay-1)*100).toFixed(0)+"%)";
-    document.getElementById("rMonth").textContent="¥"+Math.round(perDay*30).toLocaleString();
-    var gap=perDayNo/perDay;
-    document.getElementById("rGap").textContent=gap>1.8?"⚠ 若该站不算缓存,你的月成本将变成 ¥"+Math.round(perDayNo*30).toLocaleString()+"(贵 "+((gap-1)*100).toFixed(0)+"%)——比价时务必确认缓存策略。":"当前配置下缓存策略为你节省 ¥"+Math.round((perDayNo-perDay)*30).toLocaleString()+"/月。";
-  }else{
-    var req=+document.getElementById("sReq").value;
-    var chars=+document.getElementById("sChars").value;
-    var outTok=+document.getElementById("sOutTok").value;
-    var useInj=document.getElementById("sUseInject").checked;
-    var inj=useInj?(P("sInject")||0):0;
-    document.getElementById("sReqV").textContent=req.toLocaleString()+" 次/天";
-    document.getElementById("sCharsV").textContent=chars+" 字";
-    document.getElementById("sOutTokV").textContent=outTok+" tok";
-    // 内容成本:中文≈1字=1token
-    var contentTok=chars+outTok;
-    var contentCost=(chars*pIn+outTok*pOut)/1e6*ratio;
-    // 注入拆分:实测 3840 缓存价 / 558 全价(比例 0.873/0.127)
-    var injCache=inj*0.873, injFresh=inj*0.127;
-    var injCost=(injFresh*pIn+injCache*pCr)/1e6*ratio;
-    var billedTok=contentTok+inj;
-    var paidCost=contentCost+injCost;
-    var amp=contentCost>0?paidCost/contentCost:0;
-    document.getElementById("sRealTok").textContent=contentTok+" tokens";
-    document.getElementById("sBilledTok").textContent=Math.round(billedTok)+" tokens"+(inj>0?"(含注入 "+Math.round(inj)+")":"");
-    document.getElementById("sReqCost").textContent="¥"+contentCost.toFixed(5)+" → ¥"+paidCost.toFixed(5);
-    document.getElementById("sAmp").textContent=inj>0?amp.toFixed(1)+"×":"1×(无注入)";
-    document.getElementById("sMonth").textContent="¥"+Math.round(req*30*paidCost).toLocaleString();
-    document.getElementById("sMonthClean").textContent="¥"+Math.round(req*30*contentCost).toLocaleString();
-    document.getElementById("rGap").textContent=inj>0
-      ?"⚠ 注入开销让你每月多付 ¥"+Math.round(req*30*(paidCost-contentCost)).toLocaleString()+"。若你的场景是批量短请求,选无注入的渠道(官方直连/干净中转)可能比「低价」号池便宜得多——去榜单按「注入开销」列筛选。"
-      :"该站无注入开销,短请求成本即内容成本,适合批量任务。";
-  }
+ var pIn=P("pIn"),pOut=P("pOut"),pCr=P("pCr"),ratio=P("pRatio")||1;
+ if(calcMode==="long"){
+ var inM=+document.getElementById("cIn").value;
+ var hit=+document.getElementById("cHit").value/100;
+ var outR=+document.getElementById("cOut").value/100;
+ document.getElementById("cInV").textContent=inM+" M/天";
+ document.getElementById("cHitV").textContent=Math.round(hit*100)+"%";
+ document.getElementById("cOutV").textContent=Math.round(outR*100)+"%";
+ var fresh=inM*(1-hit)*pIn*ratio;
+ var cached=inM*hit*pCr*ratio;
+ var outC=inM*outR*pOut*ratio;
+ var perDay=fresh+cached+outC;
+ var perDayNo=inM*pIn*ratio+outC;
+ document.getElementById("rFresh").textContent="¥"+fresh.toFixed(2);
+ document.getElementById("rCache").textContent="¥"+cached.toFixed(2);
+ document.getElementById("rOut").textContent="¥"+outC.toFixed(2);
+ document.getElementById("rNoCache").textContent="¥"+perDayNo.toFixed(2)+"/天(多付 "+((perDayNo/perDay-1)*100).toFixed(0)+"%)";
+ document.getElementById("rMonth").textContent="¥"+Math.round(perDay*30).toLocaleString();
+ var gap=perDayNo/perDay;
+ document.getElementById("rGap").textContent=gap>1.8?"若该站不算缓存,你的月成本将变成 ¥"+Math.round(perDayNo*30).toLocaleString()+"(贵 "+((gap-1)*100).toFixed(0)+"%)——比价时务必确认缓存策略。":"当前配置下缓存策略为你节省 ¥"+Math.round((perDayNo-perDay)*30).toLocaleString()+"/月。";
+ }else{
+ var req=+document.getElementById("sReq").value;
+ var chars=+document.getElementById("sChars").value;
+ var outTok=+document.getElementById("sOutTok").value;
+ var useInj=document.getElementById("sUseInject").checked;
+ var inj=useInj?(P("sInject")||0):0;
+ document.getElementById("sReqV").textContent=req.toLocaleString()+" 次/天";
+ document.getElementById("sCharsV").textContent=chars+" 字";
+ document.getElementById("sOutTokV").textContent=outTok+" tok";
+ // 内容成本:中文≈1字=1token
+ var contentTok=chars+outTok;
+ var contentCost=(chars*pIn+outTok*pOut)/1e6*ratio;
+ // 注入拆分:实测 3840 缓存价 / 558 全价(比例 0.873/0.127)
+ var injCache=inj*0.873, injFresh=inj*0.127;
+ var injCost=(injFresh*pIn+injCache*pCr)/1e6*ratio;
+ var billedTok=contentTok+inj;
+ var paidCost=contentCost+injCost;
+ var amp=contentCost>0?paidCost/contentCost:0;
+ document.getElementById("sRealTok").textContent=contentTok+" tokens";
+ document.getElementById("sBilledTok").textContent=Math.round(billedTok)+" tokens"+(inj>0?"(含注入 "+Math.round(inj)+")":"");
+ document.getElementById("sReqCost").textContent="¥"+contentCost.toFixed(5)+" → ¥"+paidCost.toFixed(5);
+ document.getElementById("sAmp").textContent=inj>0?amp.toFixed(1)+"×":"1×(无注入)";
+ document.getElementById("sMonth").textContent="¥"+Math.round(req*30*paidCost).toLocaleString();
+ document.getElementById("sMonthClean").textContent="¥"+Math.round(req*30*contentCost).toLocaleString();
+ document.getElementById("rGap").textContent=inj>0
+ ?"注入开销让你每月多付 ¥"+Math.round(req*30*(paidCost-contentCost)).toLocaleString()+"。若你的场景是批量短请求,选无注入的渠道(官方直连/干净中转)可能比「低价」号池便宜得多——去榜单按「注入开销」列筛选。"
+ :"该站无注入开销,短请求成本即内容成本,适合批量任务。";
+ }
 }
 ["cIn","cHit","cOut","sReq","sChars","sOutTok"].forEach(function(id){document.getElementById(id).addEventListener("input",calc)});
 ["pIn","pOut","pCr","pRatio","sInject"].forEach(function(id){document.getElementById(id).addEventListener("input",calc)});

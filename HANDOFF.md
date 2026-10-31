@@ -1,47 +1,141 @@
-# 交接快照（2026-10-04）
+# RelayLens 主站交接文档
 
-## 线上状态
+> 面向接手本项目的人。读完即可本地起站、构建、部署、避坑。
+> 配套看板仓库 `renlay-ranking` 的交接见其根目录 `项目交接文档.md`（已在 GitHub）。
 
-| 项 | 值 |
-|---|---|
-| 预览域名（当前权威） | **https://jinchaoqiang0311.github.io/relaylens/** （GitHub Pages，gh-pages 分支，2026-10-10 起） |
-| 旧域名 | https://weaph8e3.qwenwork.host/ （QW Pages 已弃用，停留在线，不再更新；其 ranking.html 曾带尾部残留乱码，勿参考） |
-| 发布方式 | `node build-relay.js` → `powershell -File publish-ghpages.ps1`（见 AGENTS.md 红线 13） |
-| 代码仓库 | https://github.com/jinchaoqiang0311/relaylens （master=源码，gh-pages=发布产物） |
-| 最终目标域名 | aipaihangbang.cn/relay/（WordPress 部署未做，dist-relay/DEPLOY.md 有说明） |
-| 最后构建内容 | ranking.html 尾部残留乱码修复（两个副本+dist 全修复）、新增 .codebuddy 五智能体与 wechat-gateway 网关 |
+---
 
-## 数据状态
+## 1. 一句话定位
 
-- SQLite：`relaylens/probe/store/relaylens.sqlite`，批次号至 RL-RC-20261004-xxx，审计 hash 链 90+ 条（`cli.ts audit` 可校验）；
-- sites.json meta.updated ≈ 2026-10-04（同步于最后一次探针）；
-- 在册 12 中转站 + 3 参照系；aicost 定价靠 `store/manual-imports/aicost-pricing-*.json`（需登录 session，最新 10-03 导出）；
-- 调度器：原会话的 `npx tsx cli.ts schedule` 进程随会话结束会停止——**接手后第一件事**：进入 relaylens/probe 执行 `npm install`，然后后台拉起 `npx tsx cli.ts schedule`（改过解析器代码后重启调度是铁律，见 AGENTS.md 红线 11）。
+**AI 中转站评测站**：实测审计（榜单/黑名单/方法论/避坑）+ 全站导航 + 选型工具，比价功能外迁到独立的 Python 看板（见第 6 节）。本站定位「纯审计口径」，看板定位「自采标价数据面」，**两套数据口径不同，展示时不要混用**。
 
-## 接手验证清单（10 分钟）
+- 主仓库：`c:\Users\Administrator\Desktop\relaylens`（本站，`git` 版本管理）
+- 看板仓库：`C:\Users\Administrator\CodeBuddy\20261017201226`（renlay-ranking，`git@github.com:jinchaoqiang0311/renlay-ranking.git`）
 
-```bash
-cd relaylens/probe && npm install
-node ../../build-relay.js            # 应输出 15 页进包
-node ../../test_compare_render.js    # 13 套件任选,应全绿
-npx tsx cli.ts once --task=health    # 免费任务,验证 key 与网络
-npx tsx cli.ts report                # 数据健康概览
+---
+
+## 2. 当前本地服务状态（2026-10-30 实测）
+
+| 端口 | 服务 | 进程 | 说明 |
+|---|---|---|---|
+| 5173 | preview-server（node 零依赖） | `node preview-server.js` | 静态站 + 反代看板 `/price/` |
+| 8899 | relay_scraper 看板 serve（python） | `python relay_scraper.py serve --port 8899` | 比价看板，长驻=代码快照 |
+
+- 两服务当前都在线（HTTP 200）。
+- 看板导航当前项靠 `RELAY_SELF_URL=/price/` 留在同源，避免跨端口。
+
+---
+
+## 3. 本地如何起（顺序很重要）
+
+```powershell
+# 1) 先起看板（带环境变量，导航/链接同源）
+cd C:\Users\Administrator\CodeBuddy\20261017201226
+$env:RELAY_HOME_URL='http://127.0.0.1:5173/index.html'
+$env:RELAY_SELF_URL='/price/'
+Start-Process python -ArgumentList 'relay_scraper.py','serve','--port','8899' -WindowStyle Hidden
+
+# 2) 再起预览（反代 8899 挂 /price/）
+cd c:\Users\Administrator\Desktop\relaylens
+Start-Process node -ArgumentList 'preview-server.js' -WindowStyle Hidden
+
+# 浏览器打开
+#   首页:     http://127.0.0.1:5173/
+#   比价看板: http://127.0.0.1:5173/price/
 ```
 
-## 待办（优先级序）
+> 启动顺序：先 8899 后 5173。改看板 `relay_scraper.py` 的 `DASHBOARD_HTML` 后**必须重启 8899 进程**（长驻=代码快照）。
 
-1. 7 家测试账户充值 → 逐站实扣校准（成本分/厘级，需用户授权真实扣费）；
-2. WordPress 部署 aipaihangbang.cn/relay/ + sitemap 提交；
-3. commerce 补录：thinkai 起充金额、toonflow 充值比例；
-4. 向用户要 OpenRouter 官方 key → 掉包终局判定（fluxionai 等）；
-5. toonflow 登录墙：请用户提供网页账号登录后导出的价格接口，或 F12 抓取；
-6. ricktoken.top 源站 522，恢复后再评估接入；
-7. 安全：轮换全部 key（曾在聊天记录明文出现），清理桌面明文 key 备份文件。
+---
 
-## 会话积累的关键坑（速查）
+## 4. 构建与产物
 
-- String.replace 替换串含 `$'`/`$&` 会展开——永远用 `()=>to` 形式；
-- shell heredoc/sed 写正则常吞反斜杠——改文件用编辑器工具或按行号；
-- vm DOM 桩：innerHTML='' 要同时清 children；querySelectorAll 要按选择器作用域过滤；
-- CRLF 文件多行匹配要 `[\r\n]+`；
-- 探针慢站（aicost/thinkai）单任务可能 10 分钟+，长任务放后台。
+```powershell
+cd c:\Users\Administrator\Desktop\relaylens
+node build-relay.js          # 产物 → dist-relay/（gitignore，不入库）
+```
+
+- `dist-relay/` 即线上部署包（14 页：index/ranking/blacklist/method/pitfalls/detail/reports/selector/tools/api/claim/onboarding/404 等）。
+- 发布流程：本地 `build-relay.js` → 上传 `dist-relay/` 到线上静态目录 + nginx 配 `/price/` 反代 8899。
+
+---
+
+## 5. ⚠️ 未提交改动（换账号前必须先处理！）
+
+主站仓库当前有**一大批未提交改动**（含近期多次主题/导航/榜单改动）。`git status` 摘要：
+
+- 构建：`build-relay.js`、`relaylens-home/assets/theme-relayindex.css`
+- 全站页面（均 modified）：`index.html / ranking.html / blacklist.html / method.html / pitfalls.html / detail.html / reports.html / selector.html / tools.html / api.html / claim.html / onboarding.html / 404.html`
+- 已删：`price.html`、`compare.html`、`relaylens-home/assets/compare-matrix.js`（比价外迁）
+- 探针（TS，modified）：`relaylens/probe/*`、`shared/types.ts`
+- 数据（modified）：`relaylens-home/data/{audit,ops,sites}.json`
+- 其它：`.gitignore`
+
+**看板仓库 `relay_scraper.py` 已提交（干净）**，仅多一个未跟踪的 `项目交接文档.md`。
+
+> 风险：换账号若清工作区，这些未提交改动会丢。**建议在换账号前用项目约定的提交身份提交**（见第 9 节）。
+
+---
+
+## 6. 关键口径与产品决策（勿回退）
+
+| 决策 | 内容 |
+|---|---|
+| 比价外迁 | 2026-10-28 起 price/compare 下线为重定向壳（已删），比价走看板 `/price/`；全站入口直写 `href="/price/"` |
+| 站点数真相 | 看板启用站 **12 家**（DB `stations.enabled=1`），本站实测 **9 站**，重叠 8 家；曾误报「42 站」是把 `stations.json` 清单条数当启用数 |
+| 数据全开放 | 2026-10-22 起所有数据无查看限制，Pro 订阅不启用，变现仅靠合作推荐位 |
+| 顶栏几何锁 v3 | `header > .wrap/.nav/.shell/.topbar-inner` 统一 `max-width:1560px 居中 + 60px + gap22`（!important）+ `html{scrollbar-gutter:stable}`；看板 `rl-wrap` 同步居中、48→60px、绿系 |
+| 旧路径 301 | preview-server 把 `/price.html`、`/compare.html`、`/compare` → `/price/`；静态 HTML 加 `Cache-Control: no-cache` 防旧页缓存 |
+| heyroute CNY | 直接用价格页 ¥ CNY 公示单价，不乘充值比例（`ratio_applies_to_price:false`） |
+| 千问官方锚 | 国产官方锚以 qianwenai.com 为准（含转售价），命中 `officialCur=CNY`；glm/kimi 该站无覆盖仍用 OpenRouter |
+| billing 自动化 | 2026-10-15 用户授权 billing 真实扣费进常驻调度（见 memory） |
+| 自托管方向 | 阿里云部署规划中（静态站 + api-worker 已建，待用户提供服务器信息） |
+
+---
+
+## 7. 已知坑（接手必读）
+
+1. **双进程抢绑 8899**：`pythonw.exe` 隐藏的旧 serve 会和新 serve 同时绑 8899（SO_REUSEADDR 允许双绑），连接随机落旧页面 → 表现「改了代码不生效」。排查先 `Get-CimInstance Win32_Process | Where CommandLine -match relay_scraper`（别只筛 `python.exe`，会漏 `pythonw`）。
+2. **勿杀 watch 进程**：用户另有 `watch --interval 43200` 采集进程（pythonw）**不能杀**，否则停止数据更新。
+3. **netstat 漏报**：此环境 `netstat`/`Get-NetTCPConnection` 常漏报监听端口，判活以 HTTP 请求为准。
+4. **agent-browser eval 引号**：传参含引号必挂，把 JS 写进 `.js` 文件再用 `eval (Get-Content -Raw -Encoding UTF8 文件)`。
+5. **看板表头修复教训**：gth 模板 `class="'+...+'>'` 少收尾引号会让属性值不闭合、两级表头全毁；改动后必须浏览器实测两行表头（11+6 格、`theadTop=60`）。`.tablescroll{overflow-x:auto}` 会把 sticky 表头囚禁，已收进 `@media(max-width:1100px)`。
+
+---
+
+## 8. 接手必做（优先级）
+
+- **P0**：把主站当前未提交改动提交（见第 5 节）；线上 `aipaihangbang.cn/relay` 仍是 2026-10-23 旧包，**需重新上传 `dist-relay/`**。
+- **P0**：生产 nginx 配 `/price/` 反代 `127.0.0.1:8899` + 旧路径 301（`/price.html`、`/compare.html`、`/compare` → `/price/`）。把 site.config.json 的 `priceDashboard` 设成 `https://域名/price/` 即全站同域。
+- **P1**：看板侧「最低价分组→默认组」口径（见看板 `项目交接文档.md` 第 7 节 P0）；评分三因子前端可视化。
+- **P2**：阿里云自托管落地；公网暴露看板前加鉴权（看板当前无鉴权）。
+
+---
+
+## 9. 提交身份（本机无全局 git config）
+
+```powershell
+git -c user.name=relaylens -c user.email=relaylens@local commit -m "..."
+```
+（仓库约定：禁止改全局 config，提交用一次性 `-c` 身份。）
+
+---
+
+## 10. 关键文件索引
+
+| 文件 | 作用 |
+|---|---|
+| `preview-server.js` | 本地预览服务器（零依赖），反代 `/price/`→8899，旧路径 301，HTML no-cache |
+| `build-relay.js` | 构建脚本，产出 `dist-relay/` |
+| `relaylens-home/` | 站点源（html/css/js/data） |
+| `relaylens-home/assets/theme-relayindex.css` | 全站主题 + 顶栏几何锁 v3（最后加载，!important 压平各页） |
+| `relaylens/probe/` | Node 探针（TS），实测数据落库 |
+| `shared/types.ts` | 跨端类型 |
+| `test_*.js`（仓库根） | 21 个守卫套件（发布基线：全部 exit 0） |
+| `relaylens-home/data/*.json` | 审计/运营/站点数据 |
+
+记忆目录（随项目路径持久化，跨账号可能不自动加载）：`C:\Users\Administrator\.codebuddy\projects\c-Users-Administrator-Desktop-relaylens\memory\`（含 billing 自动化、阿里云部署、风格改版、heyroute/千问口径、数据全开放、提交身份、看板外迁等）。
+
+---
+
+**一句话交接**：代码本地两份都在、看板已上 GitHub；主站有一大批未提交改动需先 commit，线上仍待重传 `dist-relay/` 与配 nginx。最优先两件事：① 提交主站改动；② 上传 `dist-relay/` 并配 `/price/` 反代。

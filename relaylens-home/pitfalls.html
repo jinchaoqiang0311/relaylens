@@ -12,11 +12,11 @@
 <meta name="description" content="AI 中转站六种常见套路：贵的模型换成便宜的、假装实时输出、计费偷偷加量、兑换比例障眼法、可用率注水、缓存价不兑现。全用大白话讲，配匿名实测案例和三步防身法。">
 <style>
 :root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
-  --r:14px;
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+ --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -74,185 +74,179 @@ footer{margin-top:52px;padding:24px 0 34px;border-top:1px solid var(--line);font
 footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
 footer a{color:var(--sub)}
 </style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
 
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
-    <nav class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="ranking.html">全站榜单</a>
-      <a href="compare.html">模型比价</a><a href="cheapest.html">最低价</a>
-      
-      <a href="pitfalls.html" class="active">避坑指南</a>
-      <a href="blacklist.html">⚠ 黑名单</a>
-      <a href="method.html">方法论</a>
-    </nav>
-  </div>
+ <div class="wrap nav">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html" class="active" aria-current="page">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
+ </div>
 </header>
 
 <main class="wrap">
 
-  <div class="hero">
-    <div class="eyebrow">SIX TRAPS · 每条都有实测案例</div>
-    <h1>中转站避坑指南：六种常见的手脚，和识破它们的土办法</h1>
-    <p class="lead">低价不是坑，<b>看不见的手脚才是坑</b>。下面每一类都配了我们实测到的真实案例——数字实时取自榜单（<span id="dataAt">加载中</span>），<b>案例全部匿名</b>，想知道具体是谁去<a href="ranking.html" style="color:var(--brand)">榜单页</a>按公开口径查。</p>
-  </div>
+ <div class="hero">
+ <div class="eyebrow">SIX TRAPS · 每条都有实测案例</div>
+ <h1>中转站避坑指南：六种常见的手脚，和识破它们的土办法</h1>
+ <p class="lead">低价不是坑，<b>看不见的手脚才是坑</b>。下面每一类都配了我们实测到的真实案例——数字实时取自榜单（<span id="dataAt">加载中</span>），<b>案例全部匿名</b>，想知道具体是谁去<a href="ranking.html" style="color:var(--brand)">榜单页</a>按公开口径查。</p>
+ </div>
 
-  <!-- 1 掉包 -->
-  <div class="p-card">
-    <div class="p-head"><span class="p-no">陷阱 1</span><h2>挂羊头卖狗肉：贵的模型，便宜的货</h2></div>
-    <p class="p-what">页面上写着给你用最新最贵的模型，实际背后偷偷换成便宜的旧模型、小模型。<b>直接问 AI「你是谁」根本没用</b>——商家可以让任何模型开口自称是旗舰，回单上写的"型号"也是商家想填啥填啥。</p>
-    <div class="p-cost"><b>你亏在哪：</b>花旗舰的钱，办中档的事。日常闲聊察觉不出来，写代码、做分析这些关键活儿上才露馅——那时你已经充了不少钱。</div>
-    <div class="detect"><b>怎么防：</b>只信<b>「同题对比」</b>——出一批有标准答案的题（算数、逻辑、写代码的输出结果），再出几道看"回答习惯"的题，同一道题分别发给两家店，答案对不上就露馅。换过模型的店藏得住名片，藏不住答题习惯。</div>
-    <div class="case" id="case-swap"><div class="ct">📎 实测案例 · 待数据</div>加载中……</div>
-  </div>
+ <!-- 1 掉包 -->
+ <div class="p-card">
+ <div class="p-head"><span class="p-no">陷阱 1</span><h2>挂羊头卖狗肉：贵的模型，便宜的货</h2></div>
+ <p class="p-what">页面上写着给你用最新最贵的模型，实际背后偷偷换成便宜的旧模型、小模型。<b>直接问 AI「你是谁」根本没用</b>——商家可以让任何模型开口自称是旗舰，回单上写的"型号"也是商家想填啥填啥。</p>
+ <div class="p-cost"><b>你亏在哪：</b>花旗舰的钱，办中档的事。日常闲聊察觉不出来，写代码、做分析这些关键活儿上才露馅——那时你已经充了不少钱。</div>
+ <div class="detect"><b>怎么防：</b>只信<b>「同题对比」</b>——出一批有标准答案的题（算数、逻辑、写代码的输出结果），再出几道看"回答习惯"的题，同一道题分别发给两家店，答案对不上就露馅。换过模型的店藏得住名片，藏不住答题习惯。</div>
+ <div class="case" id="case-swap"><div class="ct">实测案例 · 待数据</div>加载中……</div>
+ </div>
 
-  <!-- 2 假流式 -->
-  <div class="p-card">
-    <div class="p-head"><span class="p-no">陷阱 2</span><h2>装"实时输出"，实际攒完整段才发给你</h2></div>
-    <p class="p-what">正规店打字是一个字一个字往外冒（像真人边想边说）；有的店是<b>把整篇答案憋完，才"哗"地一次全推给你</b>。表面协议看着都一样，只有让它写一段长内容、盯着字是不是陆续出来，才分得出来。</p>
-    <div class="p-cost"><b>你亏在哪：</b>看着在"流式输出"，其实干等二三十秒一个字没有；想中途叫停也停不了——程序里设的超时、打字机效果全被打乱。写代码的助手工具直接卡成慢动作。</div>
-    <div class="detect"><b>怎么防：</b>注意：让它只回两三个字是<b>测不出来</b>的（真流式回短话也是一次到齐，这是常见误判）。要测就让它写 200~300 字，用你自己的 Key 在<a href="tools.html#selftest" style="color:var(--brand);font-weight:700">自测工具箱</a>跑一次，约 30 秒出结论，还能一键保存分享图片。</div>
-    <div class="case" id="case-stream"><div class="ct">📎 实测案例 · 待数据</div>加载中……</div>
-  </div>
+ <!-- 2 假流式 -->
+ <div class="p-card">
+ <div class="p-head"><span class="p-no">陷阱 2</span><h2>装"实时输出"，实际攒完整段才发给你</h2></div>
+ <p class="p-what">正规店打字是一个字一个字往外冒（像真人边想边说）；有的店是<b>把整篇答案憋完，才"哗"地一次全推给你</b>。表面协议看着都一样，只有让它写一段长内容、盯着字是不是陆续出来，才分得出来。</p>
+ <div class="p-cost"><b>你亏在哪：</b>看着在"流式输出"，其实干等二三十秒一个字没有；想中途叫停也停不了——程序里设的超时、打字机效果全被打乱。写代码的助手工具直接卡成慢动作。</div>
+ <div class="detect"><b>怎么防：</b>注意：让它只回两三个字是<b>测不出来</b>的（真流式回短话也是一次到齐，这是常见误判）。要测就让它写 200~300 字，用你自己的 Key 在<a href="tools.html#selftest" style="color:var(--brand);font-weight:700">自测工具箱</a>跑一次，约 30 秒出结论，还能一键保存分享图片。</div>
+ <div class="case" id="case-stream"><div class="ct">实测案例 · 待数据</div>加载中……</div>
+ </div>
 
-  <!-- 3 Token 虚标 -->
-  <div class="p-card">
-    <div class="p-head"><span class="p-no">陷阱 3</span><h2>隐形加料：你发一句话，按一本书收钱</h2></div>
-    <p class="p-what">你的请求在送达 AI 之前，被悄悄塞进一大段你没写过的文字。AI 是按"读+写的总字数"计费的，所以<b>你每次都被多收一大笔</b>——账单上看不出任何异常。</p>
-    <div class="p-cost"><b>你亏在哪：</b>客服、打标这类"每次都很短但次数多"的活，成本可能被抬高好几倍。标价看着再便宜，基数被做了手脚，越用亏越多。</div>
-    <div class="detect"><b>怎么防：</b>发三段<b>字数不同的已知文本</b>，看收费是否按比例涨——如果发 30 个字和发 1000 个字报的字数都差不多高，说明每次都有一大段"不是你写的"在收费。自测工具箱免费测；我们的榜单每站也公开这项。</div>
-    <div class="case" id="case-inject"><div class="ct">📎 实测案例 · 待数据</div>加载中……</div>
-  </div>
+ <!-- 3 Token 虚标 -->
+ <div class="p-card">
+ <div class="p-head"><span class="p-no">陷阱 3</span><h2>隐形加料：你发一句话，按一本书收钱</h2></div>
+ <p class="p-what">你的请求在送达 AI 之前，被悄悄塞进一大段你没写过的文字。AI 是按"读+写的总字数"计费的，所以<b>你每次都被多收一大笔</b>——账单上看不出任何异常。</p>
+ <div class="p-cost"><b>你亏在哪：</b>客服、打标这类"每次都很短但次数多"的活，成本可能被抬高好几倍。标价看着再便宜，基数被做了手脚，越用亏越多。</div>
+ <div class="detect"><b>怎么防：</b>发三段<b>字数不同的已知文本</b>，看收费是否按比例涨——如果发 30 个字和发 1000 个字报的字数都差不多高，说明每次都有一大段"不是你写的"在收费。自测工具箱免费测；我们的榜单每站也公开这项。</div>
+ <div class="case" id="case-inject"><div class="ct">实测案例 · 待数据</div>加载中……</div>
+ </div>
 
-  <!-- 4 价格文字游戏 -->
-  <div class="p-card">
-    <div class="p-head"><span class="p-no">陷阱 4</span><h2>标价游戏：1 块钱"兑换" 10 美元，看着香其实贵</h2></div>
-    <p class="p-what">多数中转站标的价格单位不是人民币也不是美元，是它自家商城的「额度」。有的店宣传「1 元 = 10 美元额度」特别大方——但它每次消耗的额度单价，悄悄标成别家的 10 倍。<b>汇率和单价是一套的，只挑一半说就是障眼法。</b></p>
-    <div class="p-cost"><b>你亏在哪：</b>比价时把「$ 符号」当成美元，或者被兑换比例晃了眼，充完才发现每百万字实际花的钱反超别家。</div>
-    <div class="detect"><b>怎么防：</b>只认一个数：<b>最后从你微信/支付宝扣走的人民币 ÷ 实际字数</b>。我们的比价页每格都现场演算给你看（标价×兑换比例=到手价），兑换规则没公示的店，我们宁可空着也不瞎折。</div>
-    <div class="case" id="case-price"><div class="ct">📎 实测案例 · 待数据</div>加载中……</div>
-  </div>
+ <!-- 4 价格文字游戏 -->
+ <div class="p-card">
+ <div class="p-head"><span class="p-no">陷阱 4</span><h2>标价游戏：1 块钱"兑换" 10 美元，看着香其实贵</h2></div>
+ <p class="p-what">多数中转站标的价格单位不是人民币也不是美元，是它自家商城的「额度」。有的店宣传「1 元 = 10 美元额度」特别大方——但它每次消耗的额度单价，悄悄标成别家的 10 倍。<b>汇率和单价是一套的，只挑一半说就是障眼法。</b></p>
+ <div class="p-cost"><b>你亏在哪：</b>比价时把「$ 符号」当成美元，或者被兑换比例晃了眼，充完才发现每百万字实际花的钱反超别家。</div>
+ <div class="detect"><b>怎么防：</b>只认一个数：<b>最后从你微信/支付宝扣走的人民币 ÷ 实际字数</b>。我们的比价页每格都现场演算给你看（标价×兑换比例=到手价），兑换规则没公示的店，我们宁可空着也不瞎折。</div>
+ <div class="case" id="case-price"><div class="ct">实测案例 · 待数据</div>加载中……</div>
+ </div>
 
-  <!-- 5 虚假高可用 -->
-  <div class="p-card">
-    <div class="p-head"><span class="p-no">陷阱 5</span><h2>「99.9% 稳定」：网站活着 ≠ 你的请求能用</h2></div>
-    <p class="p-what">官网打得开、接口地址通了，只算"店门开着"。真正要问的是：<b>你高峰期发的请求，多久开始出字？会不会 30 秒憋不出一个字？</b>宣传页上的"99.9% 稳定"没有任何第三方口径，店自己说。</p>
-    <div class="p-cost"><b>你亏在哪：</b>你业务最忙的时候恰好也是它最堵的时候；程序重试几轮全超时，用户在你这头等到流失。</div>
-    <div class="detect"><b>怎么防：</b>看<b>第三方全天候盯梢</b>：不是"ping 一下通不通"，而是每隔几小时真的发一次"打字请求"，卡过 30 秒没首字就记一次超时。榜单每站的近 3 天小格子，一格一次体检，红黄绿一眼看完。</div>
-    <div class="case" id="case-avail"><div class="ct">📎 实测案例 · 待数据</div>加载中……</div>
-  </div>
+ <!-- 5 虚假高可用 -->
+ <div class="p-card">
+ <div class="p-head"><span class="p-no">陷阱 5</span><h2>「99.9% 稳定」：网站活着 ≠ 你的请求能用</h2></div>
+ <p class="p-what">官网打得开、接口地址通了，只算"店门开着"。真正要问的是：<b>你高峰期发的请求，多久开始出字？会不会 30 秒憋不出一个字？</b>宣传页上的"99.9% 稳定"没有任何第三方口径，店自己说。</p>
+ <div class="p-cost"><b>你亏在哪：</b>你业务最忙的时候恰好也是它最堵的时候；程序重试几轮全超时，用户在你这头等到流失。</div>
+ <div class="detect"><b>怎么防：</b>看<b>第三方全天候盯梢</b>：不是"ping 一下通不通"，而是每隔几小时真的发一次"打字请求"，卡过 30 秒没首字就记一次超时。榜单每站的近 3 天小格子，一格一次体检，红黄绿一眼看完。</div>
+ <div class="case" id="case-avail"><div class="ct">实测案例 · 待数据</div>加载中……</div>
+ </div>
 
-  <!-- 6 缓存价不兑现 -->
-  <div class="p-card">
-    <div class="p-head"><span class="p-no">陷阱 6</span><h2>「缓存一折」写在脸上，扣费按原价</h2></div>
-    <p class="p-what">正规 AI 对重复发过的长内容有"回头客价"，约打 1 折。不少中转站把"缓存价"照抄在标价页上，<b>实际扣费一次都不给你折</b>——你的账单看不出问题，因为你手里没有每笔的明细底账。</p>
-    <div class="p-cost"><b>你亏在哪：</b>越是用"反复带同一份长资料"的玩法（智能客服、陪写文档），本该省下的钱越多，被吞掉的也越多。</div>
-    <div class="detect"><b>怎么防：</b>终极办法是<b>对账</b>：拿它的消费流水，一笔一笔和真实用量对——差多少、缓存折没折，全部现形。店可以自己吹，对不了假账。我们只对肯开放对账的店发"实测"徽章。</div>
-    <div class="case" id="case-cache"><div class="ct">📎 实测案例 · 待数据</div>加载中……</div>
-  </div>
+ <!-- 6 缓存价不兑现 -->
+ <div class="p-card">
+ <div class="p-head"><span class="p-no">陷阱 6</span><h2>「缓存一折」写在脸上，扣费按原价</h2></div>
+ <p class="p-what">正规 AI 对重复发过的长内容有"回头客价"，约打 1 折。不少中转站把"缓存价"照抄在标价页上，<b>实际扣费一次都不给你折</b>——你的账单看不出问题，因为你手里没有每笔的明细底账。</p>
+ <div class="p-cost"><b>你亏在哪：</b>越是用"反复带同一份长资料"的玩法（智能客服、陪写文档），本该省下的钱越多，被吞掉的也越多。</div>
+ <div class="detect"><b>怎么防：</b>终极办法是<b>对账</b>：拿它的消费流水，一笔一笔和真实用量对——差多少、缓存折没折，全部现形。店可以自己吹，对不了假账。我们只对肯开放对账的店发"实测"徽章。</div>
+ <div class="case" id="case-cache"><div class="ct">实测案例 · 待数据</div>加载中……</div>
+ </div>
 
-  <!-- 三步自保 -->
-  <div class="steps">
-    <h2>🛡 用 API 中转站的安全三步</h2>
-    <ol>
-      <li><b>充值前先自测：</b>用<a href="tools.html#selftest">自测工具箱</a>测打字是不是真的一点点往外冒、字数有没有被多报、缓存折没兑现，30 秒出一张可转发的结果图；店不让浏览器直连就用里面的控制台脚本通道。</li>
-      <li><b>少量多次充值：</b>起充门槛低是方便你，不是对你好——大额囤钱碰上店家跑路，追回的钱还不够折腾的。</li>
-      <li><b>只信测出来的，不信嘴上说的：</b>兑换比例、宣传语、页面标价都可以是话术；<a href="compare.html">到手价</a>、对账差额、同题对比结果、超时次数这些测出来的数才配进你的决策。<a href="ranking.html">榜单</a>全部判定留痕，点进去能查到原始批次。</li>
-    </ol>
-  </div>
+ <!-- 三步自保 -->
+ <div class="steps">
+ <h2>用 API 中转站的安全三步</h2>
+ <ol>
+ <li><b>充值前先自测：</b>用<a href="tools.html#selftest">自测工具箱</a>测打字是不是真的一点点往外冒、字数有没有被多报、缓存折没兑现，30 秒出一张可转发的结果图；店不让浏览器直连就用里面的控制台脚本通道。</li>
+ <li><b>少量多次充值：</b>起充门槛低是方便你，不是对你好——大额囤钱碰上店家跑路，追回的钱还不够折腾的。</li>
+ <li><b>只信测出来的，不信嘴上说的：</b>兑换比例、宣传语、页面标价都可以是话术；<a href="/price/">到手价</a>、对账差额、同题对比结果、超时次数这些测出来的数才配进你的决策。<a href="ranking.html">榜单</a>全部判定留痕，点进去能查到原始批次。</li>
+ </ol>
+ </div>
 
-  <div class="disclaim">⚖️ <b>案例声明：</b>本页案例数字来自 RelayLens 探针在公开测试口径下的实测（批次留痕、可复现），反映<b>测量时点与探测路径下</b>的表现；<b>为避纠纷，案例一律匿名展示</b>——具体是哪几家店、判定过程与原始数据，去<a href="ranking.html" style="text-decoration:underline">榜单页</a>按公开口径查。被标注的店可能已经改好了，也可能对我们的探测有干扰（比如网关拦截了考题）；所有「疑似」均为<b>复核信号而非定论</b>，有不同意见走<a href="claim.html">申诉通道</a>。</div>
+ <div class="disclaim"><b>案例声明：</b>本页案例数字来自 RelayLens 探针在公开测试口径下的实测（批次留痕、可复现），反映<b>测量时点与探测路径下</b>的表现；<b>为避纠纷，案例一律匿名展示</b>——具体是哪几家店、判定过程与原始数据，去<a href="ranking.html" style="text-decoration:underline">榜单页</a>按公开口径查。被标注的店可能已经改好了，也可能对我们的探测有干扰（比如网关拦截了考题）；所有「疑似」均为<b>复核信号而非定论</b>，有不同意见走<a href="claim.html">申诉通道</a>。</div>
 
 </main>
 
 <footer>
-  <div class="wrap">
-    <span>RelayLens · 账单级实测的中转站审计 · <a href="method.html">方法论</a> · <a href="api.html">数据 API</a> · <a href="blacklist.html">黑名单档案</a></span>
-    <span>案例数字实时取榜单数据,判定全部留痕</span>
-  </div>
+ <div class="wrap">
+ <span>RelayLens · 账单级实测的中转站审计 · <a href="method.html">方法论</a> · <a href="api.html">数据 API</a> · <a href="blacklist.html">黑名单档案</a></span>
+ <span>案例数字实时取榜单数据,判定全部留痕</span>
+ </div>
 </footer>
 
 <script>
 /* 案例位数据驱动:数字实时从 data/sites.json 取;为避免纠纷,页面一律匿名(「一家店」),实名去榜单查 */
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function setCase(id,html){var el=document.getElementById(id);if(el)el.innerHTML=html}
-function pending(id,why){setCase(id,'<div class="ct">📎 实测案例</div><span class="chip c-gray">暂无实测</span> '+why)}
+function pending(id,why){setCase(id,'<div class="ct">实测案例</div><span class="chip c-gray">暂无实测</span> '+why)}
 
 fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))})
 .then(function(j){
-  var R=(j.realSites||[]).filter(function(s){return s.real!==false});
-  var stamp=j.meta&&j.meta.updated?String(j.meta.updated).slice(0,16).replace("T"," "):"";
-  var da=document.getElementById("dataAt"); if(da)da.textContent=stamp?("数据更新于 "+stamp+" UTC"):"";
+ var R=(j.realSites||[]).filter(function(s){return s.real!==false});
+ var stamp=j.meta&&j.meta.updated?String(j.meta.updated).slice(0,16).replace("T"," "):"";
+ var da=document.getElementById("dataAt"); if(da)da.textContent=stamp?("数据更新于 "+stamp+" UTC"):"";
 
-  /* 1「贵的模型便宜的货」:同题对比判负(匿名) */
-  var fails=R.filter(function(s){return s.fp==="fail"&&s.fpDetail&&typeof s.fpDetail.similarity==="number"})
-    .sort(function(a,b){return a.fpDetail.similarity-b.fpDetail.similarity});
-  if(fails.length){
-    var fd=fails[0].fpDetail;
-    var interfered=!!fd.note; /* 干扰史只在数据真有记录时提,不凭空说 */
-    var passSims=R.filter(function(s){return s.fp==="pass"&&s.fpDetail&&typeof s.fpDetail.similarity==="number"}).map(function(s){return s.fpDetail.similarity});
-    var passRange=passSims.length?"（"+Math.min.apply(null,passSims).toFixed(0)+"~"+Math.max.apply(null,passSims).toFixed(0)+"%）":"";
-    setCase("case-swap",'<div class="ct">📎 实测案例 · 同题对比（8 道题，标准答案 + 回答习惯）</div>'+
-      '<span class="chip c-bad">一家店 · 答案吻合度只有 '+fd.similarity+'%（不及格）</span>'+
-      '<span class="chip c-ok">'+esc(passSims.length)+' 家店及格'+passRange+'</span>'+
-      '<div style="margin-top:6px">给它和另一家店出同一批题，有标准答案的题它答得<b>完全不一样</b>（吻合度 '+fd.similarity+'%，及格线 70）——大概率不是你点的那个模型。'+
-      (interfered?'补充说明：它后来几次复检被自家网关把考题拦掉了（'+esc(fd.note)+'），样本受了干扰——所以榜单标的是「<b>疑似，待复核</b>」而不是判死刑。':'同时说明：我们只把持续明显不及格的标红，单次低分不下结论。')+
-      '具体是哪家，<a href="ranking.html">榜单页</a>按公开口径可查。</div>');
-  } else pending("case-swap","本期没有同题对比判负的店。");
+ /* 1「贵的模型便宜的货」:同题对比判负(匿名) */
+ var fails=R.filter(function(s){return s.fp==="fail"&&s.fpDetail&&typeof s.fpDetail.similarity==="number"})
+ .sort(function(a,b){return a.fpDetail.similarity-b.fpDetail.similarity});
+ if(fails.length){
+ var fd=fails[0].fpDetail;
+ var interfered=!!fd.note; /* 干扰史只在数据真有记录时提,不凭空说 */
+ var passSims=R.filter(function(s){return s.fp==="pass"&&s.fpDetail&&typeof s.fpDetail.similarity==="number"}).map(function(s){return s.fpDetail.similarity});
+ var passRange=passSims.length?"（"+Math.min.apply(null,passSims).toFixed(0)+"~"+Math.max.apply(null,passSims).toFixed(0)+"%）":"";
+ setCase("case-swap",'<div class="ct">实测案例 · 同题对比（8 道题，标准答案 + 回答习惯）</div>'+
+ '<span class="chip c-bad">一家店 · 答案吻合度只有 '+fd.similarity+'%（不及格）</span>'+
+ '<span class="chip c-ok">'+esc(passSims.length)+' 家店及格'+passRange+'</span>'+
+ '<div style="margin-top:6px">给它和另一家店出同一批题，有标准答案的题它答得<b>完全不一样</b>（吻合度 '+fd.similarity+'%，及格线 70）——大概率不是你点的那个模型。'+
+ (interfered?'补充说明：它后来几次复检被自家网关把考题拦掉了（'+esc(fd.note)+'），样本受了干扰——所以榜单标的是「<b>疑似，待复核</b>」而不是判死刑。':'同时说明：我们只把持续明显不及格的标红，单次低分不下结论。')+
+ '具体是哪家，<a href="ranking.html">榜单页</a>按公开口径可查。</div>');
+ } else pending("case-swap","本期没有同题对比判负的店。");
 
-  /* 2「装实时输出」:混合行为(匿名) */
-  var mixed=R.filter(function(s){return typeof s.stream==="number"&&s.stream>0&&s.stream<100});
-  var fake=R.filter(function(s){return s.stream===100});
-  if(mixed.length||fake.length){
-    setCase("case-stream",'<div class="ct">📎 实测案例 · 让它写 300 字，盯住字是不是陆续出来</div>'+
-      (fake.length?'<span class="chip c-bad">'+fake.length+' 家店每次都整段憋完才发</span>':"")+
-      mixed.map(function(s,i){return '<span class="chip c-warn">'+'甲乙丙丁'[i]+'店 · 有的请求一句句冒、有的整段憋（'+s.stream+'% 在憋）</span>'}).join("")+
-      '<div style="margin-top:6px">「憋完整段才发」的那几次，实测要<b>干等 26~54 秒</b>才一次性蹦出全文——同一家店、同一个模型，快慢全看那次排到哪条队，而店不会告诉你。哪家店？<a href="ranking.html">榜单</a>「流式真伪」列可查。</div>');
-  } else pending("case-stream","本轮取样没发现憋整段的行为。");
+ /* 2「装实时输出」:混合行为(匿名) */
+ var mixed=R.filter(function(s){return typeof s.stream==="number"&&s.stream>0&&s.stream<100});
+ var fake=R.filter(function(s){return s.stream===100});
+ if(mixed.length||fake.length){
+ setCase("case-stream",'<div class="ct">实测案例 · 让它写 300 字，盯住字是不是陆续出来</div>'+
+ (fake.length?'<span class="chip c-bad">'+fake.length+' 家店每次都整段憋完才发</span>':"")+
+ mixed.map(function(s,i){return '<span class="chip c-warn">'+'甲乙丙丁'[i]+'店 · 有的请求一句句冒、有的整段憋（'+s.stream+'% 在憋）</span>'}).join("")+
+ '<div style="margin-top:6px">「憋完整段才发」的那几次，实测要<b>干等 26~54 秒</b>才一次性蹦出全文——同一家店、同一个模型，快慢全看那次排到哪条队，而店不会告诉你。哪家店？<a href="ranking.html">榜单</a>「流式真伪」列可查。</div>');
+ } else pending("case-stream","本轮取样没发现憋整段的行为。");
 
-  /* 3「隐形加料」:注入(匿名) */
-  var inj=R.filter(function(s){return typeof s.inject==="number"&&s.inject>200}).sort(function(a,b){return b.inject-a.inject});
-  if(inj.length){
-    setCase("case-inject",'<div class="ct">📎 实测案例 · 发 30 字 / 200 字 / 1000 字，看计费涨不涨</div>'+
-      inj.slice(0,2).map(function(s,i){return '<span class="chip c-bad">'+(inj.length>1?'甲乙'[i]+'店':'一家店')+' · 每笔固定多算约 +'+s.inject+' token</span>'}).join("")+
-      '<div style="margin-top:6px">意思是：你发「收到」两个字，它按<b>约 '+(inj[0].inject+40)+' token</b> 起收——不是你写的字，你照样付钱。发得越短、次数越多，被坑得越狠。这正是「标价看着便宜」不能单独当省钱依据的原因：底数被偷偷加过了。</div>');
-  } else pending("case-inject","本期未发现显著加料的店。");
+ /* 3「隐形加料」:注入(匿名) */
+ var inj=R.filter(function(s){return typeof s.inject==="number"&&s.inject>200}).sort(function(a,b){return b.inject-a.inject});
+ if(inj.length){
+ setCase("case-inject",'<div class="ct">实测案例 · 发 30 字 / 200 字 / 1000 字，看计费涨不涨</div>'+
+ inj.slice(0,2).map(function(s,i){return '<span class="chip c-bad">'+(inj.length>1?'甲乙'[i]+'店':'一家店')+' · 每笔固定多算约 +'+s.inject+' token</span>'}).join("")+
+ '<div style="margin-top:6px">意思是：你发「收到」两个字，它按<b>约 '+(inj[0].inject+40)+' token</b> 起收——不是你写的字，你照样付钱。发得越短、次数越多，被坑得越狠。这正是「标价看着便宜」不能单独当省钱依据的原因：底数被偷偷加过了。</div>');
+ } else pending("case-inject","本期未发现显著加料的店。");
 
-  /* 4「兑换比例障眼法」(匿名) */
-  var withRatio=R.filter(function(s){return s.commerce&&typeof s.commerce.ratioNum==="number"&&s.commerce.ratioNum<0.5&&s.priceBase!=null});
-  if(withRatio.length){
-    var w=withRatio[0];
-    setCase("case-price",'<div class="ct">📎 实测案例 · 一家店的兑换规则</div>'+
-      '<span class="chip c-warn">「1 块钱 = '+Math.round(1/w.commerce.ratioNum)+' 美元额度」</span>'+
-      '<div style="margin-top:6px">听着是不是特别划算？但它自家额度消耗的<b>单价标得比别家高一个数量级</b>——兑换比例和单价是一套组合拳，只把「1 块换 10 块」拿出来说就是障眼法。折算成到手价（每百万字实付人民币）再比，差距远没有兑换数字看着大：<a href="compare.html?model=gpt-5-6-sol">比价页</a>每一格都现场演算。兑换规则不公示的店，我们宁可空着也不替你猜。</div>');
-  } else pending("case-price","暂无兑换比例差异显著的样本。");
+ /* 4「兑换比例障眼法」(匿名) */
+ var withRatio=R.filter(function(s){return s.commerce&&typeof s.commerce.ratioNum==="number"&&s.commerce.ratioNum<0.5&&s.priceBase!=null});
+ if(withRatio.length){
+ var w=withRatio[0];
+ setCase("case-price",'<div class="ct">实测案例 · 一家店的兑换规则</div>'+
+ '<span class="chip c-warn">「1 块钱 = '+Math.round(1/w.commerce.ratioNum)+' 美元额度」</span>'+
+ '<div style="margin-top:6px">听着是不是特别划算？但它自家额度消耗的<b>单价标得比别家高一个数量级</b>——兑换比例和单价是一套组合拳，只把「1 块换 10 块」拿出来说就是障眼法。折算成到手价（每百万字实付人民币）再比，差距远没有兑换数字看着大：<a href="/price/#cmp:gpt-5.6-sol">比价页</a>每一格都现场演算。兑换规则不公示的店，我们宁可空着也不替你猜。</div>');
+ } else pending("case-price","暂无兑换比例差异显著的样本。");
 
-  /* 5「网站活着 ≠ 你的请求能用」(匿名) */
-  var to=R.filter(function(s){return typeof s.timeout==="number"&&s.timeout>0}).sort(function(a,b){return b.timeout-a.timeout});
-  if(to.length){
-    var av=to[0].avail;
-    setCase("case-avail",'<div class="ct">📎 实测案例 · 同一时段，门开着、队伍堵死</div>'+
-      '<span class="chip '+(to[0].timeout>=20?"c-bad":"c-warn")+'">一家店：真发打字请求，'+to[0].timeout+'% 卡 30 秒没出字</span>'+
-      (av!=null?'<span class="chip c-gray">同期「网站是否活着」检测 '+av+'%</span>':"")+
-      '<div style="margin-top:6px">店门口挂着「基本永远在线」，可同一个时间里，我们替用户发的真实请求有<b> '+to[0].timeout+'% </b>等了半分钟一个字没等到——「可用性」宣传和你到底能不能用，是两回事。哪家店、哪几个小时堵，<a href="ranking.html">榜单</a>每站近 3 天的小色块一眼看完。</div>');
-  } else pending("case-avail","本期各站打字请求超时率均为 0。");
+ /* 5「网站活着 ≠ 你的请求能用」(匿名) */
+ var to=R.filter(function(s){return typeof s.timeout==="number"&&s.timeout>0}).sort(function(a,b){return b.timeout-a.timeout});
+ if(to.length){
+ var av=to[0].avail;
+ setCase("case-avail",'<div class="ct">实测案例 · 同一时段，门开着、队伍堵死</div>'+
+ '<span class="chip '+(to[0].timeout>=20?"c-bad":"c-warn")+'">一家店：真发打字请求，'+to[0].timeout+'% 卡 30 秒没出字</span>'+
+ (av!=null?'<span class="chip c-gray">同期「网站是否活着」检测 '+av+'%</span>':"")+
+ '<div style="margin-top:6px">店门口挂着「基本永远在线」，可同一个时间里，我们替用户发的真实请求有<b> '+to[0].timeout+'% </b>等了半分钟一个字没等到——「可用性」宣传和你到底能不能用，是两回事。哪家店、哪几个小时堵，<a href="ranking.html">榜单</a>每站近 3 天的小色块一眼看完。</div>');
+ } else pending("case-avail","本期各站打字请求超时率均为 0。");
 
-  /* 6「缓存一折写在脸上」(匿名) */
-  var honest=R.filter(function(s){return s.audit&&s.audit.matchPct===100&&s.audit.verified>0});
-  setCase("case-cache",'<div class="ct">📎 实测案例 · 拿真实消费流水一笔一笔对账</div>'+
-    (honest.length
-      ? '<span class="chip c-ok">目前只有 '+honest.length+' 家店的账对得上（各 '+honest.map(function(s){return s.audit.verified}).join(" / ")+' 笔，全部一致）</span>'+
-        '<div style="margin-top:6px">对账要店把测试账户的<b>每一笔消费明细</b>交出来，和真实用量逐笔核对——缓存该折的折没折、多收没收，一翻就穿。全平台 <b>'+R.length+' 家里只有 '+honest.length+' 家</b>开放到这个程度；对不了账的店，「缓存一折」就只是宣传语。名单公开在<a href="ranking.html">榜单</a>「计费测试」列。</div>'
-      : '<span class="chip c-gray">暂无开放逐笔对账的店</span>')
-  );
+ /* 6「缓存一折写在脸上」(匿名) */
+ var honest=R.filter(function(s){return s.audit&&s.audit.matchPct===100&&s.audit.verified>0});
+ setCase("case-cache",'<div class="ct">实测案例 · 拿真实消费流水一笔一笔对账</div>'+
+ (honest.length
+ ? '<span class="chip c-ok">目前只有 '+honest.length+' 家店的账对得上（各 '+honest.map(function(s){return s.audit.verified}).join(" / ")+' 笔，全部一致）</span>'+
+ '<div style="margin-top:6px">对账要店把测试账户的<b>每一笔消费明细</b>交出来，和真实用量逐笔核对——缓存该折的折没折、多收没收，一翻就穿。全平台 <b>'+R.length+' 家里只有 '+honest.length+' 家</b>开放到这个程度；对不了账的店，「缓存一折」就只是宣传语。名单公开在<a href="ranking.html">榜单</a>「计费测试」列。</div>'
+ : '<span class="chip c-gray">暂无开放逐笔对账的店</span>')
+ );
 })
 .catch(function(){
-  ["case-swap","case-stream","case-inject","case-price","case-avail","case-cache"].forEach(function(id){
-    pending(id,"榜单数据暂时取不到——刷新重试。");
-  });
+ ["case-swap","case-stream","case-inject","case-price","case-avail","case-cache"].forEach(function(id){
+ pending(id,"榜单数据暂时取不到——刷新重试。");
+ });
 });
 </script>
 </body>

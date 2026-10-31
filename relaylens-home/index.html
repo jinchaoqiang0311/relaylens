@@ -1,835 +1,472 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RelayLens · AI 中转站账单级实测榜 — 3秒选出值得充值的站</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f7f4">
+<title>RelayLens — AI 中转站选站与价格比较 · 账单级实测</title>
+<meta name="description" content="RelayLens:按模型和使用场景比较 AI API 中转站。标价、实测与证据分开展示,数据不足时明确标注。榜单、比价、黑名单数据同源,可溯源到证据批次。">
+<!-- 借用全站统一导航 .nav-links 的样式(几何与其余页面完全一致,避免切页时导航按钮移位)。
+     刻意放在本页 <style> **之前**:本页 :root 变量仍胜出,只取导航规则,不覆盖首页配色。 -->
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<meta name="description" content="RelayLens 对 AI 中转站做账单级实测:真金白银调用、逐笔核对「应扣 vs 实扣」、验证模型指纹、检出号池 token 注入与假流式。算法开源、评分权重公示、变更留痕可验,不卖排名。">
 <style>
-:root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
-  --r:14px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-
-/* ============ 顶部导航 ============ */
-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:22px;height:60px}
-.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.2px}
-.logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
-.nav-links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
-.nav-links::-webkit-scrollbar{display:none}
-.nav-links a{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:8px;white-space:nowrap;transition:.15s}
-.nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
-.nav-links a.hot{color:var(--bad);font-weight:600}
-.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:none;transition:.15s;white-space:nowrap}
-.btn-primary{background:var(--brand);color:#fff}
-.btn-primary:hover{background:var(--brand-deep)}
-.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
-.btn-sm{padding:7px 13px;font-size:13px;border-radius:8px}
-
-/* ============ Hero 首屏 ============ */
-.hero{background:
-  radial-gradient(900px 340px at 85% -60%,rgba(43,92,240,.16),transparent),
-  radial-gradient(700px 300px at 0% -40%,rgba(124,58,237,.10),transparent),
-  linear-gradient(180deg,#0c1633 0%,#12235c 74%,#16308f 100%);
-  color:#fff;padding:44px 0 36px}
-.trust-line{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 16px;font-size:14px;font-weight:600;flex-wrap:wrap}
-.dot{width:8px;height:8px;border-radius:50%;background:#2ee6a8;box-shadow:0 0 0 0 rgba(46,230,168,.7);animation:pulse 2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,230,168,.6)}70%{box-shadow:0 0 0 9px rgba(46,230,168,0)}100%{box-shadow:0 0 0 0 rgba(46,230,168,0)}}
-.trust-line b{color:#8fd0ff;font-variant-numeric:tabular-nums}
-.hero h1{font-size:clamp(26px,4.2vw,40px);font-weight:800;line-height:1.3;margin:20px 0 12px}
-.hero h1 em{font-style:normal;background:linear-gradient(90deg,#8fd0ff,#c4b5ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .sub{font-size:15.5px;opacity:.85;max-width:680px}
-.hero-cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
-.btn-light{background:#fff;color:var(--brand-deep);font-weight:700}
-.btn-light:hover{transform:translateY(-1px)}
-.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45)}
-.btn-outline:hover{background:rgba(255,255,255,.12)}
-.hero-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:26px;font-size:13px;opacity:.8}
-.hero-meta span{display:flex;align-items:center;gap:6px}
-
-/* 场景导航卡片 */
-.sec-label{font-size:13px;font-weight:700;letter-spacing:1px;color:var(--faint);text-transform:uppercase;margin:30px 0 14px}
-.scenes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-/* 按模型直达比价 chips */
-.model-direct{display:flex;flex-wrap:wrap;gap:10px}
-.md-chip{display:inline-flex;align-items:baseline;gap:8px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;color:var(--ink);transition:.15s}
-.md-chip:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
-.md-chip .fam{font-size:11px;font-weight:600;color:var(--faint)}
-.md-chip .from{font-size:12px;font-weight:700;color:var(--ok)}
-.md-chip .n{font-size:11px;color:var(--faint)}
-.scene{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:var(--r);padding:18px;transition:.18s;position:relative;cursor:pointer}
-.scene:hover{background:rgba(255,255,255,.13);transform:translateY(-2px)}
-.scene .ic{font-size:22px}
-.scene h3{font-size:15.5px;margin:8px 0 4px}
-.scene p{font-size:12.5px;opacity:.75}
-.scene .metric{margin-top:12px;font-size:12.5px;background:rgba(255,255,255,.12);border-radius:7px;padding:5px 10px;display:inline-block}
-.scene .metric b{color:#8fd0ff;font-variant-numeric:tabular-nums}
-.scene.risk{border-color:rgba(244,63,94,.45)}
-.scene.risk .metric{background:rgba(244,63,94,.2)}
-.scene.risk .metric b{color:#fda4af}
-.scene .arrow{position:absolute;top:18px;right:16px;opacity:.5;font-size:14px}
-
-/* 实时状态看板 */
-.status-board{margin-top:30px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:var(--r);overflow:hidden}
-.sb-head{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.12);font-size:13.5px;font-weight:600}
-.sb-head .upd{font-weight:400;opacity:.7;font-size:12.5px}
-.sb-scroll{display:flex;gap:0;overflow-x:auto;scrollbar-width:thin}
-.sb-item{min-width:212px;padding:14px 18px;border-right:1px solid rgba(255,255,255,.1);font-size:13px;cursor:pointer;transition:.15s}
-.sb-item:hover{background:rgba(255,255,255,.07)}
-.sb-item .name{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
-.st{width:9px;height:9px;border-radius:50%;display:inline-block}
-.st-g{background:#2ee6a8}.st-y{background:#fbbf24}.st-r{background:#f87171}
-.sb-item .row{display:flex;justify-content:space-between;margin-top:7px;opacity:.85}
-.sb-item .k{color:var(--faint)}
-.price-up{color:#fda4af;font-weight:600}
-.price-dn{color:#86efac;font-weight:600}
-.sb-item .t{color:var(--faint);font-size:12px}
-/* 真实/示例标识体系:接入探针的站才配「实测」,其余一律显式标「示例」 */
-.tag-real,.tag-demo{font-size:10px;font-weight:700;border-radius:5px;padding:1px 5px;margin-left:auto;letter-spacing:.02em}
-.tag-real{background:#2ee6a8;color:#06331f}
-.tag-demo{background:rgba(255,255,255,.16);color:rgba(255,255,255,.7)}
-.sb-item.real{background:rgba(46,230,168,.07);box-shadow:inset 0 -2px 0 rgba(46,230,168,.5)}
-.sb-item.demo .name .st{opacity:.45}
-
-/* ============ 通用区块 ============ */
-section.block{padding:52px 0 6px}
-.blk-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:22px}
-.blk-head h2{font-size:23px;font-weight:800}
-.blk-head .more{font-size:13.5px;color:var(--brand);font-weight:600}
-
-/* ============ 账单级实测证据 ============ */
-.evidence{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;display:grid;grid-template-columns:1.05fr 1fr;gap:34px}
-@media(max-width:880px){.evidence{grid-template-columns:1fr;padding:22px}}
-.ev-cap{font-size:12px;color:var(--faint);text-align:center;margin-top:10px}
-/* 模拟面板流水 */
-.panel{background:#0d1424;border-radius:12px;color:#dbe4f3;font-family:"SFMono-Regular",Consolas,"Courier New",monospace;font-size:12.5px;box-shadow:0 12px 34px rgba(13,20,36,.35);position:relative;overflow:hidden}
-.panel .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.05);font-size:34px;font-weight:800;transform:rotate(-18deg);pointer-events:none;font-family:"PingFang SC",sans-serif;letter-spacing:2px}
-.panel-bar{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.1);font-family:"PingFang SC",sans-serif;font-size:12.5px}
-.panel-bar .site{font-weight:700}
-.panel-body{padding:14px 16px}
-.prow{display:flex;justify-content:space-between;padding:5.5px 0;border-bottom:1px dashed rgba(255,255,255,.07);gap:10px}
-.prow .k{color:#8ea3c4}
-.prow .v{font-variant-numeric:tabular-nums;text-align:right}
-.v-ok{color:#4ade80;font-weight:700}
-.prow.total{border-bottom:none;margin-top:6px;padding-top:10px;border-top:1px solid rgba(255,255,255,.18)}
-.prow.total .v{font-size:15px}
-.stamp{display:flex;justify-content:space-between;padding:9px 16px;background:rgba(255,255,255,.05);border-top:1px solid rgba(255,255,255,.1);font-family:"PingFang SC",sans-serif;font-size:11.5px;color:#8ea3c4}
-.match{background:rgba(74,222,128,.13);border:1px solid rgba(74,222,128,.35);color:#4ade80;border-radius:8px;padding:8px 12px;font-family:"PingFang SC",sans-serif;font-weight:700;text-align:center;margin-top:12px;font-size:14px}
-/* 右侧说明 */
-.ev-points{list-style:none;margin:22px 0}
-/* 证据样本切换 */
-.ev-tabs{display:flex;gap:6px;padding:0 16px 14px;flex-wrap:wrap}
-.ev-tabs button{font:inherit;font-size:11.5px;padding:4px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#c8d3e8;cursor:pointer}
-.ev-tabs button.on{background:#2ee6a8;color:#06331f;border-color:#2ee6a8;font-weight:700}
-.ev-points li{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14.5px;color:var(--sub)}
-.ev-points li:last-child{border-bottom:none}
-.ev-points .n{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
-.ev-points b{color:var(--ink)}
-
-/* ============ Top3 推荐卡 ============ */
-.top3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
-.rec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative;transition:.18s;display:flex;flex-direction:column}
-.rec:hover{box-shadow:0 10px 32px rgba(16,24,40,.09);transform:translateY(-2px);border-color:#c9d4f5}
-.rec.rank1{border-top:4px solid #f59e0b;background:linear-gradient(180deg,#fffdf4,#fff 38%)}
-.rec.rank2{border-top:4px solid #94a3b8}
-.rec.rank3{border-top:4px solid #d97706}
-/* 推荐位空态:没有合格合作站时诚实说明,并把它变成入驻入口 —— 宁缺毋滥比编造优惠强 */
-.rec-empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:16px;padding:26px 24px;background:#fbfcfe;text-align:left}
-.rec-empty h4{font-size:15px;margin-bottom:6px}
-.rec-empty p{font-size:13px;color:var(--sub);max-width:640px}
-.rec-empty .acts{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.rec .benefit.none{background:#f8fafc;border:1px dashed var(--line)}
-.rec .benefit.none .bt{color:var(--faint)}
-.ad-flag{position:absolute;top:10px;right:12px;font-size:10.5px;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:1px 7px;background:#fafbfc}
-.rec .rankb{position:absolute;top:-13px;left:18px;font-size:11.5px;font-weight:800;color:#fff;border-radius:999px;padding:3px 12px}
-.rank1 .rankb{background:#f59e0b}.rank2 .rankb{background:#64748b}.rank3 .rankb{background:#d97706}
-.rec-head{display:flex;align-items:center;gap:11px;margin-bottom:6px;padding-right:56px}
-.rec-logo{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;flex-shrink:0}
-.rec-head h3{font-size:16.5px}
-.cert{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);border-radius:5px;padding:1.5px 7px;margin-top:2px}
-.score{margin-left:auto;text-align:right}
-.score .s{font-size:21px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
-.score .l{font-size:10.5px;color:var(--faint)}
-.tags{display:flex;gap:6px;flex-wrap:wrap;margin:13px 0}
-.tag{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:6px;background:#f2f4f8;color:var(--sub)}
-.tag.ok{background:var(--ok-soft);color:var(--ok)}
-.tag.warn{background:var(--warn-soft);color:var(--warn)}
-.tag.fast{background:var(--brand-soft);color:var(--brand)}
-.benefit{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1px solid #f2e2b3;border-radius:11px;padding:12px 14px;margin:6px 0 14px}
-.benefit .bt{font-size:12px;color:var(--gold);font-weight:700;display:flex;align-items:center;gap:5px}
-.benefit .code{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
-.benefit .cd{font-family:Consolas,monospace;font-weight:800;font-size:15px;letter-spacing:1px;color:#7a5c00}
-.rec-cta{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto}
-.copy-btn{background:var(--gold-soft);color:var(--gold);border:1.5px solid #ecc94b;font-weight:700}
-.copy-btn:hover{background:#f6e9b8}
-.copy-btn.copied{background:var(--ok-soft);color:var(--ok);border-color:#9fe3c0}
-
-/* ============ 工具横幅 ============ */
-.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:44px}
-.tool{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:flex;align-items:center;gap:16px;transition:.15s}
-.tool:hover{border-color:var(--brand);box-shadow:0 6px 20px rgba(43,92,240,.1)}
-.tool .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.tool h3{font-size:15px}
-.tool p{font-size:12.5px;color:var(--sub);margin-top:2px}
-.tool .btn{margin-left:auto;flex-shrink:0}
-
-/* ============ 报告摘要 ============ */
-.reports{display:grid;gap:12px}
-.rpt{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;display:flex;gap:16px;align-items:flex-start;transition:.15s}
-.rpt:hover{border-color:#c9d4f5}
-.rpt .badge{flex-shrink:0;font-size:11px;font-weight:700;border-radius:6px;padding:3px 9px;margin-top:2px}
-.bg-bad{background:var(--bad-soft);color:var(--bad)}
-.bg-warn{background:var(--warn-soft);color:var(--warn)}
-.bg-ok{background:var(--ok-soft);color:var(--ok)}
-.rpt h3{font-size:15px}
-.rpt p{font-size:13px;color:var(--sub);margin-top:3px}
-.rpt .meta{font-size:12px;color:var(--faint);margin-top:7px;display:flex;gap:14px;flex-wrap:wrap}
-.rpt .go{margin-left:auto;flex-shrink:0;align-self:center;font-size:13px;color:var(--brand);font-weight:600}
-.rpt .thumb{flex-shrink:0;width:86px;height:56px;border-radius:8px;background:#0d1424;color:#8ea3c4;font-family:Consolas,monospace;font-size:9px;display:flex;flex-direction:column;justify-content:center;padding:8px;gap:3px;overflow:hidden;border:1px solid #1e2b45}
-.rpt .thumb i{font-style:normal;background:rgba(255,255,255,.07);border-radius:2px;height:5px;display:block}
-.rpt .thumb i.w65{width:65%}.rpt .thumb i.w45{width:45%}.rpt .thumb i.w80{width:80%}.rpt .thumb i.w30{width:30%}
-@media(max-width:640px){.rpt .thumb{display:none}}
-
-/* ============ UGC ============ */
-.ugc{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
-.review{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
-.rv-head{display:flex;align-items:center;gap:11px;margin-bottom:11px}
-.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px}
-.rv-head h4{font-size:14px}
-.verified{font-size:10.5px;color:var(--ok);background:var(--ok-soft);border-radius:5px;padding:1px 7px;font-weight:700}
-.verified.demo-ugc{color:var(--faint);background:#f2f4f7}
-.rv-head .t{font-size:11.5px;color:var(--faint)}
-.review .story{font-size:13px;color:var(--sub)}
-.story .step{display:flex;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line)}
-.story .step:last-child{border-bottom:none}
-.story .lbl{flex-shrink:0;font-size:11px;font-weight:700;border-radius:5px;padding:2px 8px;height:fit-content}
-.lb1{background:var(--bad-soft);color:var(--bad)}
-.lb2{background:var(--brand-soft);color:var(--brand)}
-.lb3{background:var(--ok-soft);color:var(--ok)}
-
-/* ============ FAQ ============ */
-.faq{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-details{border-bottom:1px solid var(--line)}
-details:last-child{border-bottom:none}
-summary{padding:16px 22px;font-size:14.5px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font-size:19px;color:var(--faint);transition:.2s;flex-shrink:0}
-details[open] summary::after{transform:rotate(45deg)}
-details .ans{padding:0 22px 18px;font-size:13.5px;color:var(--sub)}
-details .ans b{color:var(--ink)}
-
-/* ============ Footer ============ */
-footer{margin-top:60px;background:#0c1633;color:#94a3c4;padding:40px 0 30px;font-size:13px}
-.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:26px;border-bottom:1px solid rgba(255,255,255,.1)}
-@media(max-width:720px){.ft-grid{grid-template-columns:1fr}}
-footer h4{color:#fff;font-size:14px;margin-bottom:12px}
-footer a{display:block;padding:3.5px 0}
-footer a:hover{color:#fff}
-footer .fine{padding-top:20px;font-size:12px;line-height:1.9;color:#5d6f92}
-
-/* ============ 悬浮CTA(移动端) ============ */
-.float-cta{position:fixed;bottom:18px;right:16px;z-index:120;display:none}
-@media(max-width:720px){.float-cta{display:block}}
-.float-cta .fab{background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;border:none;border-radius:999px;padding:13px 20px;font-size:14px;font-weight:800;box-shadow:0 8px 26px rgba(234,88,12,.45);cursor:pointer;animation:bounce 2.6s infinite}
-@keyframes bounce{0%,88%,100%{transform:translateY(0)}92%{transform:translateY(-5px)}96%{transform:translateY(0)}}
-.float-panel{position:fixed;left:14px;right:14px;bottom:76px;z-index:121;background:#fff;border-radius:16px;box-shadow:0 18px 50px rgba(16,24,40,.28);padding:18px;display:none}
-.float-panel.show{display:block}
-.float-panel h4{font-size:14.5px}
-.float-panel .code{font-family:Consolas,monospace;font-weight:800;font-size:17px;letter-spacing:1px;color:#7a5c00;background:var(--gold-soft);border:1.5px dashed #ecc94b;border-radius:9px;padding:9px;text-align:center;margin:11px 0}
-.float-panel p{font-size:12px;color:var(--sub)}
-
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media(min-width:721px){.toast{bottom:30px}}
+ :root{
+ color-scheme:light;
+ --ink:#17211f; --muted:#66736f; --soft:#eef2ef; --line:#dce4df;
+ --paper:#fff; --canvas:#f5f7f4;
+ --green:#176b58; --green-strong:#0e5746; --green-soft:#e3f2eb; --lime:#d6ed7a;
+ --amber:#9a6411; --amber-soft:#fff3d6; --red:#b43d37; --red-soft:#fce9e7;
+ --blue:#3266a3; --blue-soft:#eaf1fb;
+ --shadow:0 18px 48px rgba(20,42,34,.14);
+ font-family:Inter,ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei",sans-serif;
+ text-rendering:optimizeLegibility;
+ }
+ *{box-sizing:border-box}
+ body{margin:0;background:var(--canvas);color:var(--ink);font-size:14px;line-height:1.5}
+ button,input,select{font:inherit}
+ a{color:inherit;text-decoration:none}
+ .shell{width:min(1280px,calc(100% - 48px));margin:0 auto}
+ .topbar{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+ .topbar-inner{min-height:64px;display:flex;align-items:center;gap:28px}
+ .brand{display:inline-flex;align-items:center;gap:10px;min-width:150px}
+ .brand-mark{width:30px;height:30px;border-radius:7px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;position:relative}
+ .brand-mark::after{content:"";position:absolute;width:6px;height:6px;right:3px;top:3px;border-radius:50%;background:var(--lime)}
+ .brand-name{font-size:16px;font-weight:750}
+ .brand-name span{color:var(--green)}
+ /* 顶部导航几何锁定(2026-10-22):按钮尺寸与位置不随 hover/active/点击/窗口尺寸变化而移动。
+    ①字重全态恒定 500(原 active 650 会让文字变宽、把同行按钮推走)
+    ②flex:0 0 auto 不伸缩 ③nowrap + 横向滚动取代换行(换行会改变顶栏高度并造成位移)
+    ④active 指示改用 inset 阴影,不占任何布局空间 */
+ .top-actions{display:flex;align-items:center;gap:9px}
+ .primary-button{min-height:36px;display:inline-flex;align-items:center;gap:7px;border-radius:6px;padding:7px 13px;cursor:pointer;border:1px solid transparent;font-weight:650;font-size:13px;background:var(--green);color:#fff}
+ .primary-button:hover{background:var(--green-strong)}
+ .disclose{border-bottom:1px solid #d7e7be;background:#eff6de;color:#3c5423}
+ .disclose-inner{min-height:36px;display:flex;align-items:center;gap:9px;font-size:12px;flex-wrap:wrap}
+ .disclose b{font-weight:700}
+ .disclose .dot{width:7px;height:7px;border-radius:50%;background:#32a276;box-shadow:0 0 0 3px #e5f4ec}
+ .disclose a{color:#2f5131;font-weight:650;text-decoration:underline}
+ main{padding:26px 0 44px}
+ .intro{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;padding-bottom:18px;flex-wrap:wrap}
+ .eyebrow{text-transform:uppercase;color:var(--green);font-size:10px;font-weight:800;letter-spacing:1px;margin-bottom:5px}
+ h1{font-size:27px;line-height:1.25;margin:0 0 7px;font-weight:720}
+ .intro-copy{max-width:680px;color:var(--muted);margin:0;font-size:13px}
+ .freshness{text-align:right;color:var(--muted);font-size:11px;min-width:150px}
+ .freshness strong{color:var(--ink);font-size:12px;display:block;font-weight:650;margin-bottom:3px}
+ .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#32a276;margin-right:5px;box-shadow:0 0 0 3px #e5f4ec}
+ .metric-band{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:20px;background:rgba(255,255,255,.5)}
+ .metric{padding:13px 18px 14px;min-height:76px;border-right:1px solid var(--line)}
+ .metric:first-child{padding-left:2px}
+ .metric:last-child{border-right:0}
+ .metric-label{color:var(--muted);font-size:11px;margin-bottom:4px}
+ .metric-value{display:flex;align-items:baseline;gap:6px;font-size:21px;line-height:1.1;font-weight:710;font-variant-numeric:tabular-nums}
+ .metric-value small{font-size:11px;font-weight:550;color:var(--muted)}
+ .metric-trend{font-size:10px;color:var(--green);margin-left:auto;font-weight:650}
+ .workspace-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:11px;flex-wrap:wrap}
+ .section-title{display:flex;align-items:center;gap:9px}
+ .section-title h2{font-size:16px;margin:0;font-weight:700}
+ .count{color:var(--muted);font-size:11px}
+ .outline-link{border:0;background:transparent;color:var(--green);cursor:pointer;font-size:12px;font-weight:650;padding:6px 0}
+ .outline-link:hover{color:var(--green-strong);text-decoration:underline}
+ .filters{background:var(--paper);border:1px solid var(--line);border-bottom:0;padding:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+ .search-box{position:relative;min-width:180px;flex:1 1 220px}
+ .search-box .search-symbol{position:absolute;left:11px;top:8px;color:#7d8a84;font-size:15px}
+ .search-box input{width:100%;height:36px;border:1px solid var(--line);border-radius:5px;padding:0 12px 0 32px;outline:none;background:#fbfcfb}
+ input:focus,select:focus{border-color:#61a18d;box-shadow:0 0 0 3px rgba(23,107,88,.11)}
+ .select-wrap{position:relative}
+ .select-wrap select{appearance:none;height:36px;min-width:150px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink);padding:0 30px 0 10px;cursor:pointer;outline:none;font-size:12px}
+ .select-wrap::after{content:"⌄";position:absolute;top:6px;right:10px;pointer-events:none;color:#68766f;font-size:15px}
+ .segmented{display:inline-flex;border:1px solid var(--line);background:#f7f9f7;border-radius:5px;padding:3px;gap:2px;flex-wrap:wrap}
+ /* 分段控件同样锁定(2026-10-22):字重恒定 500,选中态不再加粗(否则文字变宽导致按钮位移) */
+ .segmented button{border:0;background:transparent;border-radius:3px;padding:5px 10px;min-height:26px;cursor:pointer;color:#68746f;font-size:11px;font-weight:500;flex:0 0 auto;white-space:nowrap}
+ .segmented button[aria-pressed="true"]{color:var(--green-strong);background:#fff;box-shadow:0 1px 3px rgba(19,48,37,.13);font-weight:500}
+ .filter-check{display:inline-flex;align-items:center;gap:7px;color:#51605a;font-size:11px;white-space:nowrap;cursor:pointer}
+ .filter-check input{accent-color:var(--green);width:14px;height:14px;margin:0}
+ .filter-spacer{flex:1}
+ .table-shell{background:var(--paper);border:1px solid var(--line);overflow:hidden}
+ .table-scroll{overflow-x:auto}
+ table{width:100%;border-collapse:collapse;text-align:left}
+ .comparison-table{min-width:1080px}
+ th{height:38px;color:#75817c;background:#f8faf8;border-bottom:1px solid var(--line);font-size:10px;font-weight:700;padding:0 12px;white-space:nowrap}
+ td{padding:11px 12px;border-bottom:1px solid #e8eeea;vertical-align:middle;font-size:12px}
+ tbody tr:last-child td{border-bottom:0}
+ tbody tr:hover{background:#f8fbf9}
+ .provider-cell{min-width:180px}
+ .score-cell{min-width:104px}
+ .score-value{display:block;font-size:15px;line-height:1.1;font-weight:760;font-variant-numeric:tabular-nums}
+ .score-high{color:var(--green-strong)}
+ .score-mid{color:var(--amber)}
+ .score-low{color:var(--red)}
+ .score-meter{width:64px;height:5px;margin-top:5px;border-radius:4px;background:#e7eeea;overflow:hidden}
+ .score-meter i{display:block;height:100%;border-radius:inherit;background:#4b9e7e}
+ .score-meter i.mid{background:#d59c3c}
+ .score-meter i.low{background:#c85d54}
+ .truth-cell{min-width:104px}
+ .truth-tag,.status-tag{display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:3px 7px;font-size:10px;font-weight:700;white-space:nowrap}
+ .truth-consistent{color:var(--green-strong);background:var(--green-soft)}
+ .truth-review{color:var(--amber);background:var(--amber-soft)}
+ .truth-suspect{color:var(--red);background:var(--red-soft)}
+ .truth-unknown{color:#5f6b66;background:#edf1ef}
+ .status-good{color:var(--green-strong);background:var(--green-soft)}
+ .status-watch{color:var(--amber);background:var(--amber-soft)}
+ .status-unknown{color:#5f6b66;background:#edf1ef}
+ .provider-main{display:flex;align-items:center;gap:9px}
+ .provider-logo{width:31px;height:31px;border-radius:7px;flex:0 0 31px;display:grid;place-items:center;font-weight:800;font-size:12px;color:#184b3f;background:#deeee6}
+ .provider-logo.blue{background:#e3edf8;color:#2c5d8f}
+ .provider-logo.orange{background:#fbecda;color:#8a591b}
+ .provider-logo.violet{background:#efe8f7;color:#684e84}
+ .provider-name{font-size:12px;font-weight:700;line-height:1.2;margin-bottom:3px}
+ .provider-meta{color:var(--muted);font-size:10px}
+ .price-primary{font-size:13px;font-weight:710;font-variant-numeric:tabular-nums;white-space:nowrap}
+ .price-primary .unit{font-size:9px;color:#74817b;font-weight:500}
+ .price-secondary{margin-top:3px;font-size:10px;color:var(--muted);white-space:nowrap}
+ .metric-number{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
+ .metric-caption{color:#89948f;font-size:10px;margin-top:2px;white-space:nowrap}
+ .detail-button{color:#53635c;cursor:pointer;font-size:11px;font-weight:650}
+ .detail-button:hover{color:var(--green);text-decoration:underline}
+ .table-footer{min-height:42px;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;gap:14px;color:var(--muted);background:#fcfdfc;border-top:1px solid var(--line);font-size:10px;flex-wrap:wrap}
+ .table-footer strong{color:var(--ink)}
+ .legend{display:flex;gap:11px;align-items:center}
+ .legend span{display:inline-flex;align-items:center;gap:5px}
+ .legend-dot{width:7px;height:7px;border-radius:50%;background:#46a580}
+ .legend-dot.amber{background:#e0a83f}
+ .legend-dot.gray{background:#aab4af}
+ .ref-strip{margin-top:16px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 15px}
+ .ref-strip h3{font-size:12px;margin:0 0 9px;font-weight:700;color:#3d4a44}
+ .ref-row{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:11px;color:#4e5d56}
+ .ref-row b{color:var(--ink);font-variant-numeric:tabular-nums}
+ .ref-row .tag{font-size:9px;color:#5f6b66;background:#edf1ef;border-radius:3px;padding:1px 6px;margin-right:6px}
+ .below-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,.9fr);gap:24px;margin-top:24px}
+ .plain-section{border-top:1px solid var(--line);padding-top:14px}
+ .plain-section h2{font-size:15px;margin:0 0 12px;font-weight:700}
+ .scene-list{display:grid;grid-template-columns:repeat(2,1fr);gap:0 22px;border-top:1px solid var(--line)}
+ .scene-item{display:block;border-bottom:1px solid var(--line);padding:12px 0}
+ .scene-item:hover .scene-name{color:var(--green)}
+ .scene-name{font-size:12px;font-weight:700;margin-bottom:3px}
+ .scene-desc{color:var(--muted);font-size:10px}
+ .scene-signal{color:var(--green);font-size:10px;margin-top:5px;font-weight:650}
+ .signal-row{display:flex;align-items:center;gap:9px;margin:9px 0;font-size:10px;color:#596761}
+ .signal-row label{width:88px}
+ .signal-track{flex:1;height:6px;background:#e8eeea;border-radius:5px;overflow:hidden}
+ .signal-fill{height:100%;background:#4b9e7e;border-radius:5px}
+ .signal-fill.amber{background:#d59c3c}
+ .signal-row strong{width:52px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+ .method-note{border-left:3px solid var(--lime);padding:9px 12px;margin-top:14px;background:#f0f5e4;color:#526044;font-size:10px;line-height:1.6}
+ .method-note strong{color:#354324}
+ .method-note a{color:#2f5131;text-decoration:underline}
+ footer{background:#202c27;color:#d5e1da;padding:22px 0 26px}
+ .footer-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:26px;flex-wrap:wrap}
+ .footer-brand{color:#fff;font-weight:720;font-size:13px;margin-bottom:5px}
+ .footer-copy{color:#aab8b0;font-size:10px;max-width:720px;line-height:1.6}
+ .footer-links{display:flex;gap:14px;font-size:10px;flex-wrap:wrap}
+ .footer-links a{color:#d3e1d8}
+ .footer-links a:hover{color:var(--lime)}
+ .toast{position:fixed;z-index:30;left:50%;bottom:24px;transform:translate(-50%,18px);background:#18231f;color:#fff;border-radius:6px;padding:10px 14px;font-size:12px;opacity:0;pointer-events:none;transition:.18s;box-shadow:var(--shadow)}
+ .toast.show{opacity:1;transform:translate(-50%,0)}
+ @media (max-width:980px){
+ .shell{width:min(100% - 32px,760px)}
+ .topbar-inner{gap:12px;flex-wrap:wrap;padding:10px 0}
+ .below-grid{grid-template-columns:1fr}
+ .metric-band{grid-template-columns:1fr 1fr}
+ }
+ @media (max-width:620px){
+ .metric:nth-child(2){border-right:0}
+ .metric:nth-child(3),.metric:nth-child(4){border-bottom:0}
+ .scene-list{grid-template-columns:1fr}
+ .freshness{text-align:left}
+ }
 </style>
 </head>
 <body>
-
-<!-- ================= 顶部导航 ================= -->
-<header>
-  <div class="wrap nav">
-    <a class="logo" href="#"><span class="mark">◎</span>RelayLens</a>
-    <nav class="nav-links">
-      <a href="#">首页</a>
-      <a href="ranking.html">全站榜单</a>
-      <a href="compare.html">模型比价</a><a href="cheapest.html">最低价</a>
-      <a href="selector.html">选型顾问</a>
-      <a href="tools.html">自测工具箱</a>
-      <a href="pitfalls.html">避坑指南</a><a href="blacklist.html" class="hot">⚠ 避雷黑名单</a>
-      <a href="method.html">方法论</a>
-      <a href="api.html">API</a>
-      <a href="reports.html">实测报告</a>
-    </nav>
-    <a class="btn btn-ghost btn-sm" href="#">登录</a>
-    <a class="btn btn-primary btn-sm" href="#">注册</a>
-  </div>
+<header class="topbar">
+ <div class="shell topbar-inner">
+ <a class="brand" href="index.html" aria-label="RelayLens 首页">
+ <span class="brand-mark">◎</span>
+ <span class="brand-name">Relay<span>Lens</span></span>
+ </a>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html" class="active" aria-current="page">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
+ <div class="top-actions">
+ <a class="primary-button" href="api.html">数据 API ↗</a>
+ </div>
+ </div>
 </header>
 
-<!-- ================= 首屏核心区 ================= -->
-<div class="hero">
-  <div class="wrap">
-    <!-- 动态信任标语:全部取自 data/sites.json 的 meta.stats,取不到即显示「—」,不预置假数 -->
-    <div class="trust-line">
-      <span class="dot"></span>
-      在测 <b id="st-sites">—</b> 家站点
-      <span style="opacity:.4">·</span>
-      逐笔核验 <b id="st-verified">—</b> 笔真实扣费
-      <span style="opacity:.4">·</span>
-      覆盖 <b id="st-models">—</b> 条报价
-      <span style="opacity:.4">·</span>
-      今日更新 <b id="st-upd">—</b> 次
-      <span style="opacity:.4">·</span>
-      <span id="live-time" style="font-weight:400;opacity:.85"></span>
-    </div>
-
-    <h1>不看广告,看<em>账单</em>。<br>3 秒找到值得充值的那家中转站</h1>
-    <p class="sub">我们真金白银付费实测站点:健康检查每 5 小时一次、报价每 6 小时刷新,<b>付费对账由人工发起批次</b> —— 逐轮核对「应扣 vs 实扣」、验证模型指纹与缓存命中。扣费偏差 &gt;1% 的站点进入标红复核队列,判定后移出推荐榜。榜单只信账单,不信嘴。</p>
-
-    <div class="hero-cta">
-      <a class="btn btn-light" href="#evidence">🔍 查看实测证据</a>
-      <a class="btn btn-outline" href="#top3">⚡ 30秒选站</a>
-    </div>
-
-    <div class="hero-meta">
-      <span>💰 赚推广佣金 · 不卖排名</span>
-      <span>🔓 原始数据可复现</span>
-      <span>🕐 最新检测 <b id="last-check" style="color:#8fd0ff"></b></span>
-    </div>
-
-    <!-- 场景化快速导航 -->
-    <div class="sec-label">按场景直达 · 点卡片看预筛选结果</div>
-    <div class="scenes">
-      <a class="scene" href="ranking.html?scene=code">
-        <span class="arrow">→</span>
-        <div class="ic">⌨️</div>
-        <h3>Claude Code / Cursor 编程专用</h3>
-        <p>重缓存 · 长上下文 · SSE 完整率优先</p>
-        <span class="metric">付费对账 <b id="mx-code">—</b> 笔 · 假流式检出 <b id="mx-code2">—</b></span>
-      </a>
-      <a class="scene" href="ranking.html?scene=office">
-        <span class="arrow">→</span>
-        <div class="ic">💼</div>
-        <h3>办公提效(翻译 / 总结 / PPT)</h3>
-        <p>多模型按需切换 · 对 Cherry Studio 等工具接入友好</p>
-        <span class="metric">7 日可用率最高 <b id="mx-avail">—</b> · 健康检查 <b id="mx-checks">—</b> 次</span>
-      </a>
-      <a class="scene" href="ranking.html?scene=ecom">
-        <span class="arrow">→</span>
-        <div class="ic">🛒</div>
-        <h3>电商运营(商品图 / 文案 / 客服)</h3>
-        <p>批量短任务 · 按次计费最容易被做手脚的场景</p>
-        <span class="metric">实测号池注入 <b id="mx-inj">—</b> tok/请求,短任务成本反超官方直连</span>
-      </a>
-      <a class="scene" href="ranking.html?scene=drama">
-        <span class="arrow">→</span>
-        <div class="ic">🎬</div>
-        <h3>短剧 / 创作剧本</h3>
-        <p>128K 长上下文不截断 · 输出吞吐跟得上思路</p>
-        <span class="metric">单笔实测最大 <b id="mx-maxtok">—</b> token · 扣费偏差 <b id="mx-dev">—</b></span>
-      </a>
-      <a class="scene" href="ranking.html?scene=image">
-        <span class="arrow">→</span>
-        <div class="ic">🎨</div>
-        <h3>生图创作(Midjourney / 即梦系)</h3>
-        <p>图像指纹检测 · 防图质降级 / 换底模</p>
-        <span class="metric">图像指纹探针<b>尚未实测</b> · 未测不出分</span>
-      </a>
-      <a class="scene" href="ranking.html?scene=biz">
-        <span class="arrow">→</span>
-        <div class="ic">🏢</div>
-        <h3>企业开票 &amp; SLA 保障</h3>
-        <p>对公转账 · 发票 · 运营年限</p>
-        <span class="metric">开票与主体资质<b>尚未实测</b> · 现按稳定性/计费诚实出分</span>
-      </a>
-      <a class="scene risk" href="blacklist.html">
-        <span class="arrow">→</span>
-        <div class="ic">⚠️</div>
-        <h3>近期高风险预警</h3>
-        <p>涨价异常 · 检测失联 · 疑似降级</p>
-        <span class="metric">当前 <b id="mx-risk">—</b> 家标红复核 · 全部判定留痕可查</span>
-      </a>
-    </div>
-
-    <!-- 按模型直达比价(数据驱动:页签来自探针实测的模型×站点矩阵) -->
-    <div class="sec-label">按模型直达比价 · 价格=到手人民币(/百万 tokens)</div>
-    <div class="model-direct" id="modelDirect"><a class="md-chip" href="compare.html">进入模型比价 →</a></div>
-
-    <!-- 实时状态看板:实测站由 JS 前插(带「实测」标),以下为未接入探针的示例位,统一带「示例」标 -->
-    <div class="status-board">
-      <div class="sb-head">
-        <span>📡 热门站点实时状态</span>
-        <span class="upd" id="board-upd">报价与可用率每 6 小时自动刷新</span>
-      </div>
-      <div class="sb-scroll" id="board">
-        <a class="sb-item demo" href="detail.html?site=RelayAPI"><div class="name"><span class="st st-g"></span>RelayAPI<span class="tag-demo">示例</span></div>
-          <div class="row"><span class="k">Gemini 3.1 FL</span><span>¥0.25/M <span class="price-dn">↓15%</span></span></div>
-          <div class="row"><span class="k">最近实测</span><span class="t">未接入探针</span></div></a>
-        <a class="sb-item demo" href="detail.html?site=TopAPI"><div class="name"><span class="st st-g"></span>TopAPI<span class="tag-demo">示例</span></div>
-          <div class="row"><span class="k">Claude Opus 5</span><span>¥18/M <span class="price-dn">持平</span></span></div>
-          <div class="row"><span class="k">最近实测</span><span class="t">未接入探针</span></div></a>
-        <a class="sb-item demo" href="detail.html?site=FluxionAI"><div class="name"><span class="st st-y"></span>FluxionAI<span class="tag-demo">示例</span></div>
-          <div class="row"><span class="k">GPT-5.6 Sol</span><span>¥3.6/M <span class="price-up">↑11%</span></span></div>
-          <div class="row"><span class="k">最近实测</span><span class="t">未接入探针</span></div></a>
-        <a class="sb-item demo" href="detail.html?site=%E5%A1%9E%E5%B0%94%E8%BE%BE%E4%BC%A0%E8%AF%B4"><div class="name"><span class="st st-g"></span>塞尔达传说<span class="tag-demo">示例</span></div>
-          <div class="row"><span class="k">DeepSeek V4</span><span>¥1.1/M <span class="price-dn">↓8%</span></span></div>
-          <div class="row"><span class="k">最近实测</span><span class="t">未接入探针</span></div></a>
-        <a class="sb-item demo" href="detail.html?site=Z-API"><div class="name"><span class="st st-g"></span>Z-API<span class="tag-demo">示例</span></div>
-          <div class="row"><span class="k">GLM-5.2</span><span>¥0.9/M <span class="price-dn">持平</span></span></div>
-          <div class="row"><span class="k">最近实测</span><span class="t">未接入探针</span></div></a>
-        <a class="sb-item demo" href="detail.html?site=Orbelis"><div class="name"><span class="st st-r"></span>Orbelis<span class="tag-demo">示例</span></div>
-          <div class="row"><span class="k">GPT-5.5</span><span>¥4.2/M <span class="price-up">↑22% ⚠</span></span></div>
-          <div class="row"><span class="k">最近实测</span><span class="t">未接入探针</span></div></a>
-      </div>
-    </div>
-  </div>
+<div class="disclose">
+ <div class="shell disclose-inner">
+ <span class="dot"></span>
+ <b>真实付费实测数据</b>
+ <span>每 6 小时刷新 · 每个数字可溯源到证据批次号 · 数据不足一律标注「未测 / 数据不足」,不用假数填充</span>
+ <a href="method.html">口径与证据等级 →</a>
+ </div>
 </div>
 
-<div class="wrap">
+<main class="shell">
+ <section>
+ <div class="intro">
+ <div>
+ <div class="eyebrow">AI 中转站选站工作台</div>
+ <h1>先看真实成本与状态,再决定接哪家</h1>
+ <p class="intro-copy">按模型和使用场景比较中转站。标价、实测与证据分开展示;样本不足的维度明确标注,不把缺失当作满分。</p>
+ </div>
+ <div class="freshness"><strong><i class="live-dot"></i>数据快照</strong><span id="fresh-time">加载中…</span></div>
+ </div>
 
-  <!-- ================= 核心价值区:账单级实测证据 ================= -->
-  <section class="block" id="evidence">
-    <div class="blk-head">
-      <h2>什么叫「账单级实测」?</h2>
-      <a class="more" href="method.html">查看完整检测方法 →</a>
-    </div>
-    <div class="evidence">
-      <div>
-        <!-- 账单流水面板:内容由 data/sites.json 的 evidence 字段渲染(真实逐笔对账样本) -->
-        <div class="panel">
-          <div class="wm">RELAYLENS 实测存档</div>
-          <div class="panel-bar"><span class="site" id="ev-site">— · 控制台流水</span><span id="ev-batch">批次 —</span></div>
-          <div class="panel-body">
-            <div class="prow"><span class="k">调用模型</span><span class="v" id="ev-model">—</span></div>
-            <div class="prow"><span class="k">输入 tokens</span><span class="v" id="ev-in">—</span></div>
-            <div class="prow"><span class="k">输出 tokens</span><span class="v" id="ev-out">—</span></div>
-            <div class="prow"><span class="k">理论应扣</span><span class="v" id="ev-exp">—</span></div>
-            <div class="prow"><span class="k">面板实扣</span><span class="v v-ok" id="ev-act">—</span></div>
-            <div class="prow total"><span class="k" style="font-weight:700;color:#dbe4f3">偏差</span><span class="v v-ok" id="ev-dev">—</span></div>
-          </div>
-          <div class="match" id="ev-match">等待实测数据…</div>
-          <div class="stamp"><span id="ev-note">可验证 <b id="ev-verified">—</b> 笔</span><span id="ev-at">—</span></div>
-          <div class="ev-tabs" id="ev-tabs"></div>
-        </div>
-        <div class="ev-cap" id="ev-cap">上表为真实消费日志逐笔对账样本(可点开不同量级的请求),原始 Response 全量存档于开源仓库</div>
-      </div>
-      <div>
-        <ul class="ev-points">
-          <li><span class="n">1</span><span><b>付费对账由人工发起批次</b> — 用真实充值的钱调用真实模型,不是免费健康检查;每批 10 轮,样本覆盖不同时刻。健康与报价则是自动巡航采集。</span></li>
-          <li><span class="n">2</span><span><b>API 原始 Response 全量存档可查</b> — 每一轮调用的 usage 明细、model 返回值、耗时全部留痕,欢迎逐条复核。</span></li>
-          <li><span class="n">3</span><span><b>扣费偏差 &gt;1% 进入标红复核队列</b> — 系统只提示不自动改分,是否下架由人工判定并登记在审计日志里,理由公开可查。</span></li>
-        </ul>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn btn-primary" href="method.html">查看完整检测方法 &amp; 原始数据</a>
-          <a class="btn btn-ghost" href="#">复现脚本(GitHub)</a>
-        </div>
-      </div>
-    </div>
+ <div class="metric-band" aria-label="数据摘要">
+ <div class="metric"><div class="metric-label">收录中转站</div><div class="metric-value"><span id="st-sites">—</span><small>家</small></div></div>
+ <div class="metric"><div class="metric-label">账单级实测</div><div class="metric-value"><span id="st-measured">—</span><small>家</small><span class="metric-trend" id="st-monitored">—</span></div></div>
+ <div class="metric"><div class="metric-label">逐笔核验</div><div class="metric-value"><span id="st-verified">—</span><small>笔</small><span class="metric-trend" id="st-mismatch">—</span></div></div>
+ <div class="metric"><div class="metric-label">数据更新</div><div class="metric-value" style="font-size:16px"><span id="st-upd">—</span></div></div>
+ </div>
 
-    <!-- Top3 推荐 -->
-    <div class="blk-head" id="top3" style="margin-top:48px">
-      <h2>编辑精选 Top 3</h2>
-      <a class="more" href="ranking.html">查看完整榜单(实测与示例已分标)→</a>
-    </div>
-    <div class="top3" id="recWrap">
-      <div class="rec-empty" id="recEmpty">正在读取推荐位…</div>
-    </div>
+ <div class="workspace-head">
+ <div class="section-title"><h2>中转站价格与服务表现</h2><span class="count" id="result-count">加载中…</span></div>
+ <a class="outline-link" href="method.html">指标口径与证据等级 →</a>
+ </div>
 
-    <p style="font-size:12px;color:var(--faint);margin-top:14px">推荐位规则:<b>先过实测门槛</b>(标红复核中、模型指纹未通过的站点一律不进),再按 综合得分 → 佣金率 → 活动有效期 排序;佣金率只参与服务端排序、不下发。推广关系不改变任何实测指标与榜单排名,所有合作位变更均记入<a href="method.html#audit" style="color:var(--brand)">公开审计日志</a>。</p>
+ <div class="filters" aria-label="筛选条件">
+ <label class="search-box"><span class="search-symbol" aria-hidden="true"></span><input id="search" type="search" placeholder="搜索中转站名" aria-label="搜索中转站名"></label>
+ <div class="select-wrap"><select id="model-select" aria-label="选择模型"><option>加载中…</option></select></div>
+ <div class="segmented" aria-label="使用场景" id="scene-seg">
+ <button type="button" data-scene="all" aria-pressed="true">综合</button>
+ <button type="button" data-scene="code" aria-pressed="false">编程</button>
+ <button type="button" data-scene="office" aria-pressed="false">办公</button>
+ <button type="button" data-scene="drama" aria-pressed="false">剧本创作</button>
+ <button type="button" data-scene="biz" aria-pressed="false">企业</button>
+ </div>
+ <label class="filter-check"><input id="tested-only" type="checkbox"> 只看账单级实测</label>
+ <span class="filter-spacer"></span>
+ <div class="select-wrap"><select id="sort-select" aria-label="排序方式">
+ <option value="score">综合表现</option>
+ <option value="price">输入到手价</option>
+ <option value="avail">可用率</option>
+ <option value="ttft">首字延迟</option>
+ </select></div>
+ </div>
 
-    <!-- 工具横幅 -->
-    <div class="tools" id="tools">
-      <a class="tool" href="selector.html">
-        <div class="ic" style="background:var(--ok-soft)">🧭</div>
-        <div><h3>AI 选型顾问</h3><p>填你的真实负载,算出该模型在哪家站、哪个分组最划算(含注入开销)</p></div>
-        <span class="btn btn-primary btn-sm">生成建议</span>
-      </a>
-      <a class="tool" href="tools.html">
-        <div class="ic" style="background:var(--bad-soft)">🩺</div>
-        <div><h3>免费自测你的 API Key</h3><p>5 项真实检测:注入虚标 / 假流式 / 首字延迟 / 缓存明细 / 模型名一致性</p></div>
-        <span class="btn btn-primary btn-sm">立即检测</span>
-      </a>
-      <a class="tool" href="tools.html">
-        <div class="ic" style="background:var(--brand-soft)">⚙️</div>
-        <div><h3>一键生成客户端配置</h3><p>Cherry Studio / Cursor / Claude Code 配置直出</p></div>
-        <span class="btn btn-ghost btn-sm">前往工具</span>
-      </a>
-    </div>
-  </section>
+ <div class="table-shell">
+ <div class="table-scroll">
+ <table class="comparison-table">
+ <thead><tr>
+ <th style="width:40px"><span class="sr-only">状态</span>状态</th>
+ <th>中转站</th>
+ <th>综合评分</th>
+ <th>模型真伪</th>
+ <th id="price-heading">到手价 / 百万输入 Token</th>
+ <th>近 7 日可用率</th>
+ <th>首字延迟 P50</th>
+ <th>缓存命中</th>
+ <th>对账匹配</th>
+ <th>操作</th>
+ </tr></thead>
+ <tbody id="provider-rows"></tbody>
+ </table>
+ </div>
+ <div class="table-footer">
+ <div class="legend"><span><i class="legend-dot"></i>账单级实测</span><span><i class="legend-dot amber"></i>样本有限 / 需留意</span><span><i class="legend-dot gray"></i>仅监测 / 未测</span></div>
+ <span id="price-note">到手价 = 站方公示额度价 × 分组倍率 × 站方声明充值比例(三因子);输出、缓存与充值比例请进详情核对。</span>
+ <a class="outline-link" href="ranking.html">查看全站榜单 →</a>
+ </div>
+ </div>
 
-  <!-- ================= 长尾内容区 ================= -->
-  <section class="block" id="reports">
-    <div class="blk-head">
-      <h2>最新实测报告</h2>
-      <a class="more" href="reports.html">全部报告 →</a>
-    </div>
-    <div class="reports">
-      <a class="rpt" href="reports.html?id=site-x-opus-downgrade">
-        <span class="badge bg-bad">实锤降级</span>
-        <div>
-          <h3>Site-X Opus 模型降级实锤:3 批次返回 Sonnet 内容</h3>
-          <p>模型指纹对比相似度仅 71%,response 中 model 字段仍显示 opus-5,已标红并移出推荐榜。</p>
-          <div class="meta"><span>2026-09-28</span><span>示例数据</span><span>指纹相似度 71%</span></div>
-        </div>
-        <span class="thumb"><i class="w65"></i><i class="w45"></i><i class="w80"></i><i class="w30"></i></span>
-        <span class="go">查看全文 →</span>
-      </a>
-      <a class="rpt" href="reports.html?id=orbelis-price-surge">
-        <span class="badge bg-warn">价格异常</span>
-        <div>
-          <h3>Orbelis 单周涨价 22%,触发波动预警</h3>
-          <p>30 天价格波动率超阈值,叠加近期充值优惠缩水,跑路风险指数上调至「中高」。</p>
-          <div class="meta"><span>2026-09-27</span><span>历史价格曲线 ×90 天</span></div>
-        </div>
-        <span class="thumb"><i class="w30"></i><i class="w45"></i><i class="w65"></i><i class="w80"></i></span>
-        <span class="go">查看全文 →</span>
-      </a>
-      <a class="rpt" href="reports.html?id=zelda-cache-fix">
-        <span class="badge bg-ok">复检通过</span>
-        <div>
-          <h3>塞尔达传说缓存计费修复复检:虚标问题已消除</h3>
-          <p>此前缓存命中率统计异常,站方修复后连续 3 批次应扣实扣一致,恢复推荐资格。</p>
-          <div class="meta"><span>2026-09-26</span><span>复检批次 ×3</span><span>全程时间线公开</span></div>
-        </div>
-        <span class="thumb"><i class="w80"></i><i class="w65"></i><i class="w45"></i><i class="w30"></i></span>
-        <span class="go">查看全文 →</span>
-      </a>
-    </div>
+ <div class="ref-strip" id="ref-strip" hidden>
+ <h3>官方直连 / 聚合参照(不参与中转站排名)</h3>
+ <div class="ref-row" id="ref-rows"></div>
+ </div>
 
-    <!-- UGC -->
-    <div class="blk-head" style="margin-top:44px">
-      <h2>用户评价<span style="font-size:12px;font-weight:600;color:var(--faint);margin-left:8px">示例占位 · 反馈系统尚未上线</span></h2>
-      <a class="more" href="#">全部评价 →</a>
-    </div>
-    <div class="ugc">
-      <div class="review">
-        <div class="rv-head">
-          <div class="avatar" style="background:#2563eb">码</div>
-          <div><h4>码农老王 <span class="verified demo-ugc">示例反馈</span></h4><span class="t">使用 RelayLens 4 个月 · Claude Code 重度用户</span></div>
-        </div>
-        <div class="story">
-          <div class="step"><span class="lbl lb1">发现问题</span><span>反馈某站扣费比理论值高 ~8%,自己没证据不敢下结论。</span></div>
-          <div class="step"><span class="lbl lb2">平台响应</span><span>站长 2 小时内补测 5 批次,确认 token 统计虚标,当晚标红下架。</span></div>
-          <div class="step"><span class="lbl lb3">结果</span><span>三天后该站公告修复并退款,现在榜单分数也回来了。第一次感觉测评站真的替用户说话。</span></div>
-        </div>
-      </div>
-      <div class="review">
-        <div class="rv-head">
-          <div class="avatar" style="background:#067647">L</div>
-          <div><h4>Lena <span class="verified demo-ugc">示例反馈</span></h4><span class="t">使用 RelayLens 2 个月 · 团队采购</span></div>
-        </div>
-        <div class="story">
-          <div class="step"><span class="lbl lb1">发现问题</span><span>团队要开票 + 对公,市面测评站根本不标这些维度。</span></div>
-          <div class="step"><span class="lbl lb2">平台响应</span><span>企业场景可按「可开票 / 对公 / 运营年限」筛,这几个维度市面测评站根本不标。</span></div>
-          <div class="step"><span class="lbl lb3">结果</span><span>按榜单选了家运营 3 年的站,月账单对得上一分不差,采购流程一次过。</span></div>
-        </div>
-      </div>
-    </div>
+ <div class="below-grid">
+ <section class="plain-section">
+ <h2>按你的使用场景筛选</h2>
+ <div class="scene-list">
+ <a class="scene-item" href="ranking.html?scene=code"><div class="scene-name">编程与长上下文</div><div class="scene-desc">优先比较缓存计费、流式完整率与长上下文不截断。</div><div class="scene-signal">进入编程榜 →</div></a>
+ <a class="scene-item" href="ranking.html?scene=office"><div class="scene-name">办公提效</div><div class="scene-desc">短请求场景,注入开销直接决定成本,重稳定顺手。</div><div class="scene-signal">进入办公榜 →</div></a>
+ <a class="scene-item" href="ranking.html?scene=drama"><div class="scene-name">剧本创作</div><div class="scene-desc">长上下文稀释注入,但截断与掉包风险最高。</div><div class="scene-signal">进入剧本创作榜 →</div></a>
+ <a class="scene-item" href="ranking.html?scene=biz"><div class="scene-name">企业与合规</div><div class="scene-desc">开票 / 对公 / SLA,合规优先于价格。</div><div class="scene-signal">进入企业榜 →</div></a>
+ </div>
+ </section>
+ <aside class="plain-section">
+ <h2>样本健康概览</h2>
+ <div class="signal-row"><label>账单级实测覆盖</label><div class="signal-track"><div class="signal-fill" id="bar-measured" style="width:0%"></div></div><strong id="val-measured">—</strong></div>
+ <div class="signal-row"><label>逐笔核验通过</label><div class="signal-track"><div class="signal-fill" id="bar-recon" style="width:0%"></div></div><strong id="val-recon">—</strong></div>
+ <div class="signal-row"><label>可用率中位数</label><div class="signal-track"><div class="signal-fill" id="bar-avail" style="width:0%"></div></div><strong id="val-avail">—</strong></div>
+ <div class="method-note"><strong>数据边界</strong><br>网关可达 ≠ 模型质量或上游身份已验证;指纹未过只作复核信号,非终局定论。每项指标都应结合样本数与检测时间查看,详见 <a href="method.html">方法论</a>。</div>
+ </aside>
+ </div>
+ </section>
+</main>
 
-    <!-- FAQ -->
-    <div class="blk-head" style="margin-top:44px">
-      <h2>常见问题</h2>
-    </div>
-    <div class="faq">
-      <details open>
-        <summary>API 中转站扣费偏差多少算正常?</summary>
-        <div class="ans">计费系统四舍五入与汇率折算会带来 <b>±0.5% 以内</b>的正常误差(我们实测到的最短单笔因整数取整,偏差可达 2.86%,量级越小越明显)。我们以 1% 为红线:偏差 &gt;1% 的站点进入标红复核队列,人工判定后移出推荐榜;连续多笔同向偏差判定「计费虚标」进黑名单流程。每站的偏差率与逐笔明细在实测详情页可查。</div>
-      </details>
-      <details>
-        <summary>Claude Code 用什么中转站不掉包?</summary>
-        <div class="ans">编程场景请认准三个指标:①<b>模型指纹检测通过</b>(返回内容特征与官方直连对比相似度 ≥85%);②<b>缓存命中真实性</b>(写代码场景缓存命中应占输入 50% 以上,不认缓存意味着成本翻倍);③<b>SSE 流式完整率</b>。首页「编程专用」卡片已按这三项预筛选,直达结果。</div>
-      </details>
-      <details>
-        <summary>如何验证缓存是否真实生效?</summary>
-        <div class="ans">最简单的方法:连续发两轮相同的长 Prompt,检查第二轮响应的 usage 字段中 <b>prompt_tokens_cached</b> 是否显著上升、扣费是否按缓存价(官方约输入价的 10%)计算。我们每站每批次都做 10 轮缓存命中率统计,数据在实测详情页公开;你也可以用「自测工具箱」的 API Key 自测 3 分钟跑完。</div>
-      </details>
-      <details>
-        <summary>你们的推荐位收费吗?排名能买吗?</summary>
-        <div class="ans">排名不能买。推荐位先过<b>实测门槛</b>(不通过的站不接推广),再按 综合得分 → 佣金率 → 活动有效期 依次排序,卡片均标注「含推广链接」;佣金率只在服务端参与排序,不下发到页面。另有两条硬红线:<b>实测不通过的站不接推广</b>、<b>进入黑名单的站永久解除合作</b>。目前没有合格合作站时,那个区域就空着并写明原因 —— 我们不会摆一个假优惠码上去。全部实测数据与复现脚本开源,欢迎逐条验证。</div>
-      </details>
-    </div>
-  </section>
-</div>
-
-<!-- ================= Footer ================= -->
 <footer>
-  <div class="wrap">
-    <div class="ft-grid">
-      <div>
-        <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
-        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位与 Pro 订阅维持运营。</p>
-      </div>
-      <div>
-        <h4>站点</h4>
-        <a href="ranking.html">全站榜单</a><a href="compare.html">模型比价</a><a href="cheapest.html">最低价</a><a href="tools.html">自测工具箱</a><a href="pitfalls.html">避坑指南</a><a href="blacklist.html">避雷黑名单</a>
-      </div>
-      <div>
-        <h4>关于</h4>
-        <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">联系方式</a><a href="#">隐私政策</a><a href="#">服务条款</a>
-      </div>
-    </div>
-    <div class="fine">
-      免责声明:本站为第三方测评平台,不提供 API 转售或代充服务;中转服务本身存在合规与资金风险,请理性小额充值。所有实测数据来自公开付费测试,检测时间与批次号可溯源;推广合作不影响实测指标与排名算法。<br>
-      数据来源:现阶段全部为<b>本站自有探针的实测批次</b>(健康巡航 + 报价快照每 6 小时,付费逐笔对账为人工发起),批次号与原始 Response 可溯源;社区探针节点与用户举报通道尚未开放,开通后其贡献将标注来源。<br>
-      © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
-    </div>
-  </div>
+ <div class="shell footer-inner">
+ <div><div class="footer-brand">RelayLens · AI 中转站决策引擎</div><div class="footer-copy">账单级实测的 AI 中转站审计平台。所有数字来自付费实测,可溯源到证据批次;不售卖 API 转售,仅通过标注清晰的合作推荐位维持运营。价格反映检测时点,充值前请以站点实时公示为准。</div></div>
+ <div class="footer-links"><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a><a href="method.html">方法论</a><a href="api.html">数据 API</a><a href="onboarding.html">站长入驻</a></div>
+ </div>
 </footer>
 
-<!-- 悬浮CTA(移动端) -->
-<div class="float-cta" id="floatCta" style="display:none">
-  <button class="fab" id="fab">🔥 今日专属福利码</button>
-</div>
-<div class="float-panel" id="floatPanel">
-  <h4 id="floatTitle">🎁 今日专属</h4>
-  <div class="code" id="floatCode"></div>
-  <button class="btn btn-primary" style="width:100%" id="floatCopy">复制优惠码</button>
-  <p style="margin-top:9px" id="floatNote">优惠码由商家提供,排名与实测无关</p>
-</div>
-<div class="toast" id="toast">已复制到剪贴板</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-// 实时时间与"最近检测"渲染(准实时信号)
-function pad(n){return String(n).padStart(2,'0')}
-function fmt(d){return pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
-var now=new Date();
-document.getElementById('live-time').textContent='数据截至 '+fmt(now);
-// 「最新检测」改由实测数据(meta.stats / evidence)填充;此前这里写死「12 分钟前」,是编的
-document.getElementById('last-check').textContent='同步中…';
+(function(){
+ var SITES=[], REFS=[], TABS=[];
+ var state={query:"",model:null,scene:"all",testedOnly:false,sort:"score"};
+ var SCENE_LABEL={all:"综合",code:"编程",office:"办公",drama:"剧本创作",biz:"企业"};
+ var TONES=["","blue","orange","violet"];
+ function $(id){return document.getElementById(id);}
+ function setTxt(id,v){var e=$(id);if(e)e.textContent=v;}
+ function setHtml(id,v){var e=$(id);if(e)e.innerHTML=v;}
+ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+ function toast(m){var t=$("toast");if(!t)return;t.textContent=m;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2400);}
+ function fmtTime(iso){if(!iso)return "—";var d=new Date(iso);if(isNaN(d))return "—";
+ function p(n){return (n<10?"0":"")+n;}return (d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());}
+ function fmtPrice(v){if(v==null||!isFinite(v))return "—";return v>=100?String(Math.round(v)):v>=10?(Math.round(v*10)/10):(Math.round(v*100)/100);}
+ function tone(name){var h=0;for(var i=0;i<String(name).length;i++)h=(h*31+String(name).charCodeAt(i))>>>0;return TONES[h%TONES.length];}
+ function abbr(name){name=String(name||"?");return name.length>2?name.slice(0,2):name;}
 
-// 优惠码复制
-var toastEl=document.getElementById('toast');
-var toastTimer;
-function showToast(msg){
-  toastEl.textContent=msg;toastEl.classList.add('show');
-  clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove('show')},1800);
-}
-function copyText(txt){
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(function(){showToast('优惠码 '+txt+' 已复制')})
-    .catch(function(){fallbackCopy(txt)});
-  }else{fallbackCopy(txt)}
-}
-function fallbackCopy(txt){
-  var ta=document.createElement('textarea');ta.value=txt;
-  ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);
-  ta.select();try{document.execCommand('copy');showToast('优惠码 '+txt+' 已复制')}
-  catch(e){showToast('请手动复制:'+txt)}document.body.removeChild(ta);
-}
-document.querySelectorAll('.copy-btn').forEach(function(b){
-  b.addEventListener('click',function(){
-    copyText(b.getAttribute('data-code'));
-    var old=b.textContent;b.textContent='✓ 已复制';b.classList.add('copied');
-    setTimeout(function(){b.textContent=old;b.classList.remove('copied')},2000);
-  });
-});
+ function curTab(){for(var i=0;i<TABS.length;i++)if(TABS[i].key===state.model)return TABS[i];return TABS[0]||null;}
+ function priceFor(site){
+ var tab=curTab();if(!tab||!tab.rows)return null;
+ for(var i=0;i<tab.rows.length;i++){var r=tab.rows[i];if(r.site===site.name&&r.effIn!=null)return {in:r.effIn,out:r.effOut};}
+ return null;
+ }
+ function scoreFor(site){var sc=site.score&&site.score[state.scene];return (sc==null?null:sc);}
+ function scoreTone(v){return v>=85?"high":v>=70?"mid":"low";}
+ function fpTag(site){
+ var fp=site.fp, d=site.fpDetail||{}, sim=(d.similarity!=null?d.similarity+"%":"");
+ if(fp==="pass")return '<span class="truth-tag truth-consistent">✓ 指纹通过</span>'+(sim?'<div class="metric-caption">'+sim+'</div>':'');
+ if(fp==="suspect")return '<span class="truth-tag truth-review">~ 存疑</span>'+(sim?'<div class="metric-caption">'+sim+'</div>':'');
+ if(fp==="fail")return '<span class="truth-tag truth-suspect">✗ 未通过</span>'+(sim?'<div class="metric-caption">'+sim+'</div>':'');
+ return '<span class="truth-tag truth-unknown">未测</span><div class="metric-caption">无指纹样本</div>';
+ }
+ function devTag(dev){
+ if(dev==null)return '<span class="status-tag status-unknown">未对账</span>';
+ if(dev>=100)return '<span class="status-tag status-good">✓ 全过</span>';
+ return '<span class="status-tag status-watch">'+dev+'%</span>';
+ }
+ function levelDot(level){
+ return level==="billing"?'<span class="legend-dot" title="账单级实测"></span>':'<span class="legend-dot gray" title="仅免费监测"></span>';
+ }
+ function commerceOf(site){var c=site.commerce||{};return [c.pay,c.minTopUp].filter(Boolean).join(" · ")||"商业信息未声明";}
 
-// 移动端悬浮福利面板
-var fab=document.getElementById('fab'),panel=document.getElementById('floatPanel');
-fab.addEventListener('click',function(){panel.classList.toggle('show')});
-document.getElementById('floatCopy').addEventListener('click',function(){
-  copyText(document.getElementById('floatCode').textContent);
-});
-document.addEventListener('click',function(e){
-  if(panel.classList.contains('show')&&!panel.contains(e.target)&&e.target!==fab){
-    panel.classList.remove('show');
-  }
-});
+ function row(site){
+ var sc=scoreFor(site), scTone=sc==null?"":scoreTone(sc);
+ var price=priceFor(site);
+ var scoreCell = sc==null
+ ? '<strong class="score-value" style="color:var(--muted)">—</strong><div class="metric-caption">数据不足</div>'
+ : '<strong class="score-value score-'+scTone+'">'+sc+'</strong><div class="score-meter"><i class="'+scTone+'" style="width:'+sc+'%"></i></div><div class="metric-caption">'+SCENE_LABEL[state.scene]+'</div>';
+ var priceCell = price
+ ? '<div class="price-primary">¥'+fmtPrice(price.in)+' <span class="unit">/M 输入</span></div><div class="price-secondary">输出 ¥'+fmtPrice(price.out)+'/M</div>'
+ : '<div class="price-primary" style="color:var(--muted)">—</div><div class="price-secondary">该模型暂无报价</div>';
+ return '<tr>'+
+ '<td>'+levelDot(site.level)+'</td>'+
+ '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+'</div><div class="provider-meta">'+(site.level==="billing"?"账单级实测":"免费监测")+' · '+esc(commerceOf(site))+'</div></div></div></td>'+
+ '<td class="score-cell">'+scoreCell+'</td>'+
+ '<td class="truth-cell">'+fpTag(site)+'</td>'+
+ '<td>'+priceCell+'</td>'+
+ '<td><div class="metric-number">'+(site.avail==null?"—":site.avail+"%")+'</div><div class="metric-caption">n='+(site.checks==null?"—":site.checks)+'</div></td>'+
+ '<td><div class="metric-number">'+(site.ttft==null?"未测":site.ttft+"s")+'</div><div class="metric-caption">'+(site.ttft!=null?"P50":"")+'</div></td>'+
+ '<td><div class="metric-number">'+(site.cache==null?"未测":site.cache+"%")+'</div><div class="metric-caption">'+(site.cache==null?"":"样本命中")+'</div></td>'+
+ '<td>'+devTag(site.dev)+'</td>'+
+ '<td><a class="detail-button" href="detail.html?site='+encodeURIComponent(site.name)+'">详情 →</a></td>'+
+ '</tr>';
+ }
 
-// 信任数字轻量滚动动画
-function countUp(el,target,dur){
-  if(el==null||target==null||!isFinite(target)){if(el&&target==null)el.textContent='—';return}
-  var start=performance.now();
-  function tick(t){
-    var p=Math.min((t-start)/dur,1);
-    el.textContent=Math.round(target*(0.4+0.6*p));
-    if(p<1)requestAnimationFrame(tick);else el.textContent=target;
-  }
-  requestAnimationFrame(tick);
-}
-function wan(n){return n>=10000?(Math.round(n/1000)/10+' 万'):String(n)}
-/* 500000 quota = 1 美元额度。额度价不等于人民币价:只有站方声明了充值比例,才补一个人民币约等于。 */
-function q2cny(q){var u=q/500000;var rt=(EV_RATIO||null);
-  return '$'+u.toFixed(5)+' 额度'+(rt?(' ≈ ¥'+(u*rt).toFixed(5)+'(该站比例 ¥'+rt+'/1$)'):'')}
+ function filtered(){
+ var q=state.query.trim().toLowerCase();
+ var list=SITES.filter(function(s){
+ if(state.testedOnly && s.level!=="billing")return false;
+ if(q && String(s.name).toLowerCase().indexOf(q)<0)return false;
+ return true;
+ });
+ var priceVal=function(s){var p=priceFor(s);return p?p.in:Infinity;};
+ list.sort(function(a,b){
+ if(state.sort==="price")return priceVal(a)-priceVal(b);
+ if(state.sort==="avail")return (b.avail==null?-1:b.avail)-(a.avail==null?-1:a.avail);
+ if(state.sort==="ttft")return (a.ttft==null?1e9:a.ttft)-(b.ttft==null?1e9:b.ttft);
+ var sa=scoreFor(a),sb=scoreFor(b);
+ return (sb==null?-1:sb)-(sa==null?-1:sa);
+ });
+ return list;
+ }
 
-/* ===== 真实数据接入:data/sites.json(meta.stats + evidence + realSites) ===== */
-var EV=null, TRUST_DATA=null, EV_RATIO=null;
-function setTxt(id,v){var e=document.getElementById(id);if(e)e.textContent=v}
-function applyTrust(j){
-  TRUST_DATA=j;   /* 证据卡要按站点查充值比例,数据留在模块变量里(不用 window,便于无浏览器桩子回归) */
-  var s=(j.meta&&j.meta.stats)||null;
-  if(s){
-    countUp(document.getElementById('st-sites'),s.sitesRegistered,700);
-    countUp(document.getElementById('st-verified'),s.reconcileVerified,900);
-    countUp(document.getElementById('st-models'),s.priceLineItems,700);
-    countUp(document.getElementById('st-upd'),s.batchesToday,700);
-    setTxt('mx-code',s.reconcileVerified+' 笔');
-    setTxt('mx-avail',(function(){var a=(j.realSites||[]).map(function(x){return x.avail}).filter(function(v){return v!=null});return a.length?Math.max.apply(null,a)+'%':'未测'})());
-    setTxt('mx-checks',s.healthChecksTotal.toLocaleString());
-    setTxt('mx-maxtok',wan(s.maxSingleRequestTokens));
-    setTxt('mx-dev',s.reconcileMismatched===0?'0 笔超差':s.reconcileMismatched+' 笔超差');
-    setTxt('last-check',j.meta.updated?fmt(new Date(j.meta.updated)):'—');
-    setTxt('board-upd',j.meta.updated?('数据更新于 '+fmt(new Date(j.meta.updated))):'数据每 6 小时自动刷新');
-  }
-  // 场景卡与看板上的注入/伪流式:只报实测到的
-  var rs=j.realSites||[];
-  if(rs.length){
-    var inj=rs.map(function(x){return x.inject}).filter(function(v){return v!=null});
-    setTxt('mx-inj',inj.length?'+'+Math.max.apply(null,inj):'未检出');
-    var st=rs.map(function(x){return x.stream}).filter(function(v){return v!=null});
-    setTxt('mx-code2',st.length?Math.max.apply(null,st)+'%':'未测');
-    setTxt('mx-risk',String(rs.filter(function(x){return x.status==='r'}).length));
-    prependRealBoard(rs);
-  }
-  renderEvidence(j.evidence);
-  renderRecs(j);
-}
-/* 实测站前插并显式标注,示例位保留但已带「示例」角标 —— 不做「把示例伪装成实测」那套 */
-function prependRealBoard(rs){
-  var board=document.getElementById('board');if(!board||!rs.length)return;
-  var seen={};Array.prototype.forEach.call(board.querySelectorAll('.sb-item'),function(n){
-    var m=/site=([^&"]*)/.exec(n.getAttribute('href')||'');if(m)seen[decodeURIComponent(m[1])]=1;
-  });
-  rs.slice().sort(function(a,b){return (b.avail||0)-(a.avail||0)}).forEach(function(x){
-    if(seen[x.name])return;
-    var a=document.createElement('a');
-    a.className='sb-item real';a.href='detail.html?site='+encodeURIComponent(x.name);
-    a.innerHTML='<div class="name"><span class="st st-'+(x.status||'y')+'"></span>'+x.name+'<span class="tag-real">实测</span></div>'+
-      '<div class="row"><span class="k">代表报价</span><span>'+(x.price||'未采')+'</span></div>'+
-      '<div class="row"><span class="k">7 日可用率</span><span class="t">'+(x.avail==null?'未测':x.avail+'%')+' · 对账 '+(x.audit?x.audit.verified:0)+' 笔</span></div>';
-    board.insertBefore(a,board.firstChild);
-  });
-}
-var EV_LABELS=['最大单笔','缓存占比最高','最短单笔','典型请求'];
-/* ===== 推荐位:只渲染真实合作站;无合格站则显示诚实空态 + 入驻入口 ===== */
-function esc2(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
-function initials(n){return String(n).replace(/[^A-Za-z0-9]/g,"").slice(0,2).toUpperCase()||"ST"}
-function renderRecs(j){
-  var wrap=document.getElementById("recWrap");if(!wrap)return;
-  var recs=j.recommendations||[];
-  var byName={};(j.realSites||[]).forEach(function(r){byName[r.name]=r});
-  if(!recs.length){
-    wrap.innerHTML='<div class="rec-empty"><h4>🤝 当前没有合作推荐位</h4>'+
-      '<p>推荐位不是广告位:<b>只有实测通过的站点才能进入</b>(标红复核中、模型指纹未通过的一律排除)。目前还没有站点与我们达成合作,所以这里空着 —— 我们宁缺毋滥,也不会编一个优惠码放这儿。</p>'+
-      '<p style="margin-top:6px">榜单排序与这里有没有钱,完全无关:评分只读探针数据与开源权重,推广配置进不了计算链路,任何改动都记在公开审计日志里。</p>'+
-      '<div class="acts"><a class="btn btn-primary btn-sm" href="onboarding.html">我是站长,申请入驻 →</a>'+
-      '<a class="btn btn-ghost btn-sm" href="claim.html">认领我的站点 →</a>'+
-      '<a class="btn btn-ghost btn-sm" href="ranking.html">先看完整榜单 →</a></div></div>';
-    return;
-  }
-  var RANK=["rank1","rank2","rank3"],MEDAL=["🥇 TOP 1","🥈 TOP 2","🥉 TOP 3"];
-  wrap.innerHTML=recs.map(function(rec,i){
-    var s=byName[rec.name]||{};
-    var tags=[];
-    if(s.audit&&s.audit.matchPct!=null)tags.push('<span class="tag ok">逐笔对账 '+esc2(s.audit.matchPct)+'%</span>');
-    if(s.dev!=null)tags.push('<span class="tag '+(s.dev<=1?'ok':'warn')+'">最大偏差 '+esc2(s.dev)+'%</span>');
-    if(s.stream!=null)tags.push('<span class="tag '+(s.stream>=50?'bad':'ok')+'">'+(s.stream>=99?'🔇 假流式':s.stream===0?'⚡ 真流式':'◐ 混合 '+esc2(s.stream)+'%')+'</span>');
-    if(s.inject!=null)tags.push('<span class="tag '+(s.inject>0?'bad':'ok')+'">注入 '+(s.inject>0?'+'+esc2(s.inject)+' tok':'⚡ 无')+'</span>');
-    if(s.avail!=null)tags.push('<span class="tag">7d 可用率 '+esc2(s.avail)+'%</span>');
-    var benefit=rec.coupon
-      ?'<div class="benefit"><div class="bt">🎁 本站专属福利</div><div class="code"><span class="cd">'+esc2(rec.coupon)+'</span><button class="btn btn-sm copy-btn" data-code="'+esc2(rec.coupon)+'">复制</button></div>'+(rec.couponDesc?'<p style="font-size:11.5px;color:#a3801f;margin-top:6px">'+esc2(rec.couponDesc)+'</p>':'')+'</div>'
-      :'<div class="benefit none"><div class="bt">本站暂无专属优惠</div><p style="font-size:11.5px;color:var(--faint);margin-top:4px">直接注册即可,链接已标注推广关系</p></div>';
-    return '<div class="rec '+RANK[i]+'"><span class="rankb">'+MEDAL[i]+'</span><span class="ad-flag">含推广链接</span>'+
-      '<div class="rec-head"><div class="rec-logo" style="background:linear-gradient(135deg,#2b5cf0,#16308f)">'+esc2(initials(rec.name))+'</div>'+
-      '<div><h3>'+esc2(rec.name)+'</h3><span class="cert">✔ 实测通过</span></div>'+
-      '<div class="score"><div class="s">'+esc2(s.score?s.score.all:"—")+'</div><div class="l">综合分</div></div></div>'+
-      '<div class="tags">'+tags.join("")+'</div>'+benefit+
-      '<div class="rec-cta"><a class="btn btn-primary" href="detail.html?site='+encodeURIComponent(rec.name)+'">查看实测详情</a>'+
-      '<a class="btn btn-ghost" href="'+esc2(rec.url)+'" target="_blank" rel="nofollow sponsored noopener">访问站点 ↗</a></div></div>';
-  }).join("");
-  // 移动端浮动福利码:仅当首位有真实优惠码时出现
-  var first=recs.filter(function(r){return r.coupon})[0];
-  if(first){
-    document.getElementById("floatCta").style.display="";
-    document.getElementById("floatTitle").textContent="🎁 今日专属:"+first.name+" "+(first.couponDesc||"专属优惠");
-    document.getElementById("floatCode").textContent=first.coupon;
-    var fc=document.getElementById("floatCopy");
-    if(fc)fc.onclick=function(){copyText(first.coupon)};
-  }
-  bindCopyButtons();
-}
-function bindCopyButtons(){
-  document.querySelectorAll(".copy-btn").forEach(function(b){
-    if(b._bound)return;b._bound=1;
-    b.addEventListener("click",function(){copyText(b.getAttribute("data-code"))});
-  });
-}
-function renderEvidence(e){
-  EV=e;
-  /* 证据卡上的金额是"额度"单位;只有该站声明了充值比例,才补人民币约等于(不拿汇率猜) */
-  try{
-    var rs=(TRUST_DATA&&TRUST_DATA.realSites)||[];
-    var hit=rs.filter(function(x){return x.name===e.site})[0];
-    EV_RATIO=(hit&&hit.commerce&&hit.commerce.ratioNum)?hit.commerce.ratioNum:null;
-  }catch(err){ EV_RATIO=null; }
-  var tabs=document.getElementById('ev-tabs');
-  if(!e||!e.rows||!e.rows.length){
-    setTxt('ev-match','暂无可展示的逐笔对账样本');
-    if(tabs)tabs.innerHTML='';
-    return;
-  }
-  if(tabs)tabs.innerHTML=e.rows.map(function(_,i){
-    return '<button type="button" data-i="'+i+'" class="'+(i===0?'on':'')+'">'+(EV_LABELS[i]||('样本 '+(i+1)))+'</button>';
-  }).join('');
-  showEvidence(0);
-  if(tabs)Array.prototype.forEach.call(tabs.querySelectorAll('button'),function(b){
-    b.addEventListener('click',function(){showEvidence(+b.getAttribute('data-i'))});
-  });
-}
-function showEvidence(i){
-  if(!EV||!EV.rows||!EV.rows[i])return;
-  var r=EV.rows[i];
-  setTxt('ev-site',EV.site+' · 控制台流水');
-  setTxt('ev-batch','批次 '+EV.batchId);
-  setTxt('ev-model',r.model||'—');
-  setTxt('ev-in',(r.inTok||0).toLocaleString()+(r.cacheTok?'(其中缓存命中 '+r.cacheTok.toLocaleString()+')':''));
-  setTxt('ev-out',(r.outTok||0).toLocaleString());
-  setTxt('ev-exp',(r.expectedQuota||0).toLocaleString()+' quota('+q2cny(r.expectedQuota||0)+')');
-  setTxt('ev-act',(r.actualQuota||0).toLocaleString()+' quota('+q2cny(r.actualQuota||0)+')');
-  var dev=r.diffPct==null?null:r.diffPct;
-  var devEl=document.getElementById('ev-dev');
-  if(devEl){devEl.textContent=dev==null?'未计':(dev>0?'+':'')+dev.toFixed(2)+'%';devEl.className='v '+(dev!=null&&Math.abs(dev)>1?'v-bad':'v-ok')}
-  var m=document.getElementById('ev-match');
-  if(m)m.textContent=(dev!=null&&Math.abs(dev)<=1?'✓ 应扣 = 实扣 · 校验通过':'⚠ 偏差超 1% · 已进复核队列')+'(该站可验证 '+EV.matched+'/'+EV.total+' 笔)';
-  setTxt('ev-verified',EV.matched+' / '+EV.total+' 笔');
-  setTxt('ev-at',EV.ranAt?EV.ranAt.slice(0,16).replace('T',' ')+' UTC':'—');
-  var tabs=document.getElementById('ev-tabs');
-  if(tabs)Array.prototype.forEach.call(tabs.querySelectorAll('button'),function(b,k){b.className=k===i?'on':''});
-}
-/* 按模型直达比价:页签与"¥X 起"全部取自探针实测矩阵(compare.tabs 的 effIn),数据不来就不渲染,绝不编造 */
-function renderModelDirect(j){
-  var host=document.getElementById("modelDirect");
-  var tabs=j&&j.compare&&j.compare.tabs;
-  if(!host||!Array.isArray(tabs)||!tabs.length)return;
-  var html="";
-  tabs.forEach(function(t){
-    var prices=(t.rows||[]).map(function(r){return r.effIn}).filter(function(v){return typeof v==="number"&&isFinite(v)&&v>0});
-    var from=prices.length?"¥"+Math.min.apply(null,prices).toFixed(2)+" 起":"";
-    var n=(t.rows||[]).length;
-    html+='<a class="md-chip" href="compare.html?model='+encodeURIComponent(t.key)+'"><span class="fam">'+esc2(t.family||"")+'</span>'+esc2(t.name||t.key)+(from?'<span class="from">'+from+'</span>':'')+'<span class="n">'+n+'家实测</span></a>';
-  });
-  html+='<a class="md-chip" href="compare.html">全部页签 →</a>';
-  host.innerHTML=html;
-}
-/* esc2 已在上方信任区脚本中定义,这里复用 */
-fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))})
-  .then(function(j){applyTrust(j);try{renderModelDirect(j)}catch(e){if(typeof console!=="undefined"&&console.error)console.error("[modelDirect]",e&&e.message)}})
-  .catch(function(err){/* 取不到就保持「—」占位,绝不回落到编造数字;但必须留痕,否则渲染期异常和断网长得一模一样 */
-  if(typeof console!=="undefined"&&console.error)console.error("[trust] 数据渲染失败:",err&&err.message?err.message:err);});
+ function render(){
+ var tab=curTab();
+ setHtml("price-heading", tab?("到手价 / 百万输入 Token · "+esc(tab.name)):"到手价 / 百万输入 Token");
+ var list=filtered();
+ setHtml("provider-rows", list.length?list.map(row).join(""):
+ '<tr><td colspan="10" style="padding:30px;text-align:center;color:#75817c">没有匹配的中转站,试试放宽搜索或取消「只看账单级实测」。</td></tr>');
+ setTxt("result-count", "显示 "+list.length+" / "+SITES.length+" 家");
+ }
+
+ function renderRefs(){
+ if(!REFS.length){var r=$("ref-strip");if(r)r.hidden=true;return;}
+ var r=$("ref-strip");if(r)r.hidden=false;
+ setHtml("ref-rows", REFS.map(function(x){
+ return '<span><span class="tag">参照</span>'+esc(x.display||x.name)+' · 报价 <b>'+esc(x.price||"无")+'</b>'+(x.avail!=null?' · 可达 '+x.avail+'%':'')+'</span>';
+ }).join(""));
+ }
+
+ function buildModelSelect(){
+ var sel=$("model-select");if(!sel)return;
+ if(!TABS.length){sel.innerHTML="<option>暂无报价数据</option>";return;}
+ sel.innerHTML=TABS.map(function(t){return '<option value="'+esc(t.key)+'">'+esc(t.name)+'</option>';}).join("");
+ if(!state.model||!TABS.some(function(t){return t.key===state.model;}))state.model=TABS[0].key;
+ sel.value=state.model;
+ }
+
+ function fillStats(j){
+ var S=(j.meta&&j.meta.stats)||{};
+ setTxt("st-sites", S.sitesRegistered==null?"—":S.sitesRegistered);
+ setTxt("st-measured", S.sitesPaidMeasured==null?"—":S.sitesPaidMeasured);
+ setTxt("st-monitored", S.sitesMonitored==null?"":"监测中 "+S.sitesMonitored);
+ setTxt("st-verified", S.reconcileVerified==null?"—":S.reconcileVerified);
+ setTxt("st-mismatch", (S.reconcileMismatched==null?"":(S.reconcileMismatched===0?"0 超差":S.reconcileMismatched+" 超差")));
+ setTxt("st-upd", fmtTime(j.meta&&j.meta.updated));
+ setTxt("fresh-time", "更新于 "+fmtTime(j.meta&&j.meta.updated));
+ // 样本健康概览(真实聚合,无样本则留「—」)
+ var total=SITES.length||1;
+ var measured=SITES.filter(function(s){return s.level==="billing";}).length;
+ setBar("bar-measured","val-measured", measured, total, measured+" / "+SITES.length+" 家");
+ var rv=S.reconcileVerified==null?0:S.reconcileVerified, rm=S.reconcileMismatched==null?0:S.reconcileMismatched;
+ setBar("bar-recon","val-recon", rv-rm, rv||1, rv?(Math.round((rv-rm)/rv*1000)/10)+"%":"—");
+ var avs=SITES.map(function(s){return s.avail;}).filter(function(v){return v!=null;}).sort(function(a,b){return a-b;});
+ var med=avs.length?avs[Math.floor(avs.length/2)]:null;
+ setBar("bar-avail","val-avail", med==null?0:med, 100, med==null?"—":med+"%");
+ }
+ function setBar(barId,valId,num,den,label){
+ var pct=den>0?Math.max(0,Math.min(100,Math.round(num/den*100))):0;
+ var b=$(barId);if(b)b.style.width=pct+"%";
+ setTxt(valId,label);
+ }
+
+ function bind(){
+ var search=$("search");if(search)search.addEventListener("input",function(){state.query=this.value;render();});
+ var ms=$("model-select");if(ms)ms.addEventListener("change",function(){state.model=this.value;render();});
+ var ss=$("sort-select");if(ss)ss.addEventListener("change",function(){state.sort=this.value;render();});
+ var to=$("tested-only");if(to)to.addEventListener("change",function(){state.testedOnly=this.checked;render();});
+ var seg=$("scene-seg");
+ if(seg)seg.addEventListener("click",function(ev){
+ var btn=ev.target;while(btn&&btn!==seg&&!(btn.getAttribute&&btn.getAttribute("data-scene")))btn=btn.parentNode;
+ if(!btn||btn===seg)return;
+ state.scene=btn.getAttribute("data-scene");
+ Array.prototype.forEach.call(seg.querySelectorAll("button"),function(b){b.setAttribute("aria-pressed",String(b===btn));});
+ render();
+ });
+ }
+
+ fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+(r.status||"?")));})
+ .then(function(j){
+ SITES=j.realSites||[];REFS=j.referenceSites||[];TABS=(j.compare&&j.compare.tabs)||[];
+ buildModelSelect();fillStats(j);renderRefs();render();bind();
+ setTxt("last-check","");
+ })
+ .catch(function(e){
+ // 取不到数据:保持静态「—」,不写任何假数
+ setHtml("provider-rows",'<tr><td colspan="10" style="padding:30px;text-align:center;color:#75817c">数据加载失败,请稍后强刷重试。我们不展示编造的示例数据。</td></tr>');
+ setTxt("result-count","数据加载失败");
+ toast("数据加载失败");
+ });
+})();
 </script>
 </body>
 </html>

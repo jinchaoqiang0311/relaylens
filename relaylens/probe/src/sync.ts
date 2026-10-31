@@ -12,8 +12,11 @@ import { getDb, siteHealth } from "./store.js";
 import { priceTableHash } from "./probes/billing.js";
 import { assembleMetrics } from "./assemble.js";
 import { latestInjection } from "./probes/tokenprobe.js";
-import { computeSceneScore, allScenes, weightsVersion, pricingDisplay, cny, money } from "./score.js";
+import { computeSceneScore, tierOf, sampleProgress, allScenes, weightsVersion, pricingDisplay, cny, money, sceneWeights, metricLabels } from "./score.js";
 import { matchCanon } from "./parsers/models.js";
+import type { TlsInfo, ContextResult } from "../../shared/types.js";
+import { judgeTls } from "./probes/health.js";
+import { latestContext, judgeContextLabel } from "./probes/context.js";
 
 const PROBE_ROOT = path.resolve(import.meta.dirname, "..");
 /** 站点发布目录(与 probe 平级) */
@@ -67,9 +70,22 @@ export interface FrontendSite {
   coverage: Record<string, number>;
   confidence: Record<string, number>;
   lowConfidence: Record<string, boolean>;
+  /** 三态(v1 PRD §2):按场景的 L2(实测榜,置信达标)/L1(观察榜,不给分)。
+   *  只对 billing 站有语义;passive 站即 L0,由 level 表达 —— 前端先看 level 再看 tier。 */
+  tier: Record<string, "L2" | "L1">;
+  /** 观察榜信号卡的样本进度:每项 n=真实累计样本,need=weights.json 官方阈值(前端只渲染) */
+  signal: Array<{ key: string; label: string; n: number; need: number; ok: boolean }>;
   dev: number | null; avail: number | null; ttft: number | null;
   /** 首字延迟原始毫秒数:48ms 这种值用秒显示会变成"0 秒",页面必须拿毫秒自己排版 */
   ttftMs?: number | null;
+  /** 推理档模型 TTFT(task=perf_reasoning,不入 PF):分模型锚点校准的数据面,
+   *  展示用途——推理首 token 含思考调度,与普通档混在一个锚点里会互相污染(method.html 待办) */
+  ttftReasoningMs?: number | null;
+  ttftReasoningModel?: string | null;
+  /** 双窗口分桶(2026-10-10.1):忙/闲桶各自中位数;ttftPartialBucket 非空=只有该桶有样本 */
+  ttftWorkMs?: number | null;
+  ttftOffMs?: number | null;
+  ttftPartialBucket?: "work" | "off" | null;
   cache: number | null; inject: number | null; timeout: number | null; stream: number | null;
   fp: "pass" | "suspect" | "fail" | "pending";
   price: string | null;
@@ -102,13 +118,21 @@ export interface FrontendSite {
   measuredGroup?: { group: string | null; ratio: number | null; models: string[] } | null;
   /** 注入的缓存/fresh 拆分(选型顾问算真实成本必需;null=该站未做 tokens 实验) */
   injectSplit?: { fresh_share: number; cached_share: number } | null;
+  /** TLS 证书证据(最近一次健康检查随行采集):确定性事实,不参与评分,只供详情页如实展示 */
+  tls?: TlsInfo | { skipped: true; reason: string } | null;
+  /** 证书结论(label 由后端 judgeTls 统一生成,前端只上色 —— 判定规则不许在页面重写第二份) */
+  tlsVerdict?: { level: "ok" | "warn" | "info" | "none"; label: string } | null;
+  /** 长上下文完整性证据(标记码法,显式触发才有;null = 未测,页面必须显示"未测"而不是空) */
+  context?: ContextResult | null;
+  /** 长上下文结论措辞(同样后端生成,前端只上色) */
+  contextVerdict?: { level: "ok" | "warn" | "info" | "none"; label: string } | null;
   /** 商业信息(支付/比例/起充/发票/退款):来源为站方入驻声明或人工核实;未取得为 null,不臆造 */
   commerce?: CommerceInfo | null;
   /** 测速直达:浏览器探测用的 origin + 我们探针的最近一次流式实测(档案,非实时) */
   probe?: ProbePayload | null;
   /** 行内富信息:近 72 小时(6h/格)可用率走势、流式探针详情、指纹详情、健康检查次数 */
   slaSeries?: Array<{ h: string; pct: number | null; n: number }>;
-  perf?: { p95: number | null; successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null };
+  perf?: { successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null };
   fpDetail?: { similarity: number | null; verdict: string | null; baseline: string | null; runs: number | null; at?: string | null; note?: string | null };
   checks?: number;
 }
@@ -153,7 +177,7 @@ export interface ProbePayload {
   /** 档案口径:最近一次 perf 批次;浏览器探测是实时的,这部分不是 */
   archived: null | {
     batchId: string; probedAt: string; model: string | null;
-    medianTtftMs: number | null; p95TtftMs: number | null;
+    medianTtftMs: number | null;
     successRate: number | null; timeoutRate: number | null;
     bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; rounds: ProbeRound[];
   };
@@ -188,7 +212,7 @@ function probePayload(site: string, baseUrl: string | undefined): ProbePayload |
     origin, endpoint,
     archived: {
       batchId: row.id, probedAt: row.started_at, model: sm.model ?? null,
-      medianTtftMs: sm.medianTtftMs ?? null, p95TtftMs: sm.p95TtftMs ?? null,
+      medianTtftMs: sm.medianTtftMs ?? null,
       successRate: sm.successRate ?? null, timeoutRate: sm.timeoutRate ?? null,
       bufferedRate: streamDisplayRate(sm), streamVerdict: sm.streamVerdict ?? null, streamCheck: sm.streamCheck ?? null, iters: sm.iters ?? null, rounds,
     },
@@ -265,6 +289,17 @@ function healthLatest(site: string): { latencyMs: number | null; httpStatus: num
   } catch { return { latencyMs: null, httpStatus: null, modelCount: null, at: null }; }
 }
 
+/** 最近一次健康检查随行采集的 TLS 证书证据(老批次没有这个字段 → null,页面显示未采集) */
+function latestTls(site: string): TlsInfo | { skipped: true; reason: string } | null {
+  const row = getDb().prepare(`SELECT summary FROM batches WHERE site=? AND task='health' ORDER BY started_at DESC LIMIT 1`)
+    .get(site) as { summary: string | null } | undefined;
+  if (!row?.summary) return null;
+  try {
+    const t = (JSON.parse(row.summary) as { tls?: TlsInfo | { skipped: true; reason: string } }).tls;
+    return t ?? null;
+  } catch { return null; }
+}
+
 function latestSummary(site: string, like: string): any | null {
   const row = getDb().prepare(`SELECT started_at, summary FROM batches WHERE site=? AND summary LIKE ? ORDER BY started_at DESC LIMIT 1`).get(site, like) as { started_at: string; summary: string } | undefined;
   if (!row?.summary) return null;
@@ -289,9 +324,11 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
   const coverage: Record<string, number> = {};
   const confidence: Record<string, number> = {};
   const lowConfidence: Record<string, boolean> = {};
+  const tier: Record<string, "L2" | "L1"> = {};
   for (const scene of allScenes()) {
     const r = computeSceneScore(m, scene);
     score[scene] = r.score; coverage[scene] = r.coverage; confidence[scene] = r.confidence; lowConfidence[scene] = r.lowConfidence;
+    tier[scene] = tierOf(r);
   }
   // 指标
   const h = siteHealth(site);
@@ -331,18 +368,36 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
   const status: "g" | "y" | "r" =
     (h.lastCheckAt && latestSummary(site, "%") === null) ? "r" :
     h.avail7d === null ? "r" : h.avail7d >= 95 ? "g" : h.avail7d >= 80 ? "y" : "r";
+  /** 推理档 TTFT(独立 task,与主 PF 样本物理隔离):锚点校准素材 + 页面透明展示 */
+  const perfR = getDb().prepare(`SELECT summary FROM batches WHERE site=? AND task='perf_reasoning' ORDER BY started_at DESC LIMIT 1`)
+    .get(site) as { summary: string } | undefined;
+  let ttftReasoningMs: number | null = null, ttftReasoningModel: string | null = null;
+  if (perfR?.summary) {
+    try {
+      const pr = JSON.parse(perfR.summary) as { medianTtftMs?: number | null; model?: string | null };
+      ttftReasoningMs = pr.medianTtftMs ?? null;
+      ttftReasoningModel = pr.model ?? null;
+    } catch { /* 损坏批次按未测处理 */ }
+  }
   return {
     name: site, real: true, dataLayer: "p2", status,
     /** billing = 做过账单级逐笔对账(可称"实测");passive = 只有免成本的健康与价格监测(只能称"监测中") */
     level: (latestSummary(site, "%reconcile%") ? "billing" : "passive") as "billing" | "passive",
-    score, coverage, confidence, lowConfidence,
+    score, coverage, confidence, lowConfidence, tier, signal: sampleProgress(m),
     dev: m.BH.match,
     avail: h.avail7d, ttft: m.PF.ttftMs !== null ? Math.round(m.PF.ttftMs / 100) / 10 : null,
     ttftMs: m.PF.ttftMs,
+    ttftWorkMs: m.PF.workMs ?? null, ttftOffMs: m.PF.offMs ?? null,
+    ttftPartialBucket: m.PF.partialBucket ?? null,
+    ttftReasoningMs, ttftReasoningModel,
     cache: null,                                     // 缓存命中率来自对账日志另算,暂 null
     inject: opts.inject ?? null,
     injectSplit: m.injectSplit ?? null,
     timeout: m.ST.timeoutPct, stream: m.SR.bufferedRate,
+    tls: latestTls(site),                            // 证书证据:只展示不评分(见 types.ts 的 TlsInfo 注释)
+    tlsVerdict: judgeTls(latestTls(site)),
+    context: latestContext(site),
+    contextVerdict: judgeContextLabel(latestContext(site)),
     fp: fp ? (fp.verdict === "pass" ? "pass" : fp.verdict === "suspect" ? "suspect" : "fail") : "pending",
     price, priceV, priceSrc, priceBase, priceBaseCur, priceGroup, priceModel, priceCalib, priceCalibFactor,
     /** 该站在监测到的价表覆盖哪些模型家族(榜单「模型」筛选栏的数据源;空=价表未采到任何登记模型) */
@@ -380,6 +435,7 @@ export interface TrustStats {
   maxSingleRequestTokens: number;
   batchesToday: number;
   healthChecksTotal: number;
+  batchesTotal: number;         // batches 表整表累计(榜单页头「累计检测批次」取自这里)
   since: string;                // 实测起始日
 }
 
@@ -437,6 +493,9 @@ function computeStats(realSites: string[]): TrustStats {
   const first = d.prepare(`SELECT MIN(started_at) a FROM batches`).get() as { a: string | null };
   const checks = (d.prepare(`SELECT COUNT(*) c FROM batches WHERE task='health'`).get() as { c: number }).c;
   const today = (d.prepare(`SELECT COUNT(*) c FROM batches WHERE started_at >= date('now')`).get() as { c: number }).c;
+  /* 累计检测批次:整表实数。此前榜单页头把它写死成 2,904,而库里实际是 3499 ——
+     门面数字一旦靠人手维护就会漂,红线 10 要求它必须来自证据源,所以由这里统一产出。 */
+  const batchesTotal = (d.prepare(`SELECT COUNT(*) c FROM batches`).get() as { c: number }).c;
 
   /**
    * 「已付费实测」必须数得出来的真数:只有做过账单级逐笔对账(reconcile 批次)的站才算。
@@ -452,7 +511,7 @@ function computeStats(realSites: string[]): TrustStats {
     /** 同一笔金额的人民币口径(站内所有对外展示金额一律用它,不得把上面的 Usd 字段直接上页面) */
     reconcileAmountCny: money(amountQuota / 500000, "USD").cny,
     maxSingleRequestTokens: maxTok,
-    batchesToday: today, healthChecksTotal: checks,
+    batchesToday: today, healthChecksTotal: checks, batchesTotal,
     since: first.a ? first.a.slice(0, 10) : "",
   };
 }
@@ -592,6 +651,22 @@ export function calibOf(site: string): { factor: number; at: string; models: str
   return out;
 }
 
+/** 千问AI平台定价页(platform.qianwenai.com)官方价第二来源,单位元/百万 Token。
+ * 仅作「国产模型官方锚」的覆盖源:命中 canon 的模型改用它的标价(CNY),不再乘汇率。
+ * 文件缺失或损坏时返回空 Map —— 退化回 OpenRouter 美元锚,不影响其余模型。 */
+function loadQianwenOfficial(): Map<string, { input: number; output: number; cacheRead: number | null }> {
+  const m = new Map<string, { input: number; output: number; cacheRead: number | null }>();
+  const file = path.join(PROBE_ROOT, "store", "manual-imports", "qianwen-official-prices.json");
+  if (!fs.existsSync(file)) return m;
+  try {
+    const data = JSON.parse(fs.readFileSync(file, "utf8")) as Record<string, { in: number; out: number; cr: number | null }>;
+    for (const [canon, v] of Object.entries(data)) {
+      if (v && isFinite(v.in) && isFinite(v.out)) m.set(canon, { input: v.in, output: v.out, cacheRead: v.cr == null ? null : v.cr });
+    }
+  } catch { /* 退化回 OpenRouter 锚 */ }
+  return m;
+}
+
 export function buildCompare(sites: string[], injectOf: (site: string) => number | null): CompareTab[] {
   const d = getDb();
   const snap = (site: string): Array<{ model: string; input: number; output: number; cacheRead: number | null; group: string | null; groupKind?: string | null; grpRatio?: number | null; base?: { input: number; output: number; cacheRead: number | null } | null; groups?: Array<{ group: string; ratio: number; input: number; output: number; cacheRead: number | null }> }> => {
@@ -604,6 +679,11 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
    * (claude-sonnet-5-5)、thinkai 的 deepseek-v4-1-flash 等在此收敛到同一 canon */
   const offMap = new Map<string, any>();
   for (const m of snap("openrouter")) { const c = matchCanon(m.model); if (c && !offMap.has(c.canon)) offMap.set(c.canon, m); }
+  /* 国产官方价第二来源:千问AI平台定价页(platform.qianwenai.com)。
+   * 该页文本大模型表列出 Qwen 全系与 DeepSeek 转售价,单位元/百万 Token。
+   * 用户决定:该站列出的国产模型一律以它的标价作官方锚(含 DeepSeek 转售价),接受「对比官方价」实为「对比该站标价」的口径。
+   * 仅对命中该表的模型覆盖 OpenRouter 美元锚,并标记 CNY(不再乘汇率)。 */
+  const qwMap = loadQianwenOfficial();
 
   /* 逐站预算:源货币、站方声明的充值比例、实扣校准因子(仅用于验证,不改价格) */
   const cfgCache = loadSiteConfigs();
@@ -626,14 +706,16 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
       if (!entry) continue;                     // 不在 17 模型登记表 → 不进比价(裁掉旧代 gpt-5.5/claude-opus-5/glm-5.2 与派生名)
       /* 因子只作用于验证批次实测覆盖的模型:站方对不同模型可配不同倍率组,把 GPT 轮次的因子外推到 deepseek 行是错的 */
       const calForModel = cal && (cal.models === null || cal.models.includes(entry.canon)) ? cal : null;
-      const off = offMap.get(entry.canon);
+      const qw = qwMap.get(entry.canon);
+      const off = qw ?? offMap.get(entry.canon);
       if (!off) continue;                        // 无官方锚,不进比价
+      const offCur = qw ? "CNY" : (curOf("openrouter") ?? "USD");
       if (seen.has(entry.canon)) continue;
       seen.add(entry.canon);
       const key = entry.canon;
       let tab = byModel.get(key);
       if (!tab) {
-        tab = { key, name: entry.disp, family: entry.fam, official: { in: off.input, out: off.output, cr: off.cacheRead ?? null }, rows: [] };
+        tab = { key, name: entry.disp, family: entry.fam, official: { in: off.input, out: off.output, cr: off.cacheRead ?? null }, officialCur: offCur, rows: [] };
         byModel.set(key, tab);
       }
       /** 到手价严格三因子:官方价格(base,$/M) × 倍率(组倍率) × 充值比例。
@@ -662,8 +744,9 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
         const lower = m.groups.filter(g => g.group !== finalGroup && g.input < quotaIn - 1e-9);
         if (lower.length) {
           const min = lower.reduce((a, b) => (a.input <= b.input ? a : b));
-          // 特价组到手 = 官方价 × 该组倍率 × 充值比例(与主口径同公式,只换倍率)
-          special = { group: min.group, ratio: min.ratio, inP: r2(min.input), outP: r2(min.output), effIn: (rc === "USD" && rn != null) ? r2(min.input * rn) : null };
+          // 特价组到手 = 官方价 × 该组倍率 × 充值比例(与主口径同公式,只换倍率);
+          // 站方直接公示人民币单价时(heyroute),页面价即到手价,不碰充值比例
+          special = { group: min.group, ratio: min.ratio, inP: r2(min.input), outP: r2(min.output), effIn: rc === "CNY" ? r2(min.input) : (rc === "USD" && rn != null) ? r2(min.input * rn) : null };
         }
       }
       /* 实扣验证:标价公式算出的应扣与真金白银一致吗(±5%) */
@@ -701,14 +784,19 @@ export function buildCompare(sites: string[], injectOf: (site: string) => number
    * OpenRouter / new-api 系是 USD,智谱官方定价页是 CNY —— 对 CNY 再乘一次汇率会把 ¥2/M 报成 ¥14.2/M。
    */
   for (const t of tabs) {
-    t.officialCur = curOf("openrouter") ?? "USD";   // 官方锚保持美元原价(真美元现金支付)
     for (const r of t.rows) {
       const rc = curOf(r.site), rn = ratioOf(r.site);
-      /** 到手价 = 额度价(= 官方价 × 倍率) × 充值比例。比例只能由站方声明;未声明留 null,前端如实显示「无法折算」。 */
+      /** 到手价 = 额度价(= 官方价 × 倍率) × 充值比例。比例只能由站方声明;未声明留 null,前端如实显示「无法折算」。
+       *  例外:站方价格页直接公示人民币单价(heyroute,¥ CNY 视图)—— 那个数就是用户真花的钱,
+       *  再乘充值比例(¥0.25/$1)会把网页明写的 ¥2.80/M 改小 4 倍。 */
       if (rn !== null && rc === "USD") {
         r.ratio = rn;
         r.effIn = r2((r.inP as number) * rn); r.effOut = r2((r.outP as number) * rn);
         r.effCr = r.cacheP == null ? null : r2((r.cacheP as number) * rn);
+      } else if (rc === "CNY") {
+        r.ratio = null;
+        r.effIn = r2(r.inP as number); r.effOut = r2(r.outP as number);
+        r.effCr = r.cacheP == null ? null : r2(r.cacheP as number);
       } else { r.ratio = null; }
       r.src = `${rc ?? "USD"}`;
     }
@@ -793,15 +881,15 @@ function slaSeries(site: string, rule: "up" | "alive" = "up"): Array<{ h: string
   return out;
 }
 
-/** 流式探针的逐轮明细与 P95(行内「延迟·口径」与链路质检用) */
-function perfDetail(site: string): { p95: number | null; successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null } {
+/** 流式探针逐轮明细(行内「延迟·口径」与链路质检用;首字延迟口径统一为 P50 中位数,不取 P95,2026-10-22) */
+function perfDetail(site: string): { successRate: number | null; timeoutRate: number | null; bufferedRate: number | null; streamVerdict: string | null; streamCheck: any | null; iters: number | null; model: string | null; at: string | null } {
   const row = getDb().prepare(`SELECT started_at, summary FROM batches WHERE site=? AND task='perf' ORDER BY started_at DESC LIMIT 1`)
     .get(site) as { started_at: string; summary: string | null } | undefined;
-  const empty = { p95: null, successRate: null, timeoutRate: null, bufferedRate: null, streamVerdict: null, streamCheck: null, iters: null, model: null, at: null };
+  const empty = { successRate: null, timeoutRate: null, bufferedRate: null, streamVerdict: null, streamCheck: null, iters: null, model: null, at: null };
   if (!row?.summary) return empty;
   try {
     const s = JSON.parse(row.summary) as any;
-    return { p95: s.p95TtftMs ?? null, successRate: s.successRate ?? null, timeoutRate: s.timeoutRate ?? null, bufferedRate: s.bufferedRate ?? null, streamVerdict: s.streamVerdict ?? null, streamCheck: s.streamCheck ?? null, iters: s.iters ?? null, model: s.model ?? null, at: row.started_at };
+    return { successRate: s.successRate ?? null, timeoutRate: s.timeoutRate ?? null, bufferedRate: s.bufferedRate ?? null, streamVerdict: s.streamVerdict ?? null, streamCheck: s.streamCheck ?? null, iters: s.iters ?? null, model: s.model ?? null, at: row.started_at };
   } catch { return empty; }
 }
 
@@ -924,6 +1012,14 @@ function buildReferenceSite(site: string, cfg: any): ReferenceSite | null {
   };
 }
 
+/** 剥掉数据字符串里的 emoji/装饰符号(站点分组名等爬取字段常带 🔥🚀 等),保持界面简洁;仅清字符串值,不动键名/数字。 */
+function stripEmojiDeep(v: any): any {
+  if (typeof v === "string") return v.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE00}-\u{FE0F}]/gu, "").replace(/[ \t]{2,}/g, " ").replace(/[ \t]+([,;:、，。）)】」])/g, "$1").trim();
+  if (Array.isArray(v)) return v.map(stripEmojiDeep);
+  if (v && typeof v === "object") { const o: any = {}; for (const k of Object.keys(v)) o[k] = stripEmojiDeep((v as any)[k]); return o; }
+  return v;
+}
+
 export function syncData(sites: string[], opts: { inject?: Record<string, number>; reference?: string[] } = {}): string {
   const promo = loadPromo();
   /** 注入开销:显式覆盖(沙盘)→ 最近一次 tokens 批次实测 → null(未测,前端显示「未测」) */
@@ -944,9 +1040,12 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
       r.fpDetail = fpDetail(s);
       r.checks = siteHealth(s).checks;
       r.commerce = commerceInfo(cfg);
-      /** 到手价只在「标价按美元额度记账 + 充值比例已声明」两个条件都满足时才算。
-       *  缺一个就留 null,前端显示「充值比例未声明,无法折算」——  assumption 1:1 会让价格差 7 倍。 */
-      const rn = r.commerce?.ratioNum ?? null;
+      /** 到手价只在「标价按美元额度记账 + 充值比例已声明 + 该比例确实作用于标价」三条件都满足时才算。
+       *  缺一个就留 null,前端显示「充值比例未声明,无法折算」——  assumption 1:1 会让价格差 7 倍。
+       *  ratio_applies_to_price: false(如 heyroute)表示站方价格页直接公示人民币单价,
+       *  充值比例只是买额度的成本,再乘一次会把网页明写的 ¥2.80/M 改小 4 倍。 */
+      const ratioApplies = (cfg as any)?.commerce?.ratio_applies_to_price !== false;
+      const rn = ratioApplies ? (r.commerce?.ratioNum ?? null) : null;
       if (rn !== null && r.priceBase !== null && r.priceBase !== undefined) {
         r.effRatio = rn;
         r.effPrice = Math.round(r.priceBase * rn * 100) / 100;
@@ -968,12 +1067,16 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
       license: "CC-BY-4.0", source: "relaylens-probe",
       /** 计价口径:站内所有金额均为人民币,由 USD 按此汇率折算(评分不受影响) */
       fx: { currency: fx.currency, symbol: fx.symbol, usdCny: fx.usdCny, asOf: fx.asOf, quotaPerUsd: fx.quotaPerUsd },
+      /** 场景权重与指标中文名:前端「本榜怎么算的」只许从这份数据渲染,不许再手写公式
+       *  (此前 ranking.html 手写的那份与 weights.json 完全脱节,页面写「长上下文完整率 30%」而该指标并不存在) */
+      scenes: sceneWeights(), metricLabels: metricLabels(),
       stats: { ...computeStats(sites), referenceCount: referenceSites.length },
     },
     evidence: evidenceSample(sites),
     compare: {
       unit: "站方公示价 /M tokens(new-api 系为美元额度价,智谱为人民币)",
       fx: "到手价 = 站方额度价 × 站方声明的充值比例;比例未声明的站不给人民币价。"
+        + " 站方价格页直接公示人民币单价的站(如 heyroute 的 ¥ CNY 视图)以页面价为准,不乘比例。"
         + " 官方直连(OpenRouter)按美元现金支付,参考汇率 1 美元 = ¥" + fx.usdCny + "(" + fx.asOf + ")仅适用于它",
       officialAnchor: "openrouter",
       note: "仅收录有官方锚(OpenRouter)的模型;价格为各站最新价格快照,计费列为该站最近一次逐笔对账实测。",
@@ -1024,6 +1127,6 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
   };
   fs.mkdirSync(DATA_DIR, { recursive: true });
   const file = path.join(DATA_DIR, "sites.json");
-  fs.writeFileSync(file, JSON.stringify(out, null, 2), "utf8");
+  fs.writeFileSync(file, JSON.stringify(stripEmojiDeep(out), null, 2), "utf8");
   return file;
 }

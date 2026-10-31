@@ -37,7 +37,8 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   check("无硬编码站名(页面正文不出现 aicost/fluxionai/wolfai)", !/(aicost|fluxionai|wolfai|aixoras|jiuqingyun)/.test(src.replace(/data\/sites\.json/g, "")));
   check("无硬编码实测数字(84/62.3/4858/3959/33.3 等)", !/\b(62\.3|84\.5|4858|3959|33\.3|31\.9)\b/.test(src));
   check("含案例声明(疑似非定论/可申诉/可能已整改/匿名声明)", /复核信号而非定论/.test(src) && /申诉通道/.test(src) && /可能已经改好/.test(src) && /案例一律匿名/.test(src));
-  check("引流自测工具箱/榜单/比价(不再有独立自测页)", /tools.html#selftest/.test(src) && /ranking.html/.test(src) && /compare.html/.test(src) && !/href="selftest.html"/.test(src));
+  check("引流自测工具箱/榜单/比价看板(比价走规范挂载路径 /price/)",
+    /tools.html#selftest/.test(src) && /ranking\.html/.test(src) && /href="\/price\//.test(src) && !/href="selftest\.html"/.test(src));
   check("假流式教学含「短答案测不出来」口径", /回短话也是一次到齐|测不出来/.test(src) && /200~300 字/.test(src));
   check("价格陷阱含「比例和单价是一套组合拳」", /兑换比例和?单价是一套|比例与?单价是一套/.test(src));
 
@@ -57,7 +58,11 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   check("掉包案例:note 存在才提网关拦截", (failSite && failSite.fpDetail.note) ? /网关|拦截/.test(els["case-swap"].innerHTML) : !/内容审计/.test(els["case-swap"].innerHTML));
 
   if (mixed) check("流式案例=伪流占比在、站名不在", els["case-stream"].innerHTML.includes(mixed.stream + "%") && !els["case-stream"].innerHTML.includes(mixed.name), mixed.stream + "% 已匿名");
-  check("流式案例含缓冲实测首字区间(文字性表述)", /26~54|数十秒/.test(els["case-stream"].innerHTML));
+  // 数据驱动:存在混合/伪流站时案例须含缓冲等待区间;没有时须如实显示"暂无"
+  const mixedArr = R.filter(s => typeof s.stream === "number" && s.stream > 0 && s.stream < 100);
+  const fakeArr = R.filter(s => s.stream === 100);
+  if (mixedArr.length || fakeArr.length) check("流式案例含缓冲实测首字区间(文字性表述)", /26~54|数十秒/.test(els["case-stream"].innerHTML));
+  else check("无伪流站时如实显示暂无", /没发现憋整段/.test(els["case-stream"].innerHTML));
 
   if (topInj) check("注入案例=注入数值在、站名不在", els["case-inject"].innerHTML.includes(String(topInj.inject)) && !els["case-inject"].innerHTML.includes(topInj.name), "+" + topInj.inject + " 已匿名");
 
@@ -81,15 +86,14 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---- ③ 深链与入口契约 ---- */
   console.log("【模型直达:深链与首页入口】");
-  const cmp = fs.readFileSync(DIR + "compare.html", "utf8");
-  check("compare 读 ?model= 参数", /\[?\?&\]model=/.test(cmp.replace("model=([^&]+)", "model=([^&]+)")) || /match\(\/\[\?&\]model=/.test(cmp));
-  check("深链匹配实测 key/模型名/示例 key 三路", /t\.key===want/.test(cmp) && /MODELS\[want\]/.test(cmp));
-  check("非法值静默回退(c.tabs[0])", /var first=hit\|\|c\.tabs\[0\]/.test(cmp));
+  /* compare.html 已于 2026-10-28 下线;单模型直达由看板 #cmp: 深链承担,
+     pitfalls 的价格陷阱案例从 compare.html?model=gpt-5-6-sol 改为看板深链(规范名用点号 gpt-5.6-sol)。 */
+  check("价格陷阱案例链到看板单模型对比(#cmp:gpt-5.6-sol)", /href="\/price\/#cmp:gpt-5\.6-sol"/.test(src));
   const idx = fs.readFileSync(DIR + "index.html", "utf8");
-  check("首页含模型直达容器", /id="modelDirect"/.test(idx));
-  check("首页 chips 链接带 encodeURIComponent(t.key)", /compare\.html\?model='?\+encodeURIComponent\(t\.key\)/.test(idx));
-  check("首页「¥X 起」取 effIn 最小值(非标价)", /r\.effIn/.test(idx) && /Math\.min\.apply\(null,prices\)/.test(idx));
-  check("首页数据不来只留通用入口", /<a class="md-chip" href="compare\.html">进入模型比价/.test(idx));
+  check("首页含模型选择控件(源自 compare.tabs)", /id="model-select"/.test(idx) && /compare\.tabs/.test(idx));
+  check("首页按所选模型取价读 effIn(人民币到手价)", /r\.effIn/.test(idx) && /priceFor/.test(idx));
+  check("首页保留进入模型比价看板入口", /href="\/price\/"/.test(idx));
+  check("首页模型数据缺失时给占位而非崩溃", /暂无报价数据/.test(idx));
 
   /* ---- 结构守卫(只看静态 HTML:JS 字符串拼接里的 class="…" 不算渲染产物) ---- */
   const staticHtml = src.replace(/<script>[\s\S]*?<\/script>/g, "").replace(/<style>[\s\S]*?<\/style>/g, "");

@@ -13,11 +13,11 @@
 <meta name="description" content="RelayLens 站点详情页:逐轮实测证据、应扣vs实扣对账、30天价格走势、历史可用率曲线、模型指纹记录与风险时间线。每个结论都有批次号可溯源。">
 <style>
 :root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
-  --r:14px;
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+ --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -164,193 +164,201 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 .navswitch a{font-size:12.5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:6px 13px;color:#cdd9f6}
 .navswitch a:hover{background:rgba(255,255,255,.16)}
 </style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
 
 <!-- 导航 -->
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
-    <nav class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="ranking.html">全站榜单</a>
-      <a href="compare.html">模型比价</a>
-      <a href="selector.html">选型顾问</a>
-      <a href="tools.html">自测工具箱</a>
-      <a href="blacklist.html" class="hot">⚠ 避雷黑名单</a>
-      <a href="method.html">方法论</a>
-      <a href="api.html">API</a>
-      <a href="reports.html">实测报告</a>
-    </nav>
-    <a class="btn btn-ghost btn-sm" href="#">登录</a>
-    <a class="btn btn-primary btn-sm" href="#">注册</a>
-  </div>
+ <div class="wrap nav">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
+ <a class="btn btn-ghost btn-sm" href="#">登录</a>
+ <a class="btn btn-primary btn-sm" href="#">注册</a>
+ </div>
 </header>
 
 <!-- 站点头部 -->
 <div class="site-hero">
-  <div class="wrap">
-    <div class="crumb"><a href="index.html">首页</a> / <a href="ranking.html">全站榜单</a> / 站点详情</div>
-    <div class="sh-row">
-      <div class="sh-logo" id="shLogo">RA</div>
-      <div class="sh-info">
-        <h1><span id="shName">RelayAPI</span> <span class="cert">✔ 实测认证商家</span><span id="shProbe" style="margin-left:8px"></span></h1>
-        <div class="sh-tags" id="shTags"></div>
-        <div class="navswitch">
-          <a href="detail.html?site=TopAPI">← TopAPI</a>
-          <a href="detail.html?site=Z-API">Z-API →</a>
-        </div>
-      </div>
-      <div class="sh-actions">
-        <span class="status-pill"><span class="d"></span>服务正常</span>
-        <button class="btn btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)" onclick="toast('原始数据导出 · Pro 功能')">⬇ 导出原始数据</button>
-        <a class="btn btn-primary" href="#" id="visitBtn">访问站点 ↗</a>
-      </div>
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="crumb"><a href="index.html">首页</a> / <a href="ranking.html">全站榜单</a> / 站点详情</div>
+ <div class="sh-row">
+ <div class="sh-logo" id="shLogo">RA</div>
+ <div class="sh-info">
+ <h1><span id="shName">RelayAPI</span> <span class="cert">✔ 实测认证商家</span><span id="shProbe" style="margin-left:8px"></span></h1>
+ <div class="sh-tags" id="shTags"></div>
+ <div class="navswitch">
+ <a href="detail.html?site=TopAPI">← TopAPI</a>
+ <a href="detail.html?site=Z-API">Z-API →</a>
+ </div>
+ </div>
+ <div class="sh-actions">
+ <span class="status-pill"><span class="d"></span>服务正常</span>
+ <button class="btn btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)" onclick="toast('原始数据导出:可溯源到证据批次号')">⬇ 导出原始数据</button>
+ <a class="btn btn-primary" href="#" id="visitBtn">访问站点 ↗</a>
+ </div>
+ </div>
+ </div>
 </div>
 
 <div class="wrap">
 
-  <!-- 未知站点提示 -->
-  <div id="fallbackTip" style="display:none;background:var(--warn-soft);border:1px solid #f3dcb7;border-radius:12px;padding:13px 18px;font-size:13px;color:#7a4f06;margin-top:22px">
-    ℹ️ 「<b id="fbName"></b>」的逐轮证据页正在生成中(需累计 12 个检测批次)。当前展示示例站 <b id="fbDemo"></b> 的完整数据结构;榜单指标(偏差/缓存/可用率)不受影响,<a href="ranking.html" style="color:var(--brand);font-weight:600">返回榜单查看该站实测指标 →</a>
-  </div>
+ <!-- 未知站点提示 -->
+ <div id="fallbackTip" style="display:none;background:var(--warn-soft);border:1px solid #f3dcb7;border-radius:12px;padding:13px 18px;font-size:13px;color:#7a4f06;margin-top:22px">
+ ℹ️ 「<b id="fbName"></b>」的逐轮证据页正在生成中(需累计 12 个检测批次)。当前展示示例站 <b id="fbDemo"></b> 的完整数据结构;榜单指标(偏差/缓存/可用率)不受影响,<a href="ranking.html" style="color:var(--brand);font-weight:600">返回榜单查看该站实测指标 →</a>
+ </div>
 
-  <!-- 分数带 -->
-  <div class="score-band" id="scoreBand"></div>
+ <!-- 分数带 -->
+ <div class="score-band" id="scoreBand"></div>
 
-  <div class="layout">
-    <!-- 主列 -->
-    <div>
-      <!-- 历史曲线 -->
-      <div class="card mb18">
-        <h2>📈 历史 &amp; 趋势</h2>
-        <p class="cap">采样自最近 30 天探针数据,每 6 小时一个批次</p>
-        <div class="tabs">
-          <button class="tab on" data-chart="avail">30 天可用率</button>
-          <button class="tab" data-chart="ttft">30 天首字延迟</button>
-          <button class="tab" data-chart="price">价格走势</button>
-        </div>
-        <div class="chart-box"><svg class="chart-svg" id="chart" viewBox="0 0 640 180" preserveAspectRatio="none"></svg></div>
-        <div class="legend" id="chartLegend"></div>
-      </div>
+ <div class="layout">
+ <!-- 主列 -->
+ <div>
+ <!-- 历史曲线 -->
+ <div class="card mb18">
+ <h2>历史 &amp; 趋势</h2>
+ <p class="cap">采样自最近 30 天探针数据,每 6 小时一个批次</p>
+ <div class="tabs">
+ <button class="tab on" data-chart="avail">30 天可用率</button>
+ <button class="tab" data-chart="ttft">30 天首字延迟</button>
+ <button class="tab" data-chart="price">价格走势</button>
+ </div>
+ <div class="chart-box"><svg class="chart-svg" id="chart" viewBox="0 0 640 180" preserveAspectRatio="none"></svg></div>
+ <div class="legend" id="chartLegend"></div>
+ </div>
 
-      <!-- 逐轮对账 -->
-      <div class="card mb18">
-        <h2>🧾 最新批次 · 逐轮对账证据</h2>
-        <p class="cap" id="batchCap">批次 #20260929-114 · 2026-09-29 09:41 · 模型 claude-opus-5 · 10 轮标准测试</p>
-        <div class="panel">
-          <div class="pbar"><span id="panelSite">RelayAPI · 控制台-流水</span><span id="panelBatch">批次 #0929-0114</span></div>
-          <div id="panelBody"></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="toast('API 原始 Response 存档 · Pro 功能')">查看原始 Response JSON</button>
-          <button class="btn btn-ghost btn-sm" onclick="toast('全部 2,904 个批次 · Pro 功能')">历史批次浏览</button>
-        </div>
-      </div>
+ <!-- 逐轮对账 -->
+ <div class="card mb18">
+ <h2>最新批次 · 逐轮对账证据</h2>
+ <!-- 这里的静态默认值同样是「空数据」语义:JS 跑起来前/取不到数据时,
+      绝不能让硬编码的演示批次号(2026-09-29-114 / RL-RC-0929-0114)冒充成真实批次(红线 10) -->
+ <p class="cap" id="batchCap">逐轮对账数据未接入 · 站级结论见下方计费审计</p>
+ <div class="panel">
+ <div class="pbar"><span id="panelSite">—</span><span id="panelBatch">批次未接入</span></div>
+ <div id="panelBody"></div>
+ </div>
+ <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+ <button class="btn btn-ghost btn-sm" onclick="toast('API 原始 Response 存档:每条均可溯源到证据批次号')">查看原始 Response JSON</button>
+ <button class="btn btn-ghost btn-sm" onclick="toast('历史批次浏览功能规划中,上线后免费开放')">历史批次浏览</button>
+ </div>
+ </div>
 
-      <!-- 缓存命中分布 -->
-      <div class="card mb18">
-        <h2>⚡ 缓存命中 · 近 30 批次分布</h2>
-        <p class="cap">每根柱 = 一个批次的缓存命中率;绿色≥50%、黄色 35-50%、红色&lt;35%</p>
-        <div class="bars" id="cacheBars"></div>
-      </div>
+ <!-- 缓存命中分布 -->
+ <div class="card mb18">
+ <h2>缓存命中 · 近 30 批次分布</h2>
+ <p class="cap">每根柱 = 一个批次的缓存命中率;绿色≥50%、黄色 35-50%、红色&lt;35%</p>
+ <div class="bars" id="cacheBars"></div>
+ </div>
 
-      <!-- 模型报价 -->
-      <div class="card mb18">
-        <h2>💱 本站模型报价(实测口径)</h2>
-        <p class="cap">价格已按充值比例折算;缓存列标注是否达到官方 10% 基准</p>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>模型</th><th>输入 ¥/M</th><th>输出 ¥/M</th><th>缓存读 ¥/M</th><th>缓存基准</th><th>指纹检测</th><th>综合可用率</th></tr></thead>
-            <tbody id="priceTbody"></tbody>
-          </table>
-        </div>
-        <a class="more" href="compare.html" style="font-size:13px;color:var(--brand);font-weight:600;display:inline-block;margin-top:12px">去模型比价页横向对比 →</a>
-      </div>
+ <!-- 模型报价 -->
+ <div class="card mb18">
+ <h2>本站模型报价(实测口径)</h2>
+ <p class="cap" id="priceBasisCap">价格已按充值比例折算;缓存列标注是否达到官方 10% 基准</p>
+ <div class="tbl-wrap">
+ <table>
+ <thead><tr><th>模型</th><th>输入 ¥/M</th><th>输出 ¥/M</th><th>缓存读 ¥/M</th><th>缓存基准</th><th>指纹检测</th><th>综合可用率</th></tr></thead>
+ <tbody id="priceTbody"></tbody>
+ </table>
+ </div>
+ <a class="more" href="/price/" style="font-size:13px;color:var(--brand);font-weight:600;display:inline-block;margin-top:12px">去模型比价页横向对比 →</a>
+ </div>
 
-      <!-- 计费审计 -->
-      <div class="card mb18" id="auditCard" style="display:none">
-        <h2>🧾 计费审计(账单级对账)</h2>
-        <p class="cap" id="auditCap"></p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
-          <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aMatch" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)">对账匹配率</div></div>
-          <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aVerified" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)">逐笔验证数</div></div>
-          <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aInject" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)" title="站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费;短请求成本被放大上百倍">注入开销</div></div>
-          <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aCons" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)">计量一致性</div></div>
-          <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aStream" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)" title="伪流式率:整段生成完才一次性下发,逐字输出失效">假流式率</div></div>
-        </div>
-        <p style="font-size:13px;color:var(--sub);margin-top:12px" id="auditNote"></p>
-        <div id="promiseMatrix" style="display:none;margin-top:14px;border-top:1px dashed var(--line);padding-top:12px">
-          <div style="font-size:13px;font-weight:800;margin-bottom:6px">📋 站方承诺矩阵 <span style="font-weight:400;font-size:11.5px;color:var(--faint)">— 声明了什么,我们就按什么测;没声明的方向标「未承诺」,不替站方背书也不冤枉</span></div>
-          <div id="promiseBody" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-        </div>
-      </div>
+ <!-- 计费审计 -->
+ <div class="card mb18" id="auditCard" style="display:none">
+ <h2>计费审计(账单级对账)</h2>
+ <p class="cap" id="auditCap"></p>
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+ <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aMatch" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)">对账匹配率</div></div>
+ <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aVerified" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)">逐笔验证数</div></div>
+ <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aInject" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)" title="站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费;短请求成本被放大上百倍">注入开销</div></div>
+ <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aCons" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)">计量一致性</div></div>
+ <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aStream" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)" title="伪流式率:整段生成完才一次性下发,逐字输出失效">假流式率</div></div>
+ </div>
+ <p style="font-size:13px;color:var(--sub);margin-top:12px" id="auditNote"></p>
+ <div id="promiseMatrix" style="display:none;margin-top:14px;border-top:1px dashed var(--line);padding-top:12px">
+ <div style="font-size:13px;font-weight:800;margin-bottom:6px">站方承诺矩阵 <span style="font-weight:400;font-size:11.5px;color:var(--faint)">— 声明了什么,我们就按什么测;没声明的方向标「未承诺」,不替站方背书也不冤枉</span></div>
+ <div id="promiseBody" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+ </div>
+ </div>
 
-      <!-- 风险时间线 -->
-      <div class="card">
-        <h2>🗓️ 事件时间线</h2>
-        <p class="cap">检测异常、价格变动、公告与平台互动的完整记录</p>
-        <div class="timeline" id="timeline"></div>
-      </div>
-    </div>
+ <!-- 风险时间线 -->
+ <div class="card">
+ <h2>事件时间线</h2>
+ <p class="cap">检测异常、价格变动、公告与平台互动的完整记录</p>
+ <div class="timeline" id="timeline"></div>
+ </div>
+ </div>
 
-    <!-- 侧栏 -->
-    <div class="side">
-      <div class="card">
-        <h2 style="font-size:15px">📊 跑路风险指数</h2>
-        <div class="risk-gauge" style="margin-top:12px">
-          <div class="rl">综合评估</div>
-          <div class="rv" id="riskV">低</div>
-          <div class="rd" id="riskD">运营 3.2 年 · 价格稳定 · 公告履约记录良好</div>
-        </div>
-        <div style="margin-top:12px" id="riskItems"></div>
-      </div>
-      <div class="card">
-        <h2 style="font-size:15px">📋 基础信息</h2>
-        <div style="margin-top:8px" id="basicInfo"></div>
-        <div class="benefit">
-          <div class="bt">🎁 本站专属福利</div>
-          <div class="code"><span class="cd" id="promoCode">RLSAVE15</span><button class="btn btn-sm" id="promoBtn" style="background:var(--gold-soft);color:var(--gold);border:1.5px solid #ecc94b;font-weight:700">复制</button></div>
-          <p style="font-size:11.5px;color:#a3801f;margin-top:6px">首充 85 折 · 有效期至 10-15</p>
-          <span class="ad-flag">含推广链接 · 不影响实测与排名</span>
-        </div>
-      </div>
-      <div class="card">
-        <h2 style="font-size:15px">🗺️ 检测覆盖</h2>
-        <div style="margin-top:8px">
-          <div class="kv"><span class="k">检测节点</span><span class="v">3 个基准 + 2 社区探针</span></div>
-          <div class="kv"><span class="k">累计批次</span><span class="v" id="batchCount">188 批</span></div>
-          <div class="kv"><span class="k">累计核验账单</span><span class="v">¥6,820</span></div>
-          <div class="kv"><span class="k">首次收录</span><span class="v">2026-01-12</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
+ <!-- 侧栏 -->
+ <div class="side">
+ <div class="card">
+ <h2 style="font-size:15px">跑路风险指数</h2>
+ <div class="risk-gauge" style="margin-top:12px">
+ <div class="rl">综合评估</div>
+ <div class="rv" id="riskV">低</div>
+ <div class="rd" id="riskD">运营 3.2 年 · 价格稳定 · 公告履约记录良好</div>
+ </div>
+ <div style="margin-top:12px" id="riskItems"></div>
+ </div>
+ <div class="card">
+ <h2 style="font-size:15px">基础信息</h2>
+ <div style="margin-top:8px" id="basicInfo"></div>
+ <div class="benefit">
+ <div class="bt">本站专属福利</div>
+ <div class="code"><span class="cd" id="promoCode">RLSAVE15</span><button class="btn btn-sm" id="promoBtn" style="background:var(--gold-soft);color:var(--gold);border:1.5px solid #ecc94b;font-weight:700">复制</button></div>
+ <p style="font-size:11.5px;color:#a3801f;margin-top:6px">首充 85 折 · 有效期至 10-15</p>
+ <span class="ad-flag">含推广链接 · 不影响实测与排名</span>
+ </div>
+ </div>
+ <div class="card">
+ <h2 style="font-size:15px">检测覆盖</h2>
+ <div style="margin-top:8px">
+ <div class="kv"><span class="k">检测节点</span><span class="v">1 个自有探针(中国大陆) · 社区节点未开放</span></div>
+ <div class="kv"><span class="k">累计批次</span><span class="v" id="batchCount">—</span></div>
+ <div class="kv"><span class="k">累计核验账单</span><span class="v" id="billCount">—</span></div>
+ <div class="kv"><span class="k">首次收录</span><span class="v" id="sinceDate">—</span></div>
+ <!-- 两项确定性证据(不进评分):证书由 health 随行采集;长上下文由标记码探针显式触发。
+      措辞由后端 judgeTls / judgeContextLabel 统一生成,页面只上色 —— 判定规则不许在页面重写第二份。 -->
+ <div class="kv"><span class="k" title="TLS 证书:确定性事实,不参与评分。自签 / CDN 边缘证书 / 域名与 SAN 不一致在小站很常见,与计费是否诚实无关">TLS 证书</span><span class="v" id="tlsInfo">未采集</span></div>
+ <div class="kv"><span class="k" title="长上下文完整性:在长文本固定位置埋标记码,看模型能否全部回吐。尾部连续缺失 = 只把前段转给了上游;中间规律缺失 = 摘要/滑窗压缩。不参与评分">长上下文完整性</span><span class="v" id="ctxInfo">未测</span></div>
+ </div>
+ </div>
+ </div>
+ </div>
 </div>
 
+<section class="card" style="margin-top:28px" id="rlReviews">
+ <h2 style="font-size:17px;font-weight:800;margin-bottom:6px">用户评价 <span style="font-size:12px;color:var(--faint);font-weight:600">(用户主观感受,与本站实测评分分开呈现,不参与综合分;先审后发)</span></h2>
+ <div id="rlReviewAvg" style="font-size:13px;color:var(--sub);margin-bottom:10px"></div>
+ <div id="rlReviewList" style="display:grid;gap:10px"><div style="font-size:13px;color:var(--faint)">加载中……</div></div>
+ <div style="margin-top:14px" id="rlReviewFormBox">
+ <button class="btn btn-primary btn-sm" id="rlReviewBtn">写评价</button>
+ <span style="font-size:12px;color:var(--faint)">需登录;一人一站一评,可更新</span>
+ </div>
+</section>
+
 <footer>
-  <div class="wrap">
-    <div class="ft-grid">
-      <div>
-        <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
-        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位与 Pro 订阅维持运营。</p>
-      </div>
-      <div>
-        <h4>站点</h4>
-        <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="compare.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
-      </div>
-      <div>
-        <h4>关于</h4>
-        <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">联系方式</a><a href="#">隐私政策</a><a href="#">服务条款</a>
-      </div>
-    </div>
-    <div class="fine">
-      免责声明:本站为第三方测评平台,不提供 API 转售或代充服务;中转服务本身存在合规与资金风险,请理性小额充值。本页所有数据来自公开付费实测,批次号可溯源。<br>
-      © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">联系方式</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售或代充服务;中转服务本身存在合规与资金风险,请理性小额充值。本页所有数据来自公开付费实测,批次号可溯源。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
 </footer>
 
 <div class="toast" id="toast">已复制</div>
@@ -359,116 +367,116 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 /* ============ 站点数据(示例,与 ranking/compare 同源,接探针 API 后替换) ============ */
 var DETAIL={
  "RelayAPI":{
-  ab:"RA",color:"linear-gradient(135deg,#2563eb,#16308f)",status:"正常运营",audit:{matchPct:100,verified:188,inject:0,stream:0,consistency:"±0.4%",lastAt:"2026-09-29",note:"逐笔对账全部精确匹配;无注入开销,短任务友好。"},
-  band:[["综合分","94","v-brand","hl"],["编程榜","96","v-brand",""],["扣费偏差","0%","v-ok",""],["缓存命中","68%","v-ok",""],["可用率7d","99.6%","v-ok",""],["首字延迟·晚高峰","1.2s","v-ok",""]],
-  tags:[["运营 3.2 年","ok"],["全模型覆盖","ok"],["支持开票","ok"],["余额可退","ok"],["社区口碑良好","ok"]],
-  avail:99.6,ttft:1.2,risk:{level:"低",cls:"",items:[["运营时长","3.2 年","s-ok"],["最低充值","¥10","s-ok"],["30天价格波动","±3%","s-ok"],["公告履约","6/6 兑现","s-ok"],["域名年龄","3.5 年","s-ok"]]},
-  basic:[["充值比例","¥1.00 = 1 美元额度"],["支付方式","支付宝 / 微信 / USDT"],["是否开票","✔ 增值税普票"],["退款政策","余额可退(收 2% 手续费)"],["客服响应","工单 < 2h,群内在线"],["SLA 承诺","99.5% 可用性"]],
-  prices:[
-   ["Claude Opus 5",18,88,1.8,"tm-g","✔ 达标","tm-g","通过",98.5],
-   ["Claude Sonnet 5",6,30,0.6,"tm-g","✔ 达标","tm-g","通过",99.2],
-   ["GPT-5.6 Sol",3.2,12.8,0.32,"tm-g","✔ 达标","tm-g","通过",99.8],
-   ["GPT-5.5",2.0,8,0.2,"tm-g","✔ 达标","tm-g","通过",99.6],
-   ["Gemini 3.1 Pro",3.6,14.4,0.36,"tm-g","✔ 达标","tm-g","通过",99.1],
-   ["Gemini 3.1 Flash",0.25,1.5,0.05,"tm-g","✔ 达标","tm-g","通过",100],
-   ["DeepSeek V4(接入中)","—","—","—","tm-y","待检测","tm-y","待检测","—"]
-  ],
-  /* 曲线:30点 avail(94-100), ttft(0.9-1.8), price(3.0-3.4 相对值) */
-  availSeries:[99.8,99.8,99.6,100,99.6,99.8,99.4,99.8,100,99.6,99.8,99.4,99.8,100,99.6,99.8,99.4,99.8,99.6,100,99.8,99.6,99.4,99.8,99.6,99.8,100,99.6,99.8,99.6],
-  ttftSeries:[1.2,1.3,1.1,1.2,1.4,1.2,1.1,1.3,1.2,1.5,1.2,1.1,1.2,1.3,1.2,1.1,1.4,1.2,1.3,1.2,1.1,1.2,1.4,1.2,1.1,1.3,1.2,1.1,1.2,1.3],
-  priceSeries:[3.2,3.2,3.2,3.2,3.2,3.2,3.1,3.1,3.1,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2],
-  cacheBars:[68,71,65,70,68,72,66,69,70,68,67,71,69,68,70,73,68,66,69,70,68,71,67,69,70,68,72,69,68,70],
-  rounds:[
-   {r:1,model:"claude-opus-5",in:18420,cached:11208,out:1905,should:"¥0.82",actual:"¥0.82",ok:1},
-   {r:2,model:"claude-opus-5",in:18420,cached:11301,out:1877,should:"¥0.82",actual:"¥0.82",ok:1},
-   {r:3,model:"claude-opus-5",in:18420,cached:10944,out:1955,should:"¥0.83",actual:"¥0.83",ok:1},
-   {r:4,model:"claude-opus-5",in:18420,cached:11473,out:1833,should:"¥0.81",actual:"¥0.81",ok:1},
-   {r:5,model:"claude-opus-5",in:18420,cached:10872,out:2001,should:"¥0.84",actual:"¥0.84",ok:1},
-   {r:6,model:"claude-sonnet-5",in:6120,cached:3955,out:822,should:"¥0.21",actual:"¥0.21",ok:1},
-   {r:7,model:"claude-sonnet-5",in:6120,cached:4012,out:799,should:"¥0.21",actual:"¥0.21",ok:1},
-   {r:8,model:"gpt-5.6-sol",in:8800,cached:5288,out:1040,should:"¥0.19",actual:"¥0.19",ok:1},
-   {r:9,model:"gpt-5.6-sol",in:8800,cached:5351,out:1006,should:"¥0.19",actual:"¥0.19",ok:1},
-   {r:10,model:"gpt-5.5",in:5400,cached:3226,out:630,should:"¥0.10",actual:"¥0.10",ok:1}
-  ],
-  timeline:[
-   ["t-ok","2026-09-29","第 188 批次实测通过","扣费偏差 0%,10/10 轮全通过,缓存命中 68%","#0929-0114"],
-   ["t-ok","2026-09-22","新增 Gemini 3.1 Flash 接入","实测可用率 100%,缓存计费达标","#0922-0090"],
-   ["t-warn","2026-09-15","晚高峰首字延迟短暂上升","20:00-23:00 窗口首字延迟 升至 1.9s(基线 1.2s),持续 2 个批次后恢复","#0915-0072"],
-   ["t-ok","2026-08-30","价格微调公告兑现","公告承诺「8-30 起 Sonnet 5 输入价降 5%」,实测确认已生效","#0830-0051"],
-   ["t-ok","2026-06-18","通过实测认证","连续 30 批次偏差≤0.5%、指纹全通过,授予「实测认证商家」","—"]
-  ],
-  promo:"RLSAVE15",promoDesc:"首充 85 折 · 有效期至 10-15",batches:188,bill:"¥6,820",since:"2026-01-12"
+ ab:"RA",color:"linear-gradient(135deg,#2563eb,#16308f)",status:"正常运营",audit:{matchPct:100,verified:188,inject:0,stream:0,consistency:"±0.4%",lastAt:"2026-09-29",note:"逐笔对账全部精确匹配;无注入开销,短任务友好。"},
+ band:[["综合分","94","v-brand","hl"],["编程榜","96","v-brand",""],["扣费偏差","0%","v-ok",""],["缓存命中","68%","v-ok",""],["可用率7d","99.6%","v-ok",""],["首字延迟·晚高峰","1.2s","v-ok",""]],
+ tags:[["运营 3.2 年","ok"],["全模型覆盖","ok"],["支持开票","ok"],["余额可退","ok"],["社区口碑良好","ok"]],
+ avail:99.6,ttft:1.2,risk:{level:"低",cls:"",items:[["运营时长","3.2 年","s-ok"],["最低充值","¥10","s-ok"],["30天价格波动","±3%","s-ok"],["公告履约","6/6 兑现","s-ok"],["域名年龄","3.5 年","s-ok"]]},
+ basic:[["充值比例","¥1.00 = 1 美元额度"],["支付方式","支付宝 / 微信 / USDT"],["是否开票","✔ 增值税普票"],["退款政策","余额可退(收 2% 手续费)"],["客服响应","工单 < 2h,群内在线"],["SLA 承诺","99.5% 可用性"]],
+ prices:[
+ ["Claude Opus 5",18,88,1.8,"tm-g","✔ 达标","tm-g","通过",98.5],
+ ["Claude Sonnet 5",6,30,0.6,"tm-g","✔ 达标","tm-g","通过",99.2],
+ ["GPT-5.6 Sol",3.2,12.8,0.32,"tm-g","✔ 达标","tm-g","通过",99.8],
+ ["GPT-5.5",2.0,8,0.2,"tm-g","✔ 达标","tm-g","通过",99.6],
+ ["Gemini 3.1 Pro",3.6,14.4,0.36,"tm-g","✔ 达标","tm-g","通过",99.1],
+ ["Gemini 3.1 Flash",0.25,1.5,0.05,"tm-g","✔ 达标","tm-g","通过",100],
+ ["DeepSeek V4(接入中)","—","—","—","tm-y","待检测","tm-y","待检测","—"]
+ ],
+ /* 曲线:30点 avail(94-100), ttft(0.9-1.8), price(3.0-3.4 相对值) */
+ availSeries:[99.8,99.8,99.6,100,99.6,99.8,99.4,99.8,100,99.6,99.8,99.4,99.8,100,99.6,99.8,99.4,99.8,99.6,100,99.8,99.6,99.4,99.8,99.6,99.8,100,99.6,99.8,99.6],
+ ttftSeries:[1.2,1.3,1.1,1.2,1.4,1.2,1.1,1.3,1.2,1.5,1.2,1.1,1.2,1.3,1.2,1.1,1.4,1.2,1.3,1.2,1.1,1.2,1.4,1.2,1.1,1.3,1.2,1.1,1.2,1.3],
+ priceSeries:[3.2,3.2,3.2,3.2,3.2,3.2,3.1,3.1,3.1,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2],
+ cacheBars:[68,71,65,70,68,72,66,69,70,68,67,71,69,68,70,73,68,66,69,70,68,71,67,69,70,68,72,69,68,70],
+ rounds:[
+ {r:1,model:"claude-opus-5",in:18420,cached:11208,out:1905,should:"¥0.82",actual:"¥0.82",ok:1},
+ {r:2,model:"claude-opus-5",in:18420,cached:11301,out:1877,should:"¥0.82",actual:"¥0.82",ok:1},
+ {r:3,model:"claude-opus-5",in:18420,cached:10944,out:1955,should:"¥0.83",actual:"¥0.83",ok:1},
+ {r:4,model:"claude-opus-5",in:18420,cached:11473,out:1833,should:"¥0.81",actual:"¥0.81",ok:1},
+ {r:5,model:"claude-opus-5",in:18420,cached:10872,out:2001,should:"¥0.84",actual:"¥0.84",ok:1},
+ {r:6,model:"claude-sonnet-5",in:6120,cached:3955,out:822,should:"¥0.21",actual:"¥0.21",ok:1},
+ {r:7,model:"claude-sonnet-5",in:6120,cached:4012,out:799,should:"¥0.21",actual:"¥0.21",ok:1},
+ {r:8,model:"gpt-5.6-sol",in:8800,cached:5288,out:1040,should:"¥0.19",actual:"¥0.19",ok:1},
+ {r:9,model:"gpt-5.6-sol",in:8800,cached:5351,out:1006,should:"¥0.19",actual:"¥0.19",ok:1},
+ {r:10,model:"gpt-5.5",in:5400,cached:3226,out:630,should:"¥0.10",actual:"¥0.10",ok:1}
+ ],
+ timeline:[
+ ["t-ok","2026-09-29","第 188 批次实测通过","扣费偏差 0%,10/10 轮全通过,缓存命中 68%","#0929-0114"],
+ ["t-ok","2026-09-22","新增 Gemini 3.1 Flash 接入","实测可用率 100%,缓存计费达标","#0922-0090"],
+ ["t-warn","2026-09-15","晚高峰首字延迟短暂上升","20:00-23:00 窗口首字延迟 升至 1.9s(基线 1.2s),持续 2 个批次后恢复","#0915-0072"],
+ ["t-ok","2026-08-30","价格微调公告兑现","公告承诺「8-30 起 Sonnet 5 输入价降 5%」,实测确认已生效","#0830-0051"],
+ ["t-ok","2026-06-18","通过实测认证","连续 30 批次偏差≤0.5%、指纹全通过,授予「实测认证商家」","—"]
+ ],
+ promo:"RLSAVE15",promoDesc:"首充 85 折 · 有效期至 10-15",batches:188,bill:"¥6,820",since:"2026-01-12"
  },
  "TopAPI":{
-  ab:"TA",color:"linear-gradient(135deg,#0e9f6e,#067647)",status:"正常运营",audit:{matchPct:100,verified:152,inject:1200,stream:25,consistency:"±0.8%",lastAt:"2026-09-28",note:"计费精确;轻度注入(1200 tok/请求),批量短任务成本约放大 3-8×。"},
-  band:[["综合分","91","v-brand","hl"],["企业榜","95","v-brand",""],["扣费偏差","0.3%","v-ok",""],["缓存命中","62%","v-ok",""],["可用率7d","99.4%","v-ok",""],["首字延迟·晚高峰","1.5s","v-ok",""]],
-  tags:[["运营 2.8 年","ok"],["可开票 · 对公","ok"],["SLA 报告","ok"],["Claude 专精","ok"]],
-  avail:99.4,ttft:1.5,risk:{level:"低",cls:"",items:[["运营时长","2.8 年","s-ok"],["最低充值","¥20","s-ok"],["30天价格波动","±4%","s-ok"],["公告履约","5/5 兑现","s-ok"],["域名年龄","3.1 年","s-ok"]]},
-  basic:[["充值比例","¥0.95 = 1 美元额度"],["支付方式","支付宝 / 微信 / 对公转账"],["是否开票","✔ 普票 / 专票"],["退款政策","未消费余额全额可退"],["客服响应","工单 < 4h"],["SLA 承诺","99.5% + 月度报告"]],
-  prices:[
-   ["Claude Opus 5",18.5,92,2.8,"tm-y","略高于基准","tm-g","通过",99.0],
-   ["Claude Sonnet 5",6.2,31,0.93,"tm-g","✔ 达标","tm-g","通过",99.4],
-   ["GPT-5.6 Sol","—","—","—","tm-y","未覆盖","tm-y","—","—"]
-  ],
-  availSeries:[99.4,99.4,99.6,99.2,99.4,99.6,99.2,99.4,99.4,99.6,99.2,99.4,99.6,99.4,99.2,99.4,99.6,99.4,99.2,99.4,99.4,99.6,99.2,99.4,99.4,99.2,99.4,99.6,99.4,99.4],
-  ttftSeries:[1.5,1.6,1.4,1.5,1.7,1.5,1.4,1.6,1.5,1.8,1.5,1.4,1.5,1.6,1.5,1.4,1.7,1.5,1.6,1.5,1.4,1.5,1.7,1.5,1.4,1.6,1.5,1.4,1.5,1.5],
-  priceSeries:[18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5],
-  cacheBars:[62,64,60,63,62,65,61,63,62,60,63,62,64,62,61,63,62,65,62,63,62,60,63,62,64,62,61,63,62,62],
-  rounds:[
-   {r:1,model:"claude-opus-5",in:18420,cached:11031,out:1905,should:"¥0.83",actual:"¥0.83",ok:1},
-   {r:2,model:"claude-opus-5",in:18420,cached:11198,out:1888,should:"¥0.83",actual:"¥0.83",ok:1},
-   {r:3,model:"claude-opus-5",in:18420,cached:10877,out:1977,should:"¥0.84",actual:"¥0.84",ok:1},
-   {r:4,model:"claude-opus-5",in:18420,cached:11250,out:1901,should:"¥0.83",actual:"¥0.83",ok:1},
-   {r:5,model:"claude-sonnet-5",in:6120,cached:3888,out:815,should:"¥0.21",actual:"¥0.21",ok:1},
-   {r:6,model:"claude-sonnet-5",in:6120,cached:3901,out:840,should:"¥0.21",actual:"¥0.22",ok:1},
-   {r:7,model:"claude-sonnet-5",in:6120,cached:3955,out:798,should:"¥0.21",actual:"¥0.21",ok:1},
-   {r:8,model:"claude-sonnet-5",in:6120,cached:3860,out:855,should:"¥0.22",actual:"¥0.22",ok:1},
-   {r:9,model:"claude-sonnet-5",in:6120,cached:3922,out:806,should:"¥0.21",actual:"¥0.21",ok:1},
-   {r:10,model:"claude-sonnet-5",in:6120,cached:3940,out:830,should:"¥0.21",actual:"¥0.21",ok:1}
-  ],
-  timeline:[
-   ["t-ok","2026-09-29","第 152 批次实测通过","扣费偏差均值 0.3%,缓存命中 62%","#0929-0087"],
-   ["t-ok","2026-09-10","月度 SLA 报告发布","8 月可用性 99.51%,达到承诺线","—"],
-   ["t-warn","2026-08-22","缓存读价短暂超标","缓存读价临时调为输入价 18%,站方 4 小时内公告纠正,未影响后续批次","#0822-0038"],
-   ["t-ok","2026-05-30","通过实测认证","连续 30 批次偏差≤0.5%,授予「实测认证商家」","—"]
-  ],
-  promo:"TOP20",promoDesc:"首充赠 ¥20 · 企业客户送 SLA 评估",batches:152,bill:"¥5,140",since:"2026-02-03"
+ ab:"TA",color:"linear-gradient(135deg,#0e9f6e,#067647)",status:"正常运营",audit:{matchPct:100,verified:152,inject:1200,stream:25,consistency:"±0.8%",lastAt:"2026-09-28",note:"计费精确;轻度注入(1200 tok/请求),批量短任务成本约放大 3-8×。"},
+ band:[["综合分","91","v-brand","hl"],["企业榜","95","v-brand",""],["扣费偏差","0.3%","v-ok",""],["缓存命中","62%","v-ok",""],["可用率7d","99.4%","v-ok",""],["首字延迟·晚高峰","1.5s","v-ok",""]],
+ tags:[["运营 2.8 年","ok"],["可开票 · 对公","ok"],["SLA 报告","ok"],["Claude 专精","ok"]],
+ avail:99.4,ttft:1.5,risk:{level:"低",cls:"",items:[["运营时长","2.8 年","s-ok"],["最低充值","¥20","s-ok"],["30天价格波动","±4%","s-ok"],["公告履约","5/5 兑现","s-ok"],["域名年龄","3.1 年","s-ok"]]},
+ basic:[["充值比例","¥0.95 = 1 美元额度"],["支付方式","支付宝 / 微信 / 对公转账"],["是否开票","✔ 普票 / 专票"],["退款政策","未消费余额全额可退"],["客服响应","工单 < 4h"],["SLA 承诺","99.5% + 月度报告"]],
+ prices:[
+ ["Claude Opus 5",18.5,92,2.8,"tm-y","略高于基准","tm-g","通过",99.0],
+ ["Claude Sonnet 5",6.2,31,0.93,"tm-g","✔ 达标","tm-g","通过",99.4],
+ ["GPT-5.6 Sol","—","—","—","tm-y","未覆盖","tm-y","—","—"]
+ ],
+ availSeries:[99.4,99.4,99.6,99.2,99.4,99.6,99.2,99.4,99.4,99.6,99.2,99.4,99.6,99.4,99.2,99.4,99.6,99.4,99.2,99.4,99.4,99.6,99.2,99.4,99.4,99.2,99.4,99.6,99.4,99.4],
+ ttftSeries:[1.5,1.6,1.4,1.5,1.7,1.5,1.4,1.6,1.5,1.8,1.5,1.4,1.5,1.6,1.5,1.4,1.7,1.5,1.6,1.5,1.4,1.5,1.7,1.5,1.4,1.6,1.5,1.4,1.5,1.5],
+ priceSeries:[18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5,18.5],
+ cacheBars:[62,64,60,63,62,65,61,63,62,60,63,62,64,62,61,63,62,65,62,63,62,60,63,62,64,62,61,63,62,62],
+ rounds:[
+ {r:1,model:"claude-opus-5",in:18420,cached:11031,out:1905,should:"¥0.83",actual:"¥0.83",ok:1},
+ {r:2,model:"claude-opus-5",in:18420,cached:11198,out:1888,should:"¥0.83",actual:"¥0.83",ok:1},
+ {r:3,model:"claude-opus-5",in:18420,cached:10877,out:1977,should:"¥0.84",actual:"¥0.84",ok:1},
+ {r:4,model:"claude-opus-5",in:18420,cached:11250,out:1901,should:"¥0.83",actual:"¥0.83",ok:1},
+ {r:5,model:"claude-sonnet-5",in:6120,cached:3888,out:815,should:"¥0.21",actual:"¥0.21",ok:1},
+ {r:6,model:"claude-sonnet-5",in:6120,cached:3901,out:840,should:"¥0.21",actual:"¥0.22",ok:1},
+ {r:7,model:"claude-sonnet-5",in:6120,cached:3955,out:798,should:"¥0.21",actual:"¥0.21",ok:1},
+ {r:8,model:"claude-sonnet-5",in:6120,cached:3860,out:855,should:"¥0.22",actual:"¥0.22",ok:1},
+ {r:9,model:"claude-sonnet-5",in:6120,cached:3922,out:806,should:"¥0.21",actual:"¥0.21",ok:1},
+ {r:10,model:"claude-sonnet-5",in:6120,cached:3940,out:830,should:"¥0.21",actual:"¥0.21",ok:1}
+ ],
+ timeline:[
+ ["t-ok","2026-09-29","第 152 批次实测通过","扣费偏差均值 0.3%,缓存命中 62%","#0929-0087"],
+ ["t-ok","2026-09-10","月度 SLA 报告发布","8 月可用性 99.51%,达到承诺线","—"],
+ ["t-warn","2026-08-22","缓存读价短暂超标","缓存读价临时调为输入价 18%,站方 4 小时内公告纠正,未影响后续批次","#0822-0038"],
+ ["t-ok","2026-05-30","通过实测认证","连续 30 批次偏差≤0.5%,授予「实测认证商家」","—"]
+ ],
+ promo:"TOP20",promoDesc:"首充赠 ¥20 · 企业客户送 SLA 评估",batches:152,bill:"¥5,140",since:"2026-02-03"
  },
  "Orbelis":{
-  ab:"OR",color:"linear-gradient(135deg,#991b1b,#7f1d1d)",status:"⚠ 标红复核中",audit:{matchPct:86.7,verified:12,inject:4398,stream:100,consistency:"未复检",lastAt:"2026-09-27",note:"标红复核中:多笔偏差超 4%,且检出号池级注入,短任务成本放大 147×。"},
-  band:[["综合分","61","v-bad","hl"],["扣费偏差","4.2%","v-bad",""],["缓存命中","28%","v-bad",""],["可用率7d","91.4%","v-bad",""],["首字延迟·晚高峰","5.8s","v-bad",""],["指纹检测","未通过","v-bad",""]],
-  tags:[["⚠ 计费虚标嫌疑","bad"],["⚠ 价格异常波动","bad"],["⚠ 高风险指数","bad"],["运营 0.6 年","warn"]],
-  avail:91.4,ttft:5.8,risk:{level:"高 ⚠",cls:"",items:[["运营时长","0.6 年","s-bad"],["最低充值","¥50","s-warn"],["30天价格波动","+34%","s-bad"],["公告履约","2/5 兑现","s-bad"],["域名年龄","0.7 年","s-bad"]]},
-  basic:[["充值比例","¥0.65 = 1 美元额度"],["支付方式","支付宝 / 微信"],["是否开票","✕ 不支持"],["退款政策","无退款条款"],["客服响应","无有效工单渠道"],["SLA 承诺","无"]],
-  prices:[
-   ["GPT-5.5",1.25,5,3.75,"tm-r","✕ 3 倍于基准","tm-r","未通过",88.2],
-   ["GPT-5.6 Sol",9.9,49,9.9,"tm-r","✕ 不算缓存","tm-r","未通过",91.0],
-   ["Claude Opus 5(标红)","9.9",49,9.9,"tm-r","✕ 数据异常","tm-r","未通过",85.4]
-  ],
-  availSeries:[97,96.8,96.5,96,95.2,95,94.1,94,93.2,93,92.5,92.4,92,91.8,91.5,91.6,91.2,91.4,91,90.8,91.2,91,90.6,91.4,91.2,91,91.6,91.4,91.4,91.2],
-  ttftSeries:[3.1,3.3,3.5,3.8,4.0,4.2,4.4,4.6,4.8,4.9,5.1,5.2,5.3,5.5,5.4,5.6,5.7,5.6,5.8,5.7,5.8,5.9,5.8,6.0,5.9,5.8,6.0,5.9,5.8,5.8],
-  priceSeries:[3.1,3.1,3.1,3.15,3.2,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.8,3.9,4.0,4.0,4.05,4.1,4.1,4.15,4.2,4.2,4.2,4.2,4.2,4.2,4.2,4.2,4.2,4.2],
-  cacheBars:[45,42,40,38,36,35,33,32,30,29,28,27,26,25,24,23,22,22,21,20,21,22,23,24,25,26,27,28,28,28],
-  rounds:[
-   {r:1,model:"gpt-5.5",in:18420,cached:1150,out:1905,should:"¥0.94",actual:"¥0.99",ok:0},
-   {r:2,model:"gpt-5.5",in:18420,cached:1080,out:1888,should:"¥0.94",actual:"¥0.98",ok:0},
-   {r:3,model:"gpt-5.5",in:18420,cached:1220,out:1977,should:"¥0.95",actual:"¥0.99",ok:0},
-   {r:4,model:"gpt-5.5",in:18420,cached:1100,out:1901,should:"¥0.94",actual:"¥0.97",ok:0},
-   {r:5,model:"gpt-5.5",in:18420,cached:1050,out:1955,should:"¥0.95",actual:"¥0.98",ok:0},
-   {r:6,model:"gpt-5.5",in:18420,cached:0,out:1901,should:"¥0.90",actual:"¥0.94",ok:0},
-   {r:7,model:"gpt-5.5",in:18420,cached:0,out:1877,should:"¥0.90",actual:"¥0.95",ok:0},
-   {r:8,model:"gpt-5.5",in:18420,cached:0,out:1955,should:"¥0.91",actual:"¥0.95",ok:0},
-   {r:9,model:"gpt-5.5",in:18420,cached:0,out:1905,should:"¥0.90",actual:"¥0.93",ok:0},
-   {r:10,model:"gpt-5.5",in:18420,cached:0,out:1933,should:"¥0.90",actual:"¥0.96",ok:0}
-  ],
-  timeline:[
-   ["t-bad","2026-09-27","连续 5 批次扣费偏差 >4%","标红复核中;已尝试联系站方,48 小时无响应","#0927-0058"],
-   ["t-bad","2026-09-24","指纹检测未通过","GPT-5.5 端点响应特征与官方直连相似度 79%,疑似轻量版替换","#0924-0047"],
-   ["t-warn","2026-09-20","单周涨价 22%","30 天波动率超阈值,跑路风险指数上调至「高」","#0920-0041"],
-   ["t-warn","2026-09-12","缓存计费策略变更","从「按缓存价计费」变为「不算缓存」,编程场景成本上升约 1.9 倍","#0912-0033"],
-   ["t-ok","2026-08-15","首次收录","收录时各项指标正常,偏差 0.8%","—"]
-  ],
-  promo:null,batches:64,bill:"¥2,410",since:"2026-08-15"
+ ab:"OR",color:"linear-gradient(135deg,#991b1b,#7f1d1d)",status:"标红复核中",audit:{matchPct:86.7,verified:12,inject:4398,stream:100,consistency:"未复检",lastAt:"2026-09-27",note:"标红复核中:多笔偏差超 4%,且检出号池级注入,短任务成本放大 147×。"},
+ band:[["综合分","61","v-bad","hl"],["扣费偏差","4.2%","v-bad",""],["缓存命中","28%","v-bad",""],["可用率7d","91.4%","v-bad",""],["首字延迟·晚高峰","5.8s","v-bad",""],["指纹检测","未通过","v-bad",""]],
+ tags:[["计费虚标嫌疑","bad"],["价格异常波动","bad"],["高风险指数","bad"],["运营 0.6 年","warn"]],
+ avail:91.4,ttft:5.8,risk:{level:"高 ",cls:"",items:[["运营时长","0.6 年","s-bad"],["最低充值","¥50","s-warn"],["30天价格波动","+34%","s-bad"],["公告履约","2/5 兑现","s-bad"],["域名年龄","0.7 年","s-bad"]]},
+ basic:[["充值比例","¥0.65 = 1 美元额度"],["支付方式","支付宝 / 微信"],["是否开票","✕ 不支持"],["退款政策","无退款条款"],["客服响应","无有效工单渠道"],["SLA 承诺","无"]],
+ prices:[
+ ["GPT-5.5",1.25,5,3.75,"tm-r","✕ 3 倍于基准","tm-r","未通过",88.2],
+ ["GPT-5.6 Sol",9.9,49,9.9,"tm-r","✕ 不算缓存","tm-r","未通过",91.0],
+ ["Claude Opus 5(标红)","9.9",49,9.9,"tm-r","✕ 数据异常","tm-r","未通过",85.4]
+ ],
+ availSeries:[97,96.8,96.5,96,95.2,95,94.1,94,93.2,93,92.5,92.4,92,91.8,91.5,91.6,91.2,91.4,91,90.8,91.2,91,90.6,91.4,91.2,91,91.6,91.4,91.4,91.2],
+ ttftSeries:[3.1,3.3,3.5,3.8,4.0,4.2,4.4,4.6,4.8,4.9,5.1,5.2,5.3,5.5,5.4,5.6,5.7,5.6,5.8,5.7,5.8,5.9,5.8,6.0,5.9,5.8,6.0,5.9,5.8,5.8],
+ priceSeries:[3.1,3.1,3.1,3.15,3.2,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.8,3.9,4.0,4.0,4.05,4.1,4.1,4.15,4.2,4.2,4.2,4.2,4.2,4.2,4.2,4.2,4.2,4.2],
+ cacheBars:[45,42,40,38,36,35,33,32,30,29,28,27,26,25,24,23,22,22,21,20,21,22,23,24,25,26,27,28,28,28],
+ rounds:[
+ {r:1,model:"gpt-5.5",in:18420,cached:1150,out:1905,should:"¥0.94",actual:"¥0.99",ok:0},
+ {r:2,model:"gpt-5.5",in:18420,cached:1080,out:1888,should:"¥0.94",actual:"¥0.98",ok:0},
+ {r:3,model:"gpt-5.5",in:18420,cached:1220,out:1977,should:"¥0.95",actual:"¥0.99",ok:0},
+ {r:4,model:"gpt-5.5",in:18420,cached:1100,out:1901,should:"¥0.94",actual:"¥0.97",ok:0},
+ {r:5,model:"gpt-5.5",in:18420,cached:1050,out:1955,should:"¥0.95",actual:"¥0.98",ok:0},
+ {r:6,model:"gpt-5.5",in:18420,cached:0,out:1901,should:"¥0.90",actual:"¥0.94",ok:0},
+ {r:7,model:"gpt-5.5",in:18420,cached:0,out:1877,should:"¥0.90",actual:"¥0.95",ok:0},
+ {r:8,model:"gpt-5.5",in:18420,cached:0,out:1955,should:"¥0.91",actual:"¥0.95",ok:0},
+ {r:9,model:"gpt-5.5",in:18420,cached:0,out:1905,should:"¥0.90",actual:"¥0.93",ok:0},
+ {r:10,model:"gpt-5.5",in:18420,cached:0,out:1933,should:"¥0.90",actual:"¥0.96",ok:0}
+ ],
+ timeline:[
+ ["t-bad","2026-09-27","连续 5 批次扣费偏差 >4%","标红复核中;已尝试联系站方,48 小时无响应","#0927-0058"],
+ ["t-bad","2026-09-24","指纹检测未通过","GPT-5.5 端点响应特征与官方直连相似度 79%,疑似轻量版替换","#0924-0047"],
+ ["t-warn","2026-09-20","单周涨价 22%","30 天波动率超阈值,跑路风险指数上调至「高」","#0920-0041"],
+ ["t-warn","2026-09-12","缓存计费策略变更","从「按缓存价计费」变为「不算缓存」,编程场景成本上升约 1.9 倍","#0912-0033"],
+ ["t-ok","2026-08-15","首次收录","收录时各项指标正常,偏差 0.8%","—"]
+ ],
+ promo:null,batches:64,bill:"¥2,410",since:"2026-08-15"
  }
 };
 /* 默认站点 fallback */
@@ -484,124 +492,149 @@ var isFallback=!!requested&&!DETAIL[requested];
 /* ===== 数据管道:探针真实数据优先(data/sites.json details),为真实站动态构建 DETAIL ===== */
 var DATA_DETAIL=null;
 function buildDetailFromSync(name,det){
-  var m=det.metrics,au=det.audit,sc=det.score;
-  var ttftS=m.ttft!==null?(m.ttft/1000).toFixed(1)+"s":"未测";
-  return {
-    ab:name==="aixoras"?"AX":"AC",
-    color:name==="aixoras"?"linear-gradient(135deg,#e8590c,#c2410c)":"linear-gradient(135deg,#0b7285,#087391)",
-    status:"正常运营(实测)",
-    band:[["综合分",String(sc.all!==null?sc.all:"—"),"v-brand","hl"],["编程榜",String(sc.code!==null?sc.code:"—"),"v-brand",""],["对账匹配",(au.matchPct!==null?au.matchPct:"—")+"%","v-ok",""],["缓存命中","未测","",""],["可用率7d",m.avail7d!==null?m.avail7d+"%(" + m.checks + "次)":"—","v-ok",""],["首字延迟(实测)",ttftS,"v-warn",""]],
-    tags:[["实测数据","ok"],["逐笔对账"+(au.matchPct!==null?au.matchPct+"%":"—"),"ok"],["号池注入 "+(m.inject||"—")+" tok","warn"],["假流式率 "+(m.bufferedRate!==null?m.bufferedRate+"%":"—"),"bad"]],
-    risk:{level: m.bufferedRate>=100?"中":"低",items:[["运营时长","未知",""],["注入开销",(m.inject||"—")+" tok/请求",""],["30天价格波动","未监测",""],["稳定性样本",m.checks+" 次",""]]},
-    basic:(function(){
-      // 商业信息只来自站方声明(commerce)或运营方人工核实;未声明的字段如实写「未声明」,不猜也不留空
-      var c=det.commerce||null,U="未声明(待站方入驻填写)";
-      // 来源标注必须跟着数字走:人工核实的东西不能伪装成站方承诺
-      var SU=c?(c.src==="manual"?(" · 人工核实"+(c.at?"("+c.at+",未经站方书面确认)":",未经站方书面确认")):(c.at?(" · 站方声明("+c.at+")"):" · 站方声明")):"";
-      var CV=function(v){return (v||U)+(v?SU:"")};
-      return [
-        ["支付方式",CV(c&&c.pay)],
-        ["充值比例",CV(c&&c.ratio)],
-        ["起充金额",CV(c&&c.minTopUp)],
-        ["是否开票",CV(c&&c.invoice)],
-        ["退款政策",CV(c&&c.refund)],
-        ["客服响应","未声明(待站方入驻填写)"],
-        ["SLA 承诺","未声明(待站方入驻填写)"]
-      ];
-    })(),
-    prices:[],   // 详情报价表由比价页承担,此处不重复
-    availSeries:Array.from({length:20},function(_,i){return m.avail7d!==null?Math.max(70,m.avail7d+Math.sin(i)*2):null}).filter(function(v){return v!==null}),
-    ttftSeries:Array.from({length:20},function(_,i){return m.ttft!==null?m.ttft/1000*(0.85+Math.sin(i/3)*0.15):null}).filter(function(v){return v!==null}),
-    priceSeries:Array.from({length:20},function(){return 1}),
-    cacheBars:Array.from({length:12},function(){return 0}),   // 缓存未测
-    rounds:[],   // 逐轮明细走 Pro 证据包
-    timeline:[
-      ["t-ok",au.lastAt||"2026-09-29","逐笔对账 "+(au.verified||0)+" 笔","匹配率 "+(au.matchPct!==null?au.matchPct+"%":"—")+",证据批次可溯源",""],
-      m.fingerprint?["t-ok",au.lastAt||"2026-09-29","指纹比对 "+m.fingerprint.similarity+"% ("+(m.fingerprint.baseline==="openrouter"?"官方基线":"跨站差分")+")","判定:"+m.fingerprint.verdict+"",""]:null,
-      ["t-warn",au.lastAt||"2026-09-29","检出号池注入 +"+(m.inject||"—")+" tok/请求","30 字短请求成本被放大约 "+Math.round((30+(m.inject||0))/30)+" 倍(按实测注入量折算);长请求影响小",""],
-      m.bufferedRate!==null&&m.bufferedRate>=50?["t-warn",au.lastAt||"2026-09-29","假流式率 "+m.bufferedRate+"%","答案整段生成完才一次性下发,逐 token 渲染客户端体验受限",""]:null
-    ].filter(Boolean),
-    promo:null,
-    audit:Object.assign({},au,{group:(m.measuredGroup&&m.measuredGroup.group)||null,gRatio:(m.measuredGroup&&m.measuredGroup.ratio)||null}),
-    batches:au.verified,bill:"—",since:au.lastAt||"2026-09-29"
-  };
+ var m=det.metrics,au=det.audit,sc=det.score;
+ var ttftS=m.ttft!==null?(m.ttft/1000).toFixed(1)+"s":"未测";
+ return {
+ ab:name==="aixoras"?"AX":"AC",
+ color:name==="aixoras"?"linear-gradient(135deg,#e8590c,#c2410c)":"linear-gradient(135deg,#0b7285,#087391)",
+ status:"正常运营(实测)",
+ band:[["综合分",String(sc.all!==null?sc.all:"—"),"v-brand","hl"],["编程榜",String(sc.code!==null?sc.code:"—"),"v-brand",""],["对账匹配",(au.matchPct!==null?au.matchPct:"—")+"%","v-ok",""],["缓存命中","未测","",""],["可用率7d",m.avail7d!==null?m.avail7d+"%(" + m.checks + "次)":"—","v-ok",""],["首字延迟(实测)",ttftS,"v-warn",""]],
+ tags:[["实测数据","ok"],["逐笔对账"+(au.matchPct!==null?au.matchPct+"%":"—"),"ok"],["号池注入 "+(m.inject||"—")+" tok","warn"],["假流式率 "+(m.bufferedRate!==null?m.bufferedRate+"%":"—"),"bad"]],
+ risk:{level: m.bufferedRate>=100?"中":"低",items:[["运营时长","未知",""],["注入开销",(m.inject||"—")+" tok/请求",""],["30天价格波动","未监测",""],["稳定性样本",m.checks+" 次",""]]},
+ basic:(function(){
+ // 商业信息只来自站方声明(commerce)或运营方人工核实;未声明的字段如实写「未声明」,不猜也不留空
+ var c=det.commerce||null,U="未声明(待站方入驻填写)";
+ // 来源标注必须跟着数字走:人工核实的东西不能伪装成站方承诺
+ var SU=c?(c.src==="manual"?(" · 人工核实"+(c.at?"("+c.at+",未经站方书面确认)":",未经站方书面确认")):(c.at?(" · 站方声明("+c.at+")"):" · 站方声明")):"";
+ var CV=function(v){return (v||U)+(v?SU:"")};
+ return [
+ ["支付方式",CV(c&&c.pay)],
+ ["充值比例",CV(c&&c.ratio)],
+ ["起充金额",CV(c&&c.minTopUp)],
+ ["是否开票",CV(c&&c.invoice)],
+ ["退款政策",CV(c&&c.refund)],
+ ["客服响应","未声明(待站方入驻填写)"],
+ ["SLA 承诺","未声明(待站方入驻填写)"]
+ ];
+ })(),
+ prices:[], // 详情报价表由比价页承担,此处不重复
+ availSeries:Array.from({length:20},function(_,i){return m.avail7d!==null?Math.max(70,m.avail7d+Math.sin(i)*2):null}).filter(function(v){return v!==null}),
+ ttftSeries:Array.from({length:20},function(_,i){return m.ttft!==null?m.ttft/1000*(0.85+Math.sin(i/3)*0.15):null}).filter(function(v){return v!==null}),
+ priceSeries:Array.from({length:20},function(){return 1}),
+ cacheBars:Array.from({length:12},function(){return 0}), // 缓存未测
+ rounds:[], // 逐轮明细走 Pro 证据包
+ timeline:[
+ ["t-ok",au.lastAt||"2026-09-29","逐笔对账 "+(au.verified||0)+" 笔","匹配率 "+(au.matchPct!==null?au.matchPct+"%":"—")+",证据批次可溯源",""],
+ m.fingerprint?["t-ok",au.lastAt||"2026-09-29","指纹比对 "+m.fingerprint.similarity+"% ("+(m.fingerprint.baseline==="openrouter"?"官方基线":"跨站差分")+")","判定:"+m.fingerprint.verdict+"",""]:null,
+ ["t-warn",au.lastAt||"2026-09-29","检出号池注入 +"+(m.inject||"—")+" tok/请求","30 字短请求成本被放大约 "+Math.round((30+(m.inject||0))/30)+" 倍(按实测注入量折算);长请求影响小",""],
+ m.bufferedRate!==null&&m.bufferedRate>=50?["t-warn",au.lastAt||"2026-09-29","假流式率 "+m.bufferedRate+"%","答案整段生成完才一次性下发,逐 token 渲染客户端体验受限",""]:null
+ ].filter(Boolean),
+ promo:null,
+ audit:Object.assign({},au,{group:(m.measuredGroup&&m.measuredGroup.group)||null,gRatio:(m.measuredGroup&&m.measuredGroup.ratio)||null}),
+ batches:au.verified,bill:"—",since:au.lastAt||"2026-09-29"
+ };
 }
 function applySyncDetail(payload){
-  if(!payload.details)return;
-  DATA_DETAIL=payload.details;
-  var det=payload.details[requested];
-  if(!det)return;
-  siteName=requested; isFallback=false;
-  D=buildDetailFromSync(requested,det);
-  // 测速直达(站名后):浏览器实时 RTT + 我们探针的流式档案
-  (function(){
-    var host=document.getElementById("shProbe");if(!host)return;
-    var rs=(payload.realSites||[]).filter(function(x){return x.name===requested})[0];
-    var pb=rs&&rs.probe&&rs.probe.origin;
-    if(!pb){host.innerHTML="";return}
-    var p={name:requested,origin:rs.probe.origin,endpoint:rs.probe.endpoint,archived:rs.probe.archived||null};
-    host.innerHTML='<button class="sp-btn" type="button" data-probe="'+JSON.stringify(p).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")+'">测速直达</button>';
-  })();
-  // 重跑首屏装配(标题/徽章/分数带/审计卡等)
-  document.title=siteName+" 站点详情 · RelayLens(实测数据)";
-  document.getElementById("shLogo").textContent=D.ab;
-  document.getElementById("shLogo").style.background=D.color;
-  document.getElementById("shName").textContent=siteName;
-  document.getElementById("shTags").innerHTML=D.tags.map(function(t){return '<span class="sh-tag '+t[1]+'">'+esc(t[0])+'</span>'}).join("");
-  document.getElementById("fallbackTip").style.display="none";
-  document.getElementById("scoreBand").innerHTML=D.band.map(function(b){return '<div class="sb-cell '+b[3]+'"><div class="v '+b[2]+' num">'+esc(b[1])+'</div><div class="k">'+esc(b[0])+'</div></div>'}).join("");
-  document.getElementById("batchCap").textContent="探针真实数据 · 权重 "+(payload.meta&&payload.meta.weightsVersion||"")+" · 更新 "+(payload.meta&&payload.meta.updated||"").slice(0,10);
-  renderRounds();
-  // 承诺矩阵:站方声明方向 × 检测状态(声明-检测-验证体系)
-  var rs=(payload.realSites||[]).filter(function(x){return x.name===requested})[0];
-  var pm=document.getElementById("promiseMatrix");
-  if(pm&&rs){
-    var DIR_LABEL={text:"大语言文本",image:"图片生成",video:"视频生成",audio:"语音",hybrid:"混合"};
-    var DIR_STATUS={text:["已检测","对账/指纹/注入/假流式/首字延迟 七件套已跑","v-ok"],image:["声明·探针未上线","生图验真(声明校验+pHash)排期中","v-warn"],video:["声明·探针未上线","视频验真抽样排期中","v-warn"],audio:["声明·探针未上线","语音验真排期中","v-warn"],hybrid:["声明","按子方向分别检测","v-warn"]};
-    var dirs=rs.directions||[];
-    if(dirs.length){
-      pm.style.display="block";
-      document.getElementById("promiseBody").innerHTML=dirs.map(function(d){
-        var s=DIR_STATUS[d]||["声明","按子方向分别检测","v-warn"];
-        return '<span style="border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-size:12.5px" title="'+esc(s[1])+'"><b>'+esc(DIR_LABEL[d]||d)+'</b> · <span class="'+s[2]+'">'+esc(s[0])+'</span></span>';
-      }).join("")+'<span style="font-size:11.5px;color:var(--faint);align-self:center">未列出的方向 = 站方未承诺,我们不检测也不打分</span>';
-    } else pm.style.display="none";
-  }
-  document.getElementById("priceTbody").innerHTML='<tr><td colspan="7" style="color:var(--faint);padding:18px">报价请前往 <a href="compare.html" style="color:var(--brand)">模型比价页</a> 查看实测口径</td></tr>';
-  document.getElementById("timeline").innerHTML=D.timeline.map(function(t){return '<div class="tl-item '+t[0]+'"><div class="dt">'+t[1]+'</div><div class="tt">'+esc(t[2])+'</div><div class="tx">'+esc(t[3])+'</div>'+(t[4]&&t[4]!=="—"?'<span class="ev">证据批次 '+t[4]+'</span>':"")+'</div>'}).join("");
-  var au=D.audit;
-  if(D.audit&&D.audit.matchPct!==null){
-    var card=document.getElementById("auditCard"); if(card)card.style.display="block";
-    var am=document.getElementById("aMatch"); if(am){am.textContent=D.audit.matchPct+"%";am.style.color=D.audit.matchPct>=99?"var(--ok)":"var(--warn)"}
-    var av=document.getElementById("aVerified"); if(av)av.textContent=D.audit.verified+" 笔";
-    var ai=document.getElementById("aInject"); if(ai){var inv=D.audit.inject;ai.textContent=inv?"+"+inv+" tok":"⚡ 无注入";ai.title=inv?"站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费":"未检出注入";ai.style.color=inv?"var(--bad)":"var(--ok)"}
-    var ac=document.getElementById("aCons"); if(ac)ac.textContent=D.audit.consistency||"未测";
-  }
-  /* CPS 推广位:启用→优惠码+复制+「含推广链接」;未启用→诚实显示洽谈中(不放假码) */
-  var ben=document.querySelector(".benefit"), pb=document.getElementById("promoBtn");
-  if(ben&&det.promo){
-    if(det.promo.enabled&&(det.promo.coupon||det.promo.url)){
-      ben.innerHTML='<div class="bt">🎁 本站专属福利</div>'+
-        (det.promo.coupon?'<div class="code"><span class="cd">'+esc(det.promo.coupon)+'</span><button class="btn btn-sm" id="promoBtn" style="background:var(--gold-soft);color:var(--gold);border:1.5px solid #ecc94b;font-weight:700">复制</button></div>':"")+
-        (det.promo.couponDesc?'<p style="font-size:11.5px;color:#a3801f;margin-top:6px">'+esc(det.promo.couponDesc)+'</p>':"")+
-        (det.promo.url?'<a class="btn btn-sm" style="margin-top:8px;background:var(--brand);color:#fff;display:inline-flex" href="'+esc(det.promo.url)+'" target="_blank" rel="nofollow sponsored noopener">前往注册 ↗</a>':"")+
-        '<span class="ad-flag">含推广链接 · 推广关系不影响实测与排名</span>';
-      var pbtn=document.getElementById("promoBtn");
-      if(pbtn&&det.promo.coupon)pbtn.addEventListener("click",function(){copyCode(det.promo.coupon)});
-    }else{
-      ben.innerHTML='<div class="bt" style="color:var(--faint)">🤝 合作洽谈中</div><p style="font-size:12px;color:var(--sub);margin-top:6px">该站暂未开通推荐位。本站推荐位均为 CPS 合作且强制标注「含推广链接」;合作与否不改变实测指标与排名——这正是我们和「付费排名」测评站的区别。</p>';
-    }
-  }
-  drawChart();
+ if(!payload.details)return;
+ DATA_DETAIL=payload.details;
+ var det=payload.details[requested];
+ if(!det)return;
+ siteName=requested; isFallback=false;
+ D=buildDetailFromSync(requested,det);
+ // 测速直达(站名后):浏览器实时 RTT + 我们探针的流式档案
+ (function(){
+ var host=document.getElementById("shProbe");if(!host)return;
+ var rs=(payload.realSites||[]).filter(function(x){return x.name===requested})[0];
+ var pb=rs&&rs.probe&&rs.probe.origin;
+ if(!pb){host.innerHTML="";return}
+ var p={name:requested,origin:rs.probe.origin,endpoint:rs.probe.endpoint,archived:rs.probe.archived||null};
+ host.innerHTML='<button class="sp-btn" type="button" data-probe="'+JSON.stringify(p).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")+'">测速直达</button>';
+ })();
+ // 重跑首屏装配(标题/徽章/分数带/审计卡等)
+ document.title=siteName+" 站点详情 · RelayLens(实测数据)";
+ document.getElementById("shLogo").textContent=D.ab;
+ document.getElementById("shLogo").style.background=D.color;
+ document.getElementById("shName").textContent=siteName;
+ document.getElementById("shTags").innerHTML=D.tags.map(function(t){return '<span class="sh-tag '+t[1]+'">'+esc(t[0])+'</span>'}).join("");
+ document.getElementById("fallbackTip").style.display="none";
+ document.getElementById("scoreBand").innerHTML=D.band.map(function(b){return '<div class="sb-cell '+b[3]+'"><div class="v '+b[2]+' num">'+esc(b[1])+'</div><div class="k">'+esc(b[0])+'</div></div>'}).join("");
+ document.getElementById("batchCap").textContent="探针真实数据 · 权重 "+(payload.meta&&payload.meta.weightsVersion||"")+" · 更新 "+(payload.meta&&payload.meta.updated||"").slice(0,10);
+ renderRounds();
+ // 承诺矩阵:站方声明方向 × 检测状态(声明-检测-验证体系)
+ var rs=(payload.realSites||[]).filter(function(x){return x.name===requested})[0];
+ var pm=document.getElementById("promiseMatrix");
+ if(pm&&rs){
+ var DIR_LABEL={text:"大语言文本",image:"图片生成",video:"视频生成",audio:"语音",hybrid:"混合"};
+ var DIR_STATUS={text:["已检测","对账/指纹/注入/假流式/首字延迟 七件套已跑","v-ok"],image:["声明·探针未上线","生图验真(声明校验+pHash)排期中","v-warn"],video:["声明·探针未上线","视频验真抽样排期中","v-warn"],audio:["声明·探针未上线","语音验真排期中","v-warn"],hybrid:["声明","按子方向分别检测","v-warn"]};
+ var dirs=rs.directions||[];
+ if(dirs.length){
+ pm.style.display="block";
+ document.getElementById("promiseBody").innerHTML=dirs.map(function(d){
+ var s=DIR_STATUS[d]||["声明","按子方向分别检测","v-warn"];
+ return '<span style="border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-size:12.5px" title="'+esc(s[1])+'"><b>'+esc(DIR_LABEL[d]||d)+'</b> · <span class="'+s[2]+'">'+esc(s[0])+'</span></span>';
+ }).join("")+'<span style="font-size:11.5px;color:var(--faint);align-self:center">未列出的方向 = 站方未承诺,我们不检测也不打分</span>';
+ } else pm.style.display="none";
+ }
+ document.getElementById("priceTbody").innerHTML='<tr><td colspan="7" style="color:var(--faint);padding:18px">报价请前往 <a href="/price/" style="color:var(--brand)">模型比价页</a> 查看实测口径</td></tr>';
+ /* 报价口径按该站源货币说明:美元额度价站走充值比例折算,直接公示人民币单价的站(heyroute)以页面价为准 */
+ var rs=(typeof payload!=="undefined"&&payload&&payload.realSites)?payload.realSites.filter(function(x){return x.name===siteName})[0]:null;
+ var SITE_CUR=(rs&&rs.priceSrc&&rs.priceSrc.src)||null;
+ var cap=document.getElementById("priceBasisCap");
+ if(cap){
+ cap.innerHTML=SITE_CUR==="CNY"
+ ? "价格为站方价格页直接公示的人民币单价(不参与充值比例折算);缓存列标注是否达到官方 10% 基准"
+ : "价格已按充值比例折算;缓存列标注是否达到官方 10% 基准";
+}
+/* 确定性证据两行(证书 / 长上下文):措辞来自后端,页面只上色。
+   取不到就保留 HTML 里的「未采集 / 未测」,绝不回退成"通过"或空字符串。 */
+(function(rs){
+ var paint=function(id,verdict,extra){
+   var el=document.getElementById(id); if(!el)return;
+   if(!verdict){el.textContent=extra||"—";el.className="v";return}
+   el.textContent=verdict.label+(extra?" · "+extra:"");
+   el.className="v"+(verdict.level==="ok"?" v-ok":verdict.level==="warn"?" v-warn":"");
+ };
+ var t=rs&&rs.tls, tv=rs&&rs.tlsVerdict;
+ var tAt=(t&&!t.skipped&&t.checkedAt)?("采集于 "+String(t.checkedAt).slice(0,10)):"";
+ paint("tlsInfo",tv,tv?tAt:"未采集");
+ var c=rs&&rs.context, cv=rs&&rs.contextVerdict;
+ var cAt=(c&&c.checkedAt)?("实测于 "+String(c.checkedAt).slice(0,10)+(c.model?" · "+c.model:"")):"";
+ paint("ctxInfo",cv,cv?cAt:"未测");
+})(rs);
+ document.getElementById("timeline").innerHTML=D.timeline.map(function(t){return '<div class="tl-item '+t[0]+'"><div class="dt">'+t[1]+'</div><div class="tt">'+esc(t[2])+'</div><div class="tx">'+esc(t[3])+'</div>'+(t[4]&&t[4]!=="—"?'<span class="ev">证据批次 '+t[4]+'</span>':"")+'</div>'}).join("");
+ var au=D.audit;
+ if(D.audit&&D.audit.matchPct!==null){
+ var card=document.getElementById("auditCard"); if(card)card.style.display="block";
+ var am=document.getElementById("aMatch"); if(am){am.textContent=D.audit.matchPct+"%";am.style.color=D.audit.matchPct>=99?"var(--ok)":"var(--warn)"}
+ var av=document.getElementById("aVerified"); if(av)av.textContent=D.audit.verified+" 笔";
+ var ai=document.getElementById("aInject"); if(ai){var inv=D.audit.inject;ai.textContent=inv?"+"+inv+" tok":"无注入";ai.title=inv?"站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费":"未检出注入";ai.style.color=inv?"var(--bad)":"var(--ok)"}
+ var ac=document.getElementById("aCons"); if(ac)ac.textContent=D.audit.consistency||"未测";
+ }
+ /* CPS 推广位:启用→优惠码+复制+「含推广链接」;未启用→诚实显示洽谈中(不放假码) */
+ var ben=document.querySelector(".benefit"), pb=document.getElementById("promoBtn");
+ if(ben&&det.promo){
+ if(det.promo.enabled&&(det.promo.coupon||det.promo.url)){
+ ben.innerHTML='<div class="bt">本站专属福利</div>'+
+ (det.promo.coupon?'<div class="code"><span class="cd">'+esc(det.promo.coupon)+'</span><button class="btn btn-sm" id="promoBtn" style="background:var(--gold-soft);color:var(--gold);border:1.5px solid #ecc94b;font-weight:700">复制</button></div>':"")+
+ (det.promo.couponDesc?'<p style="font-size:11.5px;color:#a3801f;margin-top:6px">'+esc(det.promo.couponDesc)+'</p>':"")+
+ (det.promo.url?'<a class="btn btn-sm" style="margin-top:8px;background:var(--brand);color:#fff;display:inline-flex" href="'+esc(det.promo.url)+'" target="_blank" rel="nofollow sponsored noopener">前往注册 ↗</a>':"")+
+ '<span class="ad-flag">含推广链接 · 推广关系不影响实测与排名</span>';
+ var pbtn=document.getElementById("promoBtn");
+ if(pbtn&&det.promo.coupon)pbtn.addEventListener("click",function(){copyCode(det.promo.coupon)});
+ }else{
+ ben.innerHTML='<div class="bt" style="color:var(--faint)">合作洽谈中</div><p style="font-size:12px;color:var(--sub);margin-top:6px">该站暂未开通推荐位。本站推荐位均为 CPS 合作且强制标注「含推广链接」;合作与否不改变实测指标与排名——这正是我们和「付费排名」测评站的区别。</p>';
+ }
+ }
+ drawChart();
 }
 fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject()}).then(applySyncDetail).catch(function(){/* 静默保持演示 */});
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 document.title=siteName+" 站点详情 · RelayLens";
 if(isFallback){
-  document.getElementById("fallbackTip").style.display="block";
-  document.getElementById("fbName").textContent=requested;
-  document.getElementById("fbDemo").textContent=siteName;
+ document.getElementById("fallbackTip").style.display="block";
+ document.getElementById("fbName").textContent=requested;
+ document.getElementById("fbDemo").textContent=siteName;
 }
 document.getElementById("shName").textContent=siteName;
 document.getElementById("shLogo").textContent=D.ab;
@@ -610,142 +643,161 @@ document.getElementById("panelSite").textContent=siteName+" · 控制台-流水"
 
 /* 头部tags */
 document.getElementById("shTags").innerHTML=D.tags.map(function(t){
-  return '<span class="sh-tag '+t[1]+'">'+esc(t[0])+'</span>';
+ return '<span class="sh-tag '+t[1]+'">'+esc(t[0])+'</span>';
 }).join("");
 
 /* 分数带 */
 document.getElementById("scoreBand").innerHTML=D.band.map(function(b){
-  return '<div class="sb-cell '+b[3]+'"><div class="v '+b[2]+' num">'+esc(b[1])+'</div><div class="k">'+esc(b[0])+'</div></div>';
+ return '<div class="sb-cell '+b[3]+'"><div class="v '+b[2]+' num">'+esc(b[1])+'</div><div class="k">'+esc(b[0])+'</div></div>';
 }).join("");
 
-/* 逐轮对账 */
+/* 逐轮对账。
+   ⚠ 红线 10:空数据不许出结论。rounds 为空时旧版仍渲染「通过 10/10 · 偏差 0.00% ✓」,
+   并把 batchCap 覆盖成硬编码演示批次号 RL-RC-0929-0114 —— 9 个在册实测站全部中招
+   (buildDetailFromSync 写死 rounds:[])。偏差也一律由数据算,不再 Math.random()。 */
 function renderRounds(){
-  var html='<div class="prow hd"><span>轮次 / 模型</span><span>输入(缓存命中)</span><span>输出</span><span>理论应扣</span><span>面板实扣</span></div>';
-  D.rounds.forEach(function(r){
-    html+='<div class="prow"><span class="k">'+r.r+' · '+r.model+'</span><span class="v">'+r.in.toLocaleString()+' ('+r.cached.toLocaleString()+')</span><span class="v">'+r.out.toLocaleString()+'</span><span class="v">'+r.should+'</span><span class="v '+(r.ok?'vg':'vr')+'">'+r.actual+(r.ok?"":" ⚠")+'</span></div>';
-  });
-  var fails=D.rounds.filter(function(r){return !r.ok}).length;
-  var totalDev=fails>0?(Math.random()*2+3).toFixed(1):"0";
-  html+='<div class="prow hd" style="border-top:1px solid rgba(255,255,255,.18)"><span>批次结论</span><span></span><span></span><span>通过 '+(10-fails)+'/10</span><span class="'+(fails?'vr':'vg')+'">'+(fails?'偏差 '+totalDev+'% ⚠':'偏差 0.00% ✓')+'</span></div>';
-  document.getElementById("panelBody").innerHTML=html;
-  document.getElementById("batchCap").textContent="批次 #20260929-"+(114)+" · 2026-09-29 09:41 · 标准混合模型 10 轮测试 · 存档编号 RL-RC-0929-0114";
+ var body=document.getElementById("panelBody");
+ var rounds=(D&&D.rounds)||[];
+ if(!rounds.length){
+  /* 诚实空态:对齐红线 7 的「未测」语义 —— 明说没有样本,而不是给一个好看的结论 */
+  body.innerHTML='<div class="prow"><span class="k" style="grid-column:1/-1;color:var(--amber);font-weight:600">逐轮对账:未接入</span></div>'+
+   '<div class="prow"><span class="v" style="grid-column:1/-1;color:var(--sub)">当前数据源没有该站的逐轮「应扣 vs 实扣」样本(逐轮明细尚未纳入公开数据集),因此不给出通过率与偏差百分比。站级对账结论见下方「计费审计」卡,它来自真实逐笔核验。</span></div>';
+  document.getElementById("panelBatch").textContent="批次未接入";
+  return;
+ }
+ var html='<div class="prow hd"><span>轮次 / 模型</span><span>输入(缓存命中)</span><span>输出</span><span>理论应扣</span><span>面板实扣</span></div>';
+ var total=0,devSum=0;
+ rounds.forEach(function(r){
+  var shouldN=parseFloat(String(r.should).replace(/[^0-9.]/g,""));
+  var actualN=parseFloat(String(r.actual).replace(/[^0-9.]/g,""));
+  var ok=!!r.ok; total++;
+  if(isFinite(shouldN)&&isFinite(actualN)) devSum+=Math.abs(actualN-shouldN)/Math.max(shouldN,1e-9);
+  html+='<div class="prow"><span class="k">'+r.r+' · '+r.model+'</span><span class="v">'+r.in.toLocaleString()+' ('+r.cached.toLocaleString()+')</span><span class="v">'+r.out.toLocaleString()+'</span><span class="v">'+r.should+'</span><span class="v '+(ok?'vg':'vr')+'">'+r.actual+'</span></div>';
+ });
+ var fails=rounds.length-rounds.filter(function(r){return !!r.ok}).length;
+ var devPct=total?(devSum/total*100).toFixed(2):"0.00";
+ html+='<div class="prow hd" style="border-top:1px solid rgba(255,255,255,.18)"><span>批次结论</span><span></span><span></span><span>通过 '+(total-fails)+'/'+total+'</span><span class="'+(fails?'vr':'vg')+'">'+(fails?'偏差 '+devPct+'%':'偏差 0.00% ✓')+'</span></div>';
+ body.innerHTML=html;
+ document.getElementById("panelBatch").textContent=rounds.length+" 轮实测";
 }
 renderRounds();
 
 /* 缓存柱状图 */
 document.getElementById("cacheBars").innerHTML=D.cacheBars.map(function(v){
-  var cls=v>=50?"":(v>=35?"b-warn":"b-bad");
-  return '<div class="bar '+cls+'" style="height:'+Math.max(4,v)+'%"><span class="tip">'+v+'%</span></div>';
+ var cls=v>=50?"":(v>=35?"b-warn":"b-bad");
+ return '<div class="bar '+cls+'" style="height:'+Math.max(4,v)+'%"><span class="tip">'+v+'%</span></div>';
 }).join("");
 
 /* 模型报价表 */
 document.getElementById("priceTbody").innerHTML=D.prices.map(function(p){
-  return '<tr><td><b>'+esc(p[0])+'</b></td><td>'+p[1]+'</td><td>'+p[2]+'</td><td>'+p[3]+'</td><td><span class="tag-m '+p[4]+'">'+p[5]+'</span></td><td><span class="tag-m '+p[6]+'">'+p[7]+'</span></td><td>'+p[8]+'</td></tr>';
+ return '<tr><td><b>'+esc(p[0])+'</b></td><td>'+p[1]+'</td><td>'+p[2]+'</td><td>'+p[3]+'</td><td><span class="tag-m '+p[4]+'">'+p[5]+'</span></td><td><span class="tag-m '+p[6]+'">'+p[7]+'</span></td><td>'+p[8]+'</td></tr>';
 }).join("");
 
 /* 时间线 */
 document.getElementById("timeline").innerHTML=D.timeline.map(function(t){
-  return '<div class="tl-item '+t[0]+'"><div class="dt">'+t[1]+'</div><div class="tt">'+esc(t[2])+'</div><div class="tx">'+esc(t[3])+'</div>'+(t[4]&&t[4]!=="—"?'<span class="ev">证据批次 '+t[4]+'</span>':"")+'</div>';
+ return '<div class="tl-item '+t[0]+'"><div class="dt">'+t[1]+'</div><div class="tt">'+esc(t[2])+'</div><div class="tx">'+esc(t[3])+'</div>'+(t[4]&&t[4]!=="—"?'<span class="ev">证据批次 '+t[4]+'</span>':"")+'</div>';
 }).join("");
 
 /* 计费审计卡 */
 if(D.audit){
-  var a=D.audit;
-  document.getElementById("auditCard").style.display="block";
-  document.getElementById("auditCap").textContent="最近审计 "+a.lastAt+" · 用站点逐笔消费日志重算应扣并与实扣比对(方法见方法论页)"+(a.group?" · 本次实测基于「"+a.group+"」分组"+(a.gRatio?"(倍率 "+a.gRatio+")":""):"");
-  // 分组口径披露:一个 API key 只绑一个分组,分数不代表全站
-  var gd=document.getElementById("groupNote");
-  if(!gd&&a.group){
-    gd=document.createElement("p");gd.id="groupNote";
-    gd.style.cssText="font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin-top:10px";
-    document.getElementById("auditCard").appendChild(gd);
-  }
-  if(gd)gd.textContent=a.group?("⚠ 口径说明:一个 API Key 只能绑定一个分组,以上分数反映的是「"+a.group+"」分组的表现。该站其他分组(尤其特价分组)我们尚未取得测试额度,未测不打分。站方可通过入驻提供分组 Key,用户可在自己的分组上用工具箱自测。"):((gd.style.display="none"),"");
-  var am=document.getElementById("aMatch");
-  am.textContent=a.matchPct+"%";
-  am.style.color=a.matchPct>=99?"var(--ok)":a.matchPct>=90?"var(--warn)":"var(--bad)";
-  document.getElementById("aVerified").textContent=a.verified+" 笔";
-  var ai=document.getElementById("aInject");
-  ai.textContent=a.inject===0?"⚡ 无注入":"+"+a.inject+" tok";
-  ai.title=a.inject===0?"未检出注入":"站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费";
-  ai.style.color=a.inject===0?"var(--ok)":"var(--bad)";
-  document.getElementById("aCons").textContent=a.consistency;
-  var as=document.getElementById("aStream");
-  as.textContent=a.stream===0?"0% ✓":a.stream+"%";
-  as.style.color=a.stream===0?"var(--ok)":a.stream>=50?"var(--bad)":"var(--warn)";
-  document.getElementById("auditNote").textContent=a.note;
-  if(a.stream>=50) document.getElementById("auditNote").textContent+=" 【假流式 "+a.stream+"%】答案整段生成完才一次性下发,Claude Code / Cursor 等逐 token 渲染的客户端体验等价于非流式。";
+ var a=D.audit;
+ document.getElementById("auditCard").style.display="block";
+ document.getElementById("auditCap").textContent="最近审计 "+a.lastAt+" · 用站点逐笔消费日志重算应扣并与实扣比对(方法见方法论页)"+(a.group?" · 本次实测基于「"+a.group+"」分组"+(a.gRatio?"(倍率 "+a.gRatio+")":""):"");
+ // 分组口径披露:一个 API key 只绑一个分组,分数不代表全站
+ var gd=document.getElementById("groupNote");
+ if(!gd&&a.group){
+ gd=document.createElement("p");gd.id="groupNote";
+ gd.style.cssText="font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin-top:10px";
+ document.getElementById("auditCard").appendChild(gd);
+ }
+ if(gd)gd.textContent=a.group?("口径说明:一个 API Key 只能绑定一个分组,以上分数反映的是「"+a.group+"」分组的表现。该站其他分组(尤其特价分组)我们尚未取得测试额度,未测不打分。站方可通过入驻提供分组 Key,用户可在自己的分组上用工具箱自测。"):((gd.style.display="none"),"");
+ var am=document.getElementById("aMatch");
+ am.textContent=a.matchPct+"%";
+ am.style.color=a.matchPct>=99?"var(--ok)":a.matchPct>=90?"var(--warn)":"var(--bad)";
+ document.getElementById("aVerified").textContent=a.verified+" 笔";
+ var ai=document.getElementById("aInject");
+ ai.textContent=a.inject===0?"无注入":"+"+a.inject+" tok";
+ ai.title=a.inject===0?"未检出注入":"站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费";
+ ai.style.color=a.inject===0?"var(--ok)":"var(--bad)";
+ document.getElementById("aCons").textContent=a.consistency;
+ var as=document.getElementById("aStream");
+ as.textContent=a.stream===0?"0% ✓":a.stream+"%";
+ as.style.color=a.stream===0?"var(--ok)":a.stream>=50?"var(--bad)":"var(--warn)";
+ document.getElementById("auditNote").textContent=a.note;
+ if(a.stream>=50) document.getElementById("auditNote").textContent+=" 【假流式 "+a.stream+"%】答案整段生成完才一次性下发,Claude Code / Cursor 等逐 token 渲染的客户端体验等价于非流式。";
 }
 
 /* 侧栏:风险 */
-var riskColors={低:"var(--ok)","低 ⚠":"var(--ok)",高:"var(--bad)","高 ⚠":"var(--bad)"};
+var riskColors={低:"var(--ok)","低 ":"var(--ok)",高:"var(--bad)","高 ":"var(--bad)"};
 document.getElementById("riskV").textContent=D.risk.level;
 document.getElementById("riskV").style.color=riskColors[D.risk.level]||"var(--warn)";
 document.getElementById("riskItems").innerHTML=D.risk.items.map(function(it){
-  return '<div class="risk-item"><span style="color:var(--faint)">'+it[0]+'</span><span class="s '+it[2]+'">'+it[1]+'</span></div>';
+ return '<div class="risk-item"><span style="color:var(--faint)">'+it[0]+'</span><span class="s '+it[2]+'">'+it[1]+'</span></div>';
 }).join("");
 if(!D.promo){
-  document.getElementById("riskV").style.color="var(--bad)";
+ document.getElementById("riskV").style.color="var(--bad)";
 }
 
 /* 侧栏:基础信息 */
 document.getElementById("basicInfo").innerHTML=D.basic.map(function(b){
-  return '<div class="kv"><span class="k">'+b[0]+'</span><span class="v" style="max-width:170px;white-space:normal">'+esc(b[1])+'</span></div>';
+ return '<div class="kv"><span class="k">'+b[0]+'</span><span class="v" style="max-width:170px;white-space:normal">'+esc(b[1])+'</span></div>';
 }).join("");
 document.getElementById("batchCount").textContent=D.batches+" 批";
+var _bc=document.getElementById("billCount"); if(_bc) _bc.textContent=D.bill||"—";
+var _sd=document.getElementById("sinceDate"); if(_sd) _sd.textContent=D.since||"—";
 
 /* 侧栏:福利 */
 var ben=document.querySelector(".benefit");
 if(D.promo){
-  document.getElementById("promoCode").textContent=D.promo;
-  ben.querySelector("p").textContent=D.promoDesc;
-  document.getElementById("promoBtn").addEventListener("click",function(){copyCode(D.promo)});
+ document.getElementById("promoCode").textContent=D.promo;
+ ben.querySelector("p").textContent=D.promoDesc;
+ document.getElementById("promoBtn").addEventListener("click",function(){copyCode(D.promo)});
 }else{
-  ben.innerHTML='<div class="bt">🚫 无合作福利</div><p style="font-size:11.5px;color:#a3801f;margin-top:6px">该站处于标红复核 / 高风险状态,平台不提供任何推广位。<b>不建议大额充值。</b></p>';
+ ben.innerHTML='<div class="bt">无合作福利</div><p style="font-size:11.5px;color:#a3801f;margin-top:6px">该站处于标红复核 / 高风险状态,平台不提供任何推广位。<b>不建议大额充值。</b></p>';
 }
 
 /* ============ 折线图(SVG 手绘,无依赖) ============ */
 var chartMode="avail";
 function drawChart(){
-  var svg=document.getElementById("chart");
-  var series=chartMode==="avail"?D.availSeries:chartMode==="ttft"?D.ttftSeries:D.priceSeries;
-  var W=640,H=180,pad=8;
-  var min=Math.min.apply(null,series),max=Math.max.apply(null,series);
-  var range=(max-min)||1;min-=range*0.15;max+=range*0.15;
-  var pts=series.map(function(v,i){
-    var x=pad+i*(W-pad*2)/(series.length-1);
-    var y=H-pad-(v-min)/(max-min)*(H-pad*2);
-    return[x,y];
-  });
-  var line=pts.map(function(p,i){return(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ");
-  var area=line+' L'+(W-pad)+','+(H-pad)+' L'+pad+','+(H-pad)+' Z';
-  var colors={avail:"#2b5cf0",ttft:"#7c3aed",price:"#0e9f6e"};
-  var c=colors[chartMode];
-  var dots=pts.filter(function(_,i){return i%5===4||i===0}).map(function(p){
-    return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="#fff" stroke="'+c+'" stroke-width="2"/>';
-  }).join("");
-  svg.innerHTML=
-   '<defs><linearGradient id="g'+chartMode+'" x1="0" y1="0" x2="0" y2="1">'+
-   '<stop offset="0%" stop-color="'+c+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+c+'" stop-opacity="0"/></linearGradient></defs>'+
-   /* 网格线 */
-   [0.25,0.5,0.75].map(function(t){return '<line x1="'+pad+'" y1="'+(H*t).toFixed(1)+'" x2="'+(W-pad)+'" y2="'+(H*t).toFixed(1)+'" stroke="#eef1f5" stroke-width="1"/>'}).join("")+
-   '<path d="'+area+'" fill="url(#g'+chartMode+')"/>'+
-   '<path d="'+line+'" fill="none" stroke="'+c+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
-   dots;
-  var unit=chartMode==="ttft"?"s":"%";
-  var last=series[series.length-1];
-  document.getElementById("chartLegend").innerHTML=
-   '<span><i style="background:'+c+'"></i>'+({avail:"可用率",ttft:"首字延迟",price:"价格指数"})[chartMode]+' · 当前 <b style="color:'+c+'">'+last+(chartMode==="price"?"":unit)+'</b></span>'+
-   '<span>区间: '+Math.min.apply(null,series)+(chartMode==="price"?"":"")+unit+' ~ '+Math.max.apply(null,series)+unit+'</span>'+
-   '<span>共 '+series.length+' 个批次</span>';
+ var svg=document.getElementById("chart");
+ var series=chartMode==="avail"?D.availSeries:chartMode==="ttft"?D.ttftSeries:D.priceSeries;
+ var W=640,H=180,pad=8;
+ var min=Math.min.apply(null,series),max=Math.max.apply(null,series);
+ var range=(max-min)||1;min-=range*0.15;max+=range*0.15;
+ var pts=series.map(function(v,i){
+ var x=pad+i*(W-pad*2)/(series.length-1);
+ var y=H-pad-(v-min)/(max-min)*(H-pad*2);
+ return[x,y];
+ });
+ var line=pts.map(function(p,i){return(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ");
+ var area=line+' L'+(W-pad)+','+(H-pad)+' L'+pad+','+(H-pad)+' Z';
+ var colors={avail:"#2b5cf0",ttft:"#7c3aed",price:"#0e9f6e"};
+ var c=colors[chartMode];
+ var dots=pts.filter(function(_,i){return i%5===4||i===0}).map(function(p){
+ return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="#fff" stroke="'+c+'" stroke-width="2"/>';
+ }).join("");
+ svg.innerHTML=
+ '<defs><linearGradient id="g'+chartMode+'" x1="0" y1="0" x2="0" y2="1">'+
+ '<stop offset="0%" stop-color="'+c+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+c+'" stop-opacity="0"/></linearGradient></defs>'+
+ /* 网格线 */
+ [0.25,0.5,0.75].map(function(t){return '<line x1="'+pad+'" y1="'+(H*t).toFixed(1)+'" x2="'+(W-pad)+'" y2="'+(H*t).toFixed(1)+'" stroke="#eef1f5" stroke-width="1"/>'}).join("")+
+ '<path d="'+area+'" fill="url(#g'+chartMode+')"/>'+
+ '<path d="'+line+'" fill="none" stroke="'+c+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+ dots;
+ var unit=chartMode==="ttft"?"s":"%";
+ var last=series[series.length-1];
+ document.getElementById("chartLegend").innerHTML=
+ '<span><i style="background:'+c+'"></i>'+({avail:"可用率",ttft:"首字延迟",price:"价格指数"})[chartMode]+' · 当前 <b style="color:'+c+'">'+last+(chartMode==="price"?"":unit)+'</b></span>'+
+ '<span>区间: '+Math.min.apply(null,series)+(chartMode==="price"?"":"")+unit+' ~ '+Math.max.apply(null,series)+unit+'</span>'+
+ '<span>共 '+series.length+' 个批次</span>';
 }
 document.querySelectorAll('[data-chart]').forEach(function(t){
-  t.addEventListener("click",function(){
-    document.querySelectorAll('[data-chart]').forEach(function(x){x.classList.remove("on")});
-    t.classList.add("on");
-    chartMode=t.getAttribute("data-chart");
-    drawChart();
-  });
+ t.addEventListener("click",function(){
+ document.querySelectorAll('[data-chart]').forEach(function(x){x.classList.remove("on")});
+ t.classList.add("on");
+ chartMode=t.getAttribute("data-chart");
+ drawChart();
+ });
 });
 drawChart();
 
@@ -753,9 +805,59 @@ drawChart();
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
 function copyCode(c){
-  var f=function(){toast("优惠码 "+c+" 已复制")};
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(c).then(f,f)}else{f()}
+ var f=function(){toast("优惠码 "+c+" 已复制")};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(c).then(f,f)}else{f()}
 }
+</script>
+<script src="assets/auth.js"></script>
+<script>
+/* 用户评论区:公开读(先审后发的 published),登录写;与实测评分严格分离 */
+(function(){
+ if (typeof RL_API_BASE === "undefined") return;
+ var site = (typeof siteName !== "undefined") ? siteName : (typeof DEFAULT_SITE !== "undefined" ? DEFAULT_SITE : "");
+ function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+ function load(){
+ var box = document.getElementById("rlReviewList");
+ if (!RL_API_BASE) { box.innerHTML = '<div style="font-size:13px;color:var(--faint)">评论服务接入中</div>'; return; }
+ rlApi("GET", "/v1/reviews/" + encodeURIComponent(site)).then(function(r){ return r.json(); }).then(function(j){
+ document.getElementById("rlReviewAvg").textContent = j.count ? ("平均 " + j.avg_stars + " · " + j.count + " 条已审核评价") : "暂无已审核评价";
+ box.innerHTML = j.reviews.length ? "" : '<div style="font-size:13px;color:var(--faint)">还没有评价,做第一个?</div>';
+ j.reviews.forEach(function(r){
+ var d = document.createElement("div");
+ d.style.cssText = "border:1px solid #eef1f5;border-radius:10px;padding:10px 12px";
+ d.innerHTML = '<div style="font-size:13px;font-weight:700">' + "".repeat(r.stars) + "".repeat(5 - r.stars) +
+ ' <span style="font-weight:400;color:var(--faint)">' + escHtml(r.display) + " · " + String(r.created_at).slice(0,10) + "</span></div>" +
+ '<div style="font-size:13px;margin-top:4px">' + escHtml(r.text) + "</div>" +
+ (r.station_reply ? '<div style="font-size:12.5px;margin-top:6px;background:#f6f9ff;border-radius:8px;padding:6px 10px"><b>站方回应:</b>' + escHtml(r.station_reply) + "</div>" : "");
+ box.appendChild(d);
+ });
+ }).catch(function(){ box.innerHTML = '<div style="font-size:13px;color:var(--faint)">评论加载失败</div>'; });
+ }
+ var btn = document.getElementById("rlReviewBtn");
+ if (btn) btn.onclick = function(){
+ rlLogin(function(){
+ var box = document.getElementById("rlReviewFormBox");
+ box.innerHTML = '<textarea id="rlRevText" rows="4" placeholder="你的使用体验(至少 10 字):到手价与标价一致吗?稳定吗?客服响应如何?" style="width:100%;box-sizing:border-box;font:inherit;padding:10px;border:1px solid #d0d5dd;border-radius:9px"></textarea>' +
+ '<div style="display:flex;gap:6px;align-items:center;margin-top:8px">星级: <select id="rlRevStars">' +
+ [1,2,3,4,5].map(function(n){return '<option value="' + n + '">' + n + " 星</option>";}).join("") +
+ '</select><button class="btn btn-primary btn-sm" id="rlRevGo">提交(先审后发)</button></div>' +
+ '<div id="rlRevErr" style="display:none;color:#b42318;font-size:12.5px;margin-top:6px"></div>';
+ document.getElementById("rlRevGo").onclick = async function(){
+ var stars = Number(document.getElementById("rlRevStars").value);
+ var text = document.getElementById("rlRevText").value.trim();
+ var e = document.getElementById("rlRevErr");
+ try {
+ var r = await rlApi("POST", "/reviews", { site: site, stars: stars, text: text });
+ var j = await r.json();
+ if (!r.ok) { e.textContent = j.error === "text_too_short" ? "至少 10 字" : (j.error || r.status); e.style.display = "block"; return; }
+ _rlToast("已提交,审核通过后公开显示");
+ load();
+ } catch (e2) { e.textContent = "网络错误"; e.style.display = "block"; }
+ };
+ });
+ };
+ load();
+})();
 </script>
 <script src="assets/speedprobe.js"></script>
 </body>

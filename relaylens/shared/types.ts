@@ -24,7 +24,8 @@ export interface SiteConfig {
 export interface ProbeConfig {
   sites: SiteConfig[];
   models: { flagship: string[]; standard: string[]; budget: string[] };
-  schedules: { health: string; price: string; billing: string };
+  /** billing 为真实扣费任务:配置了节拍才启用自动对账(与 perf 双窗口同一策略);未配置则只能 CLI 手动触发 */
+  schedules: { health: string; price: string; billing?: string; perf_work?: string; perf_off?: string; fingerprint?: string; tokens?: string };
   score_weights: Record<string, Record<string, number>>;
   thresholds: {
     dev_warn: number;
@@ -37,7 +38,31 @@ export interface ProbeConfig {
 }
 
 // ---------- 探针结果 ----------
-export type TaskName = "health" | "price" | "billing" | "perf" | "tokens";
+export type TaskName = "health" | "price" | "billing" | "perf" | "tokens" | "context";
+
+/**
+ * TLS 证书证据(随健康检查采集,确定性事实,不参与评分)。
+ * 为什么不进分:自签 / CDN 边缘证书 / 域名与 SAN 不一致在小站很常见,与「计费是否诚实」无关,
+ * 拿它扣分等于误杀。这里只记录事实,展示层如实标注"不影响可调用性结论"。
+ */
+export interface TlsInfo {
+  host: string;
+  port: number;
+  /** 采集时点 —— 剩余天数是随时间变化的量,必须和它一起展示 */
+  checkedAt: string;
+  handshakeOk: boolean;
+  /** 用系统 CA 校验证书链是否通过;null = 未做(如 http 站点) */
+  chainValid: boolean | null;
+  /** 原样保留 openssl/node 错误码(CERT_HAS_EXPIRED / DEPTH_ZERO_SELF_SIGNED_CERT / ERR_TLS_CERT_ALTNAME_INVALID…)*/
+  errorCode: string | null;
+  /** base_url 的 host 是否落在证书 SAN 内 */
+  sanMatch: boolean | null;
+  subject: string | null;
+  issuer: string | null;
+  notAfter: string | null;
+  daysLeft: number | null;
+  protocol: string | null;
+}
 
 /** 探针 A:健康检查原始结果 */
 export interface HealthResult {
@@ -50,6 +75,38 @@ export interface HealthResult {
   chatCheck: { ok: boolean; httpStatus: number | null; ttftMs: number | null; complete: boolean; error?: string };
   /** 综合判定:HTTP 2xx 且响应完整 */
   overall: { ok: boolean; status: "up" | "degraded" | "down" };
+  /** 证书证据:http 站点或握手被跳过时为 { skipped, reason } */
+  tls?: TlsInfo | { skipped: true; reason: string };
+}
+
+/**
+ * 长上下文完整性(标记码法)。确定性证据,不参与评分(见 docs/ 与 .codebuddy/plans 的实施方案)。
+ * 判读:complete 全部标记码命中;tail_truncated 末尾连续缺失(典型截断);
+ *       compressed 中间有规律缺失(摘要/滑窗);inconclusive 报错/格式不符/无样本 —— 不判负也不判通过。
+ */
+export type ContextVerdict = "complete" | "tail_truncated" | "compressed" | "inconclusive";
+
+export interface ContextCase {
+  targetChars: number;
+  reportedPromptTokens: number | null;
+  canaries: number;
+  returned: number;
+  hitPct: number;
+  /** 缺失的标记码序号(1-based),可回溯到原文位置 */
+  missing: number[];
+  verdict: ContextVerdict;
+}
+
+export interface ContextResult {
+  task: "context";
+  site: string;
+  checkedAt: string;
+  model: string;
+  samples: number;
+  cases: ContextCase[];
+  verdict: ContextVerdict;
+  /** 完全通过的档位里的最大字符数;全 inconclusive 时为 null(未测就是未测) */
+  maxVerifiedChars: number | null;
 }
 
 /** 探针 B:价格快照 */

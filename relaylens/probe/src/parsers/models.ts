@@ -24,6 +24,8 @@ export const CANON: CanonModel[] = [
   { canon: "grok-4-7",          disp: "Grok 4.7",           fam: "xAI" },
   { canon: "deepseek-v4-pro",       disp: "DeepSeek V4 Pro",       fam: "DeepSeek" },
   { canon: "deepseek-v4-1-flash",   disp: "DeepSeek V4.1 Flash",   fam: "DeepSeek" },
+  { canon: "qwen3-7-max",           disp: "Qwen3.7 Max",          fam: "Qwen" },
+  { canon: "qwen3-8-max",           disp: "Qwen3.8 Max",          fam: "Qwen" },
   { canon: "kimi-k3",           disp: "Kimi K3",            fam: "Moonshot" },
   { canon: "glm-5-3",           disp: "GLM-5.3",            fam: "Zhipu" },
 ];
@@ -42,4 +44,17 @@ export function canonName(raw: string): string {
 export function matchCanon(raw: string): CanonModel | null {
   const n = canonName(raw);
   return CANON.find(c => c.canon === n) ?? null;
+}
+
+/** 模型延迟类别:推理系模型的首 token 包含思考调度,TTFT 天然高于普通对话模型;
+ *  与普通模型共用一套 PF 锚点(≤1s=100 / ≥8s=0)会把推理链路系统性压低——
+ *  低分是模型类别的连带症状而非站点缺陷(method.html 待办原文)。
+ *  perf 探针据此对推理档**单独采样**(2026-10-10 起,task=perf_reasoning,不入 PF);
+ *  锚点校准待分模型数据积累后按铁律 9 走(沙盘→拍板→升版本→changelog)。 */
+export function modelCategory(raw: string): "reasoning" | "normal" {
+  const n = canonName(raw);
+  if (/(^|[^a-z0-9])o[134](?:-(?:pro|mini|preview))?(?=$|[^a-z0-9])/.test(n)) return "reasoning"; // openai o 系
+  if (/(^|[^a-z0-9])(r1|r\d+|qwq|t1)(?=$|[^a-z0-9])/.test(n)) return "reasoning";                 // deepseek-r1 / qwq / hunyuan-t1
+  if (/think(?:ing)?|reason(?:ing)?/.test(n)) return "reasoning";                                  // 思考档后缀
+  return "normal";
 }

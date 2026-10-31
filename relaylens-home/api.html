@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>数据导出 API · RelayLens — 免费 JSON 端点与 Pro 订阅</title>
+<title>数据导出 API · RelayLens — 免费 JSON 端点,无订阅墙</title>
 
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<meta name="description" content="RelayLens 数据导出 API:免费公开端点(榜单/比价/黑名单 JSON)、Pro 订阅端点(历史批次/原始对账/变更告警)、速率限制与 CC BY 4.0 使用条款、接入代码示例。">
+<meta name="description" content="RelayLens 数据导出 API:免费公开端点(榜单/比价/黑名单 JSON,无需注册、无需 Key、无订阅墙)、CC BY 4.0 使用条款与接入代码示例;历史批次/原始对账/变更告警等进阶端点规划中,上线后同样免费开放。">
 <style>
 :root{
-  --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
-  --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
-  --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
-  --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
-  --r:14px;
+ --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
+ --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
+ --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
+ --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
+ --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -137,293 +137,262 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
+ <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
 
 <!-- 导航 -->
 <header>
-  <div class="wrap nav" style="max-width:1160px">
-    <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
-    <nav class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="ranking.html">全站榜单</a>
-      <a href="compare.html">模型比价</a>
-      <a href="selector.html">选型顾问</a>
-      <a href="tools.html">自测工具箱</a>
-      <a href="blacklist.html" class="hot">⚠ 避雷黑名单</a>
-      <a href="method.html">方法论</a>
-      <a href="api.html" class="active">API</a>
-      <a href="reports.html">实测报告</a>
-    </nav>
-    <a class="btn btn-ghost btn-sm" href="#">登录</a>
-    <a class="btn btn-primary btn-sm" href="#">注册</a>
-  </div>
+ <div class="wrap nav" style="max-width:1160px">
+ <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
+ <a class="btn btn-ghost btn-sm" href="#">登录</a>
+ <a class="btn btn-primary btn-sm" href="#">注册</a>
+ </div>
 </header>
 
 <!-- 页头 -->
 <div class="page-hero">
-  <div class="wrap">
-    <div class="crumb"><a href="index.html">首页</a> / 数据导出 API</div>
-    <h1>数据导出 API · 把榜单装进你自己的程序</h1>
-    <p class="sub">核心检测数据通过公开 JSON 端点免费开放(CC BY 4.0);历史批次、原始对账流水与变更告警属于 Pro 订阅。所有数据与站内页面同源,不存在"API 版缩水"。</p>
-    <div class="hero-points">
-      <span class="hp">🔓 免费端点 <b>无需注册</b>,直接 GET</span>
-      <span class="hp">📦 响应含 <b>updated 时间戳 + 数据版本号</b></span>
-      <span class="hp">⚖️ 许可证 <b>CC BY 4.0</b>(署名即可商用)</span>
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="crumb"><a href="index.html">首页</a> / 数据导出 API</div>
+ <h1>数据导出 API · 把榜单装进你自己的程序</h1>
+ <p class="sub">核心检测数据通过公开 JSON 端点免费开放(CC BY 4.0),无需注册、无需 Key、无订阅墙。历史批次、原始对账流水与变更告警等进阶端点规划中,上线后同样免费开放。所有数据与站内页面同源,不存在"API 版缩水"。</p>
+ <div class="hero-points">
+ <span class="hp">免费端点 <b>无需注册</b>,直接 GET</span>
+ <span class="hp">响应含 <b>updated 时间戳 + 数据版本号</b></span>
+ <span class="hp">许可证 <b>CC BY 4.0</b>(署名即可商用)</span>
+ </div>
+ </div>
 </div>
 
 <div class="wrap">
 
-  <!-- 套餐 -->
-  <div class="tiers">
-    <div class="tier">
-      <h3>🌱 免费公开</h3>
-      <div class="price">无需注册 · 无需 API Key</div>
-      <ul>
-        <li class="yes">全站榜单(含 8 场景分)</li>
-        <li class="yes">模型比价(7 模型 × 16 站)</li>
-        <li class="yes">黑名单档案(7 条含证据批次号)</li>
-        <li class="yes">元数据(指标口径 / 更新时间)</li>
-        <li class="no">历史批次数据</li>
-        <li class="no">原始对账流水</li>
-        <li class="no">变更告警推送</li>
-      </ul>
-    </div>
-    <div class="tier pro">
-      <span class="pro-badge">PRO</span>
-      <h3>⚡ Pro 订阅</h3>
-      <div class="price">¥39/月 · 个人 · 邮箱注册即得 7 天试用</div>
-      <ul>
-        <li class="yes">免费层的全部内容</li>
-        <li class="yes">历史批次(365 天,逐轮对账明细)</li>
-        <li class="yes">原始面板流水存档下载</li>
-        <li class="yes">Webhook 变更告警(标红/涨价/失联)</li>
-        <li class="yes">更高速率限制(见下)</li>
-        <li class="yes">企业版:合规报告定制 · 私有部署</li>
-      </ul>
-    </div>
-    <div class="tier">
-      <h3>🏢 企业定制</h3>
-      <div class="price">按需报价</div>
-      <ul>
-        <li class="yes">Pro 全部内容</li>
-        <li class="yes">企业合规尽调报告(开票/对公/隐私条款)</li>
-        <li class="yes">指定站点加密监控(不进入公开榜单)</li>
-        <li class="yes">SLA 与专属支持通道</li>
-      </ul>
-    </div>
-  </div>
+ <!-- 套餐 -->
+ <div class="tiers" style="grid-template-columns:1fr;max-width:760px">
+ <div class="tier">
+ <h3>全部数据 · 免费开放</h3>
+ <div class="price">无需注册 · 无需 API Key · 无订阅墙</div>
+ <ul>
+ <li class="yes">全站榜单(含 8 场景分)</li>
+ <li class="yes">模型比价(7 模型 × 16 站)</li>
+ <li class="yes">黑名单档案(7 条含证据批次号)</li>
+ <li class="yes">元数据(指标口径 / 更新时间)</li>
+ <li class="yes">历史批次数据(规划中)</li>
+ <li class="yes">原始对账流水(站点详情页可查,可溯源)</li>
+ <li class="yes">变更告警推送(规划中)</li>
+ </ul>
+ <p style="font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7">没有"API 版缩水":网页能看到的,接口都能拿到;暂时做不到的,如实标注"规划中",不用订阅墙把数据锁起来。</p>
+ </div>
+ </div>
 
-  <!-- 基础信息 -->
-  <section class="block">
-    <div class="blk-head"><h2>🧭 基础信息</h2></div>
-    <div class="card">
-      <div class="ep-desc">
-        <b>Base URL:</b> <code style="background:#f2f4f8;border-radius:6px;padding:2px 10px;font-size:13.5px;color:var(--brand-deep)">https://relaylens.example/api</code><br>
-        <b>格式:</b> JSON(UTF-8)· <b>鉴权:</b> 免费端点无需鉴权;Pro 端点用 <code>Authorization: Bearer &lt;key&gt;</code> · <b>所有响应</b>都含 <code>updated</code>(ISO 8601)、<code>version</code>(数据版本号)与 <code>license</code> 字段。
-      </div>
-      <div class="rate-grid">
-        <div class="rate"><div class="v v-ok num">60</div><div class="k">免费层:请求/分钟/IP</div></div>
-        <div class="rate"><div class="v v-brand num">600</div><div class="k">Pro:请求/分钟/Key</div></div>
-        <div class="rate"><div class="v num">429</div><div class="k">超限返回 + Retry-After 头</div></div>
-        <div class="rate"><div class="v num">5 min</div><div class="k">缓存(免费层,CDN 边缘)</div></div>
-      </div>
-    </div>
-  </section>
+ <!-- 基础信息 -->
+ <section class="block">
+ <div class="blk-head"><h2>基础信息</h2></div>
+ <div class="card">
+ <div class="ep-desc">
+ <b>Base URL:</b> <code style="background:#f2f4f8;border-radius:6px;padding:2px 10px;font-size:13.5px;color:var(--brand-deep)">https://relaylens.example/api</code><br>
+ <b>格式:</b> JSON(UTF-8)· <b>鉴权:</b> 免费端点无需注册、无需 Key · <b>所有响应</b>都含 <code>updated</code>(ISO 8601)、<code>version</code>(数据版本号)与 <code>license</code> 字段。
+ </div>
+ <div class="rate-grid">
+ <div class="rate"><div class="v v-ok num">60</div><div class="k">请求/分钟/IP(公平使用,无需 Key)</div></div>
+ <div class="rate"><div class="v num">429</div><div class="k">超限返回 + Retry-After 头</div></div>
+ <div class="rate"><div class="v num">5 min</div><div class="k">缓存(CDN 边缘)</div></div>
+ </div>
+ </div>
+ </section>
 
-  <!-- 免费端点 -->
-  <section class="block">
-    <div class="blk-head"><h2>🌱 免费公开端点</h2></div>
-    <p class="lead">无需注册,浏览器直接访问即可看到 JSON。适合做自己的看板、机器人推送、学术分析。</p>
+ <!-- 免费端点 -->
+ <section class="block">
+ <div class="blk-head"><h2>免费公开端点</h2></div>
+ <p class="lead">无需注册,浏览器直接访问即可看到 JSON。适合做自己的看板、机器人推送、学术分析。</p>
 
-    <!-- 1 ranking -->
-    <div class="endpoint">
-      <div class="ep-head">
-        <span class="method m-get">GET</span>
-        <span class="ep-path">/v1/ranking</span>
-        <span class="ep-tag t-free">免费</span>
-      </div>
-      <div class="ep-body">
-        <div class="ep-desc">全站实测榜单。默认返回综合榜,可通过 <b>scene</b> 参数取任一场景分榜。</div>
-        <table class="params">
-          <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
-          <tr><td><code>scene</code></td><td><span class="opt">可选</span></td><td>场景分榜:<code>all</code>(默认)/ <code>code</code> / <code>office</code> / <code>ecom</code> / <code>drama</code> / <code>image</code> / <code>biz</code> / <code>risk</code></td></tr>
-          <tr><td><code>model</code></td><td><span class="opt">可选</span></td><td>按模型系列过滤:<code>claude</code> / <code>gpt</code> / <code>gemini</code> / <code>deepseek</code> / <code>glm</code></td></tr>
-          <tr><td><code>fields</code></td><td><span class="opt">可选</span></td><td>逗号分隔的字段白名单,如 <code>name,score,dev,avail</code>(减小响应体积)</td></tr>
-        </table>
-        <div class="code-head"><span class="t">响应示例(截断)</span><button class="copy" onclick="copyCode(this)">复制</button></div>
+ <!-- 1 ranking -->
+ <div class="endpoint">
+ <div class="ep-head">
+ <span class="method m-get">GET</span>
+ <span class="ep-path">/v1/ranking</span>
+ <span class="ep-tag t-free">免费</span>
+ </div>
+ <div class="ep-body">
+ <div class="ep-desc">全站实测榜单。默认返回综合榜,可通过 <b>scene</b> 参数取任一场景分榜。</div>
+ <table class="params">
+ <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
+ <tr><td><code>scene</code></td><td><span class="opt">可选</span></td><td>场景分榜:<code>all</code>(默认)/ <code>code</code> / <code>office</code> / <code>drama</code>(剧本创作) / <code>biz</code></td></tr>
+ <tr><td><code>model</code></td><td><span class="opt">可选</span></td><td>按模型系列过滤:<code>claude</code> / <code>gpt</code> / <code>gemini</code> / <code>deepseek</code> / <code>glm</code></td></tr>
+ <tr><td><code>fields</code></td><td><span class="opt">可选</span></td><td>逗号分隔的字段白名单,如 <code>name,score,dev,avail</code>(减小响应体积)</td></tr>
+ </table>
+ <div class="code-head"><span class="t">响应示例(截断)</span><button class="copy" onclick="copyCode(this)">复制</button></div>
 <pre><span class="cm">// GET /v1/ranking?scene=code</span>
 {
-  <span class="k">"updated"</span>: <span class="s">"2026-09-29T09:41:00+08:00"</span>,
-  <span class="k">"version"</span>: <span class="s">"v2026.09.29-114"</span>,
-  <span class="k">"license"</span>: <span class="s">"CC-BY-4.0"</span>,
-  <span class="k">"sites"</span>: [
-    {
-      <span class="k">"name"</span>: <span class="s">"RelayAPI"</span>,
-      <span class="k">"score"</span>: { <span class="k">"code"</span>: <span class="n">96</span>, <span class="k">"all"</span>: <span class="n">94</span> },
-      <span class="k">"dev"</span>: <span class="n">0.0</span>,          <span class="cm">// 扣费偏差 %,7天均值</span>
-      <span class="k">"cache"</span>: <span class="n">68</span>,         <span class="cm">// 缓存命中 %</span>
-      <span class="k">"avail7d"</span>: <span class="n">99.6</span>,
-      <span class="k">"ttftPeak"</span>: <span class="n">1.2</span>,      <span class="cm">// 晚高峰首字延迟,秒(字段名 ttft)</span>
-      <span class="k">"fingerprint"</span>: <span class="s">"pass"</span>,
-      <span class="k">"risk"</span>: <span class="s">"low"</span>,
-      <span class="k">"batches"</span>: <span class="n">188</span>,       <span class="cm">// 样本批次数(置信度= min(1, batches/12))</span>
-      <span class="k">"detail"</span>: <span class="s">"/detail.html?site=RelayAPI"</span>
-    }
-    <span class="cm">// …其余条目以 data/sites.json 实际内容为准(2026-10-02:2 家实测中转站 + 3 行官方/聚合参照系)</span>
-  ]
+ <span class="k">"updated"</span>: <span class="s">"2026-09-29T09:41:00+08:00"</span>,
+ <span class="k">"version"</span>: <span class="s">"v2026.09.29-114"</span>,
+ <span class="k">"license"</span>: <span class="s">"CC-BY-4.0"</span>,
+ <span class="k">"sites"</span>: [
+ {
+ <span class="k">"name"</span>: <span class="s">"RelayAPI"</span>,
+ <span class="k">"score"</span>: { <span class="k">"code"</span>: <span class="n">96</span>, <span class="k">"all"</span>: <span class="n">94</span> },
+ <span class="k">"dev"</span>: <span class="n">0.0</span>, <span class="cm">// 扣费偏差 %,7天均值</span>
+ <span class="k">"cache"</span>: <span class="n">68</span>, <span class="cm">// 缓存命中 %</span>
+ <span class="k">"avail7d"</span>: <span class="n">99.6</span>,
+ <span class="k">"ttftPeak"</span>: <span class="n">1.2</span>, <span class="cm">// 晚高峰首字延迟,秒(字段名 ttft)</span>
+ <span class="k">"fingerprint"</span>: <span class="s">"pass"</span>,
+ <span class="k">"risk"</span>: <span class="s">"low"</span>,
+ <span class="k">"batches"</span>: <span class="n">188</span>, <span class="cm">// 样本批次数(置信度= min(1, batches/12))</span>
+ <span class="k">"detail"</span>: <span class="s">"/detail.html?site=RelayAPI"</span>
+ }
+ <span class="cm">// …其余条目以 data/sites.json 实际内容为准(2026-10-02:2 家实测中转站 + 3 行官方/聚合参照系)</span>
+ ]
 }</pre>
-      </div>
-    </div>
+ </div>
+ </div>
 
-    <!-- 2 prices -->
-    <div class="endpoint">
-      <div class="ep-head">
-        <span class="method m-get">GET</span>
-        <span class="ep-path">/v1/prices</span>
-        <span class="ep-tag t-free">免费</span>
-      </div>
-      <div class="ep-body">
-        <div class="ep-desc">模型比价:各站各模型的输入/输出/缓存单价、充值比例与<b>到手价</b>(已折算)。价格随 6 小时批次同步更新。</div>
-        <table class="params">
-          <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
-          <tr><td><code>model</code></td><td><span class="opt">可选</span></td><td>指定模型 ID,如 <code>claude-opus-5</code>、<code>gpt-5.6-sol</code>;缺省返回全部</td></tr>
-          <tr><td><code>honest_only</code></td><td><span class="opt">可选</span></td><td><code>true</code> 时只返回缓存计费诚实(dev≤1% 且公示缓存价)的报价</td></tr>
-        </table>
+ <!-- 2 prices -->
+ <div class="endpoint">
+ <div class="ep-head">
+ <span class="method m-get">GET</span>
+ <span class="ep-path">/v1/prices</span>
+ <span class="ep-tag t-free">免费</span>
+ </div>
+ <div class="ep-body">
+ <div class="ep-desc">模型比价:各站各模型的输入/输出/缓存单价、充值比例与<b>到手价</b>(已折算)。价格随 6 小时批次同步更新。</div>
+ <table class="params">
+ <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
+ <tr><td><code>model</code></td><td><span class="opt">可选</span></td><td>指定模型 ID,如 <code>claude-opus-5</code>、<code>gpt-5.6-sol</code>;缺省返回全部</td></tr>
+ <tr><td><code>honest_only</code></td><td><span class="opt">可选</span></td><td><code>true</code> 时只返回缓存计费诚实(dev≤1% 且公示缓存价)的报价</td></tr>
+ </table>
 <pre><span class="cm">// GET /v1/prices?model=claude-opus-5</span>
 {
-  <span class="k">"model"</span>: <span class="s">"claude-opus-5"</span>,
-  <span class="k">"officialRef"</span>: { <span class="k">"in"</span>: <span class="n">42</span>, <span class="k">"out"</span>: <span class="n">210</span> },  <span class="cm">// ¥/M 官方参考</span>
-  <span class="k">"offers"</span>: [
-    {
-      <span class="k">"site"</span>: <span class="s">"RelayAPI"</span>,
-      <span class="k">"in"</span>: <span class="n">18</span>, <span class="k">"out"</span>: <span class="n">88</span>,
-      <span class="k">"cacheRead"</span>: <span class="n">1.8</span>,  <span class="k">"cacheWrite"</span>: <span class="n">22.5</span>,
-      <span class="k">"ratio"</span>: <span class="n">1.0</span>,      <span class="cm">// 人民币元 / 1 美元额度 的充值比例(实测)</span>
-      <span class="k">"effectiveIn"</span>: <span class="n">18.0</span>, <span class="cm">// 到手输入价 = in × ratio</span>
-      <span class="k">"cacheBilling"</span>: <span class="s">"honest"</span>  <span class="cm">// honest | partial | none</span>
-    }
-  ]
+ <span class="k">"model"</span>: <span class="s">"claude-opus-5"</span>,
+ <span class="k">"officialRef"</span>: { <span class="k">"in"</span>: <span class="n">42</span>, <span class="k">"out"</span>: <span class="n">210</span> }, <span class="cm">// ¥/M 官方参考</span>
+ <span class="k">"offers"</span>: [
+ {
+ <span class="k">"site"</span>: <span class="s">"RelayAPI"</span>,
+ <span class="k">"in"</span>: <span class="n">18</span>, <span class="k">"out"</span>: <span class="n">88</span>,
+ <span class="k">"cacheRead"</span>: <span class="n">1.8</span>, <span class="k">"cacheWrite"</span>: <span class="n">22.5</span>,
+ <span class="k">"ratio"</span>: <span class="n">1.0</span>, <span class="cm">// 人民币元 / 1 美元额度 的充值比例(实测)</span>
+ <span class="k">"effectiveIn"</span>: <span class="n">18.0</span>, <span class="cm">// 到手输入价 = in × ratio</span>
+ <span class="k">"cacheBilling"</span>: <span class="s">"honest"</span> <span class="cm">// honest | partial | none</span>
+ }
+ ]
 }</pre>
-      </div>
-    </div>
+ </div>
+ </div>
 
-    <!-- 3 blacklist -->
-    <div class="endpoint">
-      <div class="ep-head">
-        <span class="method m-get">GET</span>
-        <span class="ep-path">/v1/blacklist</span>
-        <span class="ep-tag t-free">免费</span>
-      </div>
-      <div class="ep-body">
-        <div class="ep-desc">黑名单档案库:跑路/虚标/降级/复核中档案,含证据批次号与预警时间线。适合做充值前的自动化风控校验。</div>
-        <table class="params">
-          <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
-          <tr><td><code>state</code></td><td><span class="opt">可选</span></td><td><code>dead</code>(跑路/失联)/ <code>black</code>(虚标/降级)/ <code>review</code>(复核中);缺省全部</td></tr>
-        </table>
+ <!-- 3 blacklist -->
+ <div class="endpoint">
+ <div class="ep-head">
+ <span class="method m-get">GET</span>
+ <span class="ep-path">/v1/blacklist</span>
+ <span class="ep-tag t-free">免费</span>
+ </div>
+ <div class="ep-body">
+ <div class="ep-desc">黑名单档案库:跑路/虚标/降级/复核中档案,含证据批次号与预警时间线。适合做充值前的自动化风控校验。</div>
+ <table class="params">
+ <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
+ <tr><td><code>state</code></td><td><span class="opt">可选</span></td><td><code>dead</code>(跑路/失联)/ <code>black</code>(虚标/降级)/ <code>review</code>(复核中);缺省全部</td></tr>
+ </table>
 <pre><span class="cm">// GET /v1/blacklist?state=dead</span>
 {
-  <span class="k">archives"</span>: [
-    {
-      <span class="k">"name"</span>: <span class="s">"PixelAPI"</span>,
-      <span class="k">"state"</span>: <span class="s">"dead"</span>,
-      <span class="k">"listedAt"</span>: <span class="s">"2026-09-15"</span>,
-      <span class="k">"evidence"</span>: [<span class="s">"RL-EV-0908-011"</span>, <span class="s">"RL-EV-0913-013"</span>],
-      <span class="k">"userLossReports"</span>: <span class="n">23</span>,
-      <span class="k">"timeline"</span>: [<span class="s">"2026-09-08 涨价40%预警"</span>, <span class="s">"2026-09-13 域名失联"</span>, <span class="s">"2026-09-15 确认跑路"</span>]
-    }
-  ]
+ <span class="k">archives"</span>: [
+ {
+ <span class="k">"name"</span>: <span class="s">"PixelAPI"</span>,
+ <span class="k">"state"</span>: <span class="s">"dead"</span>,
+ <span class="k">"listedAt"</span>: <span class="s">"2026-09-15"</span>,
+ <span class="k">"evidence"</span>: [<span class="s">"RL-EV-0908-011"</span>, <span class="s">"RL-EV-0913-013"</span>],
+ <span class="k">"userLossReports"</span>: <span class="n">23</span>,
+ <span class="k">"timeline"</span>: [<span class="s">"2026-09-08 涨价40%预警"</span>, <span class="s">"2026-09-13 域名失联"</span>, <span class="s">"2026-09-15 确认跑路"</span>]
+ }
+ ]
 }</pre>
-      </div>
-    </div>
+ </div>
+ </div>
 
-    <!-- 4 meta -->
-    <div class="endpoint">
-      <div class="ep-head">
-        <span class="method m-get">GET</span>
-        <span class="ep-path">/v1/meta</span>
-        <span class="ep-tag t-free">免费</span>
-      </div>
-      <div class="ep-body">
-        <div class="ep-desc">元数据:指标口径定义、评分权重、阈值分档、检测节点列表。做数据消费方(尤其二次发布)时应随数据一同引用,保证口径不漂移。</div>
+ <!-- 4 meta -->
+ <div class="endpoint">
+ <div class="ep-head">
+ <span class="method m-get">GET</span>
+ <span class="ep-path">/v1/meta</span>
+ <span class="ep-tag t-free">免费</span>
+ </div>
+ <div class="ep-body">
+ <div class="ep-desc">元数据:指标口径定义、评分权重、阈值分档、检测节点列表。做数据消费方(尤其二次发布)时应随数据一同引用,保证口径不漂移。</div>
 <pre><span class="cm">// GET /v1/meta</span>
 {
-  <span class="k">"metrics"</span>: { <span class="k">"dev"</span>: { <span class="k">"formula"</span>: <span class="s">"|实扣-应扣|/应扣"</span>, <span class="k">"thresholds"</span>: [<span class="n">1</span>, <span class="n">3</span>] }, <span class="cm">/* ... */</span> },
-  <span class="k">"sceneWeights"</span>: { <span class="k">"code"</span>: { <span class="k">"cache"</span>: <span class="n">0.25</span>, <span class="k">"fp"</span>: <span class="n">0.25</span> <span class="cm">/* ... */</span> } },
-  <span class="k">"nodes"</span>: [<span class="s">"cn-telecom-1"</span>, <span class="s">"cn-unicom-1"</span>, <span class="s">"overseas-1"</span>],
-  <span class="k">"methodology"</span>: <span class="s">"/method.html"</span>
+ <span class="k">"metrics"</span>: { <span class="k">"dev"</span>: { <span class="k">"formula"</span>: <span class="s">"|实扣-应扣|/应扣"</span>, <span class="k">"thresholds"</span>: [<span class="n">1</span>, <span class="n">3</span>] }, <span class="cm">/* ... */</span> },
+ <span class="k">"sceneWeights"</span>: { <span class="k">"code"</span>: { <span class="k">"cache"</span>: <span class="n">0.25</span>, <span class="k">"fp"</span>: <span class="n">0.25</span> <span class="cm">/* ... */</span> } },
+ <span class="k">"nodes"</span>: [<span class="s">"cn-telecom-1"</span>, <span class="s">"cn-unicom-1"</span>, <span class="s">"overseas-1"</span>],
+ <span class="k">"methodology"</span>: <span class="s">"/method.html"</span>
 }</pre>
-      </div>
-    </div>
-  </section>
+ </div>
+ </div>
+ </section>
 
-  <!-- Pro 端点 -->
-  <section class="block">
-    <div class="blk-head"><h2>⚡ Pro 端点(需 Bearer Key)</h2></div>
-    <p class="lead">面向需要深度历史与实时性的场景:自动化交易/监控、研究报告、审计留档。</p>
+ <!-- 进阶端点(规划中) -->
+ <section class="block" id="sec-advanced">
+ <div class="blk-head"><h2>进阶端点(规划中)</h2></div>
+ <p class="lead">面向需要深度历史与实时性的场景:自动化交易/监控、研究报告、审计留档。这些端点尚未上线,上线后同样免费开放、不设订阅墙 —— 此处仅作接口预览。</p>
 
-    <div class="endpoint">
-      <div class="ep-head">
-        <span class="method m-get">GET</span>
-        <span class="ep-path">/v1/batches</span>
-        <span class="ep-tag t-pro">PRO</span>
-      </div>
-      <div class="ep-body">
-        <div class="ep-desc">历史检测批次:365 天内任意站点的逐批次数据,含逐轮对账明细。这是"账单级实测"的原始层。</div>
-        <table class="params">
-          <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
-          <tr><td><code>site</code></td><td><span class="req">必填</span></td><td>站点名(与榜单 name 一致)</td></tr>
-          <tr><td><code>since</code> / <code>until</code></td><td><span class="opt">可选</span></td><td>ISO 8601 时间范围,最长 365 天,单次最多返回 500 批次</td></tr>
-          <tr><td><code>rounds</code></td><td><span class="opt">可选</span></td><td><code>true</code> 时展开 10 轮逐轮明细(token 用量/应扣/实扣/耗时)</td></tr>
-        </table>
-<pre><span class="cm"># 带 Key 请求</span>
+ <div class="endpoint">
+ <div class="ep-head">
+ <span class="method m-get">GET</span>
+ <span class="ep-path">/v1/batches</span>
+ <span class="ep-tag" style="background:#fff7ed;color:#b45309;border-color:#fed7aa">规划中</span>
+ </div>
+ <div class="ep-body">
+ <div class="ep-desc">历史检测批次:365 天内任意站点的逐批次数据,含逐轮对账明细。这是"账单级实测"的原始层。</div>
+ <table class="params">
+ <tr><th style="width:130px">参数</th><th style="width:90px">必填</th><th>说明</th></tr>
+ <tr><td><code>site</code></td><td><span class="req">必填</span></td><td>站点名(与榜单 name 一致)</td></tr>
+ <tr><td><code>since</code> / <code>until</code></td><td><span class="opt">可选</span></td><td>ISO 8601 时间范围,最长 365 天,单次最多返回 500 批次</td></tr>
+ <tr><td><code>rounds</code></td><td><span class="opt">可选</span></td><td><code>true</code> 时展开 10 轮逐轮明细(token 用量/应扣/实扣/耗时)</td></tr>
+ </table>
+<pre><span class="cm"># 接口预览(尚未上线,上线后免 Key)</span>
 curl -H <span class="s">"Authorization: Bearer sk-rl-..."</span> \
-     <span class="s">"https://relaylens.example/api/v1/batches?site=RelayAPI&amp;since=2026-09-01&amp;rounds=true"</span></pre>
-      </div>
-    </div>
+ <span class="s">"https://relaylens.example/api/v1/batches?site=RelayAPI&amp;since=2026-09-01&amp;rounds=true"</span></pre>
+ </div>
+ </div>
 
-    <div class="endpoint">
-      <div class="ep-head">
-        <span class="method m-post">POST</span>
-        <span class="ep-path">/v1/webhooks</span>
-        <span class="ep-tag t-pro">PRO</span>
-      </div>
-      <div class="ep-body">
-        <div class="ep-desc">变更告警订阅:站点标红/摘牌、单周涨价&gt;15%、连续失败、黑名单新增等事件实时推送到你的 Webhook。推送体含事件类型、站点、触发批次号与时间戳,5 秒超时重试 3 次。</div>
+ <div class="endpoint">
+ <div class="ep-head">
+ <span class="method m-post">POST</span>
+ <span class="ep-path">/v1/webhooks</span>
+ <span class="ep-tag" style="background:#fff7ed;color:#b45309;border-color:#fed7aa">规划中</span>
+ </div>
+ <div class="ep-body">
+ <div class="ep-desc">变更告警订阅:站点标红/摘牌、单周涨价&gt;15%、连续失败、黑名单新增等事件实时推送到你的 Webhook。推送体含事件类型、站点、触发批次号与时间戳,5 秒超时重试 3 次。</div>
 <pre><span class="cm">// 你的 Webhook 会收到的推送体</span>
 {
-  <span class="k">"event"</span>: <span class="s">"site.flagged"</span>,        <span class="cm">// flagged | cleared | price_surge | outage | blacklist</span>
-  <span class="k">"site"</span>: <span class="s">"Orbelis"</span>,
-  <span class="k">"batch"</span>: <span class="s">"RL-EV-0927-058"</span>,
-  <span class="k">"reason"</span>: <span class="s">"连续5批次扣费偏差>4%"</span>,
-  <span class="k">"at"</span>: <span class="s">"2026-09-27T14:20:00+08:00"</span>
+ <span class="k">"event"</span>: <span class="s">"site.flagged"</span>, <span class="cm">// flagged | cleared | price_surge | outage | blacklist</span>
+ <span class="k">"site"</span>: <span class="s">"Orbelis"</span>,
+ <span class="k">"batch"</span>: <span class="s">"RL-EV-0927-058"</span>,
+ <span class="k">"reason"</span>: <span class="s">"连续5批次扣费偏差>4%"</span>,
+ <span class="k">"at"</span>: <span class="s">"2026-09-27T14:20:00+08:00"</span>
 }</pre>
-      </div>
-    </div>
+ </div>
+ </div>
 
-    <div class="endpoint">
-      <div class="ep-head">
-        <span class="method m-get">GET</span>
-        <span class="ep-path">/v1/receipts/{batchId}</span>
-        <span class="ep-tag t-pro">PRO</span>
-      </div>
-      <div class="ep-body">
-        <div class="ep-desc">原始证据包:指定批次的面板流水存档(截图 + 结构化 JSON)、API 原始 Response、对账计算过程。用于审计留档或争议复核——每个存档编号(RL-RC-*)都可以在这里拿到原始文件。</div>
-      </div>
-    </div>
-  </section>
+ <div class="endpoint">
+ <div class="ep-head">
+ <span class="method m-get">GET</span>
+ <span class="ep-path">/v1/receipts/{batchId}</span>
+ <span class="ep-tag" style="background:#fff7ed;color:#b45309;border-color:#fed7aa">规划中</span>
+ </div>
+ <div class="ep-body">
+ <div class="ep-desc">原始证据包:指定批次的面板流水存档(截图 + 结构化 JSON)、API 原始 Response、对账计算过程。用于审计留档或争议复核——每个存档编号(RL-RC-*)都可以在这里拿到原始文件。</div>
+ </div>
+ </div>
+ </section>
 
-  <!-- 接入示例 -->
-  <section class="block">
-    <div class="blk-head"><h2>🛠️ 快速接入示例</h2></div>
-    <div class="card">
-      <div class="notify" style="margin-bottom:18px">
-        <div class="nc nc-webhook">📡 <b>场景一:充值前自动风控。</b>你的机器人/工作流在用户发起充值前,调 <code>GET /v1/blacklist</code> 和 <code>/v1/ranking?fields=name,risk</code> 做一次校验,黑名单或高风险站直接拦截。</div>
-        <div class="nc nc-email">📈 <b>场景二:自建看板。</b>定时拉 <code>/v1/ranking</code> 存入本地时序库,对比历史分数变化,发现"分数突降"比看静态榜单更早。</div>
-      </div>
-      <div class="code-head"><span class="t">Node.js(消费免费端点)</span><button class="copy" onclick="copyCode(this)">复制</button></div>
+ <!-- 接入示例 -->
+ <section class="block">
+ <div class="blk-head"><h2>快速接入示例</h2></div>
+ <div class="card">
+ <div class="notify" style="margin-bottom:18px">
+ <div class="nc nc-webhook"><b>场景一:充值前自动风控。</b>你的机器人/工作流在用户发起充值前,调 <code>GET /v1/blacklist</code> 和 <code>/v1/ranking?fields=name,risk</code> 做一次校验,黑名单或高风险站直接拦截。</div>
+ <div class="nc nc-email"><b>场景二:自建看板。</b>定时拉 <code>/v1/ranking</code> 存入本地时序库,对比历史分数变化,发现"分数突降"比看静态榜单更早。</div>
+ </div>
+ <div class="code-head"><span class="t">Node.js(消费免费端点)</span><button class="copy" onclick="copyCode(this)">复制</button></div>
 <pre><span class="k">const</span> res = <span class="k">await</span> fetch(<span class="s">"https://relaylens.example/api/v1/ranking?scene=code"</span>);
 <span class="k">const</span> { sites, updated, version } = <span class="k">await</span> res.json();
 
@@ -432,71 +401,146 @@ curl -H <span class="s">"Authorization: Bearer sk-rl-..."</span> \
 
 <span class="cm">// 署名要求(CC BY 4.0):展示数据时保留来源</span>
 console.log(<span class="s">`数据来源: RelayLens ${version} · 更新于 ${updated}`</span>);</pre>
-    </div>
-  </section>
+ </div>
+ </section>
 
-  <!-- 条款 -->
-  <section class="block">
-    <div class="blk-head"><h2>⚖️ 使用条款(CC BY 4.0)</h2></div>
-    <div class="card">
-      <ul class="terms">
-        <li><b>你可以:</b>复制、再分发、商用、二次加工全部免费层数据——包括用于商业产品、研究报告和自己的比价站。</li>
-        <li><b>你必须:</b>在使用处标注来源(RelayLens + 数据版本号 + 链接到本站)。API 响应中的 <code>version</code> 与 <code>updated</code> 字段就是为此准备的。</li>
-        <li><b>你不可以:</b>将数据用于伪装成"自有实测"的展示(署名不可移除);不可将 Pro 层数据转售或公开再分发。</li>
-        <li><b>无担保:</b>数据反映检测时点状态,可能随时变化,不构成采购建议;中转服务本身的风险请自行评估(参见 <a href="method.html" style="color:var(--brand);font-weight:600">方法论页的已知局限</a>)。</li>
-        <li><b>稳定性:</b>免费端点承诺 99% 月度可用性,不做 SLA 赔付;商用关键路径请订阅 Pro 并做好降级缓存。</li>
-      </ul>
-    </div>
-  </section>
+ <!-- 条款 -->
+ <section class="block">
+ <div class="blk-head"><h2>使用条款(CC BY 4.0)</h2></div>
+ <div class="card">
+ <ul class="terms">
+ <li><b>你可以:</b>复制、再分发、商用、二次加工全部免费层数据——包括用于商业产品、研究报告和自己的比价站。</li>
+ <li><b>你必须:</b>在使用处标注来源(RelayLens + 数据版本号 + 链接到本站)。API 响应中的 <code>version</code> 与 <code>updated</code> 字段就是为此准备的。</li>
+ <li><b>你不可以:</b>将数据用于伪装成"自有实测"的展示(署名不可移除)。全部数据均为免费开放(CC BY 4.0),署名即可再分发与商用。</li>
+ <li><b>无担保:</b>数据反映检测时点状态,可能随时变化,不构成采购建议;中转服务本身的风险请自行评估(参见 <a href="method.html" style="color:var(--brand);font-weight:600">方法论页的已知局限</a>)。</li>
+ <li><b>稳定性:</b>免费端点承诺 99% 月度可用性,不做 SLA 赔付;商用关键路径请自行做好降级缓存。</li>
+ </ul>
+ </div>
+ </section>
 
-  <!-- CTA -->
-  <section class="block">
-    <div class="card" style="background:linear-gradient(135deg,#0f1e3d,#1e3a8a);border:none;color:#fff;text-align:center;padding:34px 24px">
-      <h3 style="font-size:19px;margin-bottom:8px">数据开放是立场,不是营销</h3>
-      <p style="font-size:13.5px;opacity:.8;max-width:560px;margin:0 auto 18px">榜单可以复现、口径可以审计、原始证据可以下载——这是我们与"黑盒测评站"的根本区别。欢迎把我们的数据拆开来挑战。</p>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-primary" style="background:#fff;color:var(--brand-deep)" onclick="toast('API 开放注册即将上线,Pro 含 7 天免费试用')">获取 API Key →</button>
-        <a class="btn btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)" href="method.html#repro">复现指南 →</a>
-      </div>
-    </div>
-  </section>
+ <!-- CTA -->
+ <section class="block">
+ <div class="card" style="background:linear-gradient(135deg,#0f1e3d,#1e3a8a);border:none;color:#fff;text-align:center;padding:34px 24px">
+ <h3 style="font-size:19px;margin-bottom:8px">数据开放是立场,不是营销</h3>
+ <p style="font-size:13.5px;opacity:.8;max-width:560px;margin:0 auto 18px">榜单可以复现、口径可以审计、原始证据可以下载——这是我们与"黑盒测评站"的根本区别。欢迎把我们的数据拆开来挑战。</p>
+ <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+ <a class="btn btn-primary" style="background:#fff;color:var(--brand-deep)" href="#sec-advanced">查看进阶端点(规划中)→</a>
+ <a class="btn btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)" href="method.html#repro">复现指南 →</a>
+ </div>
+ </div>
+ </section>
 </div>
 
 <footer>
-  <div class="wrap">
-    <div class="ft-grid">
-      <div>
-        <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
-        <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位与 Pro 订阅维持运营。</p>
-      </div>
-      <div>
-        <h4>站点</h4>
-        <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="compare.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
-      </div>
-      <div>
-        <h4>关于</h4>
-        <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">隐私政策</a><a href="#">服务条款</a>
-      </div>
-    </div>
-    <div class="fine">
-      免责声明:本站为第三方测评平台,不提供 API 转售或代充服务;API 数据反映检测时点状态,仅供决策参考。免费层数据采用 CC BY 4.0 许可,Pro 层数据禁止转售与公开再分发。<br>
-      © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
-    </div>
-  </div>
+ <div class="wrap">
+ <div class="ft-grid">
+ <div>
+ <div class="logo" style="color:#fff;margin-bottom:12px"><span class="mark">◎</span>RelayLens</div>
+ <p style="max-width:380px">账单级实测的 AI 中转站决策引擎。我们不售卖任何 API 转售服务;榜单、比价、工具全部免费,仅通过标注清晰的合作推荐位维持运营。</p>
+ </div>
+ <div>
+ <h4>站点</h4>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ </div>
+ <div>
+ <h4>关于</h4>
+ <a href="method.html">检测方法与开源数据</a><a href="api.html">数据导出 API</a><a href="onboarding.html">站长入驻</a><a href="claim.html">认领站点</a><a href="reports.html">实测报告</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+ </div>
+ </div>
+ <div class="fine">
+ 免责声明:本站为第三方测评平台,不提供 API 转售或代充服务;API 数据反映检测时点状态,仅供决策参考。全部数据采用 CC BY 4.0 许可(署名即可再分发 / 商用)。<br>
+ © 2026 RelayLens · 测评数据仅供决策参考,不构成投资或采购建议
+ </div>
+ </div>
 </footer>
+
+<!-- API Key 注册弹窗:POST /api/register,明文 key 仅显示一次 -->
+<div class="modal-mask" id="regMask" hidden>
+ <div class="modal" role="dialog" aria-modal="true" aria-labelledby="regTitle">
+ <div class="modal-head">
+ <h3 id="regTitle">获取 API Key</h3>
+ <button class="modal-x" id="regClose" type="button" aria-label="关闭">×</button>
+ </div>
+ <div id="regForm">
+ <p class="reg-note">免费端点无需注册、无需 Key,直接 GET 即可(60 次/分钟/IP)。进阶端点(历史批次 / 原始对账 / 告警)规划中,上线后同样免费开放。</p>
+ <label>邮箱(选填,用于重要变更通知)<input id="regEmail" type="email" placeholder="you@example.com"></label>
+ <div class="reg-err" id="regErr" hidden></div>
+ <div class="reg-actions">
+ <button class="btn btn-ghost" id="regCancel" type="button">取消</button>
+ <button class="btn btn-primary" id="regGo" type="button">发放 Key</button>
+ </div>
+ </div>
+ <div id="regDone" hidden>
+ <p class="reg-note">操作完成。</p>
+ <pre id="regKey" style="background:#0c1633;color:#7ef0b0;padding:14px;border-radius:10px;font-size:13.5px;user-select:all"></pre>
+ <div class="reg-actions"><button class="btn btn-primary" id="regCopy" type="button">复制 Key</button></div>
+ </div>
+ </div>
+</div>
+<style>
+.modal-mask{position:fixed;inset:0;background:rgba(12,22,51,.55);z-index:120;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-mask[hidden]{display:none}
+.modal{background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:26px 28px;box-shadow:0 18px 60px rgba(12,22,51,.35)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.modal-head h3{font-size:18px;font-weight:800}
+.modal-x{background:none;border:none;font-size:24px;cursor:pointer;color:var(--faint);padding:4px 8px;border-radius:8px}
+.modal-x:hover{background:#f2f4f8}
+.reg-note{font-size:13px;color:var(--sub);background:var(--brand-soft);border-radius:9px;padding:11px 13px;margin-bottom:14px;line-height:1.7}
+.modal label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;margin-bottom:12px}
+.modal input{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:9px}
+.reg-err{background:var(--bad-soft);color:var(--bad);font-size:12.5px;padding:8px 12px;border-radius:8px;margin-bottom:12px}
+.reg-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+</style>
 
 <div class="toast" id="toast">已复制</div>
 <script>
+/* API 服务地址:Worker 部署后回填(api-worker/README.md 部署步骤 6)。
+ 保持占位时按钮会如实提示「服务尚未上线」,绝不假装可用。 */
+var RL_API_BASE="";
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
 function copyCode(btn){
-  var pre=btn.closest(".ep-body")?btn.closest(".ep-body").querySelector("pre")||btn.closest(".card").querySelector("pre"):null;
-  if(!pre)pre=btn.parentElement.nextElementSibling;
-  var txt=pre.innerText;
-  var done=function(){toast("代码已复制")};
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){toast("请手动选择复制")})}
-  else{toast("请手动选择复制")}
+ var pre=btn.closest(".ep-body")?btn.closest(".ep-body").querySelector("pre")||btn.closest(".card").querySelector("pre"):null;
+ if(!pre)pre=btn.parentElement.nextElementSibling;
+ var txt=pre.innerText;
+ var done=function(){toast("代码已复制")};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){toast("请手动选择复制")})}
+ else{toast("请手动选择复制")}
 }
+
+/* ===== API Key 注册(POST {RL_API_BASE}/register) ===== */
+function openRegister(){
+ if(!RL_API_BASE){toast("注册服务尚未上线——部署 api-worker 后回填 RL_API_BASE 即启用");return}
+ document.getElementById("regMask").hidden=false;
+ document.getElementById("regForm").hidden=false;
+ document.getElementById("regDone").hidden=true;
+ document.getElementById("regErr").hidden=true;
+ document.body.style.overflow="hidden";
+}
+function closeRegister(){document.getElementById("regMask").hidden=true;document.body.style.overflow=""}
+document.getElementById("regClose").addEventListener("click",closeRegister);
+document.getElementById("regCancel").addEventListener("click",closeRegister);
+document.getElementById("regMask").addEventListener("click",function(e){if(e.target===this)closeRegister()});
+document.getElementById("regGo").addEventListener("click",async function(){
+ var btn=this,email=document.getElementById("regEmail").value.trim();
+ btn.disabled=true;btn.textContent="发放中…";
+ try{
+ var r=await fetch(RL_API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(email?{email:email}:{})});
+ var j=await r.json();
+ if(!r.ok){document.getElementById("regErr").textContent=j.error==="rate_limited_register"?"尝试过于频繁,请稍后再试":"发放失败("+r.status+")";document.getElementById("regErr").hidden=false;return}
+ document.getElementById("regForm").hidden=true;
+ document.getElementById("regDone").hidden=false;
+ document.getElementById("regTrial").textContent=(j.pro_trial_until||"").slice(0,10);
+ document.getElementById("regKey").textContent=j.key;
+ }catch(e){
+ document.getElementById("regErr").textContent="网络错误,请稍后再试";document.getElementById("regErr").hidden=false;
+ }finally{btn.disabled=false;btn.textContent="发放 Key"}
+});
+document.getElementById("regCopy").addEventListener("click",function(){
+ var k=document.getElementById("regKey").textContent;
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(k).then(function(){toast("Key 已复制")},function(){toast("请手动选择复制")});
+ else toast("请手动选择复制");
+});
 </script>
 </body>
 </html>

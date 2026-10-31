@@ -1,10 +1,12 @@
 /**
- * aicost 解析器 —— 手动导出模式
- * aicost 的 /api/pricing 需登录 session,无法自动采集;
- * 数据来源:用户在已登录浏览器 Console 执行导出脚本(见 README),JSON 落盘到
- *   store/manual-imports/aicost-pricing-*.json
- * 本解析器读取最新的导出文件,capturedAt 取文件 mtime,source 标注 manual-import。
- * 自动化路径(P3):浏览器定时任务或社区节点登录态采集。
+ * aicost 解析器
+ * /api/pricing 需鉴权:必须带 New-API-User: <用户id> + Authorization: Bearer <令牌>。
+ * 采集策略(双通道,自动优先):
+ *   1) 自动:在 sites.env 配置 AICOST_ACCESS_TOKEN + AICOST_USER_ID 后,解析器直接
+ *      fetch /api/pricing(免浏览器,可进定时任务);实测 id=6289 + 令牌可返回 102 模型。
+ *   2) 回退:未配置令牌时,读取 store/manual-imports/aicost-pricing-*.json(用户在已登录
+ *      浏览器 Console 执行导出脚本落盘),capturedAt 取文件 mtime。
+ * source 标注 api(token,id=...) 或 manual-import(...),parser 对应 aicost-api / aicost-manual。
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -54,21 +56,55 @@ export async function parseAicost(site: SiteConfig): Promise<PriceResult> {
   const parseErrors: string[] = [];
   const models: Array<PriceResult["models"][number]> = [];
 
-  const imp = latestImport();
-  if (!imp) {
-    return {
-      task: "price", site: site.name, capturedAt: new Date().toISOString(),
-      currency: "USD", models: [], ratio: null, parser: "aicost-manual",
-      parseErrors: ["no manual import found — 在已登录浏览器 Console 执行导出脚本后重跑"],
-    };
+  // 1) 优先:令牌自动拉取(Bearer token + New-API-User: id,免浏览器)
+  //    来源:用户在 sites.env 配置 AICOST_ACCESS_TOKEN + AICOST_USER_ID
+  const baseUrl = (site.base_url || "https://www.aicost.me").replace(/\/$/, "");
+  const token = process.env.AICOST_ACCESS_TOKEN;
+  const userId = process.env.AICOST_USER_ID;
+  let body: NAPricingResponse | null = null;
+  let capturedAt = new Date().toISOString();
+  let sourceNote = "";
+  let parser = "aicost-manual";
+
+  if (token && userId) {
+    try {
+      const r = await fetch(baseUrl + "/api/pricing", {
+        headers: {
+          "New-API-User": String(userId),
+          "Authorization": "Bearer " + token,
+          "Cache-Control": "no-store",
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (r.ok) {
+        const j = await r.json() as NAPricingResponse;
+        if (j && j.success && Array.isArray(j.data) && j.data.length) {
+          body = j; sourceNote = `api(token,id=${userId})`; parser = "aicost-api";
+        } else { parseErrors.push("令牌拉取返回结构异常,回退手动导入"); }
+      } else { parseErrors.push(`令牌拉取 HTTP ${r.status},回退手动导入`); }
+    } catch (e) { parseErrors.push("令牌拉取异常:" + (e as Error).message + ",回退手动导入"); }
   }
 
-  const body = JSON.parse(fs.readFileSync(imp.file, "utf8")) as NAPricingResponse;
+  // 2) 回退:手动导入文件(store/manual-imports/aicost-pricing-*.json)
+  if (!body) {
+    const imp = latestImport();
+    if (!imp) {
+      return {
+        task: "price", site: site.name, capturedAt,
+        currency: "USD", models: [], ratio: null, parser: "aicost-manual",
+        parseErrors: ["no manual import found — 配置 AICOST_ACCESS_TOKEN + AICOST_USER_ID 走自动拉取,或在已登录浏览器 Console 执行导出脚本后重跑"],
+      };
+    }
+    body = JSON.parse(fs.readFileSync(imp.file, "utf8")) as NAPricingResponse;
+    capturedAt = imp.mtime.toISOString();
+    sourceNote = `manual-import(${path.basename(imp.file)})`;
+  }
+
   const data = body.data ?? [];
   const groupRatio = body.group_ratio ?? {};
-  const capturedAt = imp.mtime.toISOString();
-
   if (data.length === 0) throw new Error("pricing data empty");
+
+  const tag = parser === "aicost-api" ? "api" : "manual-import";
 
   for (const m of data) {
     if (!WATCHED_PREFIXES.some(p => m.model_name.startsWith(p))) continue;
@@ -113,13 +149,13 @@ export async function parseAicost(site: SiteConfig): Promise<PriceResult> {
       group: head.group,
       groupKind,
       groups: allGroups,
-      source: (tiered ? "manual-import(tiered_expr)" : "manual-import") + `(${path.basename(imp.file)})`,
+      source: (tiered ? tag + "(tiered_expr)" : tag) + `(${sourceNote})`,
     });
   }
 
   return {
     task: "price", site: site.name, capturedAt,
-    currency: "USD", models, ratio: null, parser: "aicost-manual",
+    currency: "USD", models, ratio: null, parser,
     parseErrors,
   };
 }

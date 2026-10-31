@@ -1,6 +1,8 @@
 # 依赖与构建
 node_modules/
 dist-relay/
+# 构建校验用的临时产物目录(build-relay.js 需要先删 dist-relay,发布目录被系统占用时改输出到这里)
+_build_check/
 
 # ⚠ 密钥绝不可入库
 relaylens/probe/config/secrets/
@@ -13,5 +15,16 @@ Thumbs.db
 *.log
 .trash/
 
+# 测试套件的 npx tsx 实跑临时脚本(跑完即删;进程占用/EPERM 时会残留成 untracked 垃圾)
+relaylens/probe/.tmp-*
+relaylens/probe/tmp-*
+
 # 本地工具状态
 .codebuddy/
+
+# SSH 私钥绝不可入库(2026-10-11 曾误提交一次,已从跟踪移除并吊销)
+deploy/aliyun_key*
+deploy/*.pub
+
+# api-worker Node 自托管运行时数据(会话/评论库,含个人信息)
+api-worker/node/data/

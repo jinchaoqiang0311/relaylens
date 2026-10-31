@@ -7,7 +7,8 @@
  *   down     = 连不上 / 超时 / 5xx
  * 注:base_url 已含 /v1 等前缀时按原样拼接。
  */
-import type { HealthResult, SiteConfig } from "../../../shared/types.js";
+import tls from "node:tls";
+import type { HealthResult, SiteConfig, TlsInfo } from "../../../shared/types.js";
 
 const USER_AGENT = "RelayLens-Probe/0.1 (+https://relaylens.example/about)";
 const TIMEOUT_MS = 15_000;
@@ -37,6 +38,101 @@ function classifyError(e: unknown): string {
   if (/ENOTFOUND|EAI_AGAIN|getaddrinfo/i.test(msg)) return "dns_error";
   if (/ECONNREFUSED|ECONNRESET|fetch failed|network/i.test(msg)) return "conn_error";
   return "error";
+}
+
+// ---------- TLS 证书证据(确定性事实,不参与评分) ----------
+const TLS_TIMEOUT_MS = 8_000;
+
+type TlsHandshake = { ok: boolean; cert?: tls.PeerCertificate; errorCode?: string; protocol?: string | null };
+
+/** 一次 TLS 握手:verify=false 用来读证书,verify=true 用来判「系统 CA 是否认」。 */
+function tlsHandshake(host: string, port: number, verify: boolean): Promise<TlsHandshake> {
+  return new Promise<TlsHandshake>(resolve => {
+    let done = false;
+    let sock: tls.TLSSocket | null = null;
+    const finish = (r: TlsHandshake) => {
+      if (done) return;
+      done = true;
+      try { sock?.destroy(); } catch { /* 已关闭 */ }
+      resolve(r);
+    };
+    try {
+      sock = tls.connect({ host, port, servername: host, rejectUnauthorized: verify }, () => {
+        const cert = sock?.getPeerCertificate(false);
+        finish({ ok: true, cert: cert && Object.keys(cert).length ? cert : undefined, protocol: sock?.getProtocol() ?? null });
+      });
+      sock.setTimeout(TLS_TIMEOUT_MS, () => finish({ ok: false, errorCode: "TIMEOUT" }));
+      sock.on("error", (e: NodeJS.ErrnoException) => finish({ ok: false, errorCode: e.code || e.message || "TLS_ERROR" }));
+    } catch (e) {
+      finish({ ok: false, errorCode: (e as NodeJS.ErrnoException).code || (e as Error).message });
+    }
+  });
+}
+
+/** 从 subjectaltname("DNS:a.com, DNS:*.b.com") 判断 host 是否被覆盖(支持单层通配) */
+export function sanCovers(san: string | undefined, host: string): boolean | null {
+  if (!san) return null;
+  const names = san.split(",").map(s => s.trim()).filter(s => /^DNS:/i.test(s)).map(s => s.slice(4).toLowerCase());
+  const h = host.toLowerCase();
+  if (!names.length) return null;
+  if (names.includes(h)) return true;
+  return names.some(n => n.startsWith("*.") && h.endsWith(n.slice(1)) && h.split(".").length === n.split(".").length);
+}
+
+/**
+ * 采集证书证据。http 站点 / 端口非 443 直接跳过 —— 不是"不通过",是不适用。
+ */
+export async function inspectTls(baseUrl: string, now: Date = new Date()): Promise<TlsInfo | { skipped: true; reason: string }> {
+  let u: URL;
+  try { u = new URL(baseUrl); } catch { return { skipped: true, reason: "base_url 解析失败" }; }
+  if (u.protocol !== "https:") return { skipped: true, reason: "非 https" };
+  const port = Number(u.port || 443);
+  const host = u.hostname;
+  const checkedAt = now.toISOString();
+
+  const peer = await tlsHandshake(host, port, false);
+  if (!peer.ok || !peer.cert) {
+    return {
+      host, port, checkedAt, handshakeOk: false, chainValid: null,
+      errorCode: peer.errorCode ?? "NO_CERT", sanMatch: null,
+      subject: null, issuer: null, notAfter: null, daysLeft: null, protocol: peer.protocol ?? null,
+    };
+  }
+  const verified = await tlsHandshake(host, port, true);
+  const cert = peer.cert;
+  const notAfterDate = cert.valid_to ? new Date(cert.valid_to) : null;
+  const daysLeft = notAfterDate && !isNaN(notAfterDate.getTime())
+    ? Math.floor((notAfterDate.getTime() - now.getTime()) / 86_400_000) : null;
+  const pick = (o: tls.Certificate | undefined) => (o && (o.CN || o.O)) ? [o.CN, o.O].filter(Boolean).join(" / ") : null;
+  return {
+    host, port, checkedAt,
+    handshakeOk: true,
+    chainValid: verified.ok,
+    errorCode: verified.ok ? null : (verified.errorCode ?? "UNVERIFIED"),
+    sanMatch: sanCovers(cert.subjectaltname, host),
+    subject: pick(cert.subject),
+    issuer: pick(cert.issuer),
+    notAfter: notAfterDate ? notAfterDate.toISOString() : null,
+    daysLeft,
+    protocol: peer.protocol ?? null,
+  };
+}
+
+export interface TlsVerdict { level: "ok" | "warn" | "info" | "none"; label: string }
+
+/**
+ * 证书结论的口径(纯函数,便于单测)。**任何分支都不产出分数或扣分语义**:
+ * 证书异常只说明"这条链不完美",不说明"这站不能用"——可用性由健康检查本身判定。
+ */
+export function judgeTls(t: HealthResult["tls"], daysWarn = 15): TlsVerdict {
+  if (!t) return { level: "none", label: "未采集" };
+  if ((t as { skipped?: boolean }).skipped) return { level: "info", label: `不适用(${(t as { reason: string }).reason})` };
+  const i = t as TlsInfo;
+  if (!i.handshakeOk) return { level: "warn", label: `握手失败(${i.errorCode || "未知"})· 不影响接口可调用性结论` };
+  if (i.chainValid === false) return { level: "warn", label: `证书链未通过系统 CA(${i.errorCode || "UNVERIFIED"})· 常见于自签或链不全,不代表站点不可用` };
+  if (i.sanMatch === false) return { level: "warn", label: "证书域名与接口域名不一致 · 请核对是否走了 CDN/反代" };
+  if (i.daysLeft !== null && i.daysLeft <= daysWarn) return { level: "warn", label: `证书 ${i.daysLeft} 天后到期(${i.notAfter?.slice(0, 10)})` };
+  return { level: "ok", label: `证书有效${i.daysLeft !== null ? ` · 剩余 ${i.daysLeft} 天` : ""}${i.protocol ? ` · ${i.protocol}` : ""}` };
 }
 
 export async function runHealth(site: SiteConfig): Promise<HealthResult> {
@@ -117,6 +213,14 @@ export async function runHealth(site: SiteConfig): Promise<HealthResult> {
   const status: HealthResult["overall"]["status"] =
     fullyCompatible ? "up" : (served || anyHttpOk) ? "degraded" : "down";
 
+  // ---- ③ TLS 证书证据(确定性事实,不进评分;失败也不影响上面的可用性判定)----
+  let tlsInfo: HealthResult["tls"];
+  try {
+    tlsInfo = await inspectTls(site.base_url);
+  } catch (e) {
+    tlsInfo = { skipped: true, reason: `采集异常: ${(e as Error).message}` };
+  }
+
   return {
     task: "health",
     site: site.name,
@@ -124,5 +228,6 @@ export async function runHealth(site: SiteConfig): Promise<HealthResult> {
     modelsCheck,
     chatCheck,
     overall: { ok: served, status },
+    tls: tlsInfo,
   };
 }

@@ -319,9 +319,15 @@ export function syncOps(opts: { sites: string[]; inject?: Record<string, number>
     },
   };
 
+  function stripEmojiDeep(v: any): any {
+    if (typeof v === "string") return v.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE00}-\u{FE0F}]/gu, "").replace(/[ \t]{2,}/g, " ").replace(/[ \t]+([,;:、，。）)】」])/g, "$1").trim();
+    if (Array.isArray(v)) return v.map(stripEmojiDeep);
+    if (v && typeof v === "object") { const o: any = {}; for (const k of Object.keys(v)) o[k] = stripEmojiDeep((v as any)[k]); return o; }
+    return v;
+  }
   fs.mkdirSync(DATA_DIR, { recursive: true });
   const opsFile = path.join(DATA_DIR, "ops.json");
-  fs.writeFileSync(opsFile, JSON.stringify(out, null, 2), "utf8");
+  fs.writeFileSync(opsFile, JSON.stringify(stripEmojiDeep(out), null, 2), "utf8");
 
   // 公开摘要:去掉快照噪声,只留「人对系统做了什么」与「数据何时发布」
   const publicEntries: AuditEntry[] = auditList(200).filter(e => e.action !== "config.snapshot");

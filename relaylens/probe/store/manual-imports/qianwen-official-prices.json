@@ -1,0 +1,22 @@
+{
+  "deepseek-v4-1-flash": {
+    "in": 2,
+    "out": 8,
+    "cr": 0.2
+  },
+  "deepseek-v4-pro": {
+    "in": 12,
+    "out": 24,
+    "cr": 1
+  },
+  "qwen3-7-max": {
+    "in": 12,
+    "out": 36,
+    "cr": 2.4
+  },
+  "qwen3-8-max": {
+    "in": 12,
+    "out": 36,
+    "cr": 1.5
+  }
+}

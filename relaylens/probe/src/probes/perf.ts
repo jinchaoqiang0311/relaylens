@@ -4,11 +4,12 @@
  * 中位数 21s 被当成 TTFT → PF 恒为 0 分,是测量缺陷不是站点问题。
  *
  * 方法:SSE 流式请求 + 固定极短 prompt,测「首个内容 token 到达时间」= 真 TTFT。
- *      同一模型重复 N 次取中位数/P95,顺带产出超时率(此前未持久化的 D3 指标)。
+ *      同一模型重复 N 次取中位数(P50),顺带产出超时率(此前未持久化的 D3 指标)。
  * 公平性:跨站比较必须用同一 --model(两站共有的模型,默认 gpt-5.5)。
  */
 import type { SiteConfig } from "../../../shared/types.js";
 import { getDb, nextBatchId, saveRaw, logEvent } from "../store.js";
+import { modelCategory } from "../parsers/models.js";
 
 const UA = "RelayLens-Probe/0.1";
 const PERF_PROMPT = "只回复两个字:收到";
@@ -54,6 +55,27 @@ export async function pickModel(site: SiteConfig): Promise<string | null> {
   return list[0];
 }
 
+/** 挑一个**推理档**模型(与主采样模型不同站内另有推理系时才返回):
+ *  分模型锚点校准的数据入口——普通/推理两类 TTFT 天然不同量级,混在一个锚点里互相污染。
+ *  找不到时返回 null(该站没有推理档,主模型样本即代表)。 */
+export async function pickReasoningModel(site: SiteConfig, exclude: string): Promise<string | null> {
+  const ids = await listModels(site);
+  const NOT_CHAT = /(image|video|t2v|i2v|dall|embed|whisper|tts|audio|speech|moderation|rerank|ocr|flux|sora|kling|jimeng)/i;
+  const hit = ids
+    .filter(id => !NOT_CHAT.test(id))
+    .filter(id => modelCategory(id) === "reasoning")
+    .filter(id => id !== exclude);
+  return hit[0] ?? null;
+}
+
+/** 时段桶(按本地时区小时):9:00–17:59 = work(忙),其余 = off(闲)。
+ *  双窗口采样(工作日 10:30 = work 桶;每天 22:30 = off 桶)落哪个桶由此判定;
+ *  PF 悲观值口径(2026-10-10.1)依赖此函数,与 assemble 的分桶统计必须一致。 */
+export function timeBucket(iso: string): "work" | "off" {
+  const h = new Date(iso).getHours();
+  return h >= 9 && h < 18 ? "work" : "off";
+}
+
 export interface PerfSample {
   seq: number; ok: boolean;
   ttftMs: number | null; totalMs: number | null;
@@ -65,8 +87,11 @@ export interface PerfSample {
 }
 export interface PerfResult {
   task: "perf"; site: string; model: string; batchId: string; startedAt: string; finishedAt: string;
+  /** 模型延迟类别:normal=主采样(入 PF);reasoning=推理档加测(task=perf_reasoning,**不入 PF**,
+   *  供分模型锚点校准——推理首 token 含思考调度,与普通模型混测互污染)。 */
+  category?: "normal" | "reasoning";
   samples: PerfSample[];
-  medianTtftMs: number | null; p95TtftMs: number | null;
+  medianTtftMs: number | null;
   successRate: number | null; timeoutRate: number | null;
   medianThroughput: number | null;
   /** 伪流式样本占比%(仅统计输出≥30 token 的可判样本;无资格样本时为 null) */
@@ -266,15 +291,14 @@ function median(xs: number[]): number | null {
   const s = [...xs].sort((a, b) => a - b);
   return s[Math.floor(s.length / 2)];
 }
-function pctl(xs: number[], q: number): number | null {
-  if (!xs.length) return null;
-  const s = [...xs].sort((a, b) => a - b);
-  return s[Math.min(s.length - 1, Math.ceil(q / 100 * s.length) - 1)];
-}
 
-export async function runPerf(site: SiteConfig, model: string, opts: { iters?: number; timeoutMs?: number } = {}): Promise<PerfResult> {
+export async function runPerf(
+  site: SiteConfig, model: string,
+  opts: { iters?: number; timeoutMs?: number; category?: "normal" | "reasoning" } = {}
+): Promise<PerfResult> {
   const iters = opts.iters ?? 8;
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const category = opts.category ?? "normal";
   const notes: string[] = [];
   const key = site.key_env ? process.env[site.key_env] : undefined;
   let base = site.base_url.replace(/\/+$/, "");
@@ -282,11 +306,14 @@ export async function runPerf(site: SiteConfig, model: string, opts: { iters?: n
 
   const result: PerfResult = {
     task: "perf", site: site.name, model, batchId: nextBatchId(),
+    category,
     startedAt: new Date().toISOString(), finishedAt: "", samples: [],
-    medianTtftMs: null, p95TtftMs: null, successRate: null, timeoutRate: null,
+    medianTtftMs: null, successRate: null, timeoutRate: null,
     medianThroughput: null, bufferedRate: null, streamCheck: null, iters, timeoutMs, notes,
   };
   if (!key) { notes.push("缺少 API key,无法测延迟"); result.finishedAt = new Date().toISOString(); return result; }
+  /** 推理档只采 TTFT:流式真伪专项(3 次长输出)对推理模型又慢又贵,且 SR 有主模型批次覆盖 */
+  if (category === "reasoning") notes.push("推理档加测:仅采 TTFT,不跑流式真伪专项;数据不入 PF,供分模型锚点校准");
 
   for (let i = 0; i < iters; i++) {
     const r = await timedStreamOnce(base, key, model, timeoutMs);
@@ -303,13 +330,16 @@ export async function runPerf(site: SiteConfig, model: string, opts: { iters?: n
   const ttfts = ok.map(s => s.ttftMs!).filter(Number.isFinite);
   const tps = ok.map(s => s.throughputTps!).filter(x => x && Number.isFinite(x));
   result.medianTtftMs = median(ttfts);
-  result.p95TtftMs = pctl(ttfts, 95);
   result.medianThroughput = median(tps);
   // 伪流式率只统计「输出够长、可判真伪」的样本;短答案(2 字)一律不算
   const judgeable = ok.filter(s => s.buffered !== null && s.buffered !== undefined);
   const bufferedN = judgeable.filter(s => s.buffered).length;
   result.bufferedRate = judgeable.length ? Math.round(bufferedN / judgeable.length * 1000) / 10 : null;
-  // 流式真伪专项:短循环判不了时由 3 次长输出请求给出结论
+  // 流式真伪专项:短循环判不了时由 3 次长输出请求给出结论(推理档加测跳过,见上)
+  if (category === "reasoning") {
+    result.finishedAt = new Date().toISOString();
+    return result;
+  }
   result.streamCheck = await streamCheck(base, key, model);
   const sc = result.streamCheck;
   if (sc.verdict === "stream") notes.push(`流式真伪专项(${sc.trials} 次):全部真流式`);
@@ -325,12 +355,15 @@ export async function runPerf(site: SiteConfig, model: string, opts: { iters?: n
 }
 
 export function persistPerf(res: PerfResult): void {
-  const batch = { batchId: res.batchId, site: res.site, task: "perf" as any, startedAt: res.startedAt, ok: (res.successRate ?? 0) >= 50, result: res };
+  /** 推理档批次用独立 task 名落库:所有 task='perf' 的既有查询(PF/超时率/流式真伪)天然免疫,
+   *  推理档更慢的 TTFT 不会污染主评分;数据经 task='perf_reasoning' 单独取用(锚点校准素材)。 */
+  const task = res.category === "reasoning" ? "perf_reasoning" : "perf";
+  const batch = { batchId: res.batchId, site: res.site, task: task as any, startedAt: res.startedAt, ok: (res.successRate ?? 0) >= 50, result: res };
   const rawPath = saveRaw(batch as any);
   const d = getDb();
   d.prepare(`INSERT INTO batches(id, site, task, started_at, ok, raw_path, summary) VALUES(?,?,?,?,?,?,?)`)
-    .run(res.batchId, res.site, "perf", res.startedAt, batch.ok ? 1 : 0, rawPath,
-      JSON.stringify({ perf: true, model: res.model, medianTtftMs: res.medianTtftMs, p95TtftMs: res.p95TtftMs, successRate: res.successRate, timeoutRate: res.timeoutRate, medianThroughput: res.medianThroughput, bufferedRate: res.bufferedRate, streamVerdict: res.streamCheck?.verdict ?? null, streamCheck: res.streamCheck, iters: res.iters }));
+    .run(res.batchId, res.site, task, res.startedAt, batch.ok ? 1 : 0, rawPath,
+      JSON.stringify({ perf: true, category: res.category ?? "normal", model: res.model, medianTtftMs: res.medianTtftMs, successRate: res.successRate, timeoutRate: res.timeoutRate, medianThroughput: res.medianThroughput, bufferedRate: res.bufferedRate, streamVerdict: res.streamCheck?.verdict ?? null, streamCheck: res.streamCheck, iters: res.iters }));
   const ins = d.prepare(`INSERT OR REPLACE INTO rounds(batch_id, seq, model, in_tok, cached_tok, out_tok, should_cost, actual_cost, ttft_ms) VALUES(?,?,?,?,?,?,?,?,?)`);
   for (const s of res.samples) ins.run(res.batchId, s.seq, res.model, s.inTok, null, s.outTok, null, null, s.ttftMs);
   if ((res.timeoutRate ?? 0) > 20) logEvent(res.site, "high_timeout_rate", { batchId: res.batchId, timeoutRate: res.timeoutRate, model: res.model });

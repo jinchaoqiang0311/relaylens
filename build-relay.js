@@ -19,11 +19,27 @@ const OUT = path.join(ROOT, "dist-relay");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
 const base0 = () => cfg.base.replace(/\/+$/, "");
 
+// 评论/账号服务地址(可选):未配置时页面保持「服务尚未上线」诚实占位。
+// 部署 api-worker 后在 site.config.json 填 apiBase(worker 的 https URL),重建即全站启用。
+const apiBase = cfg.apiBase ? String(cfg.apiBase).trim() : "";
+if (apiBase && !/^https?:\/\/[^\s<>"']+$/.test(apiBase)) {
+  throw new Error("site.config.json 的 apiBase 必须是 http(s) 绝对 URL。");
+}
+
+// 模型比价看板(2026-10-28 起 price/compare 两页下线,比价功能由独立看板 relay_scraper serve 承担)。
+// 挂载契约:看板统一挂在 **/price/** —— 本地 preview-server.js 与生产 nginx 都把 /price/ 反代到 8899,
+// 因此源码里比价入口直接写 href="/price/"(与其它导航项同窗口、无中间跳转),构建期不做任何替换。
+// site.config.json 的 priceDashboard 仅作文档备注(看板实际地址),构建不消费;
+// 若将来换挂载路径,全局搜 "/price/" 同步改源码。
+// site.config.json 的 priceDashboard 备注仍保留,供部署 nginx 时对照。
+
 // 内部只读资产:运营看板与其数据不进对外包(即便 noindex,URL 可猜、内容含未公开结论)
 // 需要内部看板时,单独把 relaylens-home/ops.html + data/ops.json 传到后台目录或加 HTTP Basic Auth。
 const INTERNAL = ["ops.html", "data/ops.json"];
 // 404:进包(供 nginx error_page 指向),但 noindex、不进 sitemap、不注入 canonical/og
-const NOINDEX_PAGES = ["404.html"];
+// (2026-10-28 晚:price/compare 两页已彻底删除——重定向壳也不要了,老链接落 404 页;
+//  站内有nginx的话建议在 DEPLOY 里对这两个路径配 301 → /price/,保住老外链权重)
+const NOINDEX_PAGES = ["404.html", "auth.html"];
 
 const pages = fs.readdirSync(SRC).filter(f => f.endsWith(".html") && !INTERNAL.includes(f));
 fs.rmSync(OUT, { recursive: true, force: true });
@@ -33,6 +49,27 @@ let changed = [];
 for (const file of pages) {
   let html = fs.readFileSync(path.join(SRC, file), "utf8");
   const url = cfg.base.replace(/\/+$/, "") + "/" + (file === cfg.defaultPage ? "" : file);
+
+  // ①'' 统一顶部导航(构建期集中注入,避免各页手写导航不一致 —— 曾出现 price/pitfalls/404 项偏少、切页按钮移位)。
+  // 每次都从源文件重注,幂等;**含首页**(此前豁免 index 导致首页用自带 .nav、几何与注入的 .nav-links 不同,切页即移位)。
+  // 要改全站导航只改这里即可;样式统一由 assets/theme-relayindex.css 的 .nav-links 提供。
+  //
+  // ⚠ NAV = 全站唯一的跨页入链来源:不在清单里的页面,除非正文有别处链到,否则构建后就是孤立页
+  //   (爬不到、用户也进不去)。test_nav_integrity.js 对构建产物做全站入链分析,少一项就红 —— 改这里前先看它。
+  //   2026-10-23 曾漏掉 选型顾问/避坑指南,两页直接 0 入链,已加回。
+  //
+  // 2026-10-28 导航加无障碍语义:aria-label 标主导航、当前页补 aria-current="page"
+  //   (原先只有 class="active" 的颜色区分,读屏用户听不出自己在哪一页);
+  //   源码各页的 <nav> 已同步成同一串(本地预览指的就是源码目录,否则源码与产物两套导航)。
+  //
+  // 2026-10-28 「模型比价」「比价矩阵」合并为一项「模型比价」,指向独立看板的规范挂载路径 /price/
+  //   (本地 preview-server 与生产 nginx 均反代到 8899,同源同窗口,无中间跳转)。
+  //   "/price/" 不对应站内文件 → h===file 永不成立 → 自然无 active,无需特判。
+  {
+    const NAV = [["index.html","选站比价"],["ranking.html","全站榜单"],["/price/","模型比价"],["selector.html","选型顾问"],["blacklist.html","避雷黑名单"],["pitfalls.html","避坑指南"],["method.html","方法论"],["tools.html","自测工具箱"]];
+    const nav = '<nav class="nav-links" aria-label="主导航">' + NAV.map(([h,l]) => '<a href="'+h+'"'+(h===file?' class="active" aria-current="page"':'')+'>'+l+'</a>').join("") + '</nav>';
+    html = html.replace(/<nav\b[^>]*>[\s\S]*?<\/nav>/, nav);
+  }
 
   // ① canonical(幂等:先清旧的再注入;404 是 noindex 页,不需要 canonical)
   html = html.replace(/\s*<link rel="canonical"[^>]*>/g, "");
@@ -79,6 +116,12 @@ for (const file of pages) {
     html = html.replace("</body>", `<!-- analytics -->\n${cfg.analyticsHtml}\n<!-- /analytics -->\n</body>`);
   }
 
+  // ④'' 评论/账号服务地址注入:直接替换源码里的 var RL_API_BASE="" 占位
+  // (auth.js 资产与 api.html 内联各一份,资产那份在下方资源拷贝后统一补丁),与脚本顺序无关。
+  if (apiBase) {
+    html = html.replace(/var RL_API_BASE\s*=\s*""\s*;/, `var RL_API_BASE=${JSON.stringify(apiBase)};`);
+  }
+
   // ④' WordPress 表单桥接(可选,幂等;未配置 wpBridge.formEndpoint 时完全不注入)
   // 作用:入驻/认领页的 schema JSON 表单从「邮件降级」切换为 POST 到 WP REST,
   // 进入 WP 后台申请/认领审核流。页面源码无需任何改动。
@@ -107,6 +150,13 @@ if (fs.existsSync(path.join(SRC, "data"))) {
 }
 if (fs.existsSync(path.join(SRC, "assets"))) {
   fs.cpSync(path.join(SRC, "assets"), path.join(OUT, "assets"), { recursive: true });
+  // auth.js 里的 RL_API_BASE 占位同样按 apiBase 替换(与页面内联替换同一口径)
+  if (apiBase) {
+    const authFile = path.join(OUT, "assets", "auth.js");
+    if (fs.existsSync(authFile)) {
+      fs.writeFileSync(authFile, fs.readFileSync(authFile, "utf8").replace(/var RL_API_BASE\s*=\s*""\s*;/, `var RL_API_BASE=${JSON.stringify(apiBase)};`));
+    }
+  }
 }
 
 // sitemap.xml(404 是 noindex 页,不进)
