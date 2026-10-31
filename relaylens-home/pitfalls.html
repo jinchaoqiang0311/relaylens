@@ -82,15 +82,7 @@ footer a{color:var(--sub)}
 <header>
  <div class="wrap nav">
  <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
- <nav class="nav-links">
- <a href="index.html">首页</a>
- <a href="ranking.html">全站榜单</a>
- <a href="price.html">模型比价</a>
-
- <a href="pitfalls.html" class="active">避坑指南</a>
- <a href="blacklist.html">黑名单</a>
- <a href="method.html">方法论</a>
- </nav>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html" class="active" aria-current="page">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
  </div>
 </header>
 
@@ -162,7 +154,7 @@ footer a{color:var(--sub)}
  <ol>
  <li><b>充值前先自测：</b>用<a href="tools.html#selftest">自测工具箱</a>测打字是不是真的一点点往外冒、字数有没有被多报、缓存折没兑现，30 秒出一张可转发的结果图；店不让浏览器直连就用里面的控制台脚本通道。</li>
  <li><b>少量多次充值：</b>起充门槛低是方便你，不是对你好——大额囤钱碰上店家跑路，追回的钱还不够折腾的。</li>
- <li><b>只信测出来的，不信嘴上说的：</b>兑换比例、宣传语、页面标价都可以是话术；<a href="price.html">到手价</a>、对账差额、同题对比结果、超时次数这些测出来的数才配进你的决策。<a href="ranking.html">榜单</a>全部判定留痕，点进去能查到原始批次。</li>
+ <li><b>只信测出来的，不信嘴上说的：</b>兑换比例、宣传语、页面标价都可以是话术；<a href="/price/">到手价</a>、对账差额、同题对比结果、超时次数这些测出来的数才配进你的决策。<a href="ranking.html">榜单</a>全部判定留痕，点进去能查到原始批次。</li>
  </ol>
  </div>
 
@@ -229,7 +221,7 @@ fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(ne
  var w=withRatio[0];
  setCase("case-price",'<div class="ct">实测案例 · 一家店的兑换规则</div>'+
  '<span class="chip c-warn">「1 块钱 = '+Math.round(1/w.commerce.ratioNum)+' 美元额度」</span>'+
- '<div style="margin-top:6px">听着是不是特别划算？但它自家额度消耗的<b>单价标得比别家高一个数量级</b>——兑换比例和单价是一套组合拳，只把「1 块换 10 块」拿出来说就是障眼法。折算成到手价（每百万字实付人民币）再比，差距远没有兑换数字看着大：<a href="compare.html?model=gpt-5-6-sol">比价页</a>每一格都现场演算。兑换规则不公示的店，我们宁可空着也不替你猜。</div>');
+ '<div style="margin-top:6px">听着是不是特别划算？但它自家额度消耗的<b>单价标得比别家高一个数量级</b>——兑换比例和单价是一套组合拳，只把「1 块换 10 块」拿出来说就是障眼法。折算成到手价（每百万字实付人民币）再比，差距远没有兑换数字看着大：<a href="/price/#cmp:gpt-5.6-sol">比价页</a>每一格都现场演算。兑换规则不公示的店，我们宁可空着也不替你猜。</div>');
  } else pending("case-price","暂无兑换比例差异显著的样本。");
 
  /* 5「网站活着 ≠ 你的请求能用」(匿名) */

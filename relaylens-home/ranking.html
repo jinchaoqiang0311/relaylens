@@ -273,17 +273,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 <header>
  <div class="wrap nav">
  <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
- <nav class="nav-links">
- <a href="index.html">首页</a>
- <a href="ranking.html" class="active">全站榜单</a>
- <a href="price.html">模型比价</a>
- <a href="selector.html">选型顾问</a>
- <a href="tools.html">自测工具箱</a>
- <a href="pitfalls.html">避坑指南</a><a href="blacklist.html" class="hot">避雷黑名单</a>
- <a href="method.html">方法论</a>
- <a href="api.html">API</a>
- <a href="reports.html">实测报告</a>
- </nav>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html" class="active" aria-current="page">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
  <a class="btn btn-ghost btn-sm" href="#">登录</a>
  <a class="btn btn-primary btn-sm" href="#">注册</a>
  </div>
@@ -298,10 +288,12 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <h1>全站实测榜单 · 每一个数字都有账单背书</h1>
  <p class="sub">所有指标来自每 6 小时自动执行的付费实测:应扣 vs 实扣逐轮对账、模型指纹比对、缓存命中统计。点击表头排序,点击行查看逐轮证据。</p>
  </div>
+ <!-- 统计带(数字必须来自 data/sites.json,不许写死 —— 2026-10-23 发现此处曾长期显示「实测站点 47 / 累计检测批次 2,904」,
+      而同期真实值是实测 9 家、批次 3499;一个卖计费诚实度的站,自己的门面数字不能是假的) -->
  <div class="ph-stats">
- <div class="s"><div class="v num">47</div><div class="k">实测站点</div></div>
- <div class="s"><div class="v num">2,904</div><div class="k">累计检测批次</div></div>
- <div class="s"><div class="v num" id="ph-updated">--</div><div class="k">最后更新</div></div>
+ <div class="s"><div class="v num" id="ph-sites">—</div><div class="k">实测站点</div></div>
+ <div class="s"><div class="v num" id="ph-batches">—</div><div class="k">累计检测批次</div></div>
+ <div class="s"><div class="v num" id="ph-updated">—</div><div class="k">最后更新</div></div>
  </div>
  </div>
  </div>
@@ -317,7 +309,9 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <a data-scene="drama">剧本创作榜</a>
  <a data-scene="biz">企业榜</a>
  </div>
- <p class="tab-note" id="tabNote"><b>综合榜</b> = 扣费诚实 30% + 稳定性 25% + 模型完整性 25% + 价格 20%<span data-tip="不同场景下同一站点可能表现迥异,建议按你的用途切换分榜。"> …</span></p>
+ <!-- 静态占位:权重文案由 sceneNoteText() 从 payload.meta.scenes 渲染(与 weights.json 同源)。
+      数据未到位时不给任何数字,也不回落旧的手写公式 —— 宁可不显示,不可显示错口径。 -->
+ <p class="tab-note" id="tabNote"><b>综合榜</b> = 权重口径取自 <code>weights.json</code>,加载中…</p>
 
  <!-- 筛选栏 -->
  <div class="filters">
@@ -439,7 +433,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  </div>
  <div>
  <h4>站点</h4>
- <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a>
  </div>
  <div>
  <h4>关于</h4>
@@ -506,14 +500,37 @@ var REFS=[];
 var DEMO_ON=/[?&]demo=1/.test(location.search);
 function currentRows(){return DEMO_ON?MEASURED_SEED.concat(DEMO_SEED):MEASURED_SEED.slice();}
 var SITES=currentRows();
-var sceneNote={
- all:"<b>综合榜</b> = 扣费诚实 30% + 稳定性 25% + 模型完整性 25% + 价格 20%<span data-tip=\"不同场景下同一站点可能表现迥异,建议按你的用途切换分榜。\"> …</span>",
- code:"<b>编程榜</b> = 缓存命中真实性 25% + 模型指纹 25% + SSE 完整率 20% + 计费诚实 15% + 首字延迟 15%<span data-tip=\"写代码场景缓存命中占输入 50-80%,缓存策略是成本第一变量。\"> …</span>",
- office:"<b>办公榜</b> = 可用率 25% + 首字延迟 20% + 多模型覆盖 20% + 客户端兼容性 15% + 价格 20%<span data-tip=\"翻译/总结/PPT 场景重在稳定顺手,轻度使用月成本普遍 ¥10 以内,不必为旗舰模型多花钱。\"> …</span>",
- drama:"<b>剧本创作榜</b> = 长上下文完整率 30% + 输出吞吐 25% + 模型指纹 20% + 缓存策略 15% + 价格 10%<span data-tip=\"剧本动辄数万字上下文,「偷偷截断上下文」是创作场景最隐蔽的坑;输出速度决定灵感不断流。\"> …</span>",
- biz:"<b>企业榜</b> = 运营风险 30% + 开票/对公 25% + SLA 记录 25% + 隐私条款 20% · 只看运营 1 年以上、可开票、有故障响应记录的站。",
- risk:"<b>跑路风险榜</b>(风险升序展示)= 运营时长 20% + 充值门槛 20% + 价格波动率 20% + 公告/兑付记录 20% + 域名年龄 10% + 社群活跃度 10% · 风险与评分互相独立:服务好 ≠ 值得大额充值。"
+/* ===== 场景权重文案:只许从 payload.meta.scenes 渲染(2026-10-23 纠偏) =====
+   此前这里是手写公式,与 weights.json 完全脱节 —— 页面写「剧本创作榜 = 长上下文完整率 30%」,
+   而权重表里根本没有这一项指标(也没有"客户端兼容性""隐私条款")。卖「网页说什么、代码就算什么」
+   的站不能有第二个口径:权重与指标名一律由 sync 从 weights.json 下发,页面只负责排版。
+   未取到权重表时不估算、不回落旧文案,直接说明「未加载到权重表」。 */
+var SCENE_W=null, METRIC_LABEL=null, WEIGHTS_VER="";
+var SCENE_NAME={all:"综合榜",code:"编程榜",office:"办公榜",drama:"剧本创作榜",biz:"企业榜"};
+/* 每场景一句"该怎么用",不含任何权重或未测指标的说法 */
+var SCENE_TIP={
+ all:"不同场景下同一站点可能表现迥异,建议按你的用途切换分榜。",
+ code:"写代码场景对首字延迟与流式真实性最敏感(伪流式会让 Cursor / Claude Code 看不到生成过程)。",
+ office:"翻译/总结/PPT 场景重在稳定顺手,轻度使用月成本普遍不高。",
+ drama:"剧本动辄数万字上下文:长上下文是否被截断我们目前**尚未实测**(标记码探针在计划中),此处不给无关分数。",
+ biz:"只看运营 1 年以上、可开票、有故障响应记录的站。"
 };
+function sceneNoteText(s){
+ var name=SCENE_NAME[s]||s;
+ var sw=SCENE_W&&SCENE_W[s];
+ if(!sw||!sw.weights)return '<b>'+name+'</b> = 权重口径取自 <code>weights.json</code>,当前未加载到权重表 —— 不在此估算';
+ var parts=Object.keys(sw.weights).map(function(k){
+   return ((METRIC_LABEL&&METRIC_LABEL[k])||k)+' '+sw.weights[k]+'%';
+ });
+ return '<b>'+name+'</b> = '+parts.join(' + ')+
+   '<span data-tip="'+(SCENE_TIP[s]||"")+'"> …</span>'+
+   (WEIGHTS_VER?' <span style="color:var(--faint)">· 权重版本 '+WEIGHTS_VER+'</span>':'');
+}
+function applySceneMeta(payload){
+ var m=(payload&&payload.meta)||{};
+ SCENE_W=m.scenes||null; METRIC_LABEL=m.metricLabels||null; WEIGHTS_VER=m.weightsVersion||"";
+ var el=document.getElementById("tabNote"); if(el)el.innerHTML=sceneNoteText(state.scene);
+}
 var riskOrder={low:0,mid:1,high:2};
 var fpText={pass:["tm-g","通过"],partial:["tm-y","存疑"],fail:["tm-r","未通过"],pending:["","待检测"]};
 var riskText={low:["tm-g","低"],mid:["tm-y","中"],high:["tm-r","高 "]};
@@ -563,8 +580,7 @@ function slaSpark(series){
  if(cur.length>1)segs.push(cur);
  var paths=segs.map(function(s){return '<path d="'+s.map(function(pt,i){return(i?"L":"M")+pt[0].toFixed(1)+","+pt[1].toFixed(1)}).join(" ")+'" fill="none" stroke="#0d9488" stroke-width="1.3" stroke-linecap="round"/>'}).join("");
  var last=segs.length?segs[segs.length-1][segs[segs.length-1].length-1]:null;
- return '<svg class="rc-spark" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="近 72 小时可用率走势,每 6 小时一格">'+paths+(last?'<circle cx="'+last[0].toFixed(1)+'" cy="'+last[1].toFixed(1)+'" r="1.8" fill="#0d9488"/>':"")+'</svg>'+
- '<div class="rc-s">'+vals.length+'/'+N+' 段有样本(6h/格) · 区间 '+lo+'–'+hi+'%</div>';
+ return '<svg class="rc-spark" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="近 72 小时可用率走势,每 6 小时一格" title="近 72 小时可用率走势:每 6 小时一格,'+vals.length+'/'+N+' 段有样本,区间 '+lo+'–'+hi+'%(2026-10-30 起样本说明悬浮展示)">'+paths+(last?'<circle cx="'+last[0].toFixed(1)+'" cy="'+last[1].toFixed(1)+'" r="1.8" fill="#0d9488"/>':"")+'</svg>';
 }
 /* 测速直达按钮:仅给有真实域名与探针档案的站;示例站不出现(不能给假站做"真测速") */
 function probeBtn(s){
@@ -767,8 +783,7 @@ function scoreCell(s,sc){
     这里还列 ecom 会渲染出 "undefined —"(SCENE_SHORT 查不到)。改场景只需改这一处 + SCENE_SHORT。 */
  '<div class="rc-mini">'+["code","office","drama","biz"].map(function(k){var v=s.score?s.score[k]:null;return '<span>'+SCENE_SHORT[k]+' <b>'+(v==null?"—":v)+'</b></span>'}).join("")+'</div>'+
  '<div class="rc-s">'+(s.coverage&&s.coverage[state.scene]!=null?'覆盖 '+s.coverage[state.scene]+'%':'覆盖未计')+(s.confidence&&s.confidence[state.scene]!=null?' · 置信 '+s.confidence[state.scene]:'')+(s.lowConfidence&&s.lowConfidence[state.scene]?' · 低置信':'')+'</div>'+
- /* 分组口径是最重要的一条披露,只藏在悬浮里等于没说 —— 分数行保留一行可见标注 */
- '<div class="rc-s">'+(s.measuredGroup&&s.measuredGroup.group?'分数仅代表实测分组 '+esc(s.measuredGroup.group):'实测分组未标注')+'</div>'+
+ /* 分组口径披露:2026-10-30 用户裁定列表内不放解释文字,改由 scoreTip 悬浮披露(该分数仅代表实测分组…) */
  '</div>';
 }
 
@@ -797,12 +812,9 @@ function render(){
  tagLine(s)+
  '</div></td>'+
  '<td class="rich">'+scoreCell(s,sc)+'</td>'+
- '<td class="rich"><div class="rc" title="'+esc(s.audit&&s.audit.lastAt?("账单核验于 "+s.audit.lastAt+(s.audit.verified?" · 逐笔 "+s.audit.verified+" 笔":"")+(s.checks?" · 健康检查 "+s.checks+" 次":"")):"该站尚无账单级核验记录")+'">'+
+ '<td class="rich"><div class="rc" title="'+esc(s.audit&&s.audit.lastAt?("账单核验于 "+s.audit.lastAt+(s.audit.verified?" · 逐笔 "+s.audit.verified+" 笔":"")+(s.checks?" · 健康检查 "+s.checks+" 次":"")):(s.passive?"该站尚未做账单级实测(需站方提供测试额度),当前仅免费探活监测":"该站尚无账单级核验记录"))+'">'+
  '<div class="rc-big '+(s.audit&&s.audit.matchPct!=null?(s.audit.matchPct>=99?"ok":"bad"):"mute")+'">'+(s.audit&&s.audit.matchPct!=null?s.audit.matchPct+"%":"未对账")+'</div>'+
- (s.passive
- ? '<div class="rc-s">尚未做账单级实测(真金白银逐笔对账需站方提供测试额度)</div>'
- : '<div class="rc-s">逐笔判定 '+devCell(s.dev,s.real===1&&s.level!=="passive")+'</div>'+
- '<div class="rc-s">容差 max(2 quota, 1%)'+(s.audit&&s.audit.lastAt?' · 核验 '+esc(String(s.audit.lastAt).slice(5)):'')+'</div>')+
+ (s.passive?"":'<div>'+devCell(s.dev,s.real===1&&s.level!=="passive")+'</div>')+
  '</div></td>'+
  '<td class="rich"><div class="rc">'+
  '<div class="rc-big '+cellCls(s.avail,function(v){return v>=99?"ok":v>=97?"warn":"bad"})+'">'+(s.avail==null?"未测":s.avail+"%")+'</div>'+
@@ -812,15 +824,14 @@ function render(){
  (ttftDual(s)?'<div class="rc-s">'+ttftDual(s)+(s.ttftPartialBucket?'(仅'+(s.ttftPartialBucket==="work"?"忙":"闲")+'时样本)':'')+'</div>':'')+
  '<div class="rc-s">'+(s.perf&&s.perf.successRate!=null?'探针成功率 '+s.perf.successRate+'%':'成功率未测')+'</div>'+
  '<div>'+cell(s.stream,function(v){return v===0?'<span class="rc-chip ok" title="内容逐字送出,Cursor/Claude Code 可边生成边看">真流式</span>':v>=99?'<span class="rc-chip bad" title="伪流式率 '+v+'%:整段生成完才一次性下发,逐字输出失效">假流式 '+v+'%</span>':'<span class="rc-chip warn" title="部分请求被缓冲后一次性下发">◐ 混合 '+v+'%</span>'})+'</div>'+
- '<div class="rc-s" style="margin-top:-2px">你的网络可以到「操作 · 测速直达」自行复现这两项</div>'+ /* 按钮本体在操作列,这里只留指路 */
  '</div></td>'+
  '<td class="rich"><div class="rc">'+
  '<div class="rc-big '+(s.inject==null?"mute":s.inject===0?"ok":"bad")+'">'+cell(s.inject,function(v){return v===0?"无":"+"+v})+'</div>'+
- '<div class="rc-s">'+(s.inject?'tok/请求'+(s.injectSplit?' · 缓存占'+Math.round(s.injectSplit.cached_share*100)+'%':''):'未做注入实验')+'</div>'+
+ (s.inject?'<div class="rc-s">tok/请求'+(s.injectSplit?' · 缓存占'+Math.round(s.injectSplit.cached_share*100)+'%':'')+'</div>':'')+
  '<div><span class="tag-m '+(fpText[s.fp]||fpText.pending)[0]+'" title="'+esc((s.fpDetail&&s.fpDetail.note)?s.fpDetail.note:'模型指纹:与基线站同题响应的特征比对')+'">'+(fpText[s.fp]||fpText.pending)[1]+(s.fpDetail&&s.fpDetail.similarity!=null?' '+s.fpDetail.similarity+'%'+(s.fpDetail.note?' *':''):'')+'</span></div>'+
  '</div></td>'+
  '<td class="rich"><div class="rc">'+
- '<div class="rc-big '+(s.price?"ok":"mute")+'" style="font-size:16px">'+(s.price?esc(s.price):"未采")+'</div>'+
+ '<div class="rc-big '+(s.price?"ok":"mute")+'" style="font-size:16px" title="'+((s.priceSrc&&s.priceSrc.src==="CNY")?"站方价格页直接以人民币公示,页面价即到手价(不乘充值比例)":((s.price&&s.price.charAt(0)==='$'&&!s.effPrice)?"站方只给美元额度价、未声明充值比例,不给人民币价(不按汇率猜)":""))+'">'+(s.price?esc(s.price):"未采")+'</div>'+
  '<div class="rc-s">'+esc(s.priceModel||"")+(s.priceGroup?' · '+esc(s.priceGroup)+'组':'')+'</div>'+
  (s.effPrice!=null
  ? '<div class="rc-s" title="人民币到手价 = 官方价格 × 倍率 × 充值比例(三因子逐格可悬浮验算)'+(s.priceCalib==='measured'?('；账单验证:实扣÷应扣 ×'+(s.priceCalibFactor??1)+(Math.abs((s.priceCalibFactor??1)-1)<=0.05?'(一致)':'(不一致,标价公式未反映真实扣费)')):'；尚未用真实账单验证,按公式折算')+'">到手 ¥'+s.effPrice+'/M(比例 ¥'+(s.effRatio||1)+'/1$)'
@@ -830,12 +841,10 @@ function render(){
     ② CNY 公示价站(heyroute 等,站方价格页直接写 ¥ 单价)→ 页面上的 ¥ 就是到手价,
        充值比例只是买额度的成本,再乘一次会把网页明写的价格改小 4 倍(2026-10-21 用户拍板);
     ③ 只声明美元额度价且未声明比例 → 明说"不给人民币价",绝不按汇率猜。 */
- : ((s.priceSrc&&s.priceSrc.src==="CNY")
- ? '<div class="rc-s" title="站方价格页直接以人民币公示单价(如 heyroute 的 ¥ CNY 视图),这就是到手价;充值比例只影响买额度的成本,不再乘第二次">站方人民币公示价 · 即到手价(不乘充值比例)</div>'
- : (s.price&&s.price.charAt(0)==='$'?'<div class="rc-s" title="站方只给了美元额度价、未声明充值比例;拿汇率折成人民币会造出站方页面不存在的价格,故不给">充值比例未声明 · 不给人民币价</div>':'')))+
+ : '')+
  /* 比例与倍率是同一笔价格的两种写法(1¥=10$ 的站往往把倍率抬高一个数量级),单看比例判断贵贱是错的;
- 只以最终到手价为准,风险判断交给对账偏差 / 指纹 / 超时这些测得出来的量。 */
- '<div class="rc-s">'+(s.groups&&s.groups.length?'共 '+s.groups.length+' 个分组已声明':'分组未声明')+'</div>'+
+ 只以最终到手价为准,风险判断交给对账偏差 / 指纹 / 超时这些测得出来的量。
+ 三种价格态的口径说明改为悬浮在价格大字上(2026-10-30 用户裁定列表内不放解释文字)。 */
  '</div></td>'+
  '<td class="rich">'+commerceCell(s)+'</td>'+
  '<td class="rich"><div class="op-col">'+
@@ -932,9 +941,7 @@ function renderRefs(tb, mc){
  if(!list.length)return;
  var sep=document.createElement('tr');
  sep.className='ref-sep';
- sep.innerHTML='<td colspan="10"><b>以下为参照系</b> · 官方直连与海外聚合平台。它们的真实可达率与公开报价用来回答「要不要走中转、中转比官方贵多少」,'+
- '<b>不参与中转榜排名</b> —— 榜单衡量的是中间商有没有少给你、多扣你,这一层对官方没有语义(故标「不适用」而非「未测」)。'+
- '<a href="method.html#updates" style="color:var(--brand);font-weight:600;margin-left:6px">口径说明 →</a></td>';
+ sep.innerHTML='<td colspan="10"><b>以下为参照系</b> · 官方直连与聚合平台,不参与中转榜排名<a href="method.html#updates" style="color:var(--brand);font-weight:600;margin-left:6px">口径说明 →</a></td>';
  tb.appendChild(sep);
  list.forEach(function(r){
  var tr=document.createElement('tr');
@@ -986,7 +993,7 @@ function detail(name){
  document.querySelectorAll("#sceneTabs a").forEach(function(x){x.classList.remove("on")});
  tab.classList.add("on");
  state.scene=s;
- document.getElementById("tabNote").innerHTML=sceneNote[s]||sceneNote.all;
+ document.getElementById("tabNote").innerHTML=sceneNoteText(s);
  }
  }
 })();
@@ -996,7 +1003,7 @@ document.querySelectorAll("#sceneTabs a").forEach(function(a){
  document.querySelectorAll("#sceneTabs a").forEach(function(x){x.classList.remove("on")});
  a.classList.add("on");
  state.scene=a.getAttribute("data-scene");
- document.getElementById("tabNote").innerHTML=sceneNote[state.scene];
+ document.getElementById("tabNote").innerHTML=sceneNoteText(state.scene);
  render();
  });
 });
@@ -1057,14 +1064,35 @@ document.querySelectorAll("th[data-sort-key]").forEach(function(th){
 var toastEl=document.getElementById("toast"),toastTimer;
 function showToast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
 
-// 页头更新时间
-var now=new Date();
-function pad(n){return String(n).padStart(2,"0")}
-document.getElementById("ph-updated").textContent=pad(now.getMonth()+1)+"-"+pad(now.getDate())+" "+pad(now.getHours())+":"+pad(now.getMinutes());
+/* 页头「最后更新」:只认 data/sites.json 的 meta.updated(探针真实落库时间)。
+   ⚠ 别改回 new Date() —— 那是访客本机时钟,会让每个人都以为数据刚刚更新过(红线 10)。
+   取不到 meta 时留「—」,不编。 */
+function setPhUpdated(payload){
+ var el=document.getElementById("ph-updated"); if(!el) return;
+ var u=(payload&&payload.meta&&payload.meta.updated)||"";
+ el.textContent=u?(u.slice(0,10)+" "+(u.slice(11,16)||"")):"—";
+}
 
 // ===== 数据管道:优先加载探针真实数据(data/sites.json),失败回退演示数据 =====
 var DATA_SOURCE="页面内置快照(2026-09-29 批次,非实时数据)";
+/* 页头统计带:只认 data/sites.json 的 meta.stats 与 meta.updated。
+   ⚠ 别改回写死数字,也别拿 new Date() 当「最后更新」—— 那会让每个访客都以为数据是刚刚更新的
+   (2026-10-23 修正:此前写死「实测站点 47 / 累计检测批次 2,904」,而同期真实值为在册 12 / 批次 3499;
+    「最后更新」则直接取访客本机时钟)。取不到就留「—」,不编。
+   口径:「实测站点」= 已入册的实测站(与榜单表下方渲染的站点集合同源),
+   账单级逐笔对账过的家数由首页门面单列(sitesPaidMeasured),这里不混用。 */
+function fillPhStats(payload){
+ var S=(payload&&payload.meta&&payload.meta.stats)||{};
+ var updated=(payload&&payload.meta&&payload.meta.updated)||"";
+ var real=(payload&&payload.realSites)||[];
+ function set(id,v){var el=document.getElementById(id);if(el)el.textContent=(v==null||v==="")?"—":String(v);}
+ set("ph-sites", S.sitesRegistered!=null?S.sitesRegistered:(real.length||null));
+ set("ph-batches", S.batchesTotal!=null?Number(S.batchesTotal).toLocaleString():null);
+ set("ph-updated", updated?(updated.slice(0,10)+" "+(updated.slice(11,16)||"")):null);
+}
+
 function applyRealData(payload){
+ fillPhStats(payload);
  /* 先按当前演示态重建行集(必须放在补行之前,否则会把下面新长出来的监测行抹掉) */
  SITES=currentRows();
  var byName={}; payload.realSites.forEach(function(r){byName[r.name]=r});
@@ -1122,6 +1150,8 @@ function applyRealData(payload){
  });
  REFS=payload.referenceSites||[]; // 官方直连/聚合参照行
  DATA_SOURCE="实测数据 · 权重"+(payload.meta&&payload.meta.weightsVersion||"")+" · "+((payload.meta&&payload.meta.updated||"").slice(0,10));
+ setPhUpdated(payload);
+ applySceneMeta(payload);   // 场景权重文案与 weights.json 同源:每次数据到位就按当前场景重排一次
  render();
  var fc=document.getElementById("fCount");
  if(fc)fc.innerHTML=fc.innerHTML+' <span style="color:var(--ok);font-weight:600">· '+DATA_SOURCE+'</span>';

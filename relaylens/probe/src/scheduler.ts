@@ -17,7 +17,11 @@ export function enabledSites(cfg: ProbeConfig): SiteConfig[] {
   return cfg.sites.filter(s => s.enabled);
 }
 
-const TIMEOUT_DEFAULT: Record<TaskName, number> = { health: 60_000, price: 300_000, billing: 900_000 };
+/** 只给走 runTask 的任务配超时;perf/tokens/context 有各自的实现与超时(不经过 runRound) */
+const TIMEOUT_DEFAULT: Record<TaskName, number> = {
+  health: 60_000, price: 300_000, billing: 900_000,
+  perf: 600_000, tokens: 600_000, context: 900_000,
+};
 
 function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([

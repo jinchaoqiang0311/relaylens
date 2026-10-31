@@ -1,16 +1,64 @@
 {
   "meta": {
-    "generatedAt": "2026-10-22T14:13:36.517Z",
+    "generatedAt": "2026-10-23T14:13:13.781Z",
     "weightsVersion": "2026-10-22.2",
     "policy": "哈希链式追加日志:每条记录包含前一条的哈希,任意改写或删除都会使链校验失败。",
     "verify": "本地校验:tsx cli.ts audit verify(探针仓库开源,任何人可重放)"
   },
   "chain": {
     "ok": true,
-    "total": 195,
-    "head": "ee1291dc78cd22f5644bed1feb7f0eac8fa0f6c68783d1941cebee8819c727a9"
+    "total": 198,
+    "head": "506b7cd87ef83ff920c45b2d8ed7b64a81a8860bc7e38bb67985b082927b8d96"
   },
   "entries": [
+    {
+      "seq": 198,
+      "at": "2026-10-23T14:13:13.591Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "a208a15de0e14dadc492434c53d94ad2f0fb85ff7e54faebc8c14de4679c220a"
+      },
+      "after": {
+        "hash": "19d8dfb4befed4d0ebdeacea9f6d6ff5673b17020f46e9c538d40a394a95c337",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "506b7cd87ef83ff9"
+    },
+    {
+      "seq": 197,
+      "at": "2026-10-23T14:10:45.195Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "aa1718efa3154c86659f767f9dd2536b4688b1f13d945bef843c8ea3ecc0c0c7"
+      },
+      "after": {
+        "hash": "a208a15de0e14dadc492434c53d94ad2f0fb85ff7e54faebc8c14de4679c220a",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "82923be25df9003c"
+    },
+    {
+      "seq": 196,
+      "at": "2026-10-23T14:07:35.647Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "987d4a290db7edd1d97e87177ff53f1134076ca252ab0d8e11af301458bf0434"
+      },
+      "after": {
+        "hash": "aa1718efa3154c86659f767f9dd2536b4688b1f13d945bef843c8ea3ecc0c0c7",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "e176de0379810e68"
+    },
     {
       "seq": 195,
       "at": "2026-10-22T14:13:36.328Z",

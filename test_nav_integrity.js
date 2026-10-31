@@ -21,21 +21,25 @@ const injLine = 'html = html.replace(/<nav\\b[^>]*>[\\s\\S]*?<\\/nav>/, nav);';
 ok(build.includes(injLine), "注入正则未变(改了注入方式请同步本测试的重建逻辑)");
 
 ok(Array.isArray(NAV) && NAV.length > 0, "NAV 非空");
-ok(NAV.length === 9, "导航 9 项(全站榜单/比价矩阵/选型顾问/避坑指南 等都在,改项数前先确认没有页面被孤立)");
+ok(NAV.length === 8, "导航 8 项(2026-10-28 起「模型比价」「比价矩阵」合并为一项外链看板,原 price/compare 两页变重定向壳;改项数前先确认没有页面被孤立)");
 ok(NAV.length === new Set(NAV.map(x => x[0])).size, "NAV 无重复项");
 
-/* —— 逐项校验:目标文件必须存在,否则注入的是死链 —— */
+/* —— 逐项校验:站内项目标文件必须存在,否则注入的是死链;比价挂载路径 /price/ 跳过 —— */
 for (const [href, label] of NAV) {
+  if (href === "/price/") {
+    ok(true, "NAV 项 模型比价 = 看板挂载路径 /price/(preview-server 与生产 nginx 反代到 8899)");
+    continue;
+  }
   ok(fs.existsSync(SRC + "/" + href), "NAV 项 " + href + "(" + label + ")对应源文件存在");
 }
 
-/* —— 复刻构建期注入(含当前页 active),得到与构建产物一致的导航 —— */
-const navFor = (file) => '<nav class="nav-links">' + NAV.map(([h, l]) => '<a href="' + h + '"' + (h === file ? ' class="active"' : '') + '>' + l + '</a>').join("") + '</nav>';
+/* —— 复刻构建期注入(含当前页 active/aria-current),得到与构建产物一致的导航 —— */
+const navFor = (file) => '<nav class="nav-links" aria-label="主导航">' + NAV.map(([h, l]) => '<a href="' + h + '"' + (h === file ? ' class="active" aria-current="page"' : '') + '>' + l + '</a>').join("") + '</nav>';
 
 /* 构建脚本的排除项:内部看板不进对外包 */
 const INTERNAL = ["ops.html"];
 const pages = fs.readdirSync(SRC).filter(f => f.endsWith(".html") && !INTERNAL.includes(f));
-ok(pages.length >= 16, "进包页面数合理(" + pages.length + ")");
+ok(pages.length >= 14, "进包页面数合理(" + pages.length + ",2026-10-28 起 price/compare 已删,比价走外链看板)");
 
 const injected = {};
 for (const file of pages) {
@@ -45,7 +49,8 @@ for (const file of pages) {
 
 /* —— 有意孤立的页面:noindex 页 + 靠 JS 跳转的详情页 ——
    404/auth 是 noindex 兜底页,本就不该被链;detail.html 由 location.href 带参数跳转
-   (ranking/compare 的行点击),静态入链统计看不到它,故单独豁免。 */
+   (ranking/compare 的行点击),静态入链统计看不到它,故单独豁免。
+   price/compare 两页已于 2026-10-28 彻底删除(比价走外链看板,老链接落 404)。 */
 const ORPHAN_OK = new Set(["404.html", "auth.html", "detail.html"]);
 
 const inbound = {};
@@ -74,7 +79,8 @@ for (const f of pages) {
 /* —— 每页导航项数一致,且(若本页在 NAV 里)当前页带 active —— */
 const navHrefs = new Set(NAV.map(x => x[0]));
 /* 无顶部导航的页面是既定设计(404/auth 是 noindex 兜底页,不挂导航)。
-   把它们钉死在这里:哪天某页的 nav 被误删,这项会红,而不是悄悄变成"注入空操作"。 */
+   把它们钉死在这里:哪天某页的 nav 被误删,这项会红,而不是悄悄变成"注入空操作"。
+   (price/compare 已删除,不再在此列。) */
 const NO_NAV_OK = new Set(["404.html", "auth.html"]);
 let noNav = pages.filter(f => !/<nav\b/.test(fs.readFileSync(SRC + "/" + f, "utf8")));
 ok(noNav.length === NO_NAV_OK.size && noNav.every(f => NO_NAV_OK.has(f)),
@@ -82,14 +88,28 @@ ok(noNav.length === NO_NAV_OK.size && noNav.every(f => NO_NAV_OK.has(f)),
 
 for (const f of pages) {
   if (NO_NAV_OK.has(f)) continue;
-  const nav = injected[f].match(/<nav class="nav-links">[\s\S]*?<\/nav>/);
+  const nav = injected[f].match(/<nav class="nav-links" aria-label="主导航">[\s\S]*?<\/nav>/);
   ok(!!nav, f + " 的 <nav> 被成功替换");
   if (!nav) continue;
   const hrefs = [...nav[0].matchAll(/href="([^"]+)"/g)].map(m => m[1]);
   ok(hrefs.length === NAV.length, f + " 导航项数 = " + NAV.length + "(实际 " + hrefs.length + ")");
+  ok(nav[0].includes('aria-label="主导航"'), f + " 导航带 aria-label(读屏可识别为主导航)");
   if (navHrefs.has(f)) {
-    ok(nav[0].includes('<a href="' + f + '" class="active">'), f + " 当前页高亮(注入逻辑按 file 名打 active)");
+    ok(nav[0].includes('<a href="' + f + '" class="active" aria-current="page">'), f + " 当前页高亮 + aria-current(注入逻辑按 file 名打 active)");
   }
+}
+
+/* —— 源码各页的 <nav> 必须与注入串同形:本地预览指向源码目录(relaylens-home/),
+   源码里手写旧导航(曾 5~11 项不等)会让人看到"有的页层级跟别的不一样"。
+   断言源码串 == 注入串,保证源码与产物是同一套导航。
+   注:构建在此之后还会往 </nav> 前追加「返回主站」(与主站互链),那是构建行为,源码不该有。 —— */
+for (const f of pages) {
+  if (NO_NAV_OK.has(f)) continue;
+  const src = fs.readFileSync(SRC + "/" + f, "utf8");
+  const nav = src.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/);
+  ok(!!nav, f + " 源码含 <nav>");
+  if (!nav) continue;
+  ok(nav[0] === navFor(f), f + " 源码导航与构建注入串逐字一致(源码=产物,本地预览不跑偏)");
 }
 
 /* —— 二级导航不得被误伤:method.html 的目录 <nav class="toc"> 要活下来 —— */

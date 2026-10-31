@@ -119,6 +119,19 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
   all &= check("实测榜中转行 = 非 passive 站数(已强制 L2)", relay === SITES.realSites.filter(x => x.level !== "passive").length, `${relay} 行`);
   all &= check("参照行 = referenceSites 数", anchor === SITES.referenceSites.length, `${anchor} vs ${SITES.referenceSites.length}`);
   all &= check("参照系前有一条分隔说明", sep === 1);
+  /* 场景权重文案必须与 weights.json 同源(2026-10-23 纠偏):
+     此前 ranking.html 手写了一份公式,和 weights.json 完全对不上,还写出了「长上下文完整率 30%」
+     这种代码里根本不存在的指标。现在只许从 payload.meta.scenes 渲染,这里逐字比对。 */
+  {
+    const sw = (SITES.meta.scenes || {}).all, lab = SITES.meta.metricLabels || {};
+    const wantNote = sw && sw.weights
+      ? "<b>综合榜</b> = " + Object.keys(sw.weights).map(k => (lab[k] || k) + " " + sw.weights[k] + "%").join(" + ")
+      : "";
+    const noteHtml = (B.elems["tabNote"] || {})._innerHTML || "";
+    all &= check("tabNote 权重与 meta.scenes 同源(不许手写公式)",
+      !!wantNote && noteHtml.includes(wantNote) && noteHtml.includes(String(SITES.meta.weightsVersion)),
+      noteHtml.replace(/<[^>]+>/g, "").slice(0, 90));
+  }
   const ax = rowWith(br, />aixoras</), aic = rowWith(br, />aicost</);
   all &= check("aixoras 亮出微信+支付宝两枚 logo", /aria-label="微信支付"/.test(ax) && /aria-label="支付宝"/.test(ax));
   const axAt = (SITES.realSites.find(r => r.name === "aixoras") || {}).commerce?.at;   // 核实日期随 commerce.verified 变,从 payload 推导
@@ -127,8 +140,8 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
     !/站方入驻声明/.test((ax.match(/<div class="paylogos"[^>]*>/) || [""])[0]) && /pay-src/.test(ax));
   all &= check("aicost 卡密降级为文字芯片(不硬凑品牌 logo)",
     /class="paylogos"[\s\S]{0,300}?rc-chip[^>]*>卡密</.test(aic) && !/aria-label="微信支付"/.test(aic));
-  all &= check("真实数据:72h 走势如实标注样本覆盖(有样本给 n/12 段,不足则明说)",
-    /\d+\/12 段有样本\(6h\/格\)/.test(ax) || /走势样本不足\(\d+\/12 段\)/.test(ax));
+  all &= check("真实数据:72h 走势如实标注样本覆盖(2026-10-30 起样本说明悬浮在走势图 title 上,不足则明说)",
+    /段有样本,区间 \d+–\d+%/.test(ax) || /走势样本不足\(\d+\/12 段\)/.test(ax));
   all &= check("走势列标题已随采样密度改口径", /72H 可用率 \/ 趋势/.test(html) && !/24H 可用率/.test(html));
   /* 2026-10-22 起 PF 只留 P50 中位数(P95 已移除,见 f238257),并展示忙/闲双桶值 ——
      期望串按 payload 现算(与页面 ttftDual 同构),不写死数字;同时守住「均值口径」的页面披露。 */
@@ -138,8 +151,8 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
     : (axS.ttftOffMs == null ? "忙 " + fmtB(axS.ttftWorkMs) + " · 闲未测"
       : axS.ttftWorkMs == null ? "忙未测 · 闲 " + fmtB(axS.ttftOffMs)
         : "忙 " + fmtB(axS.ttftWorkMs) + " · 闲 " + fmtB(axS.ttftOffMs));
-  all &= check("真实数据:首字延迟忙/闲双桶 · 逐笔 · 容差口径",
-    (!wantDual || ax.includes(wantDual)) && /逐笔判定/.test(ax) && /max\(2 quota, 1%\)/.test(ax),
+  all &= check("真实数据:首字延迟忙/闲双桶 · 逐笔芯片(容差口径改为悬停可见,2026-10-30 列表去解释文字)",
+    (!wantDual || ax.includes(wantDual)) && /max\(2 quota, 1%\)/.test(ax) && !/>逐笔判定 </.test(ax),
     wantDual || "无双桶样本");
   all &= check("首字延迟列公示「忙/闲中位数均值」口径(P95 已下线)", /忙\/闲两时段中位数的均值/.test(ax));
   all &= check("真实数据:分组口径可见(分数仅代表实测分组)", /分数仅代表实测分组/.test(ax));
@@ -168,12 +181,12 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
   const cnyDirect = SITES.realSites.filter(r => r.price && r.effPrice == null && isCny(r));
   const usdNoRatio = SITES.realSites.filter(r => r.price && r.effPrice == null && !isCny(r));
   const rowOrSrc = r => rowWith(br, new RegExp(">" + r.name + "<")) || html;
-  all &= check("CNY 公示价站明说「即到手价 · 不乘充值比例」(不谎称不给人民币价)",
-    cnyDirect.length ? cnyDirect.every(r => /站方人民币公示价 · 即到手价/.test(rowOrSrc(r)))
-      : /站方人民币公示价 · 即到手价/.test(html), cnyDirect.map(r => r.name).join(","));
-  all &= check("有标价但比例未声明的站明说「不给人民币价」(无此类站时校验代码分支)",
-    usdNoRatio.length ? usdNoRatio.every(r => /充值比例未声明 · 不给人民币价/.test(rowOrSrc(r)))
-      : /充值比例未声明 · 不给人民币价/.test(html), usdNoRatio.map(r => r.name).join(","));
+  all &= check("CNY 公示价站明说「即到手价 · 不乘充值比例」(2026-10-30 起在价格大字悬停提示里,不在列表内)",
+    cnyDirect.length ? cnyDirect.every(r => /页面价即到手价/.test(rowOrSrc(r)))
+      : /页面价即到手价/.test(html), cnyDirect.map(r => r.name).join(","));
+  all &= check("有标价但比例未声明的站明说「不给人民币价」(悬停提示;无此类站时校验代码分支)",
+    usdNoRatio.length ? usdNoRatio.every(r => /未声明充值比例,不给人民币价/.test(rowOrSrc(r)))
+      : /未声明充值比例,不给人民币价/.test(html), usdNoRatio.map(r => r.name).join(","));
   all &= check("全表不出现按 1$=¥7.1 乘出来的假主价", !/¥(6\.39|12\.43|4\.97|53\.25|79\.88)/.test(br.join("")));
   const jq = rowWith(br, />jiuqingyun</);
   all &= check("不用充值比例做风险判断(比例风险标已撤,只看测得出的量)", !/⚠ 比例/.test(jq) && !/⚠ 比例/.test(html));
@@ -258,6 +271,13 @@ const rowWith = (rows, re) => (rows.find(r => re.test(r)) || "");
     ["计费测试", "72H 可用率 / 趋势", "流式 · 首字延迟", "注入 · 指纹验真"].every(x => s.includes(x)) &&
     !["\>计费诚实 <span", "24H SLA", "24H 可用率", "\>延迟 · 流式 <span", "\>注入 · 指纹 <span"].some(x => s.includes(x)));
   t("不得存在「其他」整列", !/>其他<\/th>/.test(s));
+  /* 虚构指标名必须绝迹(注释除外):这些词曾出现在手写的场景公式里,但代码里没有对应探针/指标。
+     注释里保留这些词是为了给后来者解释"为什么不能这么写",不算对外文案。 */
+  const userText = s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/<!--[\s\S]*?-->/g, "");
+  t("无虚构指标名(长上下文完整率/缓存命中真实性/客户端兼容性/隐私条款)",
+    !/长上下文完整率|缓存命中真实性|客户端兼容性|隐私条款/.test(userText));
+  t("场景权重不由页面手写:tabNote 走 sceneNoteText + meta.scenes",
+    /function sceneNoteText/.test(s) && /payload\.meta\.scenes|m\.scenes/.test(s) && !/var sceneNote=\{/.test(s));
   t("商业信息独立成列 + 芯片仍服务移动卡片", /commerceCell\(s\)/.test(s) && /commerceChips\(s\)/.test(s));
   t("详情页 basic 读 commerce 并标未声明",
     /det\.commerce/.test(fs.readFileSync("relaylens-home/detail.html", "utf8")) &&

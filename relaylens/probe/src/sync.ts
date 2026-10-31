@@ -12,8 +12,11 @@ import { getDb, siteHealth } from "./store.js";
 import { priceTableHash } from "./probes/billing.js";
 import { assembleMetrics } from "./assemble.js";
 import { latestInjection } from "./probes/tokenprobe.js";
-import { computeSceneScore, tierOf, sampleProgress, allScenes, weightsVersion, pricingDisplay, cny, money } from "./score.js";
+import { computeSceneScore, tierOf, sampleProgress, allScenes, weightsVersion, pricingDisplay, cny, money, sceneWeights, metricLabels } from "./score.js";
 import { matchCanon } from "./parsers/models.js";
+import type { TlsInfo, ContextResult } from "../../shared/types.js";
+import { judgeTls } from "./probes/health.js";
+import { latestContext, judgeContextLabel } from "./probes/context.js";
 
 const PROBE_ROOT = path.resolve(import.meta.dirname, "..");
 /** 站点发布目录(与 probe 平级) */
@@ -115,6 +118,14 @@ export interface FrontendSite {
   measuredGroup?: { group: string | null; ratio: number | null; models: string[] } | null;
   /** 注入的缓存/fresh 拆分(选型顾问算真实成本必需;null=该站未做 tokens 实验) */
   injectSplit?: { fresh_share: number; cached_share: number } | null;
+  /** TLS 证书证据(最近一次健康检查随行采集):确定性事实,不参与评分,只供详情页如实展示 */
+  tls?: TlsInfo | { skipped: true; reason: string } | null;
+  /** 证书结论(label 由后端 judgeTls 统一生成,前端只上色 —— 判定规则不许在页面重写第二份) */
+  tlsVerdict?: { level: "ok" | "warn" | "info" | "none"; label: string } | null;
+  /** 长上下文完整性证据(标记码法,显式触发才有;null = 未测,页面必须显示"未测"而不是空) */
+  context?: ContextResult | null;
+  /** 长上下文结论措辞(同样后端生成,前端只上色) */
+  contextVerdict?: { level: "ok" | "warn" | "info" | "none"; label: string } | null;
   /** 商业信息(支付/比例/起充/发票/退款):来源为站方入驻声明或人工核实;未取得为 null,不臆造 */
   commerce?: CommerceInfo | null;
   /** 测速直达:浏览器探测用的 origin + 我们探针的最近一次流式实测(档案,非实时) */
@@ -278,6 +289,17 @@ function healthLatest(site: string): { latencyMs: number | null; httpStatus: num
   } catch { return { latencyMs: null, httpStatus: null, modelCount: null, at: null }; }
 }
 
+/** 最近一次健康检查随行采集的 TLS 证书证据(老批次没有这个字段 → null,页面显示未采集) */
+function latestTls(site: string): TlsInfo | { skipped: true; reason: string } | null {
+  const row = getDb().prepare(`SELECT summary FROM batches WHERE site=? AND task='health' ORDER BY started_at DESC LIMIT 1`)
+    .get(site) as { summary: string | null } | undefined;
+  if (!row?.summary) return null;
+  try {
+    const t = (JSON.parse(row.summary) as { tls?: TlsInfo | { skipped: true; reason: string } }).tls;
+    return t ?? null;
+  } catch { return null; }
+}
+
 function latestSummary(site: string, like: string): any | null {
   const row = getDb().prepare(`SELECT started_at, summary FROM batches WHERE site=? AND summary LIKE ? ORDER BY started_at DESC LIMIT 1`).get(site, like) as { started_at: string; summary: string } | undefined;
   if (!row?.summary) return null;
@@ -372,6 +394,10 @@ function buildRealSite(site: string, opts: { inject?: number | null }): Frontend
     inject: opts.inject ?? null,
     injectSplit: m.injectSplit ?? null,
     timeout: m.ST.timeoutPct, stream: m.SR.bufferedRate,
+    tls: latestTls(site),                            // 证书证据:只展示不评分(见 types.ts 的 TlsInfo 注释)
+    tlsVerdict: judgeTls(latestTls(site)),
+    context: latestContext(site),
+    contextVerdict: judgeContextLabel(latestContext(site)),
     fp: fp ? (fp.verdict === "pass" ? "pass" : fp.verdict === "suspect" ? "suspect" : "fail") : "pending",
     price, priceV, priceSrc, priceBase, priceBaseCur, priceGroup, priceModel, priceCalib, priceCalibFactor,
     /** 该站在监测到的价表覆盖哪些模型家族(榜单「模型」筛选栏的数据源;空=价表未采到任何登记模型) */
@@ -409,6 +435,7 @@ export interface TrustStats {
   maxSingleRequestTokens: number;
   batchesToday: number;
   healthChecksTotal: number;
+  batchesTotal: number;         // batches 表整表累计(榜单页头「累计检测批次」取自这里)
   since: string;                // 实测起始日
 }
 
@@ -466,6 +493,9 @@ function computeStats(realSites: string[]): TrustStats {
   const first = d.prepare(`SELECT MIN(started_at) a FROM batches`).get() as { a: string | null };
   const checks = (d.prepare(`SELECT COUNT(*) c FROM batches WHERE task='health'`).get() as { c: number }).c;
   const today = (d.prepare(`SELECT COUNT(*) c FROM batches WHERE started_at >= date('now')`).get() as { c: number }).c;
+  /* 累计检测批次:整表实数。此前榜单页头把它写死成 2,904,而库里实际是 3499 ——
+     门面数字一旦靠人手维护就会漂,红线 10 要求它必须来自证据源,所以由这里统一产出。 */
+  const batchesTotal = (d.prepare(`SELECT COUNT(*) c FROM batches`).get() as { c: number }).c;
 
   /**
    * 「已付费实测」必须数得出来的真数:只有做过账单级逐笔对账(reconcile 批次)的站才算。
@@ -481,7 +511,7 @@ function computeStats(realSites: string[]): TrustStats {
     /** 同一笔金额的人民币口径(站内所有对外展示金额一律用它,不得把上面的 Usd 字段直接上页面) */
     reconcileAmountCny: money(amountQuota / 500000, "USD").cny,
     maxSingleRequestTokens: maxTok,
-    batchesToday: today, healthChecksTotal: checks,
+    batchesToday: today, healthChecksTotal: checks, batchesTotal,
     since: first.a ? first.a.slice(0, 10) : "",
   };
 }
@@ -1037,6 +1067,9 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
       license: "CC-BY-4.0", source: "relaylens-probe",
       /** 计价口径:站内所有金额均为人民币,由 USD 按此汇率折算(评分不受影响) */
       fx: { currency: fx.currency, symbol: fx.symbol, usdCny: fx.usdCny, asOf: fx.asOf, quotaPerUsd: fx.quotaPerUsd },
+      /** 场景权重与指标中文名:前端「本榜怎么算的」只许从这份数据渲染,不许再手写公式
+       *  (此前 ranking.html 手写的那份与 weights.json 完全脱节,页面写「长上下文完整率 30%」而该指标并不存在) */
+      scenes: sceneWeights(), metricLabels: metricLabels(),
       stats: { ...computeStats(sites), referenceCount: referenceSites.length },
     },
     evidence: evidenceSample(sites),

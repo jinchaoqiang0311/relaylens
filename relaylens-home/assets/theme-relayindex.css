@@ -37,3 +37,18 @@ footer .fine,footer small{color:#aab8b0!important}
 .nav-links a{flex:0 0 auto!important;box-sizing:border-box!important;font-size:13px!important;font-weight:500!important;color:var(--sub)!important;padding:7px 11px!important;border-radius:6px!important;white-space:nowrap!important;transition:background-color .15s,color .15s!important}
 .nav-links a:hover{background:var(--brand-soft)!important;color:var(--brand)!important}
 .nav-links a.active{background:var(--brand-soft)!important;color:var(--brand-deep)!important;font-weight:500!important;box-shadow:inset 0 -2px 0 var(--brand)!important}
+/* 顶栏几何锁 v3(2026-10-28):导航居中,但切页零移位。
+   ① header 行统一 1560px 居中、同高 60px、同间距 22px——各页容器(1280/1560/1160)
+      与内联样式全部被 !important 压平,logo/菜单起点每页一致;
+   ② html 永久预留纵向滚动条槽位(scrollbar-gutter:stable)——滚动条出现/消失不再
+      让居中容器横跳,这是居中方案下唯一的横移源,已消除。 */
+html{scrollbar-gutter:stable}
+header{position:sticky!important;top:0!important;left:0!important;right:0!important;width:100%!important}
+header > .wrap,header > .nav,header > .shell,header > .topbar-inner{
+  max-width:1560px!important;width:auto!important;margin:0 auto!important;padding:0 20px!important;
+  min-height:60px!important;height:60px!important;
+  display:flex!important;align-items:center!important;gap:22px!important}
+header .logo,header .brand{flex:0 0 auto!important;min-width:150px!important;gap:10px!important;
+  font-size:17px!important;font-weight:700!important}
+header .logo .mark,header .brand-mark{width:30px!important;height:30px!important;flex:none!important;
+  border-radius:7px!important;font-size:15px!important}

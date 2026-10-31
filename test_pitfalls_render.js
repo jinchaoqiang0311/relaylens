@@ -37,7 +37,8 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   check("无硬编码站名(页面正文不出现 aicost/fluxionai/wolfai)", !/(aicost|fluxionai|wolfai|aixoras|jiuqingyun)/.test(src.replace(/data\/sites\.json/g, "")));
   check("无硬编码实测数字(84/62.3/4858/3959/33.3 等)", !/\b(62\.3|84\.5|4858|3959|33\.3|31\.9)\b/.test(src));
   check("含案例声明(疑似非定论/可申诉/可能已整改/匿名声明)", /复核信号而非定论/.test(src) && /申诉通道/.test(src) && /可能已经改好/.test(src) && /案例一律匿名/.test(src));
-  check("引流自测工具箱/榜单/比价(不再有独立自测页)", /tools.html#selftest/.test(src) && /ranking.html/.test(src) && /compare.html/.test(src) && !/href="selftest.html"/.test(src));
+  check("引流自测工具箱/榜单/比价看板(比价走规范挂载路径 /price/)",
+    /tools.html#selftest/.test(src) && /ranking\.html/.test(src) && /href="\/price\//.test(src) && !/href="selftest\.html"/.test(src));
   check("假流式教学含「短答案测不出来」口径", /回短话也是一次到齐|测不出来/.test(src) && /200~300 字/.test(src));
   check("价格陷阱含「比例和单价是一套组合拳」", /兑换比例和?单价是一套|比例与?单价是一套/.test(src));
 
@@ -85,14 +86,13 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---- ③ 深链与入口契约 ---- */
   console.log("【模型直达:深链与首页入口】");
-  const cmp = fs.readFileSync(DIR + "compare.html", "utf8");
-  check("compare 读 ?model= 参数", /\[?\?&\]model=/.test(cmp.replace("model=([^&]+)", "model=([^&]+)")) || /match\(\/\[\?&\]model=/.test(cmp));
-  check("深链匹配实测 key/模型名/示例 key 三路", /t\.key===want/.test(cmp) && /MODELS\[want\]/.test(cmp));
-  check("非法值静默回退(c.tabs[0])", /var first=hit\|\|c\.tabs\[0\]/.test(cmp));
+  /* compare.html 已于 2026-10-28 下线;单模型直达由看板 #cmp: 深链承担,
+     pitfalls 的价格陷阱案例从 compare.html?model=gpt-5-6-sol 改为看板深链(规范名用点号 gpt-5.6-sol)。 */
+  check("价格陷阱案例链到看板单模型对比(#cmp:gpt-5.6-sol)", /href="\/price\/#cmp:gpt-5\.6-sol"/.test(src));
   const idx = fs.readFileSync(DIR + "index.html", "utf8");
   check("首页含模型选择控件(源自 compare.tabs)", /id="model-select"/.test(idx) && /compare\.tabs/.test(idx));
   check("首页按所选模型取价读 effIn(人民币到手价)", /r\.effIn/.test(idx) && /priceFor/.test(idx));
-  check("首页保留进入模型比价通用入口", /href="price\.html"/.test(idx));
+  check("首页保留进入模型比价看板入口", /href="\/price\/"/.test(idx));
   check("首页模型数据缺失时给占位而非崩溃", /暂无报价数据/.test(idx));
 
   /* ---- 结构守卫(只看静态 HTML:JS 字符串拼接里的 class="…" 不算渲染产物) ---- */

@@ -173,17 +173,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 <header>
  <div class="wrap nav" style="max-width:1160px">
  <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
- <nav class="nav-links">
- <a href="index.html">首页</a>
- <a href="ranking.html">全站榜单</a>
- <a href="price.html">模型比价</a>
- <a href="selector.html">选型顾问</a>
- <a href="tools.html">自测工具箱</a>
- <a href="blacklist.html" class="hot">避雷黑名单</a>
- <a href="method.html" class="active">方法论</a>
- <a href="api.html">API</a>
- <a href="reports.html">实测报告</a>
- </nav>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html" class="active" aria-current="page">方法论</a><a href="tools.html">自测工具箱</a></nav>
  <a class="btn btn-ghost btn-sm" href="#">登录</a>
  <a class="btn btn-primary btn-sm" href="#">注册</a>
  </div>
@@ -278,6 +268,8 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <tr><td class="rowh">模型指纹</td><td>探针响应与官方直连的相似度。四态:通过(≥85%)/ 存疑(70-85%,复检)/ 未通过(&lt;70%)/ 未检测</td><td><span class="tag-m tm-g">通过</span> <span class="tag-m tm-y">存疑</span> <span class="tag-m tm-r">未通过</span></td></tr>
  <tr><td class="rowh">到手价</td><td>标价 × 充值比例折算系数。充值比例 = 实付金额 ÷ 到账美元额度(继承"监视者"口径,实测而非站方宣称)</td><td><span class="tag-m tm-g">≤官方 50% 低价</span> <span class="tag-m tm-y">50-100% 常规</span> <span class="tag-m tm-r">&gt;官方 贵</span></td></tr>
  <tr><td class="rowh">跑路风险</td><td>运营时长 20% + 充值门槛 20% + 30 天价格波动率 20% + 公告履约率 20% + 域名年龄 10% + 社群活跃度 10%。独立于评分展示,不并入任何综合分</td><td><span class="tag-m tm-g">低</span> <span class="tag-m tm-y">中</span> <span class="tag-m tm-r">高</span></td></tr>
+ <tr><td class="rowh">TLS 证书<br><span style="font-size:11px;color:var(--faint)">证据 · 不入分</span></td><td>随每次健康检查做一次 TLS 握手,记录证书有效期、颁发者、是否通过系统 CA 校验、证书域名与接口域名是否一致(<b>单一请求即可定论,无样本门槛</b>)。<b>明确不进评分</b>:自签证书、CDN 边缘证书、域名与 SAN 不一致在小站很常见,与「计费是否诚实」无关,拿它扣分等于误杀。详情页只如实展示事实与剩余天数(每次采集时间一并标注)</td><td><span class="tag-m tm-g">有效</span> <span class="tag-m tm-y">即将到期</span> <span class="tag-m tm-r">链异常</span></td></tr>
+ <tr><td class="rowh">长上下文完整性<br><span style="font-size:11px;color:var(--faint)">证据 · 不入分</span></td><td>在长文本的固定相对位置埋入若干唯一标记码(<code>RL-CANARY-&lt;批次号&gt;-NN</code>),只要求模型回吐看到的编号(<b>标记码无法靠"编"通过</b>)。<b>全部回吐</b>=上下文完整;<b>末尾连续缺失</b>=只把前段转给了上游(典型截断);<b>中间规律缺失</b>=摘要/滑窗压缩;一个都没回或请求失败=<b>不下结论</b>(不把"模型没照做"当成"站方截断")。该探针消耗真实 token,<b>只能显式触发、不进常驻调度</b>,因此多数站显示"未测"——未测就是未测,不给分也不给通过</td><td><span class="tag-m tm-g">完整</span> <span class="tag-m tm-y">尾部截断/压缩</span> <span class="tag-m" style="color:var(--faint)">未测</span></td></tr>
  </table>
  </div>
  </section>
@@ -286,7 +278,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <section class="block" id="scores">
  <div class="blk-head"><h2><span class="no">③</span>评分公式与权重</h2></div>
  <p class="lead">单一综合分掩盖场景差异——写代码最在乎缓存,日常聊天最在乎首字延迟。因此每站有独立的多场景评分,权重按场景第一决策变量设计。分数强制携带覆盖率与置信度,样本不足显示"数据不足"而非低分。</p>
- <div style="background:var(--brand-soft);border-radius:10px;padding:12px 16px;font-size:13px;color:#24409a;margin-bottom:14px"><b>权重版本 2026-10-22.1</b> · 本表与探针计算代码共用同一份 <code>weights.json</code>(网页说什么,代码就算什么)。<b>本次变更</b>:①<b>计价口径纠偏</b>——站方公示价恢复为其原始<b>额度单位</b>(new-api 系 $X/M,与站方页面一致),人民币只作为「到手价 = 额度价 × 站方声明的充值比例」出现,比例未声明不给人民币价(此前用 1$=¥7.1 折主价,造出站方页面不存在的数字);②决策页「TTFT」统一改称「首字延迟」;③榜单站点列瘦身、商业信息独立成列;④报价标出来源分组与「最优价口径」。评分口径与数值不变。<b>.6 修订</b>:文档化对账判定容差 max(2 quota, 1%),无计算变化。<b>.5 修订</b>:注入开销落库按站实测(aixoras 4858 / aicost 3959),EP 拆分按站,渠道混合标 unstable。<b>.4 修订</b>:编程榜新增独立桶 SR(流式真实性,权重10),弃用「并入 PF」方案(沙盘证明对首字延迟触底站零增量)。<b>.3 修订</b>:PF 改用专用流式探针测真首字延迟,新增伪流式率指标,超时率首次持久化。<b>2026-10-22 修订</b>:首字延迟 PF 由忙/闲双桶较差值(悲观值)改两桶中位数均值(用户拍板),榜单同时展示忙/闲双值。<b>更早</b>:①注入开销以「场景有效价格」吸收,避免双重计分;②计量一致性并入计费诚实;③超时率并入稳定性(慢≠挂,0.3 倍扣减);④未测指标重归一化而非零分;⑤稳定性增加时间跨度门槛(≥45 分钟),防止短时猛采刷样本。历史版本见开源仓库 changelog。</div>
+ <div style="background:var(--brand-soft);border-radius:10px;padding:12px 16px;font-size:13px;color:#24409a;margin-bottom:14px"><b>权重版本 2026-10-22.2</b> · 本表与探针计算代码共用同一份 <code>weights.json</code>(网页说什么,代码就算什么)。<b>2026-10-22 修订</b>:<b>榜单场景精简</b>(用户拍板)——只保留 综合 / 编程 / 办公 / 剧本创作 / 企业 五个场景分榜,移除电商(ecom)与生图(image)场景及其权重与参考负载,「短剧创作榜」更名「剧本创作榜」;跑路风险指数为独立展示,不占场景榜位。<b>此前修订</b>:①<b>计价口径纠偏</b>——站方公示价恢复为其原始<b>额度单位</b>(new-api 系 $X/M,与站方页面一致),人民币只作为「到手价 = 额度价 × 站方声明的充值比例」出现,比例未声明不给人民币价(此前用 1$=¥7.1 折主价,造出站方页面不存在的数字);②决策页「TTFT」统一改称「首字延迟」;③榜单站点列瘦身、商业信息独立成列;④报价标出来源分组与「最优价口径」。评分口径与数值不变。<b>.6 修订</b>:文档化对账判定容差 max(2 quota, 1%),无计算变化。<b>.5 修订</b>:注入开销落库按站实测(aixoras 4858 / aicost 3959),EP 拆分按站,渠道混合标 unstable。<b>.4 修订</b>:编程榜新增独立桶 SR(流式真实性,权重10),弃用「并入 PF」方案(沙盘证明对首字延迟触底站零增量)。<b>.3 修订</b>:PF 改用专用流式探针测真首字延迟,新增伪流式率指标,超时率首次持久化。<b>2026-10-22 修订</b>:首字延迟 PF 由忙/闲双桶较差值(悲观值)改两桶中位数均值(用户拍板),榜单同时展示忙/闲双值。<b>更早</b>:①注入开销以「场景有效价格」吸收,避免双重计分;②计量一致性并入计费诚实;③超时率并入稳定性(慢≠挂,0.3 倍扣减);④未测指标重归一化而非零分;⑤稳定性增加时间跨度门槛(≥45 分钟),防止短时猛采刷样本。历史版本见开源仓库 changelog。</div>
  <div class="card">
  <div class="formula">综合分 = Σ( 指标归一化值 × 场景权重 ) × <span class="v">置信度因子</span> <span class="cm">// 置信度 &lt; 0.8 不展示</span></div>
  <p class="formula-cap">归一化:每项指标线性映射到 0-100(如可用率 95%→0 分,100%→100 分)。<b>未测指标不惩罚</b>:剩余权重重归一化;覆盖率(已测权重占比)&lt;60% → 评分置空「数据不足」;60-80% → 展示但挂低置信标。置信度 = 样本达标比 × 覆盖率 × 基线折扣(跨站差分指纹 ×0.8)。稳定性样本需同时满足<b>次数 ≥12 且时间跨度 ≥45 分钟</b>——避免短时猛采刷出虚假置信。</p>
@@ -468,7 +460,7 @@ python verify.py --site <span class="s">"RelayAPI"</span> --since 2026-09-01</pr
  </div>
  <div>
  <h4>站点</h4>
- <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a>
  </div>
  <div>
  <h4>关于</h4>

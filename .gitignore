@@ -1,6 +1,8 @@
 # 依赖与构建
 node_modules/
 dist-relay/
+# 构建校验用的临时产物目录(build-relay.js 需要先删 dist-relay,发布目录被系统占用时改输出到这里)
+_build_check/
 
 # ⚠ 密钥绝不可入库
 relaylens/probe/config/secrets/

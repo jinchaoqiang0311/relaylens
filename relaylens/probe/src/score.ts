@@ -182,6 +182,25 @@ export function sampleProgress(m: SiteMetrics): SampleProgress[] {
 }
 
 export function weightsVersion(): string { return W.version; }
+/**
+ * 场景权重与指标名的**只读出口**,给前端渲染「本榜怎么算的」用。
+ * 存在理由:此前 ranking.html 手写了一份权重公式,和 weights.json 完全脱节
+ * (页面写「剧本创作榜 = 长上下文完整率 30%」,而 weights.json 里根本没有这项指标),
+ * 卖「网页说什么、代码就算什么」的站不能有第二个口径。以后前端只许从这份数据渲染。
+ */
+export function sceneWeights(): Record<string, { label: string; weights: Record<string, number> }> {
+  const out: Record<string, { label: string; weights: Record<string, number> }> = {};
+  for (const [scene, v] of Object.entries(W.scenes)) {
+    const { label, separate, note, ...weights } = v as Record<string, number> & { label?: string; separate?: boolean; note?: string };
+    if (separate) continue;                 // 风险指数独立展示,不占场景榜位
+    out[scene] = { label: label ?? scene, weights };
+  }
+  return out;
+}
+/** 指标键 → 中文名(BH=计费诚实度 …),与权重同源 */
+export function metricLabels(): Record<string, string> {
+  return Object.fromEntries(Object.entries(W.metrics).map(([k, v]) => [k, (v as { name: string }).name]));
+}
 /** 展示层汇率口径(pricing_display)。缺省兜底:配置缺失时退回 1 USD = 7.1 ¥ 并在页面标注日期未知 —— 宁可显式兜底也不让价格静默变成美元 */
 export function pricingDisplay() {
   const p = W.pricing_display;

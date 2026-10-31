@@ -26,10 +26,19 @@ if (apiBase && !/^https?:\/\/[^\s<>"']+$/.test(apiBase)) {
   throw new Error("site.config.json 的 apiBase 必须是 http(s) 绝对 URL。");
 }
 
+// 模型比价看板(2026-10-28 起 price/compare 两页下线,比价功能由独立看板 relay_scraper serve 承担)。
+// 挂载契约:看板统一挂在 **/price/** —— 本地 preview-server.js 与生产 nginx 都把 /price/ 反代到 8899,
+// 因此源码里比价入口直接写 href="/price/"(与其它导航项同窗口、无中间跳转),构建期不做任何替换。
+// site.config.json 的 priceDashboard 仅作文档备注(看板实际地址),构建不消费;
+// 若将来换挂载路径,全局搜 "/price/" 同步改源码。
+// site.config.json 的 priceDashboard 备注仍保留,供部署 nginx 时对照。
+
 // 内部只读资产:运营看板与其数据不进对外包(即便 noindex,URL 可猜、内容含未公开结论)
 // 需要内部看板时,单独把 relaylens-home/ops.html + data/ops.json 传到后台目录或加 HTTP Basic Auth。
 const INTERNAL = ["ops.html", "data/ops.json"];
 // 404:进包(供 nginx error_page 指向),但 noindex、不进 sitemap、不注入 canonical/og
+// (2026-10-28 晚:price/compare 两页已彻底删除——重定向壳也不要了,老链接落 404 页;
+//  站内有nginx的话建议在 DEPLOY 里对这两个路径配 301 → /price/,保住老外链权重)
 const NOINDEX_PAGES = ["404.html", "auth.html"];
 
 const pages = fs.readdirSync(SRC).filter(f => f.endsWith(".html") && !INTERNAL.includes(f));
@@ -48,9 +57,17 @@ for (const file of pages) {
   // ⚠ NAV = 全站唯一的跨页入链来源:不在清单里的页面,除非正文有别处链到,否则构建后就是孤立页
   //   (爬不到、用户也进不去)。test_nav_integrity.js 对构建产物做全站入链分析,少一项就红 —— 改这里前先看它。
   //   2026-10-23 曾漏掉 选型顾问/避坑指南,两页直接 0 入链,已加回。
+  //
+  // 2026-10-28 导航加无障碍语义:aria-label 标主导航、当前页补 aria-current="page"
+  //   (原先只有 class="active" 的颜色区分,读屏用户听不出自己在哪一页);
+  //   源码各页的 <nav> 已同步成同一串(本地预览指的就是源码目录,否则源码与产物两套导航)。
+  //
+  // 2026-10-28 「模型比价」「比价矩阵」合并为一项「模型比价」,指向独立看板的规范挂载路径 /price/
+  //   (本地 preview-server 与生产 nginx 均反代到 8899,同源同窗口,无中间跳转)。
+  //   "/price/" 不对应站内文件 → h===file 永不成立 → 自然无 active,无需特判。
   {
-    const NAV = [["index.html","选站比价"],["ranking.html","全站榜单"],["price.html","模型比价"],["compare.html","比价矩阵"],["selector.html","选型顾问"],["blacklist.html","避雷黑名单"],["pitfalls.html","避坑指南"],["method.html","方法论"],["tools.html","自测工具箱"]];
-    const nav = '<nav class="nav-links">' + NAV.map(([h,l]) => '<a href="'+h+'"'+(h===file?' class="active"':'')+'>'+l+'</a>').join("") + '</nav>';
+    const NAV = [["index.html","选站比价"],["ranking.html","全站榜单"],["/price/","模型比价"],["selector.html","选型顾问"],["blacklist.html","避雷黑名单"],["pitfalls.html","避坑指南"],["method.html","方法论"],["tools.html","自测工具箱"]];
+    const nav = '<nav class="nav-links" aria-label="主导航">' + NAV.map(([h,l]) => '<a href="'+h+'"'+(h===file?' class="active" aria-current="page"':'')+'>'+l+'</a>').join("") + '</nav>';
     html = html.replace(/<nav\b[^>]*>[\s\S]*?<\/nav>/, nav);
   }
 

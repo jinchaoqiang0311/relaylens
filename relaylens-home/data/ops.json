@@ -1,18 +1,18 @@
 {
   "meta": {
-    "generatedAt": "2026-10-22T14:13:36.508Z",
+    "generatedAt": "2026-10-23T14:13:13.771Z",
     "weightsVersion": "2026-10-22.2",
     "dataLayer": "internal-readonly",
     "note": "本文件仅描述运营状态,不含任何编辑能力。人工改动全部记录在 audit 链中。"
   },
   "integrity": {
     "chainOk": true,
-    "total": 195,
+    "total": 198,
     "brokenAt": null,
     "why": null,
-    "headHash": "ee1291dc78cd22f5644bed1feb7f0eac8fa0f6c68783d1941cebee8819c727a9",
-    "rawHeadHash": "ee1291dc78cd22f5644bed1feb7f0eac8fa0f6c68783d1941cebee8819c727a9",
-    "rawCount": 195,
+    "headHash": "506b7cd87ef83ff920c45b2d8ed7b64a81a8860bc7e38bb67985b082927b8d96",
+    "rawHeadHash": "506b7cd87ef83ff920c45b2d8ed7b64a81a8860bc7e38bb67985b082927b8d96",
+    "rawCount": 198,
     "rawDrift": 0
   },
   "thresholds": {
@@ -87,9 +87,9 @@
         {
           "bucket": "ST",
           "name": "稳定性",
-          "samples": 11,
+          "samples": 12,
           "need": 12,
-          "ok": false
+          "ok": true
         },
         {
           "bucket": "PF",
@@ -114,23 +114,23 @@
         }
       ],
       "scores": {
-        "all": 75,
-        "code": 65,
-        "office": 45,
-        "drama": 59,
-        "biz": 64
+        "all": 79,
+        "code": 69,
+        "office": 57,
+        "drama": 66,
+        "biz": 73
       },
       "coveragePct": {
-        "all": 75,
-        "code": 85,
-        "office": 75,
-        "drama": 80,
-        "biz": 70
+        "all": 100,
+        "code": 100,
+        "office": 100,
+        "drama": 100,
+        "biz": 100
       },
       "scenesWithoutScore": [],
       "metrics": {
         "avail7d": 100,
-        "checks": 11,
+        "checks": 12,
         "dev": 100,
         "reconcileEntries": 98,
         "ttftMs": 6386,
@@ -150,16 +150,16 @@
       },
       "tasks": {
         "health": {
-          "at": "2026-10-21T07:18:39.735Z",
-          "id": "RL-RC-20261021-001",
+          "at": "2026-10-23T14:09:37.916Z",
+          "id": "RL-RC-20261023-001",
           "s": {
             "task": "health",
             "site": "aixoras",
-            "startedAt": "2026-10-21T07:18:39.735Z",
+            "startedAt": "2026-10-23T14:09:37.916Z",
             "modelsCheck": {
               "ok": true,
               "httpStatus": 200,
-              "latencyMs": 1283,
+              "latencyMs": 1035,
               "modelCount": 6,
               "modelIds": [
                 "codex-auto-review",
@@ -172,15 +172,30 @@
               "authGate": false
             },
             "chatCheck": {
-              "ok": true,
-              "httpStatus": 200,
-              "ttftMs": 7873,
-              "complete": true,
-              "authGate": false
+              "ok": false,
+              "httpStatus": null,
+              "ttftMs": 15017,
+              "complete": false,
+              "authGate": false,
+              "error": "[timeout] This operation was aborted"
             },
             "overall": {
               "ok": true,
               "status": "up"
+            },
+            "tls": {
+              "host": "aixoras.com",
+              "port": 443,
+              "checkedAt": "2026-10-23T14:09:53.974Z",
+              "handshakeOk": true,
+              "chainValid": true,
+              "errorCode": null,
+              "sanMatch": true,
+              "subject": "aixoras.com",
+              "issuer": "YE2 / Let's Encrypt",
+              "notAfter": "2026-12-24T16:07:17.000Z",
+              "daysLeft": 62,
+              "protocol": "TLSv1.3"
             }
           }
         },
@@ -1468,7 +1483,7 @@
           }
         }
       },
-      "lastBatchAt": "2026-10-21T07:19:52.738Z"
+      "lastBatchAt": "2026-10-23T14:09:37.916Z"
     },
     {
       "name": "aicost",
@@ -20018,14 +20033,6 @@
     },
     {
       "level": "warn",
-      "code": "aging_health",
-      "site": "aixoras",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
-      "evidence": "RL-RC-20261021-001",
-      "action": "等下一轮或手动补跑"
-    },
-    {
-      "level": "warn",
       "code": "high_timeout",
       "site": "aixoras",
       "msg": "超时率 25%(ST 桶按 0.3 倍扣减)",
@@ -20044,7 +20051,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "aicost",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-003",
       "action": "等下一轮或手动补跑"
     },
@@ -20068,7 +20075,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "memecode",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-011",
       "action": "等下一轮或手动补跑"
     },
@@ -20084,7 +20091,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "uuapi",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-013",
       "action": "等下一轮或手动补跑"
     },
@@ -20100,7 +20107,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "fluxionai",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-015",
       "action": "等下一轮或手动补跑"
     },
@@ -20116,7 +20123,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "hahacode",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-017",
       "action": "等下一轮或手动补跑"
     },
@@ -20132,7 +20139,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "uptoken",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-019",
       "action": "等下一轮或手动补跑"
     },
@@ -20148,7 +20155,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "heyroute",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-021",
       "action": "等下一轮或手动补跑"
     },
@@ -20172,7 +20179,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "infistar",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-023",
       "action": "等下一轮或手动补跑"
     },
@@ -20196,7 +20203,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "openrouter",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-005",
       "action": "等下一轮或手动补跑"
     },
@@ -20204,7 +20211,7 @@
       "level": "warn",
       "code": "aging_health",
       "site": "deepseek-official",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-007",
       "action": "等下一轮或手动补跑"
     },
@@ -20212,17 +20219,9 @@
       "level": "warn",
       "code": "aging_health",
       "site": "zhipu-bigmodel",
-      "msg": "健康检查 30.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
+      "msg": "健康检查 54.9 小时前(>16h,已漏掉一次以上 5 小时节拍)",
       "evidence": "RL-RC-20261021-009",
       "action": "等下一轮或手动补跑"
-    },
-    {
-      "level": "info",
-      "code": "cov_ST",
-      "site": "aixoras",
-      "msg": "稳定性(ST)样本 11/12 未达门槛,该桶不计入评分(重归一化)",
-      "evidence": null,
-      "action": "补采:aixoras 的 ST 样本"
     },
     {
       "level": "info",
@@ -20548,7 +20547,7 @@
   "counts": {
     "sites": 12,
     "critical": 2,
-    "warn": 25,
-    "info": 41
+    "warn": 24,
+    "info": 40
   }
 }

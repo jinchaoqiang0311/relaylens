@@ -173,17 +173,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 <header>
  <div class="wrap nav">
  <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
- <nav class="nav-links">
- <a href="index.html">首页</a>
- <a href="ranking.html">全站榜单</a>
- <a href="price.html">模型比价</a>
- <a href="selector.html">选型顾问</a>
- <a href="tools.html">自测工具箱</a>
- <a href="blacklist.html" class="hot">避雷黑名单</a>
- <a href="method.html">方法论</a>
- <a href="api.html">API</a>
- <a href="reports.html">实测报告</a>
- </nav>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
  <a class="btn btn-ghost btn-sm" href="#">登录</a>
  <a class="btn btn-primary btn-sm" href="#">注册</a>
  </div>
@@ -241,14 +231,16 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <!-- 逐轮对账 -->
  <div class="card mb18">
  <h2>最新批次 · 逐轮对账证据</h2>
- <p class="cap" id="batchCap">批次 #20260929-114 · 2026-09-29 09:41 · 模型 claude-opus-5 · 10 轮标准测试</p>
+ <!-- 这里的静态默认值同样是「空数据」语义:JS 跑起来前/取不到数据时,
+      绝不能让硬编码的演示批次号(2026-09-29-114 / RL-RC-0929-0114)冒充成真实批次(红线 10) -->
+ <p class="cap" id="batchCap">逐轮对账数据未接入 · 站级结论见下方计费审计</p>
  <div class="panel">
- <div class="pbar"><span id="panelSite">RelayAPI · 控制台-流水</span><span id="panelBatch">批次 #0929-0114</span></div>
+ <div class="pbar"><span id="panelSite">—</span><span id="panelBatch">批次未接入</span></div>
  <div id="panelBody"></div>
  </div>
  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
  <button class="btn btn-ghost btn-sm" onclick="toast('API 原始 Response 存档:每条均可溯源到证据批次号')">查看原始 Response JSON</button>
- <button class="btn btn-ghost btn-sm" onclick="toast('全部 2,904 个批次 · 逐轮明细浏览(规划中)')">历史批次浏览</button>
+ <button class="btn btn-ghost btn-sm" onclick="toast('历史批次浏览功能规划中,上线后免费开放')">历史批次浏览</button>
  </div>
  </div>
 
@@ -269,7 +261,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <tbody id="priceTbody"></tbody>
  </table>
  </div>
- <a class="more" href="price.html" style="font-size:13px;color:var(--brand);font-weight:600;display:inline-block;margin-top:12px">去模型比价页横向对比 →</a>
+ <a class="more" href="/price/" style="font-size:13px;color:var(--brand);font-weight:600;display:inline-block;margin-top:12px">去模型比价页横向对比 →</a>
  </div>
 
  <!-- 计费审计 -->
@@ -326,6 +318,10 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <div class="kv"><span class="k">累计批次</span><span class="v" id="batchCount">—</span></div>
  <div class="kv"><span class="k">累计核验账单</span><span class="v" id="billCount">—</span></div>
  <div class="kv"><span class="k">首次收录</span><span class="v" id="sinceDate">—</span></div>
+ <!-- 两项确定性证据(不进评分):证书由 health 随行采集;长上下文由标记码探针显式触发。
+      措辞由后端 judgeTls / judgeContextLabel 统一生成,页面只上色 —— 判定规则不许在页面重写第二份。 -->
+ <div class="kv"><span class="k" title="TLS 证书:确定性事实,不参与评分。自签 / CDN 边缘证书 / 域名与 SAN 不一致在小站很常见,与计费是否诚实无关">TLS 证书</span><span class="v" id="tlsInfo">未采集</span></div>
+ <div class="kv"><span class="k" title="长上下文完整性:在长文本固定位置埋标记码,看模型能否全部回吐。尾部连续缺失 = 只把前段转给了上游;中间规律缺失 = 摘要/滑窗压缩。不参与评分">长上下文完整性</span><span class="v" id="ctxInfo">未测</span></div>
  </div>
  </div>
  </div>
@@ -351,7 +347,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  </div>
  <div>
  <h4>站点</h4>
- <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="price.html">模型比价</a><a href="blacklist.html">避雷黑名单</a>
+ <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a>
  </div>
  <div>
  <h4>关于</h4>
@@ -579,7 +575,7 @@ function applySyncDetail(payload){
  }).join("")+'<span style="font-size:11.5px;color:var(--faint);align-self:center">未列出的方向 = 站方未承诺,我们不检测也不打分</span>';
  } else pm.style.display="none";
  }
- document.getElementById("priceTbody").innerHTML='<tr><td colspan="7" style="color:var(--faint);padding:18px">报价请前往 <a href="price.html" style="color:var(--brand)">模型比价页</a> 查看实测口径</td></tr>';
+ document.getElementById("priceTbody").innerHTML='<tr><td colspan="7" style="color:var(--faint);padding:18px">报价请前往 <a href="/price/" style="color:var(--brand)">模型比价页</a> 查看实测口径</td></tr>';
  /* 报价口径按该站源货币说明:美元额度价站走充值比例折算,直接公示人民币单价的站(heyroute)以页面价为准 */
  var rs=(typeof payload!=="undefined"&&payload&&payload.realSites)?payload.realSites.filter(function(x){return x.name===siteName})[0]:null;
  var SITE_CUR=(rs&&rs.priceSrc&&rs.priceSrc.src)||null;
@@ -588,7 +584,23 @@ function applySyncDetail(payload){
  cap.innerHTML=SITE_CUR==="CNY"
  ? "价格为站方价格页直接公示的人民币单价(不参与充值比例折算);缓存列标注是否达到官方 10% 基准"
  : "价格已按充值比例折算;缓存列标注是否达到官方 10% 基准";
- }
+}
+/* 确定性证据两行(证书 / 长上下文):措辞来自后端,页面只上色。
+   取不到就保留 HTML 里的「未采集 / 未测」,绝不回退成"通过"或空字符串。 */
+(function(rs){
+ var paint=function(id,verdict,extra){
+   var el=document.getElementById(id); if(!el)return;
+   if(!verdict){el.textContent=extra||"—";el.className="v";return}
+   el.textContent=verdict.label+(extra?" · "+extra:"");
+   el.className="v"+(verdict.level==="ok"?" v-ok":verdict.level==="warn"?" v-warn":"");
+ };
+ var t=rs&&rs.tls, tv=rs&&rs.tlsVerdict;
+ var tAt=(t&&!t.skipped&&t.checkedAt)?("采集于 "+String(t.checkedAt).slice(0,10)):"";
+ paint("tlsInfo",tv,tv?tAt:"未采集");
+ var c=rs&&rs.context, cv=rs&&rs.contextVerdict;
+ var cAt=(c&&c.checkedAt)?("实测于 "+String(c.checkedAt).slice(0,10)+(c.model?" · "+c.model:"")):"";
+ paint("ctxInfo",cv,cv?cAt:"未测");
+})(rs);
  document.getElementById("timeline").innerHTML=D.timeline.map(function(t){return '<div class="tl-item '+t[0]+'"><div class="dt">'+t[1]+'</div><div class="tt">'+esc(t[2])+'</div><div class="tx">'+esc(t[3])+'</div>'+(t[4]&&t[4]!=="—"?'<span class="ev">证据批次 '+t[4]+'</span>':"")+'</div>'}).join("");
  var au=D.audit;
  if(D.audit&&D.audit.matchPct!==null){
@@ -639,17 +651,34 @@ document.getElementById("scoreBand").innerHTML=D.band.map(function(b){
  return '<div class="sb-cell '+b[3]+'"><div class="v '+b[2]+' num">'+esc(b[1])+'</div><div class="k">'+esc(b[0])+'</div></div>';
 }).join("");
 
-/* 逐轮对账 */
+/* 逐轮对账。
+   ⚠ 红线 10:空数据不许出结论。rounds 为空时旧版仍渲染「通过 10/10 · 偏差 0.00% ✓」,
+   并把 batchCap 覆盖成硬编码演示批次号 RL-RC-0929-0114 —— 9 个在册实测站全部中招
+   (buildDetailFromSync 写死 rounds:[])。偏差也一律由数据算,不再 Math.random()。 */
 function renderRounds(){
+ var body=document.getElementById("panelBody");
+ var rounds=(D&&D.rounds)||[];
+ if(!rounds.length){
+  /* 诚实空态:对齐红线 7 的「未测」语义 —— 明说没有样本,而不是给一个好看的结论 */
+  body.innerHTML='<div class="prow"><span class="k" style="grid-column:1/-1;color:var(--amber);font-weight:600">逐轮对账:未接入</span></div>'+
+   '<div class="prow"><span class="v" style="grid-column:1/-1;color:var(--sub)">当前数据源没有该站的逐轮「应扣 vs 实扣」样本(逐轮明细尚未纳入公开数据集),因此不给出通过率与偏差百分比。站级对账结论见下方「计费审计」卡,它来自真实逐笔核验。</span></div>';
+  document.getElementById("panelBatch").textContent="批次未接入";
+  return;
+ }
  var html='<div class="prow hd"><span>轮次 / 模型</span><span>输入(缓存命中)</span><span>输出</span><span>理论应扣</span><span>面板实扣</span></div>';
- D.rounds.forEach(function(r){
- html+='<div class="prow"><span class="k">'+r.r+' · '+r.model+'</span><span class="v">'+r.in.toLocaleString()+' ('+r.cached.toLocaleString()+')</span><span class="v">'+r.out.toLocaleString()+'</span><span class="v">'+r.should+'</span><span class="v '+(r.ok?'vg':'vr')+'">'+r.actual+(r.ok?"":" ")+'</span></div>';
+ var total=0,devSum=0;
+ rounds.forEach(function(r){
+  var shouldN=parseFloat(String(r.should).replace(/[^0-9.]/g,""));
+  var actualN=parseFloat(String(r.actual).replace(/[^0-9.]/g,""));
+  var ok=!!r.ok; total++;
+  if(isFinite(shouldN)&&isFinite(actualN)) devSum+=Math.abs(actualN-shouldN)/Math.max(shouldN,1e-9);
+  html+='<div class="prow"><span class="k">'+r.r+' · '+r.model+'</span><span class="v">'+r.in.toLocaleString()+' ('+r.cached.toLocaleString()+')</span><span class="v">'+r.out.toLocaleString()+'</span><span class="v">'+r.should+'</span><span class="v '+(ok?'vg':'vr')+'">'+r.actual+'</span></div>';
  });
- var fails=D.rounds.filter(function(r){return !r.ok}).length;
- var totalDev=fails>0?(Math.random()*2+3).toFixed(1):"0";
- html+='<div class="prow hd" style="border-top:1px solid rgba(255,255,255,.18)"><span>批次结论</span><span></span><span></span><span>通过 '+(10-fails)+'/10</span><span class="'+(fails?'vr':'vg')+'">'+(fails?'偏差 '+totalDev+'% ':'偏差 0.00% ✓')+'</span></div>';
- document.getElementById("panelBody").innerHTML=html;
- document.getElementById("batchCap").textContent="批次 #20260929-"+(114)+" · 2026-09-29 09:41 · 标准混合模型 10 轮测试 · 存档编号 RL-RC-0929-0114";
+ var fails=rounds.length-rounds.filter(function(r){return !!r.ok}).length;
+ var devPct=total?(devSum/total*100).toFixed(2):"0.00";
+ html+='<div class="prow hd" style="border-top:1px solid rgba(255,255,255,.18)"><span>批次结论</span><span></span><span></span><span>通过 '+(total-fails)+'/'+total+'</span><span class="'+(fails?'vr':'vg')+'">'+(fails?'偏差 '+devPct+'%':'偏差 0.00% ✓')+'</span></div>';
+ body.innerHTML=html;
+ document.getElementById("panelBatch").textContent=rounds.length+" 轮实测";
 }
 renderRounds();
 

@@ -61,7 +61,12 @@ const check = (n, c, d) => { (c ? pass++ : fail++); console.log(`  ${c ? "✓" :
   const realNames = SITES.realSites.map(s => s.name);
   const shown = realNames.filter(n => rowsHtml.includes(n));
   check("比价表渲染全部真实中转站", shown.length === realNames.length, `${shown.length}/${realNames.length}`);
-  check("表格含真实综合分(如 aixoras 75)", /aixoras/.test(rowsHtml) && rowsHtml.includes(">75<"), "");
+  /* 分数从 payload 现算,不写死 —— 探针每跑一轮综合分就会变(aixoras 曾 75,补采健康样本后 79),
+     写死数字只会让"数据是活的"变成"测试是坏的" */
+  const ax = SITES.realSites.find(s => s.name === "aixoras");
+  const axScore = ax && ax.score ? ax.score.all : null;
+  check(`表格含真实综合分(aixoras ${axScore ?? "—"})`,
+    axScore == null || (new RegExp(">" + axScore + "<").test(rowsHtml) && /aixoras/.test(rowsHtml)), String(axScore));
   check("价格列用人民币到手价(¥)", /¥/.test(rowsHtml), "");
   check("详情链接指向真实站点", /detail\.html\?site=/.test(rowsHtml), "");
   check("模型真伪列渲染指纹结论", /指纹通过|存疑|未通过|未测/.test(rowsHtml), "");
