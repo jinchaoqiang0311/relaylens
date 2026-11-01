@@ -241,8 +241,15 @@ location /relay/ { error_page 404 /relay/404.html; }
 \`\`\`
 不改也能跑:WordPress 会兜底显示主站 404,只是少了回流量入口。
 
-## 1. 上传
-把 \`dist-relay/\` 内**除 DEPLOY.md / robots-snippet.txt 外**的所有文件,上传到 WordPress 站点根目录下的 \`relay/\`:
+## 1. 上传(脚本化,演进#4)
+一键(推荐):
+\`\`\`bash
+node deploy/deploy.mjs --dry-run                              # 预检 + 清单,不落盘不上传
+node deploy/deploy.mjs --to=ssh:<user>@<host>:/www/wwwroot/你的站点/relay    # tar over ssh 上传
+node deploy/deploy.mjs --to=local:D:/tmp/relay-out            # 宝塔面板用户:复制到本地目录后按清单上传
+\`\`\`
+脚本内置预检(占位域名/必需文件/内部资产泄漏拦截)与上传后校验;排除 DEPLOY.md / robots-snippet.txt。
+手动方式(等价):把 \`dist-relay/\` 内**除 DEPLOY.md / robots-snippet.txt 外**的所有文件,上传到 WordPress 站点根目录下的 \`relay/\`:
 \`\`\`
 /www/wwwroot/你的站点/relay/        # 宝塔/lnmp 典型路径
   index.html  ranking.html  ...  data/sites.json  sitemap.xml
