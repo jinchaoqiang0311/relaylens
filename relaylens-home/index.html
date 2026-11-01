@@ -123,6 +123,9 @@
  .provider-meta+.provider-meta{margin-top:2px}
  .pay-icon{height:13px;width:13px;vertical-align:-3px;margin-right:1px;border-radius:3px}
  .price-primary{font-size:13px;font-weight:710;font-variant-numeric:tabular-nums;white-space:nowrap}
+ /* 口径标注 chip:标价(看板实时)与实测到手(探针快照)并存,谁是谁一目了然 */
+ .src-chip{display:inline-block;font-size:8.5px;font-weight:600;padding:0 4px;border-radius:4px;background:var(--brand-soft);color:var(--brand-deep);vertical-align:1px;white-space:nowrap}
+ .src-chip.src-audit{background:#eef2ef;color:var(--sub)}
  .price-primary .unit{font-size:9px;color:#74817b;font-weight:500}
  .price-secondary{margin-top:3px;font-size:10px;color:var(--muted);white-space:nowrap}
  .metric-number{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -327,7 +330,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/rl-common.js"></script>
+<script src="assets/rl-common.js?v=202611011"></script>
 <script>
 (function(){
  var SITES=[], REFS=[], TABS=[], DETAILS={}, EVID={};
@@ -349,6 +352,40 @@
  var tab=curTab();if(!tab||!tab.rows)return null;
  for(var i=0;i<tab.rows.length;i++){var r=tab.rows[i];if(r.site===site.name&&r.effIn!=null)return {in:r.effIn,out:r.effOut};}
  return null;
+ }
+ /* 看板实时标价缓存:按模型缓存 compare 行(站点名/域名双键匹配),5 分钟新鲜期。
+    标价口径 = 看板自采公示价;排序仍按实测到手价(审计口径),避免口径混用。 */
+ var DASH={cache:{},ts:{}};
+ function dashLookup(site){
+ var bySite=DASH.cache[state.model];
+ if(!bySite)return null;
+ var hit=bySite[String(site.name||"").toLowerCase()]||null;
+ if(!hit){var host="";try{host=String((site.probe&&site.probe.origin)||"").replace(/^https?:\/\//,"").split("/")[0].replace(/^www\./,"");}catch(e){}
+ if(host)hit=bySite["host:"+host]||null;}
+ return hit;
+ }
+ function refreshDashPrices(){
+ if(typeof RL==="undefined"||!RL.dashApi)return;
+ var key=state.model,now=Date.now();
+ if(DASH.ts[key]&&now-DASH.ts[key]<300000)return;
+ DASH.ts[key]=now;
+ RL.dashApi("/price/api/compare?model="+encodeURIComponent(key)).then(function(j){
+ var byRows={};
+ (j.rows||[]).forEach(function(r){
+ var nm=String(r["站点"]||"").toLowerCase();if(!nm)return;
+ (byRows[nm]=byRows[nm]||[]).push(r);
+ });
+ var bySite={};
+ Object.keys(byRows).forEach(function(nm){
+ var rs=byRows[nm].slice().sort(function(a,b){return (parseFloat(a["实付输入(¥/M)"])||Infinity)-(parseFloat(b["实付输入(¥/M)"])||Infinity);});
+ var pick=rs[Math.floor(rs.length/2)]; /* 规则#3:中位倍率组,永不取最低价组 */
+ bySite[nm]=pick;
+ var host="";try{host=String(pick["域名"]||"").replace(/^https?:\/\//,"").split("/")[0].replace(/^www\./,"");}catch(e){}
+ if(host)bySite["host:"+host]=pick;
+ });
+ DASH.cache[key]=bySite;
+ render();
+ }).catch(function(){ /* 看板挂/无此模型:保持快照口径,不编数 */ });
  }
  function scoreFor(site){var sc=site.score&&site.score[state.scene];return (sc==null?null:sc);}
  function scoreTone(v){return v>=85?"high":v>=70?"mid":"low";}
@@ -425,9 +462,20 @@
  var scoreCell = sc==null
  ? '<strong class="score-value" style="color:var(--muted)">—</strong><div class="metric-caption">数据不足</div>'
  : '<strong class="score-value score-'+scTone+'">'+sc+'</strong><div class="score-meter"><i class="'+scTone+'" style="width:'+sc+'%"></i></div><div class="metric-caption">'+SCENE_LABEL[state.scene]+'</div>';
- var priceCell = price
- ? '<div class="price-primary">¥'+fmtPrice(price.in)+' <span class="unit">/M 输入</span></div><div class="price-secondary">输出 ¥'+fmtPrice(price.out)+'/M</div>'
- : '<div class="price-primary" style="color:var(--muted)">—</div><div class="price-secondary">该模型暂无报价</div>';
+ /* 价格列双口径:主行 = 看板实时标价(自采公示,小时级);副行 = 实测到手(探针三因子快照)。
+    看板无此站/挂了 → 回退纯快照口径,不编数。 */
+ var dsh = dashLookup(site);
+ var priceCell;
+ if (dsh && isFinite(dsh["实付输入(¥/M)"])) {
+ priceCell = '<div class="price-primary">¥'+fmtPrice(dsh["实付输入(¥/M)"])+' <span class="unit">/M 输入</span> <span class="src-chip" title="标价口径:看板自采公示价(分组倍率+充值比例后) · 数据时间 '+esc(String(dsh["数据时间(UTC)"]||"").replace("T"," ").slice(0,16))+' UTC">标价</span></div>'
+ + '<div class="price-secondary">输出 ¥'+fmtPrice(dsh["实付输出(¥/M)"])+'/M'
+ + (price?' · <span class="src-chip src-audit" title="实测口径:本站探针三因子折算(公示额度价×分组倍率×充值比例),快照时点见页首">实测到手 ¥'+fmtPrice(price.in)+'</span>':'')
+ + '</div>';
+ } else if (price) {
+ priceCell = '<div class="price-primary">¥'+fmtPrice(price.in)+' <span class="unit">/M 输入</span> <span class="src-chip src-audit" title="实测口径:本站探针三因子折算,快照时点见页首">实测</span></div><div class="price-secondary">输出 ¥'+fmtPrice(price.out)+'/M</div>';
+ } else {
+ priceCell = '<div class="price-primary" style="color:var(--muted)">—</div><div class="price-secondary">该模型暂无报价</div>';
+ }
  return '<tr>'+
  '<td>'+levelDot(site.level)+'</td>'+
  '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+'</div>'+payMetaHTML(site)+'</div></div></td>'+
@@ -468,6 +516,7 @@
  setHtml("provider-rows", list.length?list.map(row).join(""):
  '<tr><td colspan="10" style="padding:30px;text-align:center;color:#75817c">没有匹配的中转站,试试放宽搜索或取消「只看账单级实测」。</td></tr>');
  setTxt("result-count", "显示 "+list.length+" / "+SITES.length+" 家");
+ refreshDashPrices(); /* 看板实时标价:有缓存先渲染,异步取新后重渲(演进:口径标注) */
  }
 
  function renderRefs(){

@@ -41,8 +41,23 @@ var RL = (function () {
     return { html: icons.join("") + (rest ? (icons.length ? " " : "") + esc(rest) : ""), any: icons.length > 0 || !!rest };
   }
 
-  return { esc: esc, payIcons: payIcons, PAY_RULES: PAY_RULES };
+  return { esc: esc, payIcons: payIcons, PAY_RULES: PAY_RULES, dashProbe: dashProbe, dashApi: dashApi };
 })();
+
+/* dashApi —— 读看板 JSON 接口(/price/api/*,同源反代)。
+ * 看板死(探活失败)时 60s 内直接拒绝,不反复敲死端口;活时正常 fetch。 */
+function dashApi(p) {
+  return dashProbe().then(function (alive) {
+    if (!alive) throw new Error("dash down");
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 6000);
+    return fetch(p, { cache: "no-store", signal: ctrl ? ctrl.signal : undefined }).then(function (r) {
+      clearTimeout(timer);
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  });
+}
 
 /* 看板探活(演进#4 接缝加固):/price/ 反代可达性,结果缓存 60s;
    不可达时给全站 a[href="/price/"] 加维护中标记(其余功能不受影响)。
