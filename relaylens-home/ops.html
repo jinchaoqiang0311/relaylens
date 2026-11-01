@@ -206,10 +206,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
  </div>
 </footer>
 
+<script src="assets/rl-common.js"></script>
 <script>
 /* ============ 只读渲染:无任何写操作、无表单、无 fetch POST ============ */
 var DATA=null, AUDIT=null;
-function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function el(id){return document.getElementById(id)}
 
 /* 未测/缺数据的统一呈现:宁可显式说没有,不显示 0 或假值 */

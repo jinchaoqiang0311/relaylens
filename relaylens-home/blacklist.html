@@ -375,6 +375,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 
 <div class="toast" id="toast">已记录</div>
 
+<script src="assets/rl-common.js"></script>
 <script>
 /* ============ 档案数据(示例,接审核后台后替换) ============ */
 /* ⚠ loss 是「用户举报累计受损」的结构化字段:统计带那一格由它求和得出,不再手写。
@@ -467,7 +468,6 @@ function fillStats(){
 var filterState="all";
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
-function esc(s){return String(s).replace(/&/g,"&amp;")}
 
 function render(){
  var list=ARCHIVES.filter(function(a){return filterState==="all"||a.state===filterState});

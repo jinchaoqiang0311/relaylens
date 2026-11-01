@@ -40,7 +40,7 @@ function run(fetchImpl) {
     setTimeout: () => 0, clearTimeout() {},
     fetch: fetchImpl,
   };
-  vm.runInContext(scripts, vm.createContext(ctx));
+  const __ctx = vm.createContext(ctx); vm.runInContext(fs.readFileSync("relaylens-home/assets/rl-common.js", "utf8"), __ctx); vm.runInContext(scripts, __ctx);
   return { captured, texts };
 }
 

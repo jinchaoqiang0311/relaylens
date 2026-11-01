@@ -49,7 +49,7 @@ function runPass(payload, search) {
     history: { replaceState() {} }, window: { scrollTo() {} },
     fetch: payload ? () => Promise.resolve({ ok: true, json: () => Promise.resolve(payload) })
       : () => Promise.reject(new Error("no-fetch-in-test")) };
-  vm.runInContext(script, vm.createContext(ctx));
+  const __rc = vm.createContext(ctx); vm.runInContext(fs.readFileSync("relaylens-home/assets/rl-common.js", "utf8"), __rc); vm.runInContext(script, __rc);
   const rowsOf = () => (elems["tbody"] ? elems["tbody"].children : []).map(c => String(c._innerHTML));
   const cardsOf = () => (elems["mCards"] ? elems["mCards"].children : []).map(c => String(c._innerHTML));
   return { elems, pending, rowsOf, cardsOf, drain: () => pending.splice(0).forEach(f => { try { f(); } catch (e) { console.log("  ⚠ 定时器回调抛错:" + e.message); } }),

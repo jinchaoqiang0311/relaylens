@@ -188,7 +188,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#aab8b0}
 .ep-label{font-size:11px;color:var(--faint);font-weight:600;letter-spacing:.04em}
 .ep-url{font-family:Consolas,monospace;font-size:13px;color:var(--ink);margin-top:2px;word-break:break-all}
 .ep-ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.pay-ic{height:13px;width:13px;vertical-align:-2px;margin-right:2px;border-radius:3px}
+.pay-icon{height:13px;width:13px;vertical-align:-2px;margin-right:2px;border-radius:3px}
 </style>
 <link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
@@ -416,6 +416,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#aab8b0}
 
 <div class="toast" id="toast">已复制</div>
 
+<script src="assets/rl-common.js"></script>
 <script>
 /* ============ 站点数据(示例,与 ranking/compare 同源,接探针 API 后替换) ============ */
 var DETAIL={
@@ -707,7 +708,6 @@ function applySyncDetail(payload){
  })
  .then(applySyncDetail).catch(function(){/* 静默保持演示 */});
 
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 /* ===== 测评表现 / 接口链接 / 支付图标(参照 OkkMax 站详情,数据诚实口径) ===== */
 function fillPerf(det){
  var pm=document.getElementById("perfModels"),pv=document.getElementById("perfVerified"),pi=document.getElementById("perfInject");
@@ -753,16 +753,11 @@ function fillEndpoints(rs,requested){
  });
  });
 }
-function payIconsHTML(text){
- var rules=[["alipay",/支付宝|alipay/i],["bankcard",/银行|bank/i],["corporate",/对公|公户/i],["paypal",/paypal|贝宝/i],["usdt",/usdt|泰达|加密|虚拟币/i],["wechatpay",/微信|wechat/i]];
- var h="";
- rules.forEach(function(r){if(r[1].test(text))h+='<img class="pay-ic" src="assets/pay/'+r[0]+'.svg" alt="'+r[0]+'" title="'+r[0]+'">';});
- return h;
-}
+ /* payIconsHTML 由 assets/rl-common.js 全局提供(全站唯一关键词表) */
 function decoratePayIcons(){
  Array.prototype.forEach.call(document.querySelectorAll("#basicInfo .kv"),function(row){
  var k=row.querySelector(".k"),v=row.querySelector(".v");
- if(k&&v&&k.textContent.indexOf("支付方式")>=0&&!v.querySelector(".pay-ic")){
+ if(k&&v&&k.textContent.indexOf("支付方式")>=0&&!v.querySelector(".pay-icon")){
  v.insertAdjacentHTML("afterbegin",payIconsHTML(v.textContent)+" ");
  }
  });

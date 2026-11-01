@@ -48,7 +48,9 @@ const ctx = {
   }),
 };
 new vm.Script(scripts.join("\n"), { filename: "ops.html" });
-vm.runInContext(scripts.join("\n"), vm.createContext(ctx));
+const __c = vm.createContext(ctx);
+vm.runInContext(fs.readFileSync("relaylens-home/assets/rl-common.js", "utf8"), __c);
+vm.runInContext(scripts.join("\n"), __c);
 
 let pass = 0, fail = 0;
 const check = (name, cond, detail) => { (cond ? pass++ : fail++); console.log(`  ${cond ? "✓" : "✗"} ${name}${detail ? " · " + detail : ""}`); };

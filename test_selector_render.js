@@ -33,7 +33,7 @@ function run(fetchImpl, values) {
     setTimeout: () => 0, clearTimeout() {}, requestAnimationFrame: cb => cb(1e9), performance: { now: () => 0 },
     fetch: fetchImpl, window: {},
   };
-  vm.runInContext(scripts, vm.createContext(ctx));
+  const __ctx = vm.createContext(ctx); vm.runInContext(fs.readFileSync("relaylens-home/assets/rl-common.js", "utf8"), __ctx); vm.runInContext(scripts, __ctx);
   return { ctx, captured, texts, vals, checked };
 }
 const flush = async () => { for (let i = 0; i < 8; i++) await new Promise(r => setImmediate(r)); };

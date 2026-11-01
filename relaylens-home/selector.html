@@ -246,6 +246,7 @@ footer a:hover{color:var(--brand)}
 </footer>
 
 <div class="toast" id="toast"></div>
+<script src="assets/rl-common.js"></script>
 <script>
 /* ============ 选型顾问引擎 ============
  * 原则:①只用实测数据,缺维度显示"未测"并降权而非编造;
@@ -254,7 +255,6 @@ footer a:hover{color:var(--brand)}
  */
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2400)}
-function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function num(id){return +document.getElementById(id).value}
 /* 选型顾问的成本一律按站方公示的额度价计算(new-api 系为美元额度)。
  人民币到手成本 = 该数字 × 站方声明的充值比例;比例未声明时不给人民币数,别拿汇率猜。 */

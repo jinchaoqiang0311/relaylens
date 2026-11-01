@@ -37,6 +37,7 @@ function load() {
     location: { href: "https://relaylens.invalid/tools.html", search: "" }, navigator: { clipboard: null } };
   ctx.window = ctx;
   vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync("relaylens-home/assets/rl-common.js", "utf8"), ctx);
   vm.runInContext(script, ctx);
   return { ctx, nodes, doc };
 }

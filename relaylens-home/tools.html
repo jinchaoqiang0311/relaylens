@@ -398,6 +398,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 
 <div class="toast" id="toast">已复制</div>
 
+<script src="assets/rl-common.js"></script>
 <script>
 var toastEl=document.getElementById("toast"),toastTimer;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.classList.remove("show")},2200)}
@@ -869,7 +870,6 @@ document.getElementById("makeImage").addEventListener("click", function () {
  toast("图片生成失败:" + (e && e.message || e));
  }
 });
-function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;") }
 
 /* ============ 配置生成器 ============ */
 var SITES_CFG={

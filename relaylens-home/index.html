@@ -327,6 +327,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="assets/rl-common.js"></script>
 <script>
 (function(){
  var SITES=[], REFS=[], TABS=[], DETAILS={}, EVID={};
@@ -336,7 +337,6 @@
  function $(id){return document.getElementById(id);}
  function setTxt(id,v){var e=$(id);if(e)e.textContent=v;}
  function setHtml(id,v){var e=$(id);if(e)e.innerHTML=v;}
- function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
  function toast(m){var t=$("toast");if(!t)return;t.textContent=m;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2400);}
  function fmtTime(iso){if(!iso)return "—";var d=new Date(iso);if(isNaN(d))return "—";
  function p(n){return (n<10?"0":"")+n;}return (d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());}
@@ -404,15 +404,11 @@
  ?'<span class="legend-dot" title="已实测(账单级)"></span><span class="level-text ok" title="已实测(账单级)">已实测</span>'
  :'<span class="legend-dot gray" title="仅免费监测"></span><span class="level-text no" title="仅免费监测">仅监测</span>';
  }
- /* 支付方式:解析 commerce.pay 关键词 → 品牌 logo(顺序即 PAY_ICONS 排列)。
+ /* 支付方式:解析 commerce.pay 关键词 → 品牌 logo。
+    关键词表与渲染收敛在 assets/rl-common.js(全站唯一实现,演进#3);
     没命中关键词的文本(如「卡密」)原样保留,未声明 pay 的站不画假 logo(诚实口径)。 */
- var PAY_ICONS=[["alipay","支付宝",/支付宝|alipay/i],["bankcard","银行卡",/银行|bank/i],["corporate","对公转账",/对公|公户/i],["paypal","PayPal",/paypal|贝宝/i],["usdt","USDT",/usdt|泰达|加密|虚拟币/i],["wechatpay","微信支付",/微信|wechat/i]];
  function payIconsOf(site){
- var pay=(site.commerce&&site.commerce.pay)||"";
- var icons=[],rest=pay;
- PAY_ICONS.forEach(function(ic){if(ic[2].test(pay)){icons.push('<img class="pay-icon" src="assets/pay/'+ic[0]+'.svg" alt="'+ic[1]+'" title="'+ic[1]+'">');rest=rest.replace(ic[2],"");}});
- rest=rest.replace(/[\/,、|]+/g," ").trim();
- return {html:icons.join("")+(rest?(icons.length?" ":"")+esc(rest):""),any:icons.length>0||!!rest};
+ return RL.payIcons((site.commerce&&site.commerce.pay)||"");
  }
  /* 第一行只放支付方式(logo/未匹配文本);起充价独立成行(等级徽章已在状态列,不重复)。 */
  function payMetaHTML(site){

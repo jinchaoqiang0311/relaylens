@@ -23,6 +23,7 @@ function load(fetchImpl) {
   const { doc, els } = makeDom();
   const ctx = { document: doc, console, Math, JSON, Date, String, Number, Array, Object, RegExp, Error, Promise, isNaN, parseInt, parseFloat, Infinity, setTimeout, clearTimeout, fetch: fetchImpl };
   vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync("relaylens-home/assets/rl-common.js", "utf8"), ctx);
   vm.runInContext(src.match(/<script>([\s\S]*)<\/script>/)[1], ctx);
   return { ctx, els };
 }

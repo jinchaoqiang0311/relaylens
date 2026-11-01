@@ -449,6 +449,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 
 <div class="toast" id="toast">已复制</div>
 
+<script src="assets/rl-common.js"></script>
 <script>
 /* ============ 数据源 ============
  MEASURED_SEED 是 2 家做过账单级实测的站(取不到 data/sites.json 时的降级兜底,字段会被 applyRealData 覆盖);
@@ -755,7 +756,6 @@ function getFiltered(){
  return list;
 }
 
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 
 /* ===== 综合评分列:L2 出分;L1 观察榜不给分,给信号卡(PRD §2.3) ===== */
 function scoreCell(s,sc){
