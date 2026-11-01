@@ -1,0 +1,347 @@
+{
+ "site": "aicost",
+ "ranAt": "2026-10-31T13:49:16.806Z",
+ "source": "管理面逐笔消费日志(全量)",
+ "logsTotal": 3660,
+ "consumeRows": 3646,
+ "audited": 1854,
+ "skipped": {
+  "模型不在公示价表": 1792
+ },
+ "actualQuota": 3932732,
+ "expectedQuota": 3606794,
+ "actualUsd": 7.8655,
+ "expectedUsd": 7.2136,
+ "deviationPct": 9.0368,
+ "matchRatePct": 66.073,
+ "exprDrift": {
+  "checked": 1225,
+  "mismatch": 4
+ },
+ "perModel": [
+  {
+   "model": "gpt-image-2",
+   "n": 540,
+   "actualUsd": 5.5274,
+   "expectedUsd": 4.9745,
+   "devPct": 11.1159,
+   "bad": 540
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "n": 318,
+   "actualUsd": 0.3422,
+   "expectedUsd": 0.3422,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "n": 255,
+   "actualUsd": 0.8915,
+   "expectedUsd": 0.8915,
+   "devPct": 0.0002,
+   "bad": 0
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "n": 225,
+   "actualUsd": 0.0188,
+   "expectedUsd": 0.0188,
+   "devPct": 0.0106,
+   "bad": 1
+  },
+  {
+   "model": "gpt-6-astra",
+   "n": 214,
+   "actualUsd": 0.072,
+   "expectedUsd": 0.072,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-6-sol",
+   "n": 213,
+   "actualUsd": 0.0141,
+   "expectedUsd": 0.0141,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-image-2.5-flare",
+   "n": 46,
+   "actualUsd": 0.529,
+   "expectedUsd": 0.4761,
+   "devPct": 11.1111,
+   "bad": 46
+  },
+  {
+   "model": "gpt-image-2.5-sunburst",
+   "n": 41,
+   "actualUsd": 0.4703,
+   "expectedUsd": 0.4244,
+   "devPct": 10.8401,
+   "bad": 40
+  },
+  {
+   "model": "claude-haiku-4-5-20251001",
+   "n": 2,
+   "actualUsd": 0,
+   "expectedUsd": 0,
+   "devPct": 300,
+   "bad": 2
+  }
+ ],
+ "anomalies": [
+  {
+   "at": 1793083289,
+   "model": "claude-haiku-4-5-20251001",
+   "group": "claude-kiro渠道",
+   "act": 4,
+   "exp": 1,
+   "dev": 300
+  },
+  {
+   "at": 1793073079,
+   "model": "claude-haiku-4-5-20251001",
+   "group": "claude-kiro渠道",
+   "act": 4,
+   "exp": 1,
+   "dev": 300
+  },
+  {
+   "at": 1792744224,
+   "model": "gpt-5.6-terra",
+   "group": "gpt-plus号池",
+   "act": 8,
+   "exp": 7,
+   "dev": 14.29
+  },
+  {
+   "at": 1792296438,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792296173,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792295899,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792237054,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792236454,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792235848,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792235245,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792234647,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792234039,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1792232323,
+   "model": "gpt-image-2.5-sunburst",
+   "group": "gpt-image-2-主",
+   "act": 5750,
+   "exp": 5175,
+   "dev": 11.11
+  },
+  {
+   "at": 1791720033,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791702048,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791666031,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791529247,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791511242,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791493230,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791475244,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791460845,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1791449259,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790992834,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790974836,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790956876,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790942758,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790924835,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790921071,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790921065,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  },
+  {
+   "at": 1790921059,
+   "model": "gpt-image-2",
+   "group": "gpt-image-2-主",
+   "act": 5118,
+   "exp": 4606,
+   "dev": 11.12
+  }
+ ],
+ "matchRateNote": "v2 修正:匹配率分母改用 perModel 全量累计(初版 anomalies 数组 cap 30 导致分母失真)",
+ "textContent": {
+  "n": 1227,
+  "matchPct": 99.76
+ },
+ "imageNote": {
+  "n": 627,
+  "bad": 626,
+  "finding": "实扣=旧倍率0.023精确命中,现行公示(api实时)=0.0207 → 公示已降价、扣费未跟随,用户每张图多付约11.1%(单笔约¥0.004)"
+ }
+}

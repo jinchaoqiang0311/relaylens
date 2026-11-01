@@ -73,12 +73,20 @@ export async function parseNewAPI(site: SiteConfig): Promise<PriceResult> {
   const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   let models: Array<PriceResult["models"][number]> = [];
 
+  /* /api/pricing 的鉴权因站而异:有的收 sk- key,有的只认管理面令牌(new-api 后台"系统访问令牌")。
+     优先管理面令牌(<SITE>_ACCESS_TOKEN + <SITE>_USER_ID,与 aicost.ts 同约定),回退 sk- key。 */
+  const at = process.env[site.name.toUpperCase() + "_ACCESS_TOKEN"];
+  const uid = process.env[site.name.toUpperCase() + "_USER_ID"];
+  const authHeaders = (at && uid)
+    ? { Authorization: `Bearer ${at}`, "New-API-User": String(uid) }
+    : (apiKey ? { Authorization: `Bearer ${apiKey}` } : {});
+
   try {
     const res = await fetch(`${origin}/api/pricing`, {
       signal: ctrl.signal,
       headers: {
         "User-Agent": "RelayLens-Probe/0.1",
-        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}), // 部分站需要
+        ...authHeaders,
       },
     });
     if (!res.ok) {

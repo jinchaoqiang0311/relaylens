@@ -1,0 +1,815 @@
+{
+ "site": "aixoras",
+ "ranAt": "2026-10-31T15:31:39.723Z",
+ "source": "管理面逐笔消费日志(全量)",
+ "logsTotal": 3723,
+ "consumeRows": 3617,
+ "audited": 3617,
+ "skipped": {},
+ "actualQuota": 7315008,
+ "expectedQuota": 6991514,
+ "actualUsd": 14.63,
+ "expectedUsd": 13.983,
+ "deviationPct": 4.627,
+ "matchRatePct": 97.622,
+ "exprDrift": {
+  "checked": 738,
+  "mismatch": 0
+ },
+ "perModel": [
+  {
+   "model": "gpt-5.5",
+   "n": 1563,
+   "actualUsd": 1.4015,
+   "expectedUsd": 1.4015,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "n": 427,
+   "actualUsd": 11.1582,
+   "expectedUsd": 11.1582,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "codex-auto-review",
+   "n": 401,
+   "actualUsd": 0.3798,
+   "expectedUsd": 0.3798,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "n": 323,
+   "actualUsd": 0.3422,
+   "expectedUsd": 0.3422,
+   "devPct": 0.0041,
+   "bad": 7
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "n": 229,
+   "actualUsd": 0.1031,
+   "expectedUsd": 0.1031,
+   "devPct": 0.0019,
+   "bad": 1
+  },
+  {
+   "model": "gpt-6-sol",
+   "n": 214,
+   "actualUsd": 0.0657,
+   "expectedUsd": 0.0657,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-6-astra",
+   "n": 186,
+   "actualUsd": 0.2557,
+   "expectedUsd": 0.2557,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "claude-sonnet-5",
+   "n": 91,
+   "actualUsd": 0.0135,
+   "expectedUsd": 0.0121,
+   "devPct": 11.4789,
+   "bad": 2
+  },
+  {
+   "model": "claude-opus-4-8",
+   "n": 87,
+   "actualUsd": 0.7851,
+   "expectedUsd": 0.1642,
+   "devPct": 378.0998,
+   "bad": 73
+  },
+  {
+   "model": "glm-5.3",
+   "n": 86,
+   "actualUsd": 0.098,
+   "expectedUsd": 0.098,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "glm-5.3-flash",
+   "n": 7,
+   "actualUsd": 0.0003,
+   "expectedUsd": 0.0003,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "claude-opus-5",
+   "n": 2,
+   "actualUsd": 0.0089,
+   "expectedUsd": 0.0022,
+   "devPct": 303.902,
+   "bad": 2
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "n": 1,
+   "actualUsd": 0.018,
+   "expectedUsd": 0,
+   "devPct": 69123.0769,
+   "bad": 1
+  }
+ ],
+ "anomalies": [
+  {
+   "at": 1793457770,
+   "model": "claude-sonnet-5",
+   "group": "特价Claude",
+   "act": 4573,
+   "exp": 3881,
+   "dev": 17.83
+  },
+  {
+   "at": 1793457762,
+   "model": "claude-sonnet-5",
+   "group": "特价Claude",
+   "act": 93,
+   "exp": 88,
+   "dev": 5.68
+  },
+  {
+   "at": 1793457759,
+   "model": "claude-opus-5",
+   "group": "特价Claude",
+   "act": 4236,
+   "exp": 900,
+   "dev": 370.67
+  },
+  {
+   "at": 1793457745,
+   "model": "claude-opus-5",
+   "group": "特价Claude",
+   "act": 215,
+   "exp": 202,
+   "dev": 6.44
+  },
+  {
+   "at": 1793097661,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793095810,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793094799,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793091012,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1793087259,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793085382,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1392,
+   "exp": 369,
+   "dev": 277.24
+  },
+  {
+   "at": 1793083517,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793081657,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1392,
+   "exp": 369,
+   "dev": 277.24
+  },
+  {
+   "at": 1793077885,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793076015,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793074165,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793072302,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1427,
+   "exp": 378,
+   "dev": 277.51
+  },
+  {
+   "at": 1793070421,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1465,
+   "exp": 398,
+   "dev": 268.09
+  },
+  {
+   "at": 1793068550,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1497,
+   "exp": 395,
+   "dev": 278.99
+  },
+  {
+   "at": 1793066692,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793064822,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793062957,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793061122,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1427,
+   "exp": 378,
+   "dev": 277.51
+  },
+  {
+   "at": 1793059278,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1465,
+   "exp": 398,
+   "dev": 268.09
+  },
+  {
+   "at": 1793057435,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 4583,
+   "exp": 420,
+   "dev": 991.19
+  },
+  {
+   "at": 1793055571,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793053711,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1427,
+   "exp": 378,
+   "dev": 277.51
+  },
+  {
+   "at": 1793051858,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793050007,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793048159,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1500,
+   "exp": 407,
+   "dev": 268.55
+  },
+  {
+   "at": 1793046303,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3776,
+   "exp": 1041,
+   "dev": 262.73
+  },
+  {
+   "at": 1793042605,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793040768,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793038919,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1465,
+   "exp": 398,
+   "dev": 268.09
+  },
+  {
+   "at": 1793037074,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793035232,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793033383,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793031527,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793029645,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3881,
+   "exp": 1067,
+   "dev": 263.73
+  },
+  {
+   "at": 1793027753,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3881,
+   "exp": 1067,
+   "dev": 263.73
+  },
+  {
+   "at": 1793025893,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1392,
+   "exp": 369,
+   "dev": 277.24
+  },
+  {
+   "at": 1793023992,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793022096,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793020212,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14709,
+   "exp": 525,
+   "dev": 2701.71
+  },
+  {
+   "at": 1793018330,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14674,
+   "exp": 490,
+   "dev": 2894.69
+  },
+  {
+   "at": 1793016453,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793014568,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3846,
+   "exp": 1059,
+   "dev": 263.17
+  },
+  {
+   "at": 1793003218,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14308,
+   "exp": 124,
+   "dev": 11438.71
+  },
+  {
+   "at": 1793001360,
+   "model": "gpt-5.6-terra",
+   "group": "Codex",
+   "act": 14,
+   "exp": 13,
+   "dev": 7.69
+  },
+  {
+   "at": 1793001304,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792999458,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792999434,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792997557,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3332,
+   "exp": 1052,
+   "dev": 216.73
+  },
+  {
+   "at": 1792995216,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792993321,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 4259,
+   "exp": 98,
+   "dev": 4245.92
+  },
+  {
+   "at": 1792990677,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792988810,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792985108,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792983253,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792981386,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792979520,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1065,
+   "exp": 372,
+   "dev": 186.29
+  },
+  {
+   "at": 1792977654,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792975800,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1065,
+   "exp": 372,
+   "dev": 186.29
+  },
+  {
+   "at": 1792973971,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792972131,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792970304,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3358,
+   "exp": 1079,
+   "dev": 211.21
+  },
+  {
+   "at": 1792966642,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1044,
+   "exp": 384,
+   "dev": 171.88
+  },
+  {
+   "at": 1792964820,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792962975,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1074,
+   "exp": 381,
+   "dev": 181.89
+  },
+  {
+   "at": 1792961132,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792959303,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1070,
+   "exp": 410,
+   "dev": 160.98
+  },
+  {
+   "at": 1792957467,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792955604,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792953758,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14317,
+   "exp": 133,
+   "dev": 10664.66
+  },
+  {
+   "at": 1792951912,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792950065,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14308,
+   "exp": 124,
+   "dev": 11438.71
+  },
+  {
+   "at": 1792948227,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1091,
+   "exp": 398,
+   "dev": 174.12
+  },
+  {
+   "at": 1792946387,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792944532,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792944517,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792942678,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 3350,
+   "exp": 1070,
+   "dev": 213.08
+  },
+  {
+   "at": 1792938931,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 14308,
+   "exp": 124,
+   "dev": 11438.71
+  },
+  {
+   "at": 1792937058,
+   "model": "claude-opus-4-8",
+   "group": "AWS/Anti-Claude",
+   "act": 1065,
+   "exp": 372,
+   "dev": 186.29
+  },
+  {
+   "at": 1792929546,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792923997,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792914709,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792678575,
+   "model": "claude-haiku-5-5",
+   "group": "Claude-Max-外接",
+   "act": 8999,
+   "exp": 13,
+   "dev": 69123.08
+  }
+ ]
+}

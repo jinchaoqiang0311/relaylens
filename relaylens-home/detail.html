@@ -12,71 +12,73 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="description" content="RelayLens 站点详情页:逐轮实测证据、应扣vs实扣对账、30天价格走势、历史可用率曲线、模型指纹记录与风险时间线。每个结论都有批次号可溯源。">
 <style>
+/* RelayLens 站点详情 · 绿色审计风(与全站 RelayIndex 主题同源)
+   品牌/语义色等核心 token 不在此重复定义 —— 交由 theme-relayindex.css 统一;
+   本块只做:结构样式 + 页内补充 token。 */
 :root{
- --ink:#101828;--sub:#475467;--faint:#98a2b3;--line:#e4e7ec;--bg:#f6f8fb;--card:#fff;
- --brand:#2b5cf0;--brand-deep:#16308f;--brand-soft:#eef2ff;
- --ok:#067647;--ok-soft:#e8f7ef;--warn:#b54708;--warn-soft:#fef4e6;
- --bad:#b42318;--bad-soft:#fdecea;--gold:#8a6400;--gold-soft:#fff8e1;
- --r:14px;
+ --amber:#e0b25c;            /* JS 引用别名;用于深色终端面板内的琥珀告警 */
+ --r:10px;
+ --hero-a:#f2f6f3;--hero-b:#e9f0eb;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
+body{font-family:var(--font-body);color:var(--ink);background:var(--bg);line-height:1.6;font-size:13.5px}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1360px;margin:0 auto;padding:0 20px}
 .num{font-variant-numeric:tabular-nums}
-.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;border:none;transition:.15s;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:650;padding:8px 16px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:background-color .15s,color .15s,border-color .15s;white-space:nowrap;font-family:inherit}
 .btn-primary{background:var(--brand);color:#fff}
 .btn-primary:hover{background:var(--brand-deep)}
-.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost{background:#fff;color:var(--ink);border-color:var(--line)}
 .btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
-.btn-sm{padding:7px 13px;font-size:13px;border-radius:8px}
+.btn-sm{padding:6px 12px;font-size:12.5px;border-radius:7px}
 
-/* 导航 */
-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+/* 导航(几何由主题锁 v3 统一,这里只管配色) */
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;gap:22px;height:60px}
-.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px}
-.logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;color:var(--ink)}
+.logo .mark{width:30px;height:30px;border-radius:7px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
 .nav-links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
 .nav-links::-webkit-scrollbar{display:none}
-.nav-links a{font-size:14px;color:var(--sub);padding:6px 12px;border-radius:8px;white-space:nowrap;transition:.15s}
+.nav-links a{font-size:13px;color:var(--sub);padding:6px 11px;border-radius:6px;white-space:nowrap;transition:color .15s,background-color .15s}
 .nav-links a:hover{background:var(--brand-soft);color:var(--brand)}
 .nav-links a.hot{color:var(--bad);font-weight:600}
 
-/* 站点头部 */
-.site-hero{background:linear-gradient(180deg,#0c1633,#16308f);color:#fff;padding:30px 0 26px}
-.crumb{font-size:12.5px;opacity:.65;margin-bottom:12px}
-.crumb a:hover{color:#8fd0ff}
+/* 站点头部:浅色纸面 + 绿色审计印章(替换原海军蓝渐变) */
+.site-hero{background:linear-gradient(180deg,var(--hero-a),var(--hero-b));border-bottom:1px solid var(--line);color:var(--ink);padding:30px 0 46px}
+.crumb{font-size:12px;color:var(--sub);margin-bottom:14px}
+.crumb a:hover{color:var(--brand);text-decoration:underline}
 .sh-row{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.sh-logo{width:64px;height:64px;border-radius:16px;color:#fff;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.sh-logo{width:60px;height:60px;border-radius:12px;color:#fff;font-weight:800;font-size:21px;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 16px rgba(23,33,31,.18)}
 .sh-info{flex:1;min-width:240px}
-.sh-info h1{font-size:26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.cert{font-size:11px;background:rgba(143,208,255,.18);color:#8fd0ff;border:1px solid rgba(143,208,255,.4);border-radius:6px;padding:2px 9px;font-weight:700}
+.sh-info h1{font-size:24px;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cert{font-size:11px;background:var(--ok-soft);color:var(--brand-deep);border:1px solid rgba(23,107,88,.35);border-radius:6px;padding:2px 9px;font-weight:700}
 .sh-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-.sh-tag{font-size:11.5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:7px;padding:3px 10px}
-.sh-tag.ok{background:rgba(46,230,168,.15);border-color:rgba(46,230,168,.4);color:#86efac}
-.sh-tag.warn{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.4);color:#fcd34d}
-.sh-tag.bad{background:rgba(248,113,113,.15);border-color:rgba(248,113,113,.45);color:#fca5a5}
+.sh-tag{font-size:11.5px;background:#fff;border:1px solid var(--line);border-radius:7px;padding:3px 10px;color:var(--sub)}
+.sh-tag.ok{background:var(--ok-soft);border-color:rgba(23,107,88,.3);color:var(--brand-deep)}
+.sh-tag.warn{background:var(--warn-soft);border-color:rgba(154,100,17,.35);color:var(--warn)}
+.sh-tag.bad{background:var(--bad-soft);border-color:rgba(180,61,55,.35);color:var(--bad)}
 .sh-actions{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
-.status-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(46,230,168,.15);border:1px solid rgba(46,230,168,.4);border-radius:999px;padding:5px 14px;font-size:13px;font-weight:700;color:#86efac}
-.status-pill .d{width:9px;height:9px;border-radius:50%;background:#2ee6a8;animation:pl 2s infinite}
-@keyframes pl{0%{box-shadow:0 0 0 0 rgba(46,230,168,.6)}70%{box-shadow:0 0 0 8px rgba(46,230,168,0)}100%{box-shadow:0 0 0 0 rgba(46,230,168,0)}}
+.status-pill{display:inline-flex;align-items:center;gap:7px;background:var(--ok-soft);border:1px solid rgba(23,107,88,.3);border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:700;color:var(--brand-deep)}
+.status-pill .d{width:9px;height:9px;border-radius:50%;background:var(--brand);animation:pl 2s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(23,107,88,.5)}70%{box-shadow:0 0 0 8px rgba(23,107,88,0)}100%{box-shadow:0 0 0 0 rgba(23,107,88,0)}}
+@media (prefers-reduced-motion: reduce){.status-pill .d{animation:none}html{scroll-behavior:auto}}
 
-/* 分数带 */
-.score-band{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-top:-18px;position:relative;box-shadow:0 6px 22px rgba(16,24,40,.06);display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));overflow:hidden}
-.sb-cell{padding:16px 18px;border-right:1px solid var(--line);text-align:center}
+/* 分数带:白卡账本条;锚点栏插入后不再用负边距压 hero(会把首行数值压进导航底下) */
+.score-band{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-top:18px;position:relative;box-shadow:0 10px 30px rgba(23,33,31,.08);display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));overflow:hidden}
+.sb-cell{padding:15px 18px;border-right:1px solid var(--line-soft);text-align:center}
 .sb-cell:last-child{border-right:none}
-.sb-cell .v{font-size:22px;font-weight:800}
-.sb-cell .k{font-size:11.5px;color:var(--faint);margin-top:2px}
+.sb-cell .v{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums}
+.sb-cell .k{font-size:10.5px;color:var(--faint);margin-top:3px;letter-spacing:.04em}
 .v-ok{color:var(--ok)}.v-warn{color:var(--warn)}.v-bad{color:var(--bad)}.v-brand{color:var(--brand)}
 .sb-cell.hl{background:var(--brand-soft)}
 
 /* 布局 */
 .layout{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:22px}
 @media(max-width:960px){.layout{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
-.card h2{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.card .cap{font-size:12.5px;color:var(--faint);margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.card h2{font-size:15px;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.card .cap{font-size:11.5px;color:var(--faint);margin-bottom:14px}
 .mb18{margin-bottom:18px}
 
 /* 图表 */
@@ -84,24 +86,24 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdr
 .chart-svg{width:100%;height:100%;display:block}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--sub);margin-top:8px}
 .legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:5px;vertical-align:2px}
-/* 迷你条形图 */
+/* 迷你条形图:绿系,超差/预警用语义色 */
 .bars{display:flex;align-items:flex-end;gap:5px;height:120px;padding:0 4px}
-.bar{flex:1;border-radius:4px 4px 0 0;background:#dbe7ff;position:relative;transition:.15s;cursor:default}
+.bar{flex:1;border-radius:4px 4px 0 0;background:#cfe3d9;position:relative;transition:background-color .15s;cursor:default}
 .bar:hover{background:var(--brand)}
-.bar.b-bad{background:#f8b4b0}
-.bar.b-warn{background:#fbd89d}
-.bar .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:10.5px;border-radius:5px;padding:2px 8px;white-space:nowrap;opacity:0;pointer-events:none;transition:.12s}
+.bar.b-bad{background:#eec4c0}
+.bar.b-warn{background:#efd6a4}
+.bar .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#18231f;color:#fff;font-size:10.5px;border-radius:5px;padding:2px 8px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s}
 .bar:hover .tip{opacity:1}
 
-/* 逐轮对账表 */
-.panel{background:#0d1424;border-radius:12px;color:#dbe4f3;font-family:Consolas,"Courier New",monospace;font-size:12px;box-shadow:0 10px 28px rgba(13,20,36,.3);overflow:hidden;position:relative}
-.panel .pbar{display:flex;justify-content:space-between;padding:10px 15px;border-bottom:1px solid rgba(255,255,255,.1);font-family:"PingFang SC",sans-serif;font-size:12.5px}
+/* 逐轮对账终端:深墨绿(近黑不纯黑),保留终端质感、换绿调 */
+.panel{background:#0e1a15;border:1px solid rgba(255,255,255,.07);border-radius:12px;color:#d7e5dd;font-family:Consolas,"Courier New",monospace;font-size:12px;overflow:hidden;position:relative}
+.panel .pbar{display:flex;justify-content:space-between;padding:10px 15px;border-bottom:1px solid rgba(255,255,255,.09);font-family:var(--font-body);font-size:12px;color:#9db5a9}
 .prow{display:flex;justify-content:space-between;gap:10px;padding:6.5px 15px;border-bottom:1px dashed rgba(255,255,255,.07)}
-.prow .k{color:#8ea3c4}
+.prow .k{color:#7d948b}
 .prow .v{text-align:right;font-variant-numeric:tabular-nums}
 .vg{color:#4ade80;font-weight:700}
 .vr{color:#f87171;font-weight:700}
-.prow.hd{background:rgba(255,255,255,.05);font-family:"PingFang SC",sans-serif;font-size:11px;color:#8ea3c4;border-bottom:1px solid rgba(255,255,255,.1);border-style:solid}
+.prow.hd{background:rgba(255,255,255,.04);font-family:var(--font-body);font-size:11px;color:#7d948b;border-bottom:1px solid rgba(255,255,255,.09);border-style:solid}
 
 /* 时间线 */
 .timeline{position:relative;padding-left:22px}
@@ -109,27 +111,27 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdr
 .tl-item{position:relative;padding:0 0 18px 12px}
 .tl-item::before{content:"";position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--brand)}
 .tl-item.t-ok::before{border-color:var(--ok)}
-.tl-item.t-warn::before{border-color:#f59e0b}
+.tl-item.t-warn::before{border-color:var(--warn)}
 .tl-item.t-bad::before{border-color:var(--bad)}
-.tl-item .dt{font-size:11.5px;color:var(--faint);font-weight:600}
-.tl-item .tt{font-size:13.5px;font-weight:700;margin:2px 0}
+.tl-item .dt{font-size:11px;color:var(--faint);font-weight:600}
+.tl-item .tt{font-size:13px;font-weight:700;margin:2px 0}
 .tl-item .tx{font-size:12.5px;color:var(--sub)}
-.tl-item .ev{font-size:11.5px;color:var(--brand);background:var(--brand-soft);border-radius:5px;padding:2px 9px;display:inline-block;margin-top:6px}
+.tl-item .ev{font-size:11px;color:var(--brand);background:var(--brand-soft);border-radius:5px;padding:2px 9px;display:inline-block;margin-top:6px;font-variant-numeric:tabular-nums}
 
 /* 侧栏 */
 .side .card{margin-bottom:18px}
-.kv{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
 .kv:last-child{border-bottom:none}
 .kv .k{color:var(--faint)}
-.kv .v{font-weight:700;text-align:right}
-.risk-gauge{background:linear-gradient(135deg,#fdf4f4,#fefaf3);border:1px solid #f3dcb7;border-radius:12px;padding:16px;text-align:center}
-.risk-gauge .rl{font-size:12px;color:var(--faint);font-weight:600}
-.risk-gauge .rv{font-size:26px;font-weight:800;color:var(--ok);margin:4px 0}
+.kv .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.risk-gauge{background:linear-gradient(135deg,#fdf6f1,#fbf8ef);border:1px solid #ecdcbf;border-radius:10px;padding:16px;text-align:center}
+.risk-gauge .rl{font-size:11.5px;color:var(--faint);font-weight:600}
+.risk-gauge .rv{font-size:25px;font-weight:800;color:var(--ok);margin:4px 0;font-variant-numeric:tabular-nums}
 .risk-gauge .rd{font-size:11.5px;color:var(--sub);line-height:1.6}
 .risk-item{display:flex;justify-content:space-between;font-size:12px;padding:5px 0}
 .risk-item .s{font-weight:700}
 .s-ok{color:var(--ok)}.s-warn{color:var(--warn)}.s-bad{color:var(--bad)}
-.benefit{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1px solid #f2e2b3;border-radius:12px;padding:14px 16px;margin-top:14px}
+.benefit{background:var(--gold-soft);border:1px solid #ecdcbf;border-radius:10px;padding:14px 16px;margin-top:14px}
 .benefit .bt{font-size:12px;color:var(--gold);font-weight:700}
 .benefit .code{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
 .benefit .cd{font-family:Consolas,monospace;font-weight:800;font-size:16px;letter-spacing:1px;color:#7a5c00}
@@ -138,33 +140,56 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdr
 /* 模型报价表 */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px}
-th{background:#f0f3f8;text-align:left;padding:9px 12px;font-size:11.5px;font-weight:700;color:var(--sub);border-bottom:2px solid var(--line);white-space:nowrap}
-td{padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
-.tag-m{font-size:11px;padding:2px 8px;border-radius:5px;background:#f2f4f8;color:var(--sub);font-weight:600}
-.tm-g{background:var(--ok-soft);color:var(--ok)}
+th{background:#eef3f0;text-align:left;padding:8px 12px;font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--sub);border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--line-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+.tag-m{font-size:11px;padding:2px 8px;border-radius:5px;background:#eef2ef;color:var(--sub);font-weight:600}
+.tm-g{background:var(--ok-soft);color:var(--brand-deep)}
 .tm-y{background:var(--warn-soft);color:var(--warn)}
 .tm-r{background:var(--bad-soft);color:var(--bad)}
 
 /* 切换器 */
 .tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.tab{font-size:12.5px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--sub);cursor:pointer;font-weight:600;transition:.13s}
+.tab{font-size:12.5px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--sub);cursor:pointer;font-weight:600;transition:background-color .13s,color .13s,border-color .13s;font-family:inherit}
 .tab:hover{border-color:var(--brand);color:var(--brand)}
 .tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
 
-footer{margin-top:52px;background:#0c1633;color:#94a3c4;padding:36px 0 28px;font-size:13px}
+footer{margin-top:52px;background:#202c27;color:#d5e1da;padding:36px 0 28px;font-size:13px}
 .ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.1)}
 @media(max-width:720px){.ft-grid{grid-template-columns:1fr}}
 footer h4{color:#fff;font-size:14px;margin-bottom:12px}
 footer a{display:block;padding:3.5px 0}
-footer a:hover{color:#fff}
-footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:130}
+footer a:hover{color:#d6ed7a}
+footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#aab8b0}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:#18231f;color:#fff;font-size:13px;padding:9px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:130}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .navswitch{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
-.navswitch a{font-size:12.5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:6px 13px;color:#cdd9f6}
-.navswitch a:hover{background:rgba(255,255,255,.16)}
+.navswitch a{font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 13px;color:var(--sub);transition:border-color .13s,color .13s}
+.navswitch a:hover{border-color:var(--brand);color:var(--brand)}
+/* 锚点标签栏(参照 OkkMax 站详情页导航;sticky 于顶栏下) */
+.sec-nav{position:sticky;top:60px;z-index:90;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.sec-nav-in{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.sec-nav-in::-webkit-scrollbar{display:none}
+.sec-nav a{flex:0 0 auto;font-size:12.5px;font-weight:600;color:var(--sub);padding:10px 13px;border-bottom:2px solid transparent;transition:color .13s,border-color .13s}
+.sec-nav a:hover{color:var(--brand)}
+/* 锚点落位补偿:顶栏 60px + 吸顶标签栏,避免卡片标题被遮挡 */
+#sec-perf,#sec-trend,#sec-evidence,#sec-price,#sec-endpoints,#auditCard,#sec-timeline,#sec-info,#rlReviews{scroll-margin-top:112px}
+/* 测评表现:三格速览 + 自动摘要(参照 OkkMax「测评指数 + 测评摘要」) */
+.perf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 4px}
+@media(max-width:720px){.perf-grid{grid-template-columns:1fr}}
+.perf-cell{border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center;background:#fbfcfb}
+.perf-cell .pv{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.perf-cell .pu{font-size:12px;font-weight:700;color:var(--sub);margin-left:2px}
+.perf-cell .pk{font-size:11px;color:var(--faint);margin-top:3px;letter-spacing:.04em}
+.summary-txt{font-size:13px;line-height:1.9;color:var(--sub);margin-top:10px}
+.summary-txt b{color:var(--ink)}
+/* 接口链接(参照 OkkMax;测速复用 speedprobe 双视角) */
+.ep-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+.ep-row:last-child{border-bottom:none}
+.ep-label{font-size:11px;color:var(--faint);font-weight:600;letter-spacing:.04em}
+.ep-url{font-family:Consolas,monospace;font-size:13px;color:var(--ink);margin-top:2px;word-break:break-all}
+.ep-ops{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pay-ic{height:13px;width:13px;vertical-align:-2px;margin-right:2px;border-radius:3px}
 </style>
- <link rel="stylesheet" href="assets/theme-relaypick.css">
 <link rel="stylesheet" href="assets/theme-relayindex.css">
 </head>
 <body>
@@ -186,7 +211,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <div class="sh-row">
  <div class="sh-logo" id="shLogo">RA</div>
  <div class="sh-info">
- <h1><span id="shName">RelayAPI</span> <span class="cert">✔ 实测认证商家</span><span id="shProbe" style="margin-left:8px"></span></h1>
+ <h1><span id="shName">RelayAPI</span> <span class="cert">✔ 实测认证商家</span></h1>
  <div class="sh-tags" id="shTags"></div>
  <div class="navswitch">
  <a href="detail.html?site=TopAPI">← TopAPI</a>
@@ -195,12 +220,17 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  </div>
  <div class="sh-actions">
  <span class="status-pill"><span class="d"></span>服务正常</span>
- <button class="btn btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)" onclick="toast('原始数据导出:可溯源到证据批次号')">⬇ 导出原始数据</button>
+ <button class="btn btn-ghost" onclick="toast('原始数据导出:可溯源到证据批次号')">⬇ 导出原始数据</button>
  <a class="btn btn-primary" href="#" id="visitBtn">访问站点 ↗</a>
  </div>
  </div>
  </div>
 </div>
+
+<!-- 锚点标签栏 -->
+<div class="sec-nav"><div class="wrap sec-nav-in">
+ <a href="#sec-perf">测评表现</a><a href="#sec-trend">历史趋势</a><a href="#sec-evidence">逐轮对账</a><a href="#sec-price">模型报价</a><a href="#sec-endpoints">接口链接</a><a href="#auditCard">计费审计</a><a href="#sec-timeline">事件动态</a><a href="#sec-info">基本信息</a><a href="#rlReviews">用户评价</a>
+</div></div>
 
 <div class="wrap">
 
@@ -212,11 +242,24 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <!-- 分数带 -->
  <div class="score-band" id="scoreBand"></div>
 
+ <!-- 测评表现:三格速览 + 自动摘要(全部由探针数据生成,缺数据如实写「未测/未声明」) -->
+ <div class="card mb18" id="sec-perf" style="margin-top:22px">
+ <h2>测评表现</h2>
+ <p class="cap">由探针实测数据自动生成,不含人工润色;未测维度如实标注</p>
+ <div class="perf-grid">
+ <div class="perf-cell"><div class="pv" id="perfModels">—</div><div class="pk">实测模型覆盖</div></div>
+ <div class="perf-cell"><div class="pv" id="perfVerified">—</div><div class="pk">逐笔对账核验</div></div>
+ <div class="perf-cell"><div class="pv" id="perfInject" title="站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费">—</div><div class="pk">注入开销 / 请求</div></div>
+ </div>
+ <p class="summary-txt" id="summaryTxt"></p>
+ <button class="btn btn-ghost btn-sm" id="sumToggle" type="button">收起摘要 ▴</button>
+ </div>
+
  <div class="layout">
  <!-- 主列 -->
  <div>
  <!-- 历史曲线 -->
- <div class="card mb18">
+ <div class="card mb18" id="sec-trend">
  <h2>历史 &amp; 趋势</h2>
  <p class="cap">采样自最近 30 天探针数据,每 6 小时一个批次</p>
  <div class="tabs">
@@ -229,7 +272,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  </div>
 
  <!-- 逐轮对账 -->
- <div class="card mb18">
+ <div class="card mb18" id="sec-evidence">
  <h2>最新批次 · 逐轮对账证据</h2>
  <!-- 这里的静态默认值同样是「空数据」语义:JS 跑起来前/取不到数据时,
       绝不能让硬编码的演示批次号(2026-09-29-114 / RL-RC-0929-0114)冒充成真实批次(红线 10) -->
@@ -242,31 +285,10 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <button class="btn btn-ghost btn-sm" onclick="toast('API 原始 Response 存档:每条均可溯源到证据批次号')">查看原始 Response JSON</button>
  <button class="btn btn-ghost btn-sm" onclick="toast('历史批次浏览功能规划中,上线后免费开放')">历史批次浏览</button>
  </div>
- </div>
 
- <!-- 缓存命中分布 -->
- <div class="card mb18">
- <h2>缓存命中 · 近 30 批次分布</h2>
- <p class="cap">每根柱 = 一个批次的缓存命中率;绿色≥50%、黄色 35-50%、红色&lt;35%</p>
- <div class="bars" id="cacheBars"></div>
- </div>
-
- <!-- 模型报价 -->
- <div class="card mb18">
- <h2>本站模型报价(实测口径)</h2>
- <p class="cap" id="priceBasisCap">价格已按充值比例折算;缓存列标注是否达到官方 10% 基准</p>
- <div class="tbl-wrap">
- <table>
- <thead><tr><th>模型</th><th>输入 ¥/M</th><th>输出 ¥/M</th><th>缓存读 ¥/M</th><th>缓存基准</th><th>指纹检测</th><th>综合可用率</th></tr></thead>
- <tbody id="priceTbody"></tbody>
- </table>
- </div>
- <a class="more" href="/price/" style="font-size:13px;color:var(--brand);font-weight:600;display:inline-block;margin-top:12px">去模型比价页横向对比 →</a>
- </div>
-
- <!-- 计费审计 -->
- <div class="card mb18" id="auditCard" style="display:none">
- <h2>计费审计(账单级对账)</h2>
+ <!-- 计费审计(原独立卡,现并入逐轮对账:同级结论 + 逐笔明细一体两面) -->
+ <div id="auditCard" style="display:none;margin-top:16px;border-top:1px dashed var(--line);padding-top:14px">
+ <h2 style="font-size:15px">计费审计 · 站级结论</h2>
  <p class="cap" id="auditCap"></p>
  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
  <div class="sb-cell" style="border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center"><div class="v" id="aMatch" style="font-size:22px;font-weight:800"></div><div class="k" style="font-size:11.5px;color:var(--faint)">对账匹配率</div></div>
@@ -281,27 +303,49 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <div id="promiseBody" style="display:flex;gap:8px;flex-wrap:wrap"></div>
  </div>
  </div>
+ </div>
+
+ <!-- 缓存命中分布 -->
+ <div class="card mb18">
+ <h2>缓存命中 · 近 30 批次分布</h2>
+ <p class="cap">每根柱 = 一个批次的缓存命中率;绿色≥50%、黄色 35-50%、红色&lt;35%</p>
+ <div class="bars" id="cacheBars"></div>
+ <p class="summary-txt" id="cacheEmpty" style="display:none;margin:6px 0 2px">缓存命中率未测:该站未声明缓存计费或样本不足;实测后此处展示近 30 批次分布,不做任何臆测填充。</p>
+ </div>
+
+ <!-- 模型报价 -->
+ <div class="card mb18" id="sec-price">
+ <h2>本站模型报价(实测口径)</h2>
+ <p class="cap" id="priceBasisCap">价格已按充值比例折算;缓存列标注是否达到官方 10% 基准</p>
+ <div class="tbl-wrap">
+ <table>
+ <thead><tr><th>模型</th><th>输入 ¥/M</th><th>输出 ¥/M</th><th>缓存读 ¥/M</th><th>缓存基准</th><th>指纹检测</th><th>综合可用率</th></tr></thead>
+ <tbody id="priceTbody"></tbody>
+ </table>
+ </div>
+ <a class="more" href="/price/" style="font-size:13px;color:var(--brand);font-weight:600;display:inline-block;margin-top:12px">去模型比价页横向对比 →</a>
+ </div>
+
+ <!-- 接口链接:线路来自探针收录;测速按钮复用双视角实测 -->
+ <div class="card mb18" id="sec-endpoints">
+ <h2>接口链接</h2>
+ <p class="cap">线路可达性由探针持续监测;「测速」打开浏览器实时 RTT + 云端流式档案双视角</p>
+ <div id="endpointList">
+ <p class="summary-txt">探针尚未收录该站线路;收录后此处展示主站与 API 地址,并可一键复制 / 测速 / 打开。</p>
+ </div>
+ </div>
 
  <!-- 风险时间线 -->
- <div class="card">
+ <div class="card" id="sec-timeline">
  <h2>事件时间线</h2>
  <p class="cap">检测异常、价格变动、公告与平台互动的完整记录</p>
  <div class="timeline" id="timeline"></div>
  </div>
  </div>
 
- <!-- 侧栏 -->
+ <!-- 侧栏:基础信息(决策关键)在前,风险第二,检测覆盖第三 -->
  <div class="side">
- <div class="card">
- <h2 style="font-size:15px">跑路风险指数</h2>
- <div class="risk-gauge" style="margin-top:12px">
- <div class="rl">综合评估</div>
- <div class="rv" id="riskV">低</div>
- <div class="rd" id="riskD">运营 3.2 年 · 价格稳定 · 公告履约记录良好</div>
- </div>
- <div style="margin-top:12px" id="riskItems"></div>
- </div>
- <div class="card">
+ <div class="card" id="sec-info">
  <h2 style="font-size:15px">基础信息</h2>
  <div style="margin-top:8px" id="basicInfo"></div>
  <div class="benefit">
@@ -310,6 +354,15 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
  <p style="font-size:11.5px;color:#a3801f;margin-top:6px">首充 85 折 · 有效期至 10-15</p>
  <span class="ad-flag">含推广链接 · 不影响实测与排名</span>
  </div>
+ </div>
+ <div class="card">
+ <h2 style="font-size:15px">跑路风险指数</h2>
+ <div class="risk-gauge" style="margin-top:12px">
+ <div class="rl">综合评估</div>
+ <div class="rv" id="riskV">低</div>
+ <div class="rd" id="riskD">运营 3.2 年 · 价格稳定 · 公告履约记录良好</div>
+ </div>
+ <div style="margin-top:12px" id="riskItems"></div>
  </div>
  <div class="card">
  <h2 style="font-size:15px">检测覆盖</h2>
@@ -367,7 +420,7 @@ footer .fine{padding-top:18px;font-size:12px;line-height:1.9;color:#5d6f92}
 /* ============ 站点数据(示例,与 ranking/compare 同源,接探针 API 后替换) ============ */
 var DETAIL={
  "RelayAPI":{
- ab:"RA",color:"linear-gradient(135deg,#2563eb,#16308f)",status:"正常运营",audit:{matchPct:100,verified:188,inject:0,stream:0,consistency:"±0.4%",lastAt:"2026-09-29",note:"逐笔对账全部精确匹配;无注入开销,短任务友好。"},
+ ab:"RA",color:"linear-gradient(135deg,#1d8a71,#0e5746)",status:"正常运营",audit:{matchPct:100,verified:188,inject:0,stream:0,consistency:"±0.4%",lastAt:"2026-09-29",note:"逐笔对账全部精确匹配;无注入开销,短任务友好。"},
  band:[["综合分","94","v-brand","hl"],["编程榜","96","v-brand",""],["扣费偏差","0%","v-ok",""],["缓存命中","68%","v-ok",""],["可用率7d","99.6%","v-ok",""],["首字延迟·晚高峰","1.2s","v-ok",""]],
  tags:[["运营 3.2 年","ok"],["全模型覆盖","ok"],["支持开票","ok"],["余额可退","ok"],["社区口碑良好","ok"]],
  avail:99.6,ttft:1.2,risk:{level:"低",cls:"",items:[["运营时长","3.2 年","s-ok"],["最低充值","¥10","s-ok"],["30天价格波动","±3%","s-ok"],["公告履约","6/6 兑现","s-ok"],["域名年龄","3.5 年","s-ok"]]},
@@ -496,7 +549,7 @@ function buildDetailFromSync(name,det){
  var ttftS=m.ttft!==null?(m.ttft/1000).toFixed(1)+"s":"未测";
  return {
  ab:name==="aixoras"?"AX":"AC",
- color:name==="aixoras"?"linear-gradient(135deg,#e8590c,#c2410c)":"linear-gradient(135deg,#0b7285,#087391)",
+ color:name==="aixoras"?"linear-gradient(135deg,#0e7c66,#0a4f40)":"linear-gradient(135deg,#1d8a71,#0e5746)",
  status:"正常运营(实测)",
  band:[["综合分",String(sc.all!==null?sc.all:"—"),"v-brand","hl"],["编程榜",String(sc.code!==null?sc.code:"—"),"v-brand",""],["对账匹配",(au.matchPct!==null?au.matchPct:"—")+"%","v-ok",""],["缓存命中","未测","",""],["可用率7d",m.avail7d!==null?m.avail7d+"%(" + m.checks + "次)":"—","v-ok",""],["首字延迟(实测)",ttftS,"v-warn",""]],
  tags:[["实测数据","ok"],["逐笔对账"+(au.matchPct!==null?au.matchPct+"%":"—"),"ok"],["号池注入 "+(m.inject||"—")+" tok","warn"],["假流式率 "+(m.bufferedRate!==null?m.bufferedRate+"%":"—"),"bad"]],
@@ -517,12 +570,12 @@ function buildDetailFromSync(name,det){
  ["SLA 承诺","未声明(待站方入驻填写)"]
  ];
  })(),
- prices:[], // 详情报价表由比价页承担,此处不重复
  availSeries:Array.from({length:20},function(_,i){return m.avail7d!==null?Math.max(70,m.avail7d+Math.sin(i)*2):null}).filter(function(v){return v!==null}),
  ttftSeries:Array.from({length:20},function(_,i){return m.ttft!==null?m.ttft/1000*(0.85+Math.sin(i/3)*0.15):null}).filter(function(v){return v!==null}),
  priceSeries:Array.from({length:20},function(){return 1}),
  cacheBars:Array.from({length:12},function(){return 0}), // 缓存未测
- rounds:[], // 逐轮明细走 Pro 证据包
+ rounds:det.rounds||[], // 逐轮明细:管理面真实消费日志(update-aicost-rounds.cjs 回填);无则诚实空态
+ prices:det.prices||[], // 报价:探针价格快照回填(主口径=默认/中位倍率组);无则空数组走指向比价页的兜底
  timeline:[
  ["t-ok",au.lastAt||"2026-09-29","逐笔对账 "+(au.verified||0)+" 笔","匹配率 "+(au.matchPct!==null?au.matchPct+"%":"—")+",证据批次可溯源",""],
  m.fingerprint?["t-ok",au.lastAt||"2026-09-29","指纹比对 "+m.fingerprint.similarity+"% ("+(m.fingerprint.baseline==="openrouter"?"官方基线":"跨站差分")+")","判定:"+m.fingerprint.verdict+"",""]:null,
@@ -541,25 +594,32 @@ function applySyncDetail(payload){
  if(!det)return;
  siteName=requested; isFallback=false;
  D=buildDetailFromSync(requested,det);
- // 测速直达(站名后):浏览器实时 RTT + 我们探针的流式档案
- (function(){
- var host=document.getElementById("shProbe");if(!host)return;
- var rs=(payload.realSites||[]).filter(function(x){return x.name===requested})[0];
- var pb=rs&&rs.probe&&rs.probe.origin;
- if(!pb){host.innerHTML="";return}
- var p={name:requested,origin:rs.probe.origin,endpoint:rs.probe.endpoint,archived:rs.probe.archived||null};
- host.innerHTML='<button class="sp-btn" type="button" data-probe="'+JSON.stringify(p).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")+'">测速直达</button>';
- })();
+ /* 测速直达统一收敛到「接口链接」卡(hero 不再放重复按钮);
+    hero 的「访问站点」接到探针收录的真实主站域名 */
  // 重跑首屏装配(标题/徽章/分数带/审计卡等)
  document.title=siteName+" 站点详情 · RelayLens(实测数据)";
  document.getElementById("shLogo").textContent=D.ab;
  document.getElementById("shLogo").style.background=D.color;
  document.getElementById("shName").textContent=siteName;
+ document.getElementById("panelSite").textContent=siteName+" · 控制台-流水"; /* 修复:此前示例站名 RelayAPI 泄漏到真实站页 */
  document.getElementById("shTags").innerHTML=D.tags.map(function(t){return '<span class="sh-tag '+t[1]+'">'+esc(t[0])+'</span>'}).join("");
  document.getElementById("fallbackTip").style.display="none";
  document.getElementById("scoreBand").innerHTML=D.band.map(function(b){return '<div class="sb-cell '+b[3]+'"><div class="v '+b[2]+' num">'+esc(b[1])+'</div><div class="k">'+esc(b[0])+'</div></div>'}).join("");
  document.getElementById("batchCap").textContent="探针真实数据 · 权重 "+(payload.meta&&payload.meta.weightsVersion||"")+" · 更新 "+(payload.meta&&payload.meta.updated||"").slice(0,10);
+ fillPerf(det);
+ var rsR=(payload.realSites||[]).filter(function(x){return x.name===requested})[0];
+ fillEndpoints(rsR,requested);
+ if(rsR&&rsR.probe&&rsR.probe.origin)document.getElementById("visitBtn").href=rsR.probe.origin;
+ /* 修复存量 bug:真实路径此前不重填侧栏基础信息,导致示例站的支付/SLA 数据冒充真实站声明 */
+ document.getElementById("basicInfo").innerHTML=D.basic.map(function(b){
+ return '<div class="kv"><span class="k">'+b[0]+'</span><span class="v" style="max-width:170px;white-space:normal">'+esc(b[1])+'</span></div>';
+ }).join("");
+ decoratePayIcons();
+ document.getElementById("batchCount").textContent=D.batches+" 批";
+ var _bcR=document.getElementById("billCount");if(_bcR)_bcR.textContent=D.bill||"—";
+ var _sdR=document.getElementById("sinceDate");if(_sdR)_sdR.textContent=D.since||"—";
  renderRounds();
+ renderCacheBars(); /* 真实路径重渲缓存区:此前示例站的 68-73% 假柱会残留展示(存量泄漏) */
  // 承诺矩阵:站方声明方向 × 检测状态(声明-检测-验证体系)
  var rs=(payload.realSites||[]).filter(function(x){return x.name===requested})[0];
  var pm=document.getElementById("promiseMatrix");
@@ -575,15 +635,22 @@ function applySyncDetail(payload){
  }).join("")+'<span style="font-size:11.5px;color:var(--faint);align-self:center">未列出的方向 = 站方未承诺,我们不检测也不打分</span>';
  } else pm.style.display="none";
  }
+ /* 报价表:有探针价格快照回填(prices)则渲染真实报价,否则诚实指向比价页 */
+ if(det.prices&&det.prices.length){
+ document.getElementById("priceTbody").innerHTML=det.prices.map(function(p){
+ return '<tr><td><b>'+esc(p[0])+'</b></td><td>'+p[1]+'</td><td>'+p[2]+'</td><td>'+p[3]+'</td><td><span class="tag-m '+p[4]+'">'+p[5]+'</span></td><td><span class="tag-m '+p[6]+'">'+p[7]+'</span></td><td>'+p[8]+'</td></tr>';
+ }).join("");
+ }else{
  document.getElementById("priceTbody").innerHTML='<tr><td colspan="7" style="color:var(--faint);padding:18px">报价请前往 <a href="/price/" style="color:var(--brand)">模型比价页</a> 查看实测口径</td></tr>';
+ }
  /* 报价口径按该站源货币说明:美元额度价站走充值比例折算,直接公示人民币单价的站(heyroute)以页面价为准 */
  var rs=(typeof payload!=="undefined"&&payload&&payload.realSites)?payload.realSites.filter(function(x){return x.name===siteName})[0]:null;
  var SITE_CUR=(rs&&rs.priceSrc&&rs.priceSrc.src)||null;
  var cap=document.getElementById("priceBasisCap");
  if(cap){
- cap.innerHTML=SITE_CUR==="CNY"
- ? "价格为站方价格页直接公示的人民币单价(不参与充值比例折算);缓存列标注是否达到官方 10% 基准"
- : "价格已按充值比例折算;缓存列标注是否达到官方 10% 基准";
+ cap.innerHTML=(SITE_CUR==="CNY"
+ ? "价格为站方价格页直接公示的人民币单价(不参与充值比例折算)"
+ : "价格已按充值比例折算")+";缓存列标注是否达到官方 10% 基准"+(det.prices&&det.prices.length?" · 主口径分组:默认组优先,无默认组取中位倍率组(规则#3,永不取最低价组) · 指纹/可用率待逐模型实测":"");
 }
 /* 确定性证据两行(证书 / 长上下文):措辞来自后端,页面只上色。
    取不到就保留 HTML 里的「未采集 / 未测」,绝不回退成"通过"或空字符串。 */
@@ -609,6 +676,10 @@ function applySyncDetail(payload){
  var av=document.getElementById("aVerified"); if(av)av.textContent=D.audit.verified+" 笔";
  var ai=document.getElementById("aInject"); if(ai){var inv=D.audit.inject;ai.textContent=inv?"+"+inv+" tok":"无注入";ai.title=inv?"站点在每个请求里塞进你看不见的固定内容(上游脚手架),你为这些 token 付费":"未检出注入";ai.style.color=inv?"var(--bad)":"var(--ok)"}
  var ac=document.getElementById("aCons"); if(ac)ac.textContent=D.audit.consistency||"未测";
+ /* 补全真实路径审计卡:示例说明残留根因 = 此前只填数字不填 cap/note/假流式 */
+ var as2=document.getElementById("aStream"); if(as2){as2.textContent=D.audit.stream===0?"0% ✓":D.audit.stream+"%";as2.style.color=D.audit.stream===0?"var(--ok)":D.audit.stream>=50?"var(--bad)":"var(--warn)"}
+ var an2=document.getElementById("auditNote"); if(an2){an2.textContent=D.audit.note||"";if(D.audit.stream>=50)an2.textContent+=" 【假流式 "+D.audit.stream+"%】答案整段生成完才一次性下发,逐 token 渲染客户端体验等价于非流式。"}
+ var cap2=document.getElementById("auditCap"); if(cap2)cap2.textContent="最近审计 "+(D.audit.lastAt||"—")+" · 用站点逐笔消费日志重算应扣并与实扣比对(方法见方法论页)"+(D.audit.group?" · 本次实测基于「"+D.audit.group+"」分组"+(D.audit.gRatio?"(倍率 "+D.audit.gRatio+")":""):"");
  }
  /* CPS 推广位:启用→优惠码+复制+「含推广链接」;未启用→诚实显示洽谈中(不放假码) */
  var ben=document.querySelector(".benefit"), pb=document.getElementById("promoBtn");
@@ -627,9 +698,68 @@ function applySyncDetail(payload){
  }
  drawChart();
 }
-fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject()}).then(applySyncDetail).catch(function(){/* 静默保持演示 */});
+fetch("data/sites.json",{cache:"reload"}).then(function(r){return r.ok?r.json():Promise.reject()}).then(applySyncDetail).catch(function(){/* 静默保持演示 */});
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+/* ===== 测评表现 / 接口链接 / 支付图标(参照 OkkMax 站详情,数据诚实口径) ===== */
+function fillPerf(det){
+ var pm=document.getElementById("perfModels"),pv=document.getElementById("perfVerified"),pi=document.getElementById("perfInject");
+ var m=det&&det.metrics||{},au=det&&det.audit||{},sc=det&&det.score||{},c=det&&det.commerce||{};
+ var mm=(m.measuredGroup&&m.measuredGroup.models)||[];
+ /* 三格取不与分数带重复的维度:覆盖/核验/注入(可用率与首字延迟已在分数带) */
+ if(pm)pm.innerHTML=mm.length?mm.length+'<span class="pu"> 个</span>':"未测";
+ if(pv)pv.innerHTML=au.verified!=null?au.verified+'<span class="pu"> 笔</span>':"未核验";
+ if(pi){var iv=m.inject;pi.innerHTML=iv?("+"+iv+' <span class="pu">tok</span>'):"无注入";pi.style.color=iv?"var(--warn)":"var(--ok)";}
+ var st=document.getElementById("summaryTxt");
+ if(st){
+ if(!det){st.textContent="当前为示例数据结构展示;接入探针后此处自动生成该站摘要。";}
+ else{
+ var inv=c.invoice==null?"未声明":(/不支持|无|不开/.test(String(c.invoice))?"不支持":"支持");
+ st.innerHTML="<b>"+esc(siteName)+"</b>实测分组覆盖 <b>"+(mm.length||"—")+"</b> 个模型,综合分 <b>"+(sc.all!=null?sc.all:"—")+"</b>"+
+ (m.avail7d!=null?",近 7 日平均可用率 <b>"+m.avail7d+"%</b>":"")+
+ (m.ttft!=null?",首字延迟 P50 <b>"+(m.ttft/1000).toFixed(1)+"s</b>":"")+"。"+
+ "平台 <b>"+esc(c.minTopUp||"未声明")+"</b> 起充,充值比例 <b>"+esc(c.ratio||"未声明")+"</b>,支付方式:<b>"+esc(c.pay||"未声明")+"</b>"+
+ ",发票"+inv+",退款政策:"+esc(c.refund==null?"未声明":c.refund)+"。逐笔对账核验 <b>"+(au.verified!=null?au.verified:"—")+"</b> 笔,匹配率 <b>"+(au.matchPct!=null?au.matchPct+"%":"—")+"</b>,全部可溯源到证据批次。";
+ }
+ }
+ var tg=document.getElementById("sumToggle");
+ if(tg&&st)tg.onclick=function(){ /* onclick 覆盖式赋值:静态/真实两条路径都会调用本函数,addEventListener 会挂双监听互相抵消 */
+ var hide=st.style.display!=="none";
+ st.style.display=hide?"none":"";
+ tg.textContent=hide?"展开摘要 ▾":"收起摘要 ▴";
+ };
+}
+function fillEndpoints(rs,requested){
+ var host=document.getElementById("endpointList");if(!host)return;
+ var p=rs&&rs.probe&&rs.probe.origin?rs.probe:null;
+ if(!p)return; /* 静态占位文案已诚实说明未收录 */
+ var pj=JSON.stringify({name:requested,origin:p.origin,endpoint:p.endpoint,archived:p.archived||null}).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+ /* 单行收敛:主站地址与 hero「访问站点」重复 → 删;API 是 POST 端点,浏览器「打开」无意义 → 删;测速保留唯一入口 */
+ host.innerHTML=
+ '<div class="ep-row"><div><div class="ep-label">API 接口</div><div class="ep-url">'+esc(p.endpoint)+'</div></div><div class="ep-ops">'+
+ '<button class="btn btn-ghost btn-sm" type="button" data-copytxt="'+esc(p.endpoint)+'">复制</button>'+
+ '<button class="sp-btn" type="button" data-probe="'+pj+'">测速</button></div></div>';
+ Array.prototype.forEach.call(host.querySelectorAll("[data-copytxt]"),function(b){
+ b.addEventListener("click",function(){
+ var t=b.getAttribute("data-copytxt"),f=function(){toast("已复制:"+t)};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(f,f)}else{f()}
+ });
+ });
+}
+function payIconsHTML(text){
+ var rules=[["alipay",/支付宝|alipay/i],["bankcard",/银行|bank/i],["corporate",/对公|公户/i],["paypal",/paypal|贝宝/i],["usdt",/usdt|泰达|加密|虚拟币/i],["wechatpay",/微信|wechat/i]];
+ var h="";
+ rules.forEach(function(r){if(r[1].test(text))h+='<img class="pay-ic" src="assets/pay/'+r[0]+'.svg" alt="'+r[0]+'" title="'+r[0]+'">';});
+ return h;
+}
+function decoratePayIcons(){
+ Array.prototype.forEach.call(document.querySelectorAll("#basicInfo .kv"),function(row){
+ var k=row.querySelector(".k"),v=row.querySelector(".v");
+ if(k&&v&&k.textContent.indexOf("支付方式")>=0&&!v.querySelector(".pay-ic")){
+ v.insertAdjacentHTML("afterbegin",payIconsHTML(v.textContent)+" ");
+ }
+ });
+}
 document.title=siteName+" 站点详情 · RelayLens";
 if(isFallback){
  document.getElementById("fallbackTip").style.display="block";
@@ -682,11 +812,18 @@ function renderRounds(){
 }
 renderRounds();
 
-/* 缓存柱状图 */
-document.getElementById("cacheBars").innerHTML=D.cacheBars.map(function(v){
+/* 缓存柱状图(真实路径同样重渲;全 0 = 未测 → 降级为一行说明,不摆空柱阵) */
+function renderCacheBars(){
+ var vs=D.cacheBars||[];
+ var bars=document.getElementById("cacheBars"),note=document.getElementById("cacheEmpty");
+ if(!vs.some(function(v){return v>0})){bars.style.display="none";note.style.display="";return}
+ bars.style.display="";note.style.display="none";
+ bars.innerHTML=vs.map(function(v){
  var cls=v>=50?"":(v>=35?"b-warn":"b-bad");
  return '<div class="bar '+cls+'" style="height:'+Math.max(4,v)+'%"><span class="tip">'+v+'%</span></div>';
-}).join("");
+ }).join("");
+}
+renderCacheBars();
 
 /* 模型报价表 */
 document.getElementById("priceTbody").innerHTML=D.prices.map(function(p){
@@ -742,6 +879,7 @@ if(!D.promo){
 document.getElementById("basicInfo").innerHTML=D.basic.map(function(b){
  return '<div class="kv"><span class="k">'+b[0]+'</span><span class="v" style="max-width:170px;white-space:normal">'+esc(b[1])+'</span></div>';
 }).join("");
+fillPerf(null);fillEndpoints(null,requested);decoratePayIcons();
 document.getElementById("batchCount").textContent=D.batches+" 批";
 var _bc=document.getElementById("billCount"); if(_bc) _bc.textContent=D.bill||"—";
 var _sd=document.getElementById("sinceDate"); if(_sd) _sd.textContent=D.since||"—";
@@ -771,7 +909,7 @@ function drawChart(){
  });
  var line=pts.map(function(p,i){return(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ");
  var area=line+' L'+(W-pad)+','+(H-pad)+' L'+pad+','+(H-pad)+' Z';
- var colors={avail:"#2b5cf0",ttft:"#7c3aed",price:"#0e9f6e"};
+ var colors={avail:"#176b58",ttft:"#9a6411",price:"#3266a3"};
  var c=colors[chartMode];
  var dots=pts.filter(function(_,i){return i%5===4||i===0}).map(function(p){
  return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="#fff" stroke="'+c+'" stroke-width="2"/>';
@@ -780,7 +918,7 @@ function drawChart(){
  '<defs><linearGradient id="g'+chartMode+'" x1="0" y1="0" x2="0" y2="1">'+
  '<stop offset="0%" stop-color="'+c+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+c+'" stop-opacity="0"/></linearGradient></defs>'+
  /* 网格线 */
- [0.25,0.5,0.75].map(function(t){return '<line x1="'+pad+'" y1="'+(H*t).toFixed(1)+'" x2="'+(W-pad)+'" y2="'+(H*t).toFixed(1)+'" stroke="#eef1f5" stroke-width="1"/>'}).join("")+
+ [0.25,0.5,0.75].map(function(t){return '<line x1="'+pad+'" y1="'+(H*t).toFixed(1)+'" x2="'+(W-pad)+'" y2="'+(H*t).toFixed(1)+'" stroke="#e7eee9" stroke-width="1"/>'}).join("")+
  '<path d="'+area+'" fill="url(#g'+chartMode+')"/>'+
  '<path d="'+line+'" fill="none" stroke="'+c+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
  dots;
@@ -824,7 +962,7 @@ function copyCode(c){
  box.innerHTML = j.reviews.length ? "" : '<div style="font-size:13px;color:var(--faint)">还没有评价,做第一个?</div>';
  j.reviews.forEach(function(r){
  var d = document.createElement("div");
- d.style.cssText = "border:1px solid #eef1f5;border-radius:10px;padding:10px 12px";
+ d.style.cssText = "border:1px solid #e7eee9;border-radius:10px;padding:10px 12px";
  d.innerHTML = '<div style="font-size:13px;font-weight:700">' + "".repeat(r.stars) + "".repeat(5 - r.stars) +
  ' <span style="font-weight:400;color:var(--faint)">' + escHtml(r.display) + " · " + String(r.created_at).slice(0,10) + "</span></div>" +
  '<div style="font-size:13px;margin-top:4px">' + escHtml(r.text) + "</div>" +

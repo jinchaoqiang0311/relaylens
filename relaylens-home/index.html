@@ -120,6 +120,8 @@
  .provider-logo.violet{background:#efe8f7;color:#684e84}
  .provider-name{font-size:12px;font-weight:700;line-height:1.2;margin-bottom:3px}
  .provider-meta{color:var(--muted);font-size:10px}
+ .provider-meta+.provider-meta{margin-top:2px}
+ .pay-icon{height:13px;width:13px;vertical-align:-3px;margin-right:1px;border-radius:3px}
  .price-primary{font-size:13px;font-weight:710;font-variant-numeric:tabular-nums;white-space:nowrap}
  .price-primary .unit{font-size:9px;color:#74817b;font-weight:500}
  .price-secondary{margin-top:3px;font-size:10px;color:var(--muted);white-space:nowrap}
@@ -127,6 +129,9 @@
  .metric-caption{color:#89948f;font-size:10px;margin-top:2px;white-space:nowrap}
  .detail-button{color:#53635c;cursor:pointer;font-size:11px;font-weight:650}
  .detail-button:hover{color:var(--green);text-decoration:underline}
+ /* 操作列:详情 + 测速直达 竖排(与榜单页 op-col 同构,尺寸适配本页紧凑表) */
+ .op-stack{display:flex;flex-direction:column;gap:5px;align-items:stretch}
+ .op-stack .sp-btn{width:100%;justify-content:center;font-size:10px;padding:3px 8px;border-radius:7px}
  .table-footer{min-height:42px;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;gap:14px;color:var(--muted);background:#fcfdfc;border-top:1px solid var(--line);font-size:10px;flex-wrap:wrap}
  .table-footer strong{color:var(--ink)}
  .legend{display:flex;gap:11px;align-items:center}
@@ -134,6 +139,21 @@
  .legend-dot{width:7px;height:7px;border-radius:50%;background:#46a580}
  .legend-dot.amber{background:#e0a83f}
  .legend-dot.gray{background:#aab4af}
+ .level-text{font-size:11px;font-weight:600;margin-left:5px;white-space:nowrap;vertical-align:1px}
+ .level-text.ok{color:var(--green)}
+ .level-text.no{color:var(--muted)}
+ .recon-toggle-wrap{margin-top:4px}
+ .recon-toggle{font-size:10px;font-weight:600;color:var(--green);background:var(--green-soft);border:0;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit}
+ .recon-toggle:hover{background:#d3e8de}
+ .recon-row>td{background:#f7faf8;padding:12px 16px;border-top:1px dashed var(--line)}
+ .recon-panel{font-size:11px;color:var(--muted)}
+ .recon-head{margin-bottom:2px}
+ .recon-head b{color:var(--ink);font-variant-numeric:tabular-nums}
+ .recon-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:8px 0 6px}
+ .recon-table th{font-size:10px;color:var(--muted);text-align:left;padding:4px 10px 4px 0;border-bottom:1px solid var(--line);white-space:nowrap;font-weight:600}
+ .recon-table td{padding:5px 10px 5px 0;border-bottom:1px solid var(--soft);color:var(--ink);white-space:nowrap}
+ .recon-bad{color:var(--red);font-weight:700}
+ .recon-note{font-size:10px;color:var(--muted)}
  .ref-strip{margin-top:16px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 15px}
  .ref-strip h3{font-size:12px;margin:0 0 9px;font-weight:700;color:#3d4a44}
  .ref-row{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:11px;color:#4e5d56}
@@ -179,6 +199,7 @@
  .freshness{text-align:left}
  }
 </style>
+<link rel="stylesheet" href="assets/speedprobe.css">
 </head>
 <body>
 <header class="topbar">
@@ -250,7 +271,7 @@
  <div class="table-scroll">
  <table class="comparison-table">
  <thead><tr>
- <th style="width:40px"><span class="sr-only">状态</span>状态</th>
+ <th style="width:40px">测试状态</th>
  <th>中转站</th>
  <th>综合评分</th>
  <th>模型真伪</th>
@@ -265,7 +286,7 @@
  </table>
  </div>
  <div class="table-footer">
- <div class="legend"><span><i class="legend-dot"></i>账单级实测</span><span><i class="legend-dot amber"></i>样本有限 / 需留意</span><span><i class="legend-dot gray"></i>仅监测 / 未测</span></div>
+ <div class="legend"><span><i class="legend-dot"></i>已实测</span><span><i class="legend-dot amber"></i>样本有限 / 需留意</span><span><i class="legend-dot gray"></i>仅监测</span></div>
  <span id="price-note">到手价 = 站方公示额度价 × 分组倍率 × 站方声明充值比例(三因子);输出、缓存与充值比例请进详情核对。</span>
  <a class="outline-link" href="ranking.html">查看全站榜单 →</a>
  </div>
@@ -308,7 +329,7 @@
 
 <script>
 (function(){
- var SITES=[], REFS=[], TABS=[];
+ var SITES=[], REFS=[], TABS=[], DETAILS={}, EVID={};
  var state={query:"",model:null,scene:"all",testedOnly:false,sort:"score"};
  var SCENE_LABEL={all:"综合",code:"编程",office:"办公",drama:"剧本创作",biz:"企业"};
  var TONES=["","blue","orange","violet"];
@@ -343,10 +364,64 @@
  if(dev>=100)return '<span class="status-tag status-good">✓ 全过</span>';
  return '<span class="status-tag status-watch">'+dev+'%</span>';
  }
- function levelDot(level){
- return level==="billing"?'<span class="legend-dot" title="账单级实测"></span>':'<span class="legend-dot gray" title="仅免费监测"></span>';
+ /* 测速直达按钮:与榜单页同款 sp-btn,仅给有真实域名与探针档案的站(示例站不给假测速) */
+ function probeBtnHTML(site){
+ var p=site.probe;
+ if(!p||!p.origin)return "";
+ var d={name:site.name,origin:p.origin,endpoint:p.endpoint,archived:p.archived||null};
+ return '<button class="sp-btn" type="button" data-probe="'+JSON.stringify(d).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")+'">测速直达</button>';
  }
- function commerceOf(site){var c=site.commerce||{};return [c.pay,c.minTopUp].filter(Boolean).join(" · ")||"商业信息未声明";}
+ /* 对账详情:仅对对过账的站(dev!=null)出「实测详情」按钮,展开逐笔核验面板。
+    无明细归档的站如实说明,不虚构逐笔数据。 */
+ function fmtTok(n){return n==null?"—":String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+ function reconPanelHTML(site){
+ var det=DETAILS[site.name]||{};
+ var a=det.audit||{};
+ var ev=EVID[site.name];
+ var h='<div class="recon-head">对账批次核验 <b>'+(a.verified!=null?fmtTok(a.verified):"—")+'</b> 笔 · 匹配率 <b>'+(a.matchPct!=null?a.matchPct+"%":"—")+'</b> · 注入开销 '+(a.inject!=null?fmtTok(a.inject)+" tok":"—")+' · 最近核验 '+(a.lastAt||"—")+'</div>';
+ /* 优先:管理面真实消费日志的逐轮明细(update-aicost-rounds.cjs 回填);偏差>1% 行红标 */
+ var rounds=det.rounds||[];
+ if(rounds.length){
+ h+='<table class="recon-table"><thead><tr><th>轮次 / 模型</th><th>输入(缓存命中)</th><th>输出</th><th>理论应扣</th><th>实扣</th></tr></thead>'+
+ rounds.map(function(r){
+ var bad=r.ok?"":' class="recon-bad"';
+ return '<tr><td>'+esc(r.model)+'</td><td>'+fmtTok(r.in)+'('+fmtTok(r.cached)+')</td><td>'+fmtTok(r.out)+'</td><td'+bad+'>'+esc(r.should)+'</td><td'+bad+'>'+esc(r.actual)+'</td></tr>';
+ }).join("")+'</table>';
+ var meta=det.roundsMeta||{};
+ h+='<div class="recon-note">逐笔来源:'+esc(meta.src||"管理面消费日志")+(meta.pulledAt?' · 拉取于 '+String(meta.pulledAt).slice(0,10):'')+' · 偏差 &gt;1% 行红标;完整溯源见站点详情页</div>';
+ }else if(ev&&ev.rows&&ev.rows.length){
+ /* 注意:嵌套表不可写显式 <tbody> —— table 上下文的 innerHTML 解析会把表头行复制进 tbody(实测怪癖),数据行走隐式 tbody 即可 */
+ h+='<table class="recon-table"><thead><tr><th>模型</th><th>输入 tok</th><th>缓存 tok</th><th>输出 tok</th><th>实扣额度</th><th>应扣额度</th><th>偏差</th><th>计费模式</th></tr></thead>'+
+ ev.rows.map(function(r){return '<tr><td>'+esc(r.model)+'</td><td>'+fmtTok(r.inTok)+'</td><td>'+fmtTok(r.cacheTok)+'</td><td>'+fmtTok(r.outTok)+'</td><td>'+r.actualQuota+'</td><td>'+r.expectedQuota+'</td><td'+(r.diffPct>1?' class="recon-bad"':'')+'>'+r.diffPct+'%</td><td>'+esc(r.mode||"—")+'</td></tr>';}).join("")+
+ '</table><div class="recon-note">批次 '+(ev.batchId||"—")+' · 全量逐笔 '+ev.matched+'/'+ev.total+' 通过 · 下方仅归档样本 '+ev.rows.length+' 条</div>';
+ }else{
+ h+='<div class="recon-note">该站暂无逐笔明细归档,仅汇总核验结论;不虚构明细。</div>';
+ }
+ return '<div class="recon-panel">'+h+'</div>';
+ }
+ function levelDot(level){
+ return level==="billing"
+ ?'<span class="legend-dot" title="已实测(账单级)"></span><span class="level-text ok" title="已实测(账单级)">已实测</span>'
+ :'<span class="legend-dot gray" title="仅免费监测"></span><span class="level-text no" title="仅免费监测">仅监测</span>';
+ }
+ /* 支付方式:解析 commerce.pay 关键词 → 品牌 logo(顺序即 PAY_ICONS 排列)。
+    没命中关键词的文本(如「卡密」)原样保留,未声明 pay 的站不画假 logo(诚实口径)。 */
+ var PAY_ICONS=[["alipay","支付宝",/支付宝|alipay/i],["bankcard","银行卡",/银行|bank/i],["corporate","对公转账",/对公|公户/i],["paypal","PayPal",/paypal|贝宝/i],["usdt","USDT",/usdt|泰达|加密|虚拟币/i],["wechatpay","微信支付",/微信|wechat/i]];
+ function payIconsOf(site){
+ var pay=(site.commerce&&site.commerce.pay)||"";
+ var icons=[],rest=pay;
+ PAY_ICONS.forEach(function(ic){if(ic[2].test(pay)){icons.push('<img class="pay-icon" src="assets/pay/'+ic[0]+'.svg" alt="'+ic[1]+'" title="'+ic[1]+'">');rest=rest.replace(ic[2],"");}});
+ rest=rest.replace(/[\/,、|]+/g," ").trim();
+ return {html:icons.join("")+(rest?(icons.length?" ":"")+esc(rest):""),any:icons.length>0||!!rest};
+ }
+ /* 第一行只放支付方式(logo/未匹配文本);起充价独立成行(等级徽章已在状态列,不重复)。 */
+ function payMetaHTML(site){
+ var c=site.commerce||{};
+ var pay=payIconsOf(site).html;
+ var topUp=c.minTopUp?("起充 "+esc(c.minTopUp)):"";
+ if(!pay&&!topUp)return '<div class="provider-meta">商业信息未声明</div>';
+ return (pay?'<div class="provider-meta">'+pay+'</div>':'')+(topUp?'<div class="provider-meta provider-sub">'+topUp+'</div>':'');
+ }
 
  function row(site){
  var sc=scoreFor(site), scTone=sc==null?"":scoreTone(sc);
@@ -359,16 +434,17 @@
  : '<div class="price-primary" style="color:var(--muted)">—</div><div class="price-secondary">该模型暂无报价</div>';
  return '<tr>'+
  '<td>'+levelDot(site.level)+'</td>'+
- '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+'</div><div class="provider-meta">'+(site.level==="billing"?"账单级实测":"免费监测")+' · '+esc(commerceOf(site))+'</div></div></div></td>'+
+ '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+'</div>'+payMetaHTML(site)+'</div></div></td>'+
  '<td class="score-cell">'+scoreCell+'</td>'+
  '<td class="truth-cell">'+fpTag(site)+'</td>'+
  '<td>'+priceCell+'</td>'+
  '<td><div class="metric-number">'+(site.avail==null?"—":site.avail+"%")+'</div><div class="metric-caption">n='+(site.checks==null?"—":site.checks)+'</div></td>'+
  '<td><div class="metric-number">'+(site.ttft==null?"未测":site.ttft+"s")+'</div><div class="metric-caption">'+(site.ttft!=null?"P50":"")+'</div></td>'+
  '<td><div class="metric-number">'+(site.cache==null?"未测":site.cache+"%")+'</div><div class="metric-caption">'+(site.cache==null?"":"样本命中")+'</div></td>'+
- '<td>'+devTag(site.dev)+'</td>'+
- '<td><a class="detail-button" href="detail.html?site='+encodeURIComponent(site.name)+'">详情 →</a></td>'+
- '</tr>';
+ '<td>'+devTag(site.dev)+(site.dev!=null?'<div class="recon-toggle-wrap"><button class="recon-toggle" type="button" data-site="'+esc(site.name)+'">实测详情 ▾</button></div>':'')+'</td>'+
+ '<td><div class="op-stack"><a class="detail-button" href="detail.html?site='+encodeURIComponent(site.name)+'">站点详情 →</a>'+probeBtnHTML(site)+'</div></td>'+
+ '</tr>'+
+ (site.dev!=null?'<tr class="recon-row" hidden data-recon="'+esc(site.name)+'"><td colspan="10"></td></tr>':'');
  }
 
  function filtered(){
@@ -391,7 +467,7 @@
 
  function render(){
  var tab=curTab();
- setHtml("price-heading", tab?("到手价 / 百万输入 Token · "+esc(tab.name)):"到手价 / 百万输入 Token");
+ setHtml("price-heading", tab?("到手价 / 百万输入 Token<br><span style=\"font-weight:400\">"+esc(tab.name)+"</span>"):"到手价 / 百万输入 Token");
  var list=filtered();
  setHtml("provider-rows", list.length?list.map(row).join(""):
  '<tr><td colspan="10" style="padding:30px;text-align:center;color:#75817c">没有匹配的中转站,试试放宽搜索或取消「只看账单级实测」。</td></tr>');
@@ -439,7 +515,27 @@
  setTxt(valId,label);
  }
 
+ /* 详情面板延迟构建:嵌套 <table> 字符串直接走 tbody.innerHTML 解析不稳定(表头行偶发被复制进 tbody),
+    改为 div 上下文解析后搬运节点 —— 上下文隔离,确定性正确。 */
+ function ensureReconPanel(panelTr, siteName){
+ var td=panelTr.firstElementChild;
+ if(td.childNodes.length)return;
+ var site=null;
+ for(var i=0;i<SITES.length;i++){if(SITES[i].name===siteName){site=SITES[i];break;}}
+ if(!site)return;
+ var tmp=document.createElement("div");
+ tmp.innerHTML=reconPanelHTML(site);
+ while(tmp.firstChild)td.appendChild(tmp.firstChild);
+ }
  function bind(){
+ var pr=$("provider-rows");if(pr)pr.addEventListener("click",function(ev){
+ var btn=ev.target&&ev.target.closest?ev.target.closest(".recon-toggle"):null;if(!btn)return;
+ var tr=btn.closest("tr"),panel=tr&&tr.nextElementSibling;
+ if(panel&&panel.classList.contains("recon-row")){
+ ensureReconPanel(panel,panel.getAttribute("data-recon"));
+ panel.hidden=!panel.hidden;btn.textContent=panel.hidden?"实测详情 ▾":"收起 ▴";
+ }
+ });
  var search=$("search");if(search)search.addEventListener("input",function(){state.query=this.value;render();});
  var ms=$("model-select");if(ms)ms.addEventListener("change",function(){state.model=this.value;render();});
  var ss=$("sort-select");if(ss)ss.addEventListener("change",function(){state.sort=this.value;render();});
@@ -454,9 +550,10 @@
  });
  }
 
- fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+(r.status||"?")));})
+ fetch("data/sites.json",{cache:"reload"}).then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+(r.status||"?")));})
  .then(function(j){
  SITES=j.realSites||[];REFS=j.referenceSites||[];TABS=(j.compare&&j.compare.tabs)||[];
+ DETAILS=j.details||{};[].concat(j.evidence||[]).forEach(function(ev){if(ev&&ev.site)EVID[ev.site]=ev;});
  buildModelSelect();fillStats(j);renderRefs();render();bind();
  setTxt("last-check","");
  })
@@ -468,5 +565,6 @@
  });
 })();
 </script>
+<script src="assets/speedprobe.js"></script>
 </body>
 </html>

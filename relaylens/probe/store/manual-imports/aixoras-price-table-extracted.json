@@ -1,0 +1,699 @@
+{
+ "src": "aixoras-pricing-live.json(经 2026-10-31 逐笔对账验证与实扣一致)",
+ "rows": [
+  {
+   "model": "claude-opus-4-7",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 2,
+   "yout": 10,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-4-7",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 8,
+   "yout": 40,
+   "cache": 0.1
+  },
+  {
+   "model": "codex-auto-review",
+   "group": "Codex",
+   "gr": 0.18,
+   "yin": 0.315,
+   "yout": 2.52
+  },
+  {
+   "model": "codex-auto-review",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 0.612,
+   "yout": 4.9
+  },
+  {
+   "model": "codex-auto-review",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 1.05,
+   "yout": 8.4
+  },
+  {
+   "model": "gemini-3-pro-preview",
+   "group": "Gemini 优质",
+   "gr": 0.6,
+   "yin": 1.2,
+   "yout": 7.2,
+   "cache": 0.1
+  },
+  {
+   "model": "wan-3.0",
+   "group": "Seedance满血",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "claude-sonnet-5",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 3.2,
+   "yout": 16
+  },
+  {
+   "model": "claude-sonnet-5",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 0.8,
+   "yout": 4
+  },
+  {
+   "model": "gpt-6-sol",
+   "group": "Codex",
+   "gr": 0.18,
+   "yin": 0.36,
+   "yout": 1.8,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-6-sol",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 0.7,
+   "yout": 3.5,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-6-sol",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 1.2,
+   "yout": 6,
+   "cache": 0.1
+  },
+  {
+   "model": "gemini-3.8-flash",
+   "group": "Gemini 优质",
+   "gr": 0.6,
+   "yin": 0.45,
+   "yout": 2.25,
+   "cache": 0.1
+  },
+  {
+   "model": "glm-5.3",
+   "group": "GLM智谱",
+   "gr": 0.7,
+   "yin": 5.6,
+   "yout": 19.6,
+   "cache": 0.25
+  },
+  {
+   "model": "seedance-2.0-fast",
+   "group": "Seedance满血",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "gemini-3.1-flash-image-preview",
+   "group": "Gemini 生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 300
+  },
+  {
+   "model": "claude-opus-4-8",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 8,
+   "yout": 40,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-4-8",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 2,
+   "yout": 10,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-5",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 8,
+   "yout": 40,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-5",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 2,
+   "yout": 10,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-sonnet-4-6",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 4.8,
+   "yout": 24,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-sonnet-4-6",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 1.2,
+   "yout": 6,
+   "cache": 0.1
+  },
+  {
+   "model": "seedance-2.0",
+   "group": "Seedance满血",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "seedance-2.0",
+   "group": "测试专用",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "seedance-2.5",
+   "group": "Seedance满血",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "seedance-2.5",
+   "group": "测试专用",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "deepseek-v4-pro",
+   "group": "Deepseek",
+   "gr": 0.7,
+   "yin": 3.15,
+   "yout": 9.45,
+   "cache": 0.066666666667
+  },
+  {
+   "model": "gemini-3-pro-image",
+   "group": "Gemini 生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 4500
+  },
+  {
+   "model": "glm-5.3-flash",
+   "group": "GLM智谱",
+   "gr": 0.7,
+   "yin": 0.105,
+   "yout": 0.35,
+   "cache": 0.2
+  },
+  {
+   "model": "grok-4.7",
+   "group": "Grok",
+   "gr": 0.2,
+   "yin": 0.4,
+   "yout": 1.2,
+   "cache": 0.25
+  },
+  {
+   "model": "claude-fable-5.1",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 30,
+   "yout": 30
+  },
+  {
+   "model": "gpt-5.5",
+   "group": "Codex",
+   "gr": 0.18,
+   "yin": 0.9,
+   "yout": 5.4,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.5",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 1.75,
+   "yout": 10.5,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.5",
+   "group": "GPT-azure",
+   "gr": 2.2,
+   "yin": 11,
+   "yout": 66,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.5",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 3,
+   "yout": 18,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "group": "GPT-azure",
+   "gr": 2.2,
+   "yin": 5.5,
+   "yout": 33,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 1.5,
+   "yout": 9,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "group": "Codex",
+   "gr": 0.18,
+   "yin": 0.45,
+   "yout": 2.7,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 0.875,
+   "yout": 5.25,
+   "cache": 0.1
+  },
+  {
+   "model": "gemini-3.1-pro-preview",
+   "group": "Gemini 优质",
+   "gr": 0.6,
+   "yin": 1.2,
+   "yout": 7.2,
+   "cache": 0.1
+  },
+  {
+   "model": "gemini-3.7-flash",
+   "group": "Gemini 优质",
+   "gr": 0.6,
+   "yin": 0.45,
+   "yout": 2.25
+  },
+  {
+   "model": "gemini-3-pro-image-preview",
+   "group": "Gemini 生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 4500
+  },
+  {
+   "model": "gpt-image-2.5-flare",
+   "group": "IMAGE-2生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 150
+  },
+  {
+   "model": "seedance-2.0-mini",
+   "group": "Seedance满血",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "claude-sonnet-4-5",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 1.2,
+   "yout": 6,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-4-6-max",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 8,
+   "yout": 40,
+   "cache": 0.1
+  },
+  {
+   "model": "gemini-3.1-pro",
+   "group": "Gemini 优质",
+   "gr": 0.6,
+   "yin": 1.2,
+   "yout": 7.2,
+   "cache": 0.1
+  },
+  {
+   "model": "qwen3.8-max",
+   "group": "Qwen千问",
+   "gr": 0.7,
+   "yin": 8.4,
+   "yout": 25.2
+  },
+  {
+   "model": "seedance-2.5-s",
+   "group": "Seedance满血",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "claude-fable-5",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 16,
+   "yout": 80,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-fable-5",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 4,
+   "yout": 20,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 1.75,
+   "yout": 10.5,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "group": "GPT-azure",
+   "gr": 2.2,
+   "yin": 11,
+   "yout": 66,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 3,
+   "yout": 18,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "gr": 0.18,
+   "yin": 0.9,
+   "yout": 5.4,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "group": "Codex",
+   "gr": 0.18,
+   "yin": 0.36,
+   "yout": 1.8,
+   "cache": 0.05
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 0.7,
+   "yout": 3.5,
+   "cache": 0.05
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 1.2,
+   "yout": 6,
+   "cache": 0.05
+  },
+  {
+   "model": "deepseek-v4-flash",
+   "group": "Deepseek",
+   "gr": 0.7,
+   "yin": 0.7,
+   "yout": 3.15,
+   "cache": 0.05
+  },
+  {
+   "model": "gemini-3.5-flash",
+   "group": "Gemini 优质",
+   "gr": 0.6,
+   "yin": 0.9,
+   "yout": 5.4,
+   "cache": 0.1
+  },
+  {
+   "model": "minimax-m3",
+   "group": "Mini-Max",
+   "gr": 0.7,
+   "yin": 1.47,
+   "yout": 5.88,
+   "cache": 0.2
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 0.8,
+   "yout": 4,
+   "cache": 0.1
+  },
+  {
+   "model": "gemini-3.1-flash-image",
+   "group": "Gemini 生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 300
+  },
+  {
+   "model": "kimi-k3",
+   "group": "KIMI",
+   "gr": 0.7,
+   "yin": 14,
+   "yout": 70,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-fable-5-1",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 16,
+   "yout": 80,
+   "cache": 0.025
+  },
+  {
+   "model": "claude-fable-5-1",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 4,
+   "yout": 20,
+   "cache": 0.025
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 3.2,
+   "yout": 16,
+   "cache": 0.1
+  },
+  {
+   "model": "glm-5.2",
+   "group": "GLM智谱",
+   "gr": 0.7,
+   "yin": 5.6,
+   "yout": 19.6,
+   "cache": 0.25
+  },
+  {
+   "model": "gpt-image-2.5-sunburst",
+   "group": "IMAGE-2生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 150
+  },
+  {
+   "model": "claude-opus-4-6",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 2,
+   "yout": 10,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-4-6",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 8,
+   "yout": 40,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-4-7-max",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 8,
+   "yout": 40,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.4",
+   "group": "GPT-azure",
+   "gr": 2.2,
+   "yin": 5.5,
+   "yout": 33,
+   "cache": 0.1
+  },
+  {
+   "model": "claude-opus-5-5",
+   "group": "Claude-Max-外接",
+   "gr": 1.6,
+   "yin": 6.4,
+   "yout": 32,
+   "cache": 0.05
+  },
+  {
+   "model": "claude-opus-5-5",
+   "group": "特价Claude",
+   "gr": 0.4,
+   "yin": 1.6,
+   "yout": 8,
+   "cache": 0.05
+  },
+  {
+   "model": "gpt-6-astra",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 3.5,
+   "yout": 17.5,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-6-astra",
+   "group": "GPT-azure",
+   "gr": 2.2,
+   "yin": 22,
+   "yout": 110,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-6-astra",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 6,
+   "yout": 30,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-6-astra",
+   "group": "Codex",
+   "gr": 0.18,
+   "yin": 1.8,
+   "yout": 9,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.4-mini",
+   "group": "GPT-azure",
+   "gr": 2.2,
+   "yin": 1.65,
+   "yout": 9.9,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-image-2",
+   "group": "IMAGE-2生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 150
+  },
+  {
+   "model": "gpt-image-2",
+   "group": "IMAGE-VIP",
+   "gr": 1.5,
+   "yin": 112.5,
+   "yout": 225
+  },
+  {
+   "model": "grok-4.6",
+   "group": "Grok",
+   "gr": 0.2,
+   "yin": 0.4,
+   "yout": 1.2,
+   "cache": 0.25
+  },
+  {
+   "model": "seedream-5.0-pro",
+   "group": "IMAGE-2生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 75
+  },
+  {
+   "model": "gemini-nano-banana-2.1",
+   "group": "Gemini 生图",
+   "gr": 1,
+   "yin": 75,
+   "yout": 300
+  },
+  {
+   "model": "grok-4.5",
+   "group": "Grok",
+   "gr": 0.2,
+   "yin": 0.4,
+   "yout": 1.2,
+   "cache": 0.25
+  },
+  {
+   "model": "gemini-3.6-flash",
+   "group": "Gemini 优质",
+   "gr": 0.6,
+   "yin": 0.81,
+   "yout": 4.5,
+   "cache": 0.111111111111
+  },
+  {
+   "model": "gpt-5.6-luna",
+   "group": "GPT 优质",
+   "gr": 0.35,
+   "yin": 0.35,
+   "yout": 2.1,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-luna",
+   "group": "GPT-azure",
+   "gr": 2.2,
+   "yin": 2.2,
+   "yout": 13.2,
+   "cache": 0.1
+  },
+  {
+   "model": "gpt-5.6-luna",
+   "group": "GPT-企业级",
+   "gr": 0.6,
+   "yin": 0.6,
+   "yout": 3.6,
+   "cache": 0.1
+  }
+ ]
+}

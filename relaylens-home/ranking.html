@@ -1164,7 +1164,7 @@ function syncDemoUI(){
 }
 if(demoBtn)demoBtn.addEventListener("click",function(){DEMO_ON=!DEMO_ON;SITES=currentRows();syncDemoUI();render();});
 syncDemoUI();
-fetch("data/sites.json").then(function(r){return r.ok?r.json():Promise.reject()}).then(applyRealData).catch(function(){/* 静默回退实测种子数据 */});
+fetch("data/sites.json",{cache:"reload"}).then(function(r){return r.ok?r.json():Promise.reject()}).then(applyRealData).catch(function(){/* 静默回退实测种子数据 */});
 
 render();
 </script>

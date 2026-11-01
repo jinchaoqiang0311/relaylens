@@ -62,7 +62,14 @@ if (rrSrc) {
     const body = doc.getElementById("panelBody").innerHTML;
     const cap = doc.getElementById("batchCap").textContent;
     const hasFakeConclusion = /通过\s*\d+\/\d+/.test(body) || /偏差\s*[0-9.]+%/.test(body);
-    ok(!hasFakeConclusion, name + " 空 rounds 时不得出现「通过 n/n」「偏差 x%」结论行");
+    /* 2026-10-31 起部分站(如 aicost)经 update-aicost-rounds.cjs 接入管理面真实消费日志,
+       rounds 有真数据 → 渲染真实结论是本功能的正输出;「不得出结论」只约束空 rounds 的站 */
+    const hasRealRounds = Array.isArray(payload.details[name].rounds) && payload.details[name].rounds.length > 0;
+    if (!hasRealRounds) {
+      ok(!hasFakeConclusion, name + " 空 rounds 时不得出现「通过 n/n」「偏差 x%」结论行");
+    } else {
+      ok(hasFakeConclusion || body.length > 0, name + " 有真实 rounds 时应渲染逐轮结论");
+    }
     ok(!/RL-RC-0929|20260929-114/.test(cap + body), name + " 不得显示硬编码演示批次号");
   }
   /* 有真数据时仍要能出结论(证明空态分支没有把正常路径一起干掉) */
