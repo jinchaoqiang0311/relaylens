@@ -28,3 +28,8 @@ deploy/*.pub
 
 # api-worker Node 自托管运行时数据(会话/评论库,含个人信息)
 api-worker/node/data/
+build-relay-dbg*.js
+build-out.txt
+build-err.txt
+dist-test-*/
+*.bak-2*
