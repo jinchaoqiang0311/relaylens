@@ -377,8 +377,10 @@
  });
  var bySite={};
  Object.keys(byRows).forEach(function(nm){
+ /* 标价口径选组:默认组优先;无默认组取最低可用组(用户实付口径,组名入 chip 提示)。
+    与审计口径的规则#3(中位)不同 —— 标价列展示的是「用户买到的价」,不是评分数值 */
  var rs=byRows[nm].slice().sort(function(a,b){return (parseFloat(a["实付输入(¥/M)"])||Infinity)-(parseFloat(b["实付输入(¥/M)"])||Infinity);});
- var pick=rs[Math.floor(rs.length/2)]; /* 规则#3:中位倍率组,永不取最低价组 */
+ var pick=rs.find(function(r){return /^(default|默认|普通用户|normal|auto)$/i.test(String(r["分组"]||""));})||rs[0];
  bySite[nm]=pick;
  var host="";try{host=String(pick["域名"]||"").replace(/^https?:\/\//,"").split("/")[0].replace(/^www\./,"");}catch(e){}
  if(host)bySite["host:"+host]=pick;
@@ -467,7 +469,7 @@
  var dsh = dashLookup(site);
  var priceCell;
  if (dsh && isFinite(dsh["实付输入(¥/M)"])) {
- priceCell = '<div class="price-primary">¥'+fmtPrice(dsh["实付输入(¥/M)"])+' <span class="unit">/M 输入</span> <span class="src-chip" title="标价口径:看板自采公示价(分组倍率+充值比例后) · 数据时间 '+esc(String(dsh["数据时间(UTC)"]||"").replace("T"," ").slice(0,16))+' UTC">标价</span></div>'
+ priceCell = '<div class="price-primary">¥'+fmtPrice(dsh["实付输入(¥/M)"])+' <span class="unit">/M 输入</span> <span class="src-chip" title="标价口径:看板自采公示价(分组倍率+充值比例后) · 分组 '+esc(String(dsh["分组"]||""))+' · 数据时间 '+esc(String(dsh["数据时间(UTC)"]||"").replace("T"," ").slice(0,16))+' UTC">标价</span></div>'
  + '<div class="price-secondary">输出 ¥'+fmtPrice(dsh["实付输出(¥/M)"])+'/M'
  + (price?' · <span class="src-chip src-audit" title="实测口径:本站探针三因子折算(公示额度价×分组倍率×充值比例),快照时点见页首">实测到手 ¥'+fmtPrice(price.in)+'</span>':'')
  + '</div>';
