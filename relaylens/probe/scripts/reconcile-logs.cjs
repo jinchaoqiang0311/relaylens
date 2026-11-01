@@ -66,7 +66,9 @@ function expectedQuota(log, pm) {
   let other = {}; try { other = log.other ? JSON.parse(log.other) : {}; } catch { }
   const pT = log.prompt_tokens || 0, cT = log.completion_tokens || 0;
   const cacheT = other.cache_tokens || 0;
-  const pNc = Math.max(0, pT - cacheT);
+  /* 缓存口径自判:cache_tokens > prompt_tokens = 排除式(prompt 不含缓存,aixoras claude 实测);
+     否则包含式(缓存 ⊆ prompt,aicost new-api 实测)。两站日志语义不同,不能写死 */
+  const pNc = cacheT > pT ? pT : Math.max(0, pT - cacheT);
   const mult = other.service_tier === "priority" ? 2.5 : 1;
   if (pr.quota_type === 1) return { exp: Math.round((pr.model_price || 0) * gr * QUOTA_PER_USD * mult), detail: "按次" };
   if (pr.billing_mode === "tiered_expr") {
@@ -77,9 +79,14 @@ function expectedQuota(log, pm) {
     const perM = pNc * tier.input + cT * tier.output + cacheT * (tier.cacheRead || 0);
     return { exp: Math.round(perM / 1e6 * gr * QUOTA_PER_USD * mult), detail: "tier:" + tier.name };
   }
-  const cr = pr.cache_ratio != null && pr.cache_ratio > 0 ? pr.cache_ratio : 1;
-  /* new-api 标准口径:model_ratio 直接乘 token 数(1 ratio = $2/M = 1 quota/token),不做 /1e6×500000 换算 */
-  const perM = (pNc + cacheT * cr + cT * (pr.completion_ratio || 1)) * (pr.model_ratio || 0);
+  /* 标准口径:优先站方每笔自报倍率(log other = 计费时点的事实),缺失回退公示价。
+     缓存读按 cache_ratio;缓存写(cache_creation_tokens × cache_creation_ratio,claude 系有)单独建模 —— 此前盲区导致 claude 行误报异常 */
+  const mr = other.model_ratio != null ? other.model_ratio : (pr.model_ratio || 0);
+  const crC = other.completion_ratio != null ? other.completion_ratio : (pr.completion_ratio || 1);
+  const crR = other.cache_ratio != null ? other.cache_ratio : (pr.cache_ratio != null && pr.cache_ratio > 0 ? pr.cache_ratio : 1);
+  const crW = other.cache_creation_ratio != null ? other.cache_creation_ratio : 1;
+  const wT = other.cache_write_tokens != null ? other.cache_write_tokens : (other.cache_creation_tokens || 0);
+  const perM = (pNc + cacheT * crR + wT * crW + cT * crC) * mr;
   return { exp: Math.round(perM * gr), detail: "standard" };
 }
 

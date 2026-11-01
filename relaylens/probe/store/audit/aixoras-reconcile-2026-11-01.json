@@ -1,0 +1,191 @@
+{
+ "site": "aixoras",
+ "ranAt": "2026-11-01T13:54:59.323Z",
+ "source": "管理面逐笔消费日志(全量)",
+ "logsTotal": 3715,
+ "consumeRows": 3609,
+ "audited": 3609,
+ "skipped": {},
+ "actualQuota": 7308446,
+ "expectedQuota": 7308438,
+ "actualUsd": 14.6169,
+ "expectedUsd": 14.6169,
+ "deviationPct": 0.0001,
+ "matchRatePct": 99.778,
+ "exprDrift": {
+  "checked": 736,
+  "mismatch": 0
+ },
+ "perModel": [
+  {
+   "model": "gpt-5.5",
+   "n": 1558,
+   "actualUsd": 1.3932,
+   "expectedUsd": 1.3932,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "n": 427,
+   "actualUsd": 11.1582,
+   "expectedUsd": 11.1582,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "codex-auto-review",
+   "n": 400,
+   "actualUsd": 0.3784,
+   "expectedUsd": 0.3784,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-5.6-sol",
+   "n": 321,
+   "actualUsd": 0.3388,
+   "expectedUsd": 0.3388,
+   "devPct": 0.0041,
+   "bad": 7
+  },
+  {
+   "model": "gpt-5.6-terra",
+   "n": 229,
+   "actualUsd": 0.1031,
+   "expectedUsd": 0.1031,
+   "devPct": 0.0019,
+   "bad": 1
+  },
+  {
+   "model": "gpt-6-sol",
+   "n": 214,
+   "actualUsd": 0.0657,
+   "expectedUsd": 0.0657,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "gpt-6-astra",
+   "n": 186,
+   "actualUsd": 0.2557,
+   "expectedUsd": 0.2557,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "claude-sonnet-5",
+   "n": 91,
+   "actualUsd": 0.0135,
+   "expectedUsd": 0.0135,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "claude-opus-4-8",
+   "n": 87,
+   "actualUsd": 0.7851,
+   "expectedUsd": 0.7851,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "glm-5.3",
+   "n": 86,
+   "actualUsd": 0.098,
+   "expectedUsd": 0.098,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "glm-5.3-flash",
+   "n": 7,
+   "actualUsd": 0.0003,
+   "expectedUsd": 0.0003,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "claude-opus-5",
+   "n": 2,
+   "actualUsd": 0.0089,
+   "expectedUsd": 0.0089,
+   "devPct": 0,
+   "bad": 0
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "n": 1,
+   "actualUsd": 0.018,
+   "expectedUsd": 0.018,
+   "devPct": 0,
+   "bad": 0
+  }
+ ],
+ "anomalies": [
+  {
+   "at": 1793091012,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1793001360,
+   "model": "gpt-5.6-terra",
+   "group": "Codex",
+   "act": 14,
+   "exp": 13,
+   "dev": 7.69
+  },
+  {
+   "at": 1793001304,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792999434,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792944517,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792929546,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792923997,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  },
+  {
+   "at": 1792914709,
+   "model": "gpt-5.6-sol",
+   "group": "Codex",
+   "act": 41,
+   "exp": 40,
+   "dev": 2.5
+  }
+ ]
+}

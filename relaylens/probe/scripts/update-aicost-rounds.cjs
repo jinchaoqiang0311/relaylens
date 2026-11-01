@@ -47,7 +47,7 @@ function expectedQuota(log, pm) {
   if (!(gr > 0)) return null;
   let other = {}; try { other = log.other ? JSON.parse(log.other) : {}; } catch { }
   const pT = log.prompt_tokens || 0, cT = log.completion_tokens || 0, cacheT = other.cache_tokens || 0;
-  const pNc = Math.max(0, pT - cacheT);
+  const pNc = cacheT > pT ? pT : Math.max(0, pT - cacheT);
   const mult = other.service_tier === "priority" ? 2.5 : 1;
   if (pr.quota_type === 1) return Math.round((pr.model_price || 0) * gr * QUOTA_PER_USD * mult);
   if (pr.billing_mode === "tiered_expr") {
