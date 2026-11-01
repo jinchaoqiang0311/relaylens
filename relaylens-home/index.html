@@ -126,6 +126,15 @@
  /* 口径标注 chip:标价(看板实时)与实测到手(探针快照)并存,谁是谁一目了然 */
  .src-chip{display:inline-block;font-size:8.5px;font-weight:600;padding:0 4px;border-radius:4px;background:var(--brand-soft);color:var(--brand-deep);vertical-align:1px;white-space:nowrap}
  .src-chip.src-audit{background:#eef2ef;color:var(--sub)}
+ .grp-cell{min-width:96px}
+ .grp-btn{font-size:9.5px;font-weight:600;color:var(--brand);background:var(--brand-soft);border:0;border-radius:5px;padding:1px 6px;cursor:pointer;font-family:inherit}
+ .grp-btn:hover{background:#d3e8de}
+ .grp-drawer{display:none;margin-top:5px;padding:5px 8px;background:#fbfcfb;border:1px solid var(--line);border-radius:7px;min-width:190px}
+ .grp-drawer.open{display:block}
+ .grp-row{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--sub);padding:2.5px 0}
+ .grp-row .gn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+ .grp-row .gp{white-space:nowrap;font-variant-numeric:tabular-nums}
+ .grp-row.cur{color:var(--brand-deep);font-weight:700}
  .price-primary .unit{font-size:9px;color:#74817b;font-weight:500}
  .price-secondary{margin-top:3px;font-size:10px;color:var(--muted);white-space:nowrap}
  .metric-number{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -278,6 +287,7 @@
  <th>中转站</th>
  <th>综合评分</th>
  <th>模型真伪</th>
+ <th>实测分组</th>
  <th id="price-heading">到手价 / 百万输入 Token</th>
  <th>近 7 日可用率</th>
  <th>首字延迟 P50</th>
@@ -348,6 +358,27 @@
  function abbr(name){name=String(name||"?");return name.length>2?name.slice(0,2):name;}
 
  function curTab(){for(var i=0;i<TABS.length;i++)if(TABS[i].key===state.model)return TABS[i];return TABS[0]||null;}
+ function tabRowFor(site){
+ var tab=curTab();if(!tab||!tab.rows)return null;
+ for(var i=0;i<tab.rows.length;i++){if(tab.rows[i].site===site.name)return tab.rows[i];}
+ return null;
+ }
+ /* 实测分组列:主口径组名 + 抽屉按钮(该模型其余分组价目,channels 全集) */
+ function groupCellFor(site){
+ var trow=tabRowFor(site);
+ var cur=trow?trow.group:null;
+ var chans=(trow&&trow.channels)||[];
+ if(!cur&&!chans.length)return '<span style="color:var(--muted)">—</span>';
+ var h=esc(cur||"—");
+ if(chans.length>1){
+ h+=' <button class="grp-btn" type="button" data-n="'+chans.length+'">▾ '+chans.length+' 组</button>';
+ h+='<div class="grp-drawer">'+chans.map(function(c){
+ var isCur=c.group===cur;
+ return '<div class="grp-row'+(isCur?' cur':'')+'"><span class="gn">'+(isCur?'● ':'')+esc(c.group)+'</span><span class="gp">×'+c.grpRatio+' · ¥'+fmtPrice(c.inP)+'/¥'+fmtPrice(c.outP)+'</span></div>';
+ }).join("")+'</div>';
+ }
+ return h;
+ }
  function priceFor(site){
  var tab=curTab();if(!tab||!tab.rows)return null;
  for(var i=0;i<tab.rows.length;i++){var r=tab.rows[i];if(r.site===site.name&&r.effIn!=null)return {in:r.effIn,out:r.effOut,group:r.group};}
@@ -487,6 +518,7 @@
  '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+'</div>'+payMetaHTML(site)+'</div></div></td>'+
  '<td class="score-cell">'+scoreCell+'</td>'+
  '<td class="truth-cell">'+fpTag(site)+'</td>'+
+ '<td class="grp-cell">'+groupCellFor(site)+'</td>'+
  '<td>'+priceCell+'</td>'+
  '<td><div class="metric-number">'+(site.avail==null?"—":site.avail+"%")+'</div><div class="metric-caption">n='+(site.checks==null?"—":site.checks)+'</div></td>'+
  '<td><div class="metric-number">'+(site.ttft==null?"未测":site.ttft+"s")+'</div><div class="metric-caption">'+(site.ttft!=null?"P50":"")+'</div></td>'+
@@ -494,7 +526,7 @@
  '<td>'+devTag(site.dev)+(site.dev!=null?'<div class="recon-toggle-wrap"><button class="recon-toggle" type="button" data-site="'+esc(site.name)+'">实测详情 ▾</button></div>':'')+'</td>'+
  '<td><div class="op-stack"><a class="detail-button" href="detail.html?site='+encodeURIComponent(site.name)+'">站点详情 →</a>'+probeBtnHTML(site)+'</div></td>'+
  '</tr>'+
- (site.dev!=null?'<tr class="recon-row" hidden data-recon="'+esc(site.name)+'"><td colspan="10"></td></tr>':'');
+ (site.dev!=null?'<tr class="recon-row" hidden data-recon="'+esc(site.name)+'"><td colspan="11"></td></tr>':'');
  }
 
  function filtered(){
@@ -520,7 +552,7 @@
  setHtml("price-heading", tab?("到手价 / 百万输入 Token<br><span style=\"font-weight:400\">"+esc(tab.name)+"</span>"):"到手价 / 百万输入 Token");
  var list=filtered();
  setHtml("provider-rows", list.length?list.map(row).join(""):
- '<tr><td colspan="10" style="padding:30px;text-align:center;color:#75817c">没有匹配的中转站,试试放宽搜索或取消「只看账单级实测」。</td></tr>');
+ '<tr><td colspan="11" style="padding:30px;text-align:center;color:#75817c">没有匹配的中转站,试试放宽搜索或取消「只看账单级实测」。</td></tr>');
  setTxt("result-count", "显示 "+list.length+" / "+SITES.length+" 家");
  refreshDashPrices(); /* 看板实时标价:有缓存先渲染,异步取新后重渲(演进:口径标注) */
  }
@@ -580,6 +612,9 @@
  }
  function bind(){
  var pr=$("provider-rows");if(pr)pr.addEventListener("click",function(ev){
+ /* 分组抽屉:展开/收起该模型的其余分组价目 */
+ var gb=ev.target&&ev.target.closest?ev.target.closest(".grp-btn"):null;
+ if(gb){var gd=gb.parentNode.querySelector(".grp-drawer");if(gd){gd.classList.toggle("open");gb.textContent=(gd.classList.contains("open")?"▴ ":"▾ ")+gb.getAttribute("data-n")+" 组";}return;}
  var btn=ev.target&&ev.target.closest?ev.target.closest(".recon-toggle"):null;if(!btn)return;
  var tr=btn.closest("tr"),panel=tr&&tr.nextElementSibling;
  if(panel&&panel.classList.contains("recon-row")){
@@ -610,7 +645,7 @@
  })
  .catch(function(e){
  // 取不到数据:保持静态「—」,不写任何假数
- setHtml("provider-rows",'<tr><td colspan="10" style="padding:30px;text-align:center;color:#75817c">数据加载失败,请稍后强刷重试。我们不展示编造的示例数据。</td></tr>');
+ setHtml("provider-rows",'<tr><td colspan="11" style="padding:30px;text-align:center;color:#75817c">数据加载失败,请稍后强刷重试。我们不展示编造的示例数据。</td></tr>');
  setTxt("result-count","数据加载失败");
  toast("数据加载失败");
  });
