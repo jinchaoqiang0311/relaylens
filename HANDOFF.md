@@ -5,6 +5,20 @@
 
 ---
 
+## 0. 2026-11-01 更新摘要(主工作区已迁移,先读这节)
+
+- **主工作区**:`D:\软件项目\中转站测评网站relaylens`(GitHub `jinchaoqiang0311/relaylens`,git 推送走 SSH 443 通道,已在仓库级 insteadOf 配置)。桌面 `Desktop\relaylens` 为**只读历史**,其探针库 3500 批次 + 198 条审计链已全量并入本区(哈希链逐条验证),两库 git 谱系分叉,勿再从桌面同步。
+- **数据管道加固(演进#1)**:全部 JSON 落盘走 `atomicWriteJson`(临时文件+rename)+ 收缩熔断(audit 0.2/ops 0.5——新内容缩水超阈值拒绝覆盖、另存 *.rejected-*);空库 rebuild 截断线上数据的事故类已结构性消除。
+- **按站切片(演进#2)**:详情页只拉 `data/details/<站>.json`(4~15KB);上游真源仍是 sites.json,改数据后跑 `node relaylens/probe/scripts/slice-details.cjs` 重投影(构建器不改切片)。
+- **公共 JS(演进#3)**:`assets/rl-common.js` 全站唯一 `esc` 与支付图标实现 + 看板探活降级标记;九页已删本地副本。**新页面勿再定义本地 esc**。
+- **部署脚本(演进#4)**:`node deploy/deploy.mjs --dry-run|--to=local:<目录>|--to=ssh:<user>@<host>:<路径>`(预检含占位域名/必需文件/内部资产泄漏拦截)。
+- **看板接缝加固**:renlay-ranking 的 serve 有单实例锁(启动前试连端口)+ `/healthz` + 可选令牌门(`RL_DASH_TOKEN`;preview-server/nginx 同名注入 X-RL-Token);守护重启 `serve-guarded.ps1`;挂载契约 `docs/dashboard-contract.md`(两仓库同文)。
+- **双站扣费实测结论(2026-10-31)**:aicost 文本计费逐笔精确(1854 笔),图片按次"公示降价、扣费未跟随"+11% 待核,号池注入 4224 tok 实锤;aixoras 计费精确(3617 笔 97.62%),号池注入 3968 tok 实锤。明细:`relaylens/probe/store/audit/*-reconcile-*.json`。
+- **探针新工具**(probe/scripts/):`reconcile-logs.cjs <站>`(管理面日志逐笔对账)、`update-rounds.cjs <站> [N]`(逐轮回填,最新 20 笔)、`slice-details.cjs`;管理面令牌在 `config/secrets/sites.env`(gitignored,令牌存活期短,失效找站方重取)。
+- **剩余已知项**:aicost 详情报价表仍指向比价页(其价格页需登录、按次计费);claude 缓存写口径待核;#5 调度迁服务器为长期项。
+
+---
+
 ## 1. 一句话定位
 
 **AI 中转站评测站**：实测审计（榜单/黑名单/方法论/避坑）+ 全站导航 + 选型工具，比价功能外迁到独立的 Python 看板（见第 6 节）。本站定位「纯审计口径」，看板定位「自采标价数据面」，**两套数据口径不同，展示时不要混用**。
