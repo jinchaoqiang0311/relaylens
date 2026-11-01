@@ -101,6 +101,31 @@ export function saveRaw<T>(batch: Batch<T>): string {
   return path.relative(PROBE_ROOT, file);
 }
 
+/**
+ * atomicWriteJson —— 原子写 JSON:同目录临时文件 + rename(同分区原子)。
+ * 附带「收缩熔断」:开启时,新内容比旧内容缩水超阈值 → 拒绝覆盖、新内容另存 *.rejected-*,
+ * 防止空库/异常导出把线上数据截断(2026-10-31 事故:rebuild 用空库把 ops/audit 写掉 97%)。
+ * audit.json 是追加链、只应增长,guard 收得最紧(0.2);ops.json 0.5;sites.json 内容可合法大幅变化,默认不开。
+ */
+export function atomicWriteJson(file: string, data: unknown, opts?: { shrinkGuard?: number }): void {
+  const json = JSON.stringify(data, null, 2);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.tmp`;
+  fs.writeFileSync(tmp, json, "utf8");
+  const guard = opts?.shrinkGuard;
+  if (guard != null && fs.existsSync(file)) {
+    const oldSize = fs.statSync(file).size;
+    if (oldSize > 1024 && json.length < oldSize * (1 - guard)) {
+      const rej = `${file}.rejected-${Date.now()}`;
+      fs.renameSync(tmp, rej);
+      throw new Error(
+        `收缩熔断:${file} 新内容 ${json.length}B 比旧 ${oldSize}B 缩水超 ${Math.round(guard * 100)}%,疑似空库/异常导出。新内容已另存 ${rej},线上文件未动。`,
+      );
+    }
+  }
+  fs.renameSync(tmp, file);
+}
+
 function sanitize(s: string): string {
   return s.replace(/[^a-zA-Z0-9-_\u4e00-\u9fa5]/g, "_");
 }

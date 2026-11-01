@@ -96,7 +96,13 @@ const fmtY = q => { const y = q / QUOTA_PER_USD; return "¥" + (y < 1 ? y.toFixe
   const d = JSON.parse(fs.readFileSync(f, "utf8"));
   d.details.aicost.rounds = rounds;
   d.details.aicost.roundsMeta = { src: "管理面逐笔消费日志(最新 " + rounds.length + " 笔)", pricing: pricing.src, pulledAt: new Date().toISOString() };
-  fs.writeFileSync(f, JSON.stringify(d, null, 1));
+  /* 原子写 + 收缩熔断(与探针 atomicWriteJson 同语义) */
+  (function atomic(file, data, guard){
+    var j = JSON.stringify(data, null, 1), tmp = file + ".tmp";
+    fs.writeFileSync(tmp, j);
+    if (fs.existsSync(file)) { var old = fs.statSync(file).size; if (old > 1024 && j.length < old * (1 - guard)) { fs.renameSync(tmp, file + ".rejected-" + Date.now()); throw new Error("收缩熔断:" + file + " 缩水超 " + Math.round(guard * 100) + "%,线上文件未动"); } }
+    fs.renameSync(tmp, file);
+  })(f, d, 0.5);
   console.log("已写入 details.aicost.rounds(" + rounds.length + " 轮)→ " + path.basename(f));
   rounds.slice(0, 5).forEach(r => console.log("  #" + r.r, r.model, r.should, "→", r.actual, r.ok ? "✓" : "✗"));
 })().catch(e => { console.error("失败:", e.message); process.exit(1); });

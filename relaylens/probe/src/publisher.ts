@@ -4,12 +4,11 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { DIST_DIR, getDb, siteHealth } from "./store.js";
+import { atomicWriteJson, DIST_DIR, getDb, siteHealth } from "./store.js";
 import type { DistRankingSite, DistStats, DistPrices } from "../../shared/types.js";
 
 function writeJson(file: string, data: unknown) {
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
+  atomicWriteJson(file, data);
 }
 
 function meta() {

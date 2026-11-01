@@ -8,7 +8,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import YAML from "yaml";
-import { getDb, siteHealth } from "./store.js";
+import { atomicWriteJson, getDb, siteHealth } from "./store.js";
 import { priceTableHash } from "./probes/billing.js";
 import { assembleMetrics } from "./assemble.js";
 import { latestInjection } from "./probes/tokenprobe.js";
@@ -1127,6 +1127,6 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
   };
   fs.mkdirSync(DATA_DIR, { recursive: true });
   const file = path.join(DATA_DIR, "sites.json");
-  fs.writeFileSync(file, JSON.stringify(stripEmojiDeep(out), null, 2), "utf8");
+  atomicWriteJson(file, stripEmojiDeep(out), { shrinkGuard: 0.5 });
   return file;
 }

@@ -15,7 +15,9 @@ const path = require("path");
 
 const ROOT = __dirname;
 const SRC = path.join(ROOT, "relaylens-home");
-const OUT = path.join(ROOT, "dist-relay");
+/* 原子发布:先构建进临时目录,全部成功后一次换名 —— 构建中途崩溃(如被安全软件杀)不再留半包 */
+const OUT = path.join(ROOT, "dist-relay.tmp");
+const OUT_FINAL = path.join(ROOT, "dist-relay");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
 const base0 = () => cfg.base.replace(/\/+$/, "");
 
@@ -297,6 +299,10 @@ node build-relay.js                          # 重新构建
 - CPS 链接若不想进 Git,保持 promo.yaml 在 .gitignore 或用环境变量注入。
 - 静态包内所有引用均为相对路径,换子目录名(如 /relayLens/)只需同步改 base 并重构建。
 `);
+
+/* 换名发布:临时目录 → 正式目录(rm+rename 窗口极小;若 rename 失败,tmp 保留供手工恢复) */
+fs.rmSync(OUT_FINAL, { recursive: true, force: true });
+fs.renameSync(OUT, OUT_FINAL);
 
 console.log(`✅ 构建完成 → dist-relay/`);
 console.log(`   页面 ${pages.length} 个进包(${NOINDEX_PAGES.length} 个 noindex 不注入 canonical/OG)${cfg.mainSite && !/YOUR-DOMAIN/.test(cfg.mainSite) ? " + 返回主站" : ""}${cfg.icp ? " + ICP" : ""}${cfg.analyticsHtml ? " + 统计" : ""}`);

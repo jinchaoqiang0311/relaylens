@@ -33,3 +33,4 @@ build-out.txt
 build-err.txt
 dist-test-*/
 *.bak-2*
+dist-relay.tmp/

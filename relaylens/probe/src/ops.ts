@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import YAML from "yaml";
-import { getDb, siteHealth } from "./store.js";
+import { atomicWriteJson, getDb, siteHealth } from "./store.js";
 import { assembleMetrics } from "./assemble.js";
 import { latestInjection } from "./probes/tokenprobe.js";
 import { pendingCount } from "./onboard.js";
@@ -327,12 +327,13 @@ export function syncOps(opts: { sites: string[]; inject?: Record<string, number>
   }
   fs.mkdirSync(DATA_DIR, { recursive: true });
   const opsFile = path.join(DATA_DIR, "ops.json");
-  fs.writeFileSync(opsFile, JSON.stringify(stripEmojiDeep(out), null, 2), "utf8");
+  atomicWriteJson(opsFile, stripEmojiDeep(out), { shrinkGuard: 0.5 });
 
   // 公开摘要:去掉快照噪声,只留「人对系统做了什么」与「数据何时发布」
   const publicEntries: AuditEntry[] = auditList(200).filter(e => e.action !== "config.snapshot");
   const auditFile = path.join(DATA_DIR, "audit.json");
-  fs.writeFileSync(auditFile, JSON.stringify({
+  /* audit.json 是公开哈希链的投影,只应增长 —— 收缩熔断收最紧(0.2):链条截断/空库重建在此直接拒绝 */
+  atomicWriteJson(auditFile, {
     meta: {
       generatedAt: new Date().toISOString(), weightsVersion: weightsVersion(),
       policy: "哈希链式追加日志:每条记录包含前一条的哈希,任意改写或删除都会使链校验失败。",
@@ -344,7 +345,7 @@ export function syncOps(opts: { sites: string[]; inject?: Record<string, number>
       seq: e.seq, at: e.at, actor: e.actor, action: e.action, target: e.target,
       before: e.before, after: e.after, reason: e.reason, hash: e.hash?.slice(0, 16),
     })),
-  }, null, 2), "utf8");
+  }, { shrinkGuard: 0.2 });
 
   // 注:看板刷新本身不入审计链(纯读操作,无对外状态变化);会改变对外事实的只有
   // sync.ts 里的 data.publish 与配置漂移。避免机器噪声稀释「谁动了数据」这条主线。
