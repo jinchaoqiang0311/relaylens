@@ -32,9 +32,12 @@ const MIME = {
 };
 
 function proxy(req, res) {
+  /* 看板令牌门(可选):本进程环境变量 RL_DASH_TOKEN 设置时,自动给反代请求注入
+     X-RL-Token 头 —— 与看板侧 relay_scraper.py 的令牌门配对;不设置则行为不变 */
+  const headers = { ...req.headers, host: `${DASH.host}:${DASH.port}` };
+  if (process.env.RL_DASH_TOKEN) headers["X-RL-Token"] = process.env.RL_DASH_TOKEN;
   const up = http.request(
-    { host: DASH.host, port: DASH.port, path: req.url, method: req.method,
-      headers: { ...req.headers, host: `${DASH.host}:${DASH.port}` } },
+    { host: DASH.host, port: DASH.port, path: req.url, method: req.method, headers },
     (r) => { res.writeHead(r.statusCode || 502, r.headers); r.pipe(res); }
   );
   /* 页面间快速切换会掐断在途请求(如 388KB 的 /api/summary),流错误必须吞掉,

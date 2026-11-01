@@ -43,6 +43,49 @@ var RL = (function () {
   return { esc: esc, payIcons: payIcons, PAY_RULES: PAY_RULES };
 })();
 
+/* 看板探活(演进#4 接缝加固):/price/ 反代可达性,结果缓存 60s;
+   不可达时给全站 a[href="/price/"] 加维护中标记(其余功能不受影响)。
+   判定:任何 HTTP 响应(含 401/404)= 进程活着;网络错误/超时 = 死。 */
+var DASH_KEY = "rl-dash-alive";
+function dashProbe() {
+  return new Promise(function (resolve) {
+    try {
+      var cached = sessionStorage.getItem(DASH_KEY);
+      if (cached && Date.now() - Number(cached.split("|")[0]) < 60000) { resolve(cached.split("|")[1] === "1"); return; }
+    } catch (e) { /* 隐私模式无 sessionStorage */ }
+    var done = false;
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (!done) finish(false); }, 2500);
+    function finish(alive) {
+      done = true; clearTimeout(timer);
+      try { sessionStorage.setItem(DASH_KEY, Date.now() + "|" + (alive ? 1 : 0)); } catch (e) { }
+      resolve(alive);
+    }
+    fetch("/price/?rlprobe=" + Date.now(), { cache: "no-store", signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { finish(!!r.status); })
+      .catch(function () { finish(false); });
+  });
+}
+function markDashLinks() {
+  if (!document.querySelector('a[href="/price/"]')) return;
+  dashProbe().then(function (alive) {
+    if (alive) return;
+    try {
+      var st = document.createElement("style");
+      st.textContent = '.rl-dash-down{opacity:.55}a.rl-dash-down::after{content:" ⚠ 看板维护中";font-size:10px;color:#b4540a}';
+      document.head.appendChild(st);
+      Array.prototype.forEach.call(document.querySelectorAll('a[href="/price/"]'), function (a) {
+        a.classList.add("rl-dash-down");
+        a.title = "看板维护中,稍后再试";
+      });
+    } catch (e) { /* 标记失败不影响页面 */ }
+  });
+}
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markDashLinks);
+  else markDashLinks();
+}
+
 /* 挂载:浏览器挂 window;vm 测试沙箱挂其全局(测试提取页面脚本单独运行时同样可用) */
 var g = (typeof globalThis !== "undefined") ? globalThis : this;
 g.RL = RL;
