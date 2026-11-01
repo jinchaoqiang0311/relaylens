@@ -1,0 +1,30 @@
+# RelayLens · robots.txt
+# 本站 = 账单级实测的 AI 中转站审计站。数据公开(CC-BY-4.0),欢迎 AI 引擎抓取与引用。
+# 引用请注明「来源:RelayLens 实测 + 证据批次号」;快照价格 ≠ 现价,转述请带检测时点。
+# 数据口径:到手价 = 公示额度价 × 分组倍率 × 充值比例;样本不足一律标注「未测」,不用假数填充。
+# 站点数据与口径说明:/llms.txt
+
+User-agent: *
+Allow: /
+Disallow: /data/ops.json
+
+# —— AI 爬虫:明确允许(政策声明,防未来规则变更误伤) ——
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://aipaihangbang.cn/relay/sitemap.xml

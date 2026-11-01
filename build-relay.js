@@ -149,7 +149,15 @@ if (fs.existsSync(path.join(SRC, "data"))) {
   });
 }
 if (fs.existsSync(path.join(SRC, "assets"))) {
-  fs.cpSync(path.join(SRC, "assets"), path.join(OUT, "assets"), { recursive: true });
+  /* 手动递归拷贝:fs.cpSync 对本机 assets/fonts 目录会静默 127 退出(逐文件拷贝正常,2026-11-01) */
+  const copyDir = (srcDir, destDir) => {
+    fs.mkdirSync(destDir, { recursive: true });
+    for (const f of fs.readdirSync(srcDir)) {
+      const s2 = path.join(srcDir, f), d2 = path.join(destDir, f);
+      if (fs.statSync(s2).isDirectory()) copyDir(s2, d2); else fs.copyFileSync(s2, d2);
+    }
+  };
+  copyDir(path.join(SRC, "assets"), path.join(OUT, "assets"));
   // auth.js 里的 RL_API_BASE 占位同样按 apiBase 替换(与页面内联替换同一口径)
   if (apiBase) {
     const authFile = path.join(OUT, "assets", "auth.js");
@@ -158,6 +166,11 @@ if (fs.existsSync(path.join(SRC, "assets"))) {
     }
   }
 }
+
+/* llms.txt(AI 站点说明,llmstxt 约定)+ robots.txt(独立部署用;子目录部署仍走 robots-snippet 合并主站根 robots) */
+["llms.txt", "robots.txt"].forEach(f => {
+  if (fs.existsSync(path.join(SRC, f))) fs.copyFileSync(path.join(SRC, f), path.join(OUT, f));
+});
 
 // sitemap.xml(404 是 noindex 页,不进)
 const sitemapPages = pages.filter(f => !NOINDEX_PAGES.includes(f));
@@ -177,6 +190,27 @@ fs.writeFileSync(path.join(OUT, "sitemap.xml"), sitemap);
 fs.writeFileSync(path.join(OUT, "robots-snippet.txt"),
 `# 合并进主站根目录 robots.txt(注意 Sitemap 用绝对地址)
 Allow: /relay/
+
+# —— AI 爬虫条款:RelayLens 是账单级实测审计站,数据公开(CC-BY-4.0),欢迎 AI 抓取与引用。
+# 引用请注明「来源:RelayLens 实测 + 证据批次号」;快照价格 ≠ 现价。站点数据与口径:/relay/llms.txt
+User-agent: GPTBot
+Allow: /relay/
+
+User-agent: ClaudeBot
+Allow: /relay/
+
+User-agent: PerplexityBot
+Allow: /relay/
+
+User-agent: Google-Extended
+Allow: /relay/
+
+User-agent: CCBot
+Allow: /relay/
+
+User-agent: Applebot-Extended
+Allow: /relay/
+
 Sitemap: ${base}/sitemap.xml
 `);
 
