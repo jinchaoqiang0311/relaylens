@@ -1,0 +1,884 @@
+{
+ "slice": "details/aicost.json",
+ "site": "aicost",
+ "meta": {
+  "updated": "2026-10-23T14:13:13.417Z",
+  "weightsVersion": "2026-10-22.2",
+  "license": "CC-BY-4.0",
+  "source": "relaylens-probe",
+  "fx": {
+   "currency": "CNY",
+   "symbol": "¥",
+   "usdCny": 7.1,
+   "asOf": "2026-10-02",
+   "quotaPerUsd": 500000
+  },
+  "scenes": {
+   "all": {
+    "label": "综合",
+    "weights": {
+     "BH": 30,
+     "MA": 25,
+     "ST": 25,
+     "PF": 5,
+     "EP": 15
+    }
+   },
+   "code": {
+    "label": "编程",
+    "weights": {
+     "BH": 20,
+     "MA": 20,
+     "ST": 15,
+     "PF": 15,
+     "SR": 10,
+     "EP": 20
+    }
+   },
+   "office": {
+    "label": "办公",
+    "weights": {
+     "BH": 10,
+     "MA": 15,
+     "ST": 25,
+     "PF": 20,
+     "EP": 30
+    }
+   },
+   "drama": {
+    "label": "剧本创作",
+    "weights": {
+     "BH": 15,
+     "MA": 25,
+     "ST": 20,
+     "PF": 15,
+     "EP": 25
+    }
+   },
+   "biz": {
+    "label": "企业",
+    "weights": {
+     "BH": 25,
+     "MA": 15,
+     "ST": 30,
+     "PF": 20,
+     "EP": 10
+    }
+   }
+  },
+  "metricLabels": {
+   "BH": "计费诚实度",
+   "MA": "模型真实性",
+   "ST": "稳定性",
+   "PF": "性能",
+   "SR": "流式真实性",
+   "EP": "有效价格(场景负载)"
+  },
+  "stats": {
+   "sitesRegistered": 12,
+   "sitesPaidMeasured": 2,
+   "sitesMonitored": 7,
+   "priceLineItems": 535,
+   "distinctModels": 193,
+   "reconcileVerified": 138,
+   "reconcileMismatched": 0,
+   "reconcileAmountUsd": 1.382,
+   "reconcileAmountCny": 9.81,
+   "maxSingleRequestTokens": 405338,
+   "batchesToday": 1,
+   "healthChecksTotal": 2958,
+   "batchesTotal": 3500,
+   "since": "2026-09-29",
+   "referenceCount": 3
+  }
+ },
+ "realSites": [
+  {
+   "name": "aicost",
+   "real": true,
+   "dataLayer": "p2",
+   "status": "g",
+   "level": "billing",
+   "score": {
+    "all": 86,
+    "code": 84,
+    "office": null,
+    "drama": 78,
+    "biz": null
+   },
+   "coverage": {
+    "all": 0.7,
+    "code": 0.7,
+    "office": 0.55,
+    "drama": 0.65,
+    "biz": 0.5
+   },
+   "confidence": {
+    "all": 0.28,
+    "code": 0.28,
+    "office": 0,
+    "drama": 0.26,
+    "biz": 0
+   },
+   "lowConfidence": {
+    "all": true,
+    "code": true,
+    "office": false,
+    "drama": true,
+    "biz": false
+   },
+   "tier": {
+    "all": "L1",
+    "code": "L1",
+    "office": "L1",
+    "drama": "L1",
+    "biz": "L1"
+   },
+   "signal": [
+    {
+     "key": "BH",
+     "label": "扣费对账",
+     "n": 41,
+     "need": 20,
+     "ok": true
+    },
+    {
+     "key": "ST",
+     "label": "稳定性",
+     "n": 11,
+     "need": 12,
+     "ok": false
+    },
+    {
+     "key": "PF",
+     "label": "首字延迟",
+     "n": 2,
+     "need": 6,
+     "ok": false
+    },
+    {
+     "key": "MA",
+     "label": "模型指纹",
+     "n": 1,
+     "need": 1,
+     "ok": true
+    },
+    {
+     "key": "SR",
+     "label": "流式真实性",
+     "n": 3,
+     "need": 3,
+     "ok": true
+    }
+   ],
+   "dev": 100,
+   "avail": 100,
+   "ttft": 26.7,
+   "ttftMs": 26732,
+   "ttftWorkMs": null,
+   "ttftOffMs": 26732,
+   "ttftPartialBucket": "off",
+   "ttftReasoningMs": null,
+   "ttftReasoningModel": null,
+   "cache": null,
+   "inject": 3959,
+   "injectSplit": {
+    "fresh_share": 0.030058095478656226,
+    "cached_share": 0.9699419045213438
+   },
+   "timeout": 62.5,
+   "stream": 0,
+   "tls": null,
+   "tlsVerdict": {
+    "level": "none",
+    "label": "未采集"
+   },
+   "context": null,
+   "contextVerdict": {
+    "level": "none",
+    "label": "未测(标记码探针需显式触发,会产生真实 token 消耗)"
+   },
+   "fp": "pass",
+   "price": "¥0.2/M",
+   "priceV": 0.2,
+   "priceSrc": {
+    "src": "USD",
+    "fxApplied": false
+   },
+   "priceBase": 0.2,
+   "priceBaseCur": "USD",
+   "priceGroup": "depsek",
+   "priceModel": "deepseek-v4.1-flash",
+   "priceCalib": "page",
+   "priceCalibFactor": null,
+   "models": [
+    "gpt",
+    "deepseek",
+    "grok"
+   ],
+   "audit": {
+    "matchPct": 100,
+    "verified": 40,
+    "consistency": null,
+    "lastAt": "2026-10-02"
+   },
+   "promo": {
+    "enabled": false,
+    "url": "",
+    "coupon": "",
+    "couponDesc": ""
+   },
+   "directions": [
+    "text"
+   ],
+   "groups": [
+    {
+     "name": "claude-kiro渠道",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "claude-opus-5",
+       "inP": 2.5,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-opus-4-6",
+       "inP": 2.5,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-opus-4-7",
+       "inP": 2.5,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-opus-4-8",
+       "inP": 2.5,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-sonnet-4-6",
+       "inP": 3.6,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-sonnet-4-5-20250929",
+       "inP": 0.33,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-fable-5",
+       "inP": 5,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-opus-5-5",
+       "inP": 2,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "claude-opus-4-5-20251101",
+       "inP": 0.0781,
+       "offIn": null,
+       "ratioPct": null
+      }
+     ]
+    },
+    {
+     "name": "gpt-plus号池",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "gpt-5.5",
+       "inP": 4.25,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "gpt-5.6-sol",
+       "inP": 1.5,
+       "offIn": 4,
+       "ratioPct": 38
+      },
+      {
+       "model": "gpt-5.6-terra",
+       "inP": 0.6,
+       "offIn": 2,
+       "ratioPct": 30
+      },
+      {
+       "model": "gpt-6-astra",
+       "inP": 3,
+       "offIn": 10,
+       "ratioPct": 30
+      }
+     ]
+    },
+    {
+     "name": "正价kiro/满血",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "claude-opus-5.5",
+       "inP": null,
+       "offIn": 4,
+       "ratioPct": null
+      }
+     ]
+    },
+    {
+     "name": "cursor-claude",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "claude-fable-5-1",
+       "inP": 12,
+       "offIn": null,
+       "ratioPct": null
+      }
+     ]
+    },
+    {
+     "name": "gemini-语言模型",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "gemini-3.1-pro-preview",
+       "inP": 3.6,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "gemini-3.1-flash-lite",
+       "inP": 0.45,
+       "offIn": null,
+       "ratioPct": null
+      }
+     ]
+    },
+    {
+     "name": "depsek",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "deepseek-v4.1-flash",
+       "inP": 0.2,
+       "offIn": 0.049,
+       "ratioPct": 408
+      },
+      {
+       "model": "deepseek-v4.1-flash-hc",
+       "inP": null,
+       "offIn": null,
+       "ratioPct": null
+      }
+     ]
+    },
+    {
+     "name": "grok语言",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "grok-4.5",
+       "inP": 0.3,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "grok-4.6",
+       "inP": 0.3,
+       "offIn": null,
+       "ratioPct": null
+      },
+      {
+       "model": "grok-4.7",
+       "inP": 0.3,
+       "offIn": 2,
+       "ratioPct": 15
+      }
+     ]
+    },
+    {
+     "name": "gpt-pro号池",
+     "tier": "primary",
+     "models": [
+      {
+       "model": "gpt-6-sol",
+       "inP": 0.6,
+       "offIn": 2,
+       "ratioPct": 30
+      }
+     ]
+    }
+   ],
+   "measuredGroup": {
+    "group": "gpt-pro大客户号池",
+    "ratio": 0.1,
+    "models": [
+     "gpt-5.5",
+     "gpt-5.6-sol",
+     "gpt-6-astra"
+    ]
+   },
+   "probe": {
+    "origin": "https://www.aicost.me",
+    "endpoint": "https://www.aicost.me/v1/chat/completions",
+    "archived": {
+     "batchId": "RL-RC-20261017-011",
+     "probedAt": "2026-10-17T10:25:27.779Z",
+     "model": "gpt-5.6-sol",
+     "medianTtftMs": 26732,
+     "successRate": 25,
+     "timeoutRate": 62.5,
+     "bufferedRate": 0,
+     "streamVerdict": "stream",
+     "streamCheck": {
+      "prompt": "3 次取样·措辞各异(逐次 prompt 见 trials)",
+      "trials": 3,
+      "streamed": 3,
+      "bufferedTrials": 0,
+      "bufferedPct": 0,
+      "verdict": "stream",
+      "lastError": null
+     },
+     "iters": 8,
+     "rounds": [
+      {
+       "seq": 1,
+       "ok": false,
+       "ttftMs": null,
+       "totalMs": null,
+       "inTok": null,
+       "outTok": null,
+       "buffered": null,
+       "httpStatus": null,
+       "error": "This operation was aborted",
+       "failureType": "timeout"
+      },
+      {
+       "seq": 2,
+       "ok": true,
+       "ttftMs": 26732,
+       "totalMs": 26732,
+       "inTok": 4392,
+       "outTok": 5,
+       "buffered": false,
+       "httpStatus": 200,
+       "error": null,
+       "failureType": null
+      },
+      {
+       "seq": 3,
+       "ok": false,
+       "ttftMs": null,
+       "totalMs": null,
+       "inTok": null,
+       "outTok": null,
+       "buffered": null,
+       "httpStatus": null,
+       "error": "This operation was aborted",
+       "failureType": "timeout"
+      },
+      {
+       "seq": 4,
+       "ok": true,
+       "ttftMs": 16766,
+       "totalMs": 16766,
+       "inTok": 4392,
+       "outTok": 5,
+       "buffered": false,
+       "httpStatus": 200,
+       "error": null,
+       "failureType": null
+      },
+      {
+       "seq": 5,
+       "ok": false,
+       "ttftMs": null,
+       "totalMs": null,
+       "inTok": null,
+       "outTok": null,
+       "buffered": null,
+       "httpStatus": null,
+       "error": "This operation was aborted",
+       "failureType": "timeout"
+      },
+      {
+       "seq": 6,
+       "ok": false,
+       "ttftMs": null,
+       "totalMs": null,
+       "inTok": null,
+       "outTok": null,
+       "buffered": null,
+       "httpStatus": null,
+       "error": "This operation was aborted",
+       "failureType": "timeout"
+      },
+      {
+       "seq": 7,
+       "ok": false,
+       "ttftMs": null,
+       "totalMs": null,
+       "inTok": null,
+       "outTok": null,
+       "buffered": null,
+       "httpStatus": null,
+       "error": "This operation was aborted",
+       "failureType": "timeout"
+      },
+      {
+       "seq": 8,
+       "ok": false,
+       "ttftMs": null,
+       "totalMs": null,
+       "inTok": null,
+       "outTok": null,
+       "buffered": null,
+       "httpStatus": 502,
+       "error": "HTTP 502 {\"error\":{\"message\":\"openai_error\",\"type\":\"bad_response_status_code\",\"param\":\"\",\"code\":\"bad_response",
+       "failureType": "http_error"
+      }
+     ]
+    }
+   },
+   "slaSeries": [
+    {
+     "h": "10-20 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-21 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-21 06:00",
+     "pct": 100,
+     "n": 1
+    },
+    {
+     "h": "10-21 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-21 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-22 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-22 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-22 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-22 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-23 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-23 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-23 12:00",
+     "pct": null,
+     "n": 0
+    }
+   ],
+   "perf": {
+    "successRate": 25,
+    "timeoutRate": 62.5,
+    "bufferedRate": 0,
+    "streamVerdict": "stream",
+    "streamCheck": {
+     "prompt": "3 次取样·措辞各异(逐次 prompt 见 trials)",
+     "trials": 3,
+     "streamed": 3,
+     "bufferedTrials": 0,
+     "bufferedPct": 0,
+     "verdict": "stream",
+     "lastError": null
+    },
+    "iters": 8,
+    "model": "gpt-5.6-sol",
+    "at": "2026-10-17T10:25:27.779Z"
+   },
+   "fpDetail": {
+    "similarity": 91.2,
+    "verdict": "pass",
+    "baseline": "aixoras",
+    "runs": null,
+    "at": "2026-10-02T10:00:38.640Z",
+    "note": null
+   },
+   "checks": 11,
+   "commerce": {
+    "pay": "卡密",
+    "ratio": "¥1 = 1 美元额度",
+    "ratioNum": 1,
+    "minTopUp": "¥2",
+    "invoice": null,
+    "refund": null,
+    "src": "manual",
+    "at": "2026-10-17"
+   },
+   "effRatio": 1,
+   "effPrice": 0.2
+  }
+ ],
+ "details": {
+  "aicost": {
+   "score": {
+    "all": 86,
+    "code": 84,
+    "office": null,
+    "drama": 78,
+    "biz": null
+   },
+   "coverage": {
+    "all": 0.7,
+    "code": 0.7,
+    "office": 0.55,
+    "drama": 0.65,
+    "biz": 0.5
+   },
+   "confidence": {
+    "all": 0.28,
+    "code": 0.28,
+    "office": 0,
+    "drama": 0.26,
+    "biz": 0
+   },
+   "lowConfidence": {
+    "all": true,
+    "code": true,
+    "office": false,
+    "drama": true,
+    "biz": false
+   },
+   "promo": {
+    "enabled": false,
+    "url": "",
+    "coupon": "",
+    "couponDesc": ""
+   },
+   "commerce": {
+    "pay": "卡密",
+    "ratio": "¥1 = 1 美元额度",
+    "ratioNum": 1,
+    "minTopUp": "¥2",
+    "invoice": null,
+    "refund": null,
+    "src": "manual",
+    "at": "2026-10-17"
+   },
+   "audit": {
+    "matchPct": 66.1,
+    "verified": 1854,
+    "inject": 4224,
+    "stream": 0,
+    "consistency": null,
+    "lastAt": "2026-10-31",
+    "note": "2026-10-31 全量逐笔对账(本账号 1854 笔真实账单重算):文本模型(分层表达式计费)1227 笔 99.76% 逐笔精确,计费诚实;图片按次 626 笔实扣=旧倍率 0.023 精确命中,但现行公示价已降至 0.0207 —— 公示已降价、扣费未跟随,每张图多付约 11.1%(单笔约 ¥0.004),定性为公示滞后而非恶意多扣;另有 1792 笔引用已下架模型未计入。付费探针实锤号池注入:短请求(本地估算 17 token)被报 4401 prompt,其中 4224 token 为站方常驻前缀(已缓存,按缓存读价计费)。"
+   },
+   "metrics": {
+    "avail7d": 100,
+    "checks": 11,
+    "ttft": 26732,
+    "ttftSamples": 2,
+    "timeoutRate": 62.5,
+    "bufferedRate": 0,
+    "fingerprint": {
+     "similarity": 91.2,
+     "baseline": "aixoras",
+     "verdict": "pass"
+    },
+    "inject": 4224,
+    "measuredGroup": {
+     "group": "gpt-pro大客户号池",
+     "ratio": 0.1,
+     "models": [
+      "gpt-5.5",
+      "gpt-5.6-sol",
+      "gpt-6-astra"
+     ]
+    }
+   },
+   "rounds": [
+    {
+     "r": 1,
+     "model": "gpt-5.6-sol",
+     "in": 4935,
+     "cached": 4224,
+     "out": 18,
+     "should": "¥0.0006",
+     "actual": "¥0.0006",
+     "ok": 1
+    },
+    {
+     "r": 2,
+     "model": "gpt-5.6-sol",
+     "in": 4401,
+     "cached": 4224,
+     "out": 19,
+     "should": "¥0.0004",
+     "actual": "¥0.0004",
+     "ok": 1
+    },
+    {
+     "r": 3,
+     "model": "gpt-6.1-sol",
+     "in": 50209,
+     "cached": 44544,
+     "out": 523,
+     "should": "¥0.0021",
+     "actual": "¥0.0021",
+     "ok": 1
+    },
+    {
+     "r": 4,
+     "model": "gpt-6.1-sol",
+     "in": 45233,
+     "cached": 44416,
+     "out": 541,
+     "should": "¥0.0011",
+     "actual": "¥0.0011",
+     "ok": 1
+    },
+    {
+     "r": 5,
+     "model": "gpt-6.1-sol",
+     "in": 44745,
+     "cached": 44544,
+     "out": 777,
+     "should": "¥0.0013",
+     "actual": "¥0.0013",
+     "ok": 1
+    },
+    {
+     "r": 6,
+     "model": "gpt-6.1-sol",
+     "in": 44555,
+     "cached": 28800,
+     "out": 143,
+     "should": "¥0.0036",
+     "actual": "¥0.0036",
+     "ok": 1
+    },
+    {
+     "r": 7,
+     "model": "gpt-6.1-sol",
+     "in": 44229,
+     "cached": 32128,
+     "out": 749,
+     "should": "¥0.0035",
+     "actual": "¥0.0035",
+     "ok": 1
+    },
+    {
+     "r": 8,
+     "model": "gpt-6.1-sol",
+     "in": 32283,
+     "cached": 32128,
+     "out": 393,
+     "should": "¥0.0007",
+     "actual": "¥0.0007",
+     "ok": 1
+    },
+    {
+     "r": 9,
+     "model": "gpt-6.1-sol",
+     "in": 29033,
+     "cached": 16640,
+     "out": 480,
+     "should": "¥0.0031",
+     "actual": "¥0.0031",
+     "ok": 1
+    },
+    {
+     "r": 10,
+     "model": "gpt-6.1-sol",
+     "in": 4680,
+     "cached": 0,
+     "out": 14,
+     "should": "¥0.0009",
+     "actual": "¥0.0009",
+     "ok": 1
+    },
+    {
+     "r": 11,
+     "model": "gpt-6.1-sol",
+     "in": 28956,
+     "cached": 16640,
+     "out": 63,
+     "should": "¥0.0027",
+     "actual": "¥0.0027",
+     "ok": 1
+    },
+    {
+     "r": 12,
+     "model": "gpt-6.1-sol",
+     "in": 28432,
+     "cached": 16640,
+     "out": 497,
+     "should": "¥0.0030",
+     "actual": "¥0.0030",
+     "ok": 1
+    },
+    {
+     "r": 13,
+     "model": "gpt-6.1-sol",
+     "in": 269756,
+     "cached": 0,
+     "out": 220,
+     "should": "¥0.0542",
+     "actual": "¥0.0542",
+     "ok": 1
+    },
+    {
+     "r": 14,
+     "model": "gpt-6.1-sol",
+     "in": 269375,
+     "cached": 0,
+     "out": 100,
+     "should": "¥0.0540",
+     "actual": "¥0.0540",
+     "ok": 1
+    }
+   ],
+   "roundsMeta": {
+    "src": "管理面逐笔消费日志(最新 14 笔)",
+    "pricing": "live",
+    "pulledAt": "2026-10-31T14:07:23.385Z"
+   }
+  }
+ },
+ "evidence": []
+}

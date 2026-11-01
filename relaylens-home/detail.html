@@ -698,7 +698,14 @@ function applySyncDetail(payload){
  }
  drawChart();
 }
-fetch("data/sites.json",{cache:"reload"}).then(function(r){return r.ok?r.json():Promise.reject()}).then(applySyncDetail).catch(function(){/* 静默保持演示 */});
+ /* 数据源:优先单站切片 data/details/<站>.json(几 KB,演进#2);切片缺失(示例站/未收录站)回退全量 sites.json。
+    切片结构与全量 payload 同构(meta/realSites/details/evidence 四键),下游装配代码零改动。 */
+ fetch("data/details/" + encodeURIComponent(requested) + ".json", { cache: "reload" })
+ .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error("no slice")); })
+ .catch(function(){
+ return fetch("data/sites.json", { cache: "reload" }).then(function(r){ return r.ok ? r.json() : Promise.reject(); });
+ })
+ .then(applySyncDetail).catch(function(){/* 静默保持演示 */});
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 /* ===== 测评表现 / 接口链接 / 支付图标(参照 OkkMax 站详情,数据诚实口径) ===== */
