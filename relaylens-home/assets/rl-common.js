@@ -12,7 +12,7 @@ var RL = (function () {
     });
   }
 
-  /* 顺序即展示顺序:支付宝 → 银行卡 → 对公 → PayPal → USDT → 微信 */
+  /* 顺序即展示顺序:支付宝 → 银行卡 → 对公 → PayPal → USDT → 微信 → 卡密(兑换码/CDKey) */
   var PAY_RULES = [
     ["alipay", "支付宝", /支付宝|alipay/i],
     ["bankcard", "银行卡", /银行|bank/i],
@@ -20,6 +20,7 @@ var RL = (function () {
     ["paypal", "PayPal", /paypal|贝宝/i],
     ["usdt", "USDT", /usdt|泰达|加密|虚拟币/i],
     ["wechatpay", "微信支付", /微信|wechat/i],
+    ["kami", "卡密", /卡密|卡券|兑换码|cdkey/i],
   ];
 
   /**
