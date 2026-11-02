@@ -2,7 +2,7 @@
  "slice": "details/aixoras.json",
  "site": "aixoras",
  "meta": {
-  "updated": "2026-11-01T13:42:47.036Z",
+  "updated": "2026-11-02T06:28:49.090Z",
   "weightsVersion": "2026-10-22.2",
   "license": "CC-BY-4.0",
   "source": "relaylens-probe",
@@ -78,16 +78,16 @@
    "sitesRegistered": 12,
    "sitesPaidMeasured": 2,
    "sitesMonitored": 7,
-   "priceLineItems": 535,
-   "distinctModels": 193,
-   "reconcileVerified": 5609,
+   "priceLineItems": 510,
+   "distinctModels": 199,
+   "reconcileVerified": 138,
    "reconcileMismatched": 0,
    "reconcileAmountUsd": 1.382,
    "reconcileAmountCny": 9.81,
    "maxSingleRequestTokens": 405338,
-   "batchesToday": 1,
-   "healthChecksTotal": 2958,
-   "batchesTotal": 3500,
+   "batchesToday": 36,
+   "healthChecksTotal": 2970,
+   "batchesTotal": 3536,
    "since": "2026-09-29",
    "referenceCount": 3
   }
@@ -100,25 +100,25 @@
    "status": "g",
    "level": "billing",
    "score": {
-    "all": 79,
-    "code": 69,
-    "office": 57,
-    "drama": 66,
-    "biz": 73
+    "all": null,
+    "code": null,
+    "office": null,
+    "drama": null,
+    "biz": null
    },
    "coverage": {
-    "all": 1,
-    "code": 1,
-    "office": 1,
-    "drama": 1,
-    "biz": 1
+    "all": 0.55,
+    "code": 0.5,
+    "office": 0.25,
+    "drama": 0.4,
+    "biz": 0.4
    },
    "confidence": {
-    "all": 0.8,
-    "code": 0.8,
-    "office": 0.8,
-    "drama": 0.8,
-    "biz": 0.8
+    "all": 0,
+    "code": 0,
+    "office": 0,
+    "drama": 0,
+    "biz": 0
    },
    "lowConfidence": {
     "all": false,
@@ -128,11 +128,11 @@
     "biz": false
    },
    "tier": {
-    "all": "L2",
-    "code": "L2",
-    "office": "L2",
-    "drama": "L2",
-    "biz": "L2"
+    "all": "L1",
+    "code": "L1",
+    "office": "L1",
+    "drama": "L1",
+    "biz": "L1"
    },
    "signal": [
     {
@@ -145,16 +145,16 @@
     {
      "key": "ST",
      "label": "稳定性",
-     "n": 12,
+     "n": 1,
      "need": 12,
-     "ok": true
+     "ok": false
     },
     {
      "key": "PF",
      "label": "首字延迟",
-     "n": 6,
+     "n": 0,
      "need": 6,
-     "ok": true
+     "ok": false
     },
     {
      "key": "MA",
@@ -173,11 +173,11 @@
    ],
    "dev": 100,
    "avail": 100,
-   "ttft": 6.4,
-   "ttftMs": 6386,
+   "ttft": null,
+   "ttftMs": null,
    "ttftWorkMs": null,
-   "ttftOffMs": 6386,
-   "ttftPartialBucket": "off",
+   "ttftOffMs": null,
+   "ttftPartialBucket": null,
    "ttftReasoningMs": null,
    "ttftReasoningModel": null,
    "cache": null,
@@ -191,7 +191,7 @@
    "tls": {
     "host": "aixoras.com",
     "port": 443,
-    "checkedAt": "2026-10-23T14:09:53.974Z",
+    "checkedAt": "2026-11-02T04:59:46.745Z",
     "handshakeOk": true,
     "chainValid": true,
     "errorCode": null,
@@ -199,12 +199,12 @@
     "subject": "aixoras.com",
     "issuer": "YE2 / Let's Encrypt",
     "notAfter": "2026-12-24T16:07:17.000Z",
-    "daysLeft": 62,
+    "daysLeft": 52,
     "protocol": "TLSv1.3"
    },
    "tlsVerdict": {
     "level": "ok",
-    "label": "证书有效 · 剩余 62 天 · TLSv1.3"
+    "label": "证书有效 · 剩余 52 天 · TLSv1.3"
    },
    "context": null,
    "contextVerdict": {
@@ -212,27 +212,16 @@
     "label": "未测(标记码探针需显式触发,会产生真实 token 消耗)"
    },
    "fp": "pass",
-   "price": "¥0.4/M",
-   "priceV": 0.4,
-   "priceSrc": {
-    "src": "USD",
-    "fxApplied": false
-   },
-   "priceBase": 0.4,
-   "priceBaseCur": "USD",
-   "priceGroup": "Grok",
-   "priceModel": "grok-4.7",
-   "priceCalib": "page",
+   "price": null,
+   "priceV": null,
+   "priceSrc": null,
+   "priceBase": null,
+   "priceBaseCur": null,
+   "priceGroup": null,
+   "priceModel": null,
+   "priceCalib": null,
    "priceCalibFactor": null,
-   "models": [
-    "gpt",
-    "deepseek",
-    "gemini",
-    "glm",
-    "claude",
-    "grok",
-    "kimi"
-   ],
+   "models": [],
    "audit": {
     "matchPct": 100,
     "verified": 98,
@@ -256,33 +245,33 @@
      "models": [
       {
        "model": "claude-opus-4-6",
-       "inP": 3.5,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "claude-opus-5",
-       "inP": 3.5,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "claude-opus-5-5",
-       "inP": 2.8,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "claude-sonnet-4-6",
-       "inP": 2.1,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "claude-sonnet-5",
-       "inP": 3.2,
+       "inP": null,
        "offIn": 2,
-       "ratioPct": 160
+       "ratioPct": null
       },
       {
        "model": "claude-opus-4-7-thinking",
@@ -292,13 +281,13 @@
       },
       {
        "model": "claude-opus-4-7",
-       "inP": 3.5,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "claude-opus-4-8",
-       "inP": 3.5,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       }
@@ -310,27 +299,27 @@
      "models": [
       {
        "model": "gpt-5.5",
-       "inP": 11,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "gpt-5.6-terra",
-       "inP": 1.2,
+       "inP": null,
        "offIn": 2,
-       "ratioPct": 60
+       "ratioPct": null
       },
       {
        "model": "gpt-5.6-sol",
-       "inP": 3,
+       "inP": null,
        "offIn": 4,
-       "ratioPct": 75
+       "ratioPct": null
       },
       {
        "model": "gpt-6-astra",
-       "inP": 6,
+       "inP": null,
        "offIn": 10,
-       "ratioPct": 60
+       "ratioPct": null
       }
      ]
     },
@@ -340,19 +329,19 @@
      "models": [
       {
        "model": "claude-opus-4-6-max",
-       "inP": 8,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "claude-opus-4-7-max",
-       "inP": 8,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "claude-sonnet-5-5",
-       "inP": 3.2,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       }
@@ -364,19 +353,19 @@
      "models": [
       {
        "model": "glm-5.3",
-       "inP": 5.6,
-       "offIn": 0.079,
-       "ratioPct": 7089
+       "inP": null,
+       "offIn": 0.08,
+       "ratioPct": null
       },
       {
        "model": "glm-5.3-flash",
-       "inP": 0.105,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "glm-5.2",
-       "inP": 5.6,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       }
@@ -406,13 +395,13 @@
      "models": [
       {
        "model": "gemini-3.1-flash-image",
-       "inP": 75,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "gemini-3.1-flash-image-preview",
-       "inP": 75,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       }
@@ -424,21 +413,21 @@
      "models": [
       {
        "model": "deepseek-v4-flash",
-       "inP": 0.7,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "deepseek-v4-pro",
-       "inP": 3.15,
-       "offIn": 0.95526,
-       "ratioPct": 330
+       "inP": null,
+       "offIn": 1.6,
+       "ratioPct": null
       },
       {
        "model": "deepseek-v4.1-flash",
-       "inP": 0.7,
-       "offIn": 0.049,
-       "ratioPct": 1429
+       "inP": null,
+       "offIn": 0.045,
+       "ratioPct": null
       }
      ]
     },
@@ -448,7 +437,7 @@
      "models": [
       {
        "model": "gpt-5.6-luna",
-       "inP": 0.44,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       }
@@ -460,27 +449,27 @@
      "models": [
       {
        "model": "grok-4.5",
-       "inP": 0.4,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "grok-4.6",
-       "inP": 0.4,
+       "inP": null,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "grok-4.7",
-       "inP": 0.4,
+       "inP": null,
        "offIn": 2,
-       "ratioPct": 20
+       "ratioPct": null
       }
      ]
     }
    ],
    "measuredGroup": {
-    "group": "GPT-企业级",
+    "group": null,
     "ratio": 0.18,
     "models": [
      "gpt-5.5",
@@ -613,64 +602,64 @@
    },
    "slaSeries": [
     {
-     "h": "10-20 18:00",
+     "h": "10-30 12:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 00:00",
+     "h": "10-30 18:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 06:00",
+     "h": "10-31 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-02 00:00",
      "pct": 100,
      "n": 1
     },
     {
-     "h": "10-21 12:00",
+     "h": "11-02 06:00",
      "pct": null,
      "n": 0
-    },
-    {
-     "h": "10-21 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 12:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 12:00",
-     "pct": 100,
-     "n": 1
     }
    ],
    "perf": {
@@ -699,7 +688,7 @@
     "at": "2026-10-02T09:57:43.808Z",
     "note": null
    },
-   "checks": 12,
+   "checks": 1,
    "commerce": {
     "pay": "微信 / 支付宝",
     "ratio": "¥1 = 1 美元额度",
@@ -709,33 +698,31 @@
     "refund": null,
     "src": "manual",
     "at": "2026-10-17"
-   },
-   "effRatio": 1,
-   "effPrice": 0.4
+   }
   }
  ],
  "details": {
   "aixoras": {
    "score": {
-    "all": 79,
-    "code": 69,
-    "office": 57,
-    "drama": 66,
-    "biz": 73
+    "all": null,
+    "code": null,
+    "office": null,
+    "drama": null,
+    "biz": null
    },
    "coverage": {
-    "all": 1,
-    "code": 1,
-    "office": 1,
-    "drama": 1,
-    "biz": 1
+    "all": 0.55,
+    "code": 0.5,
+    "office": 0.25,
+    "drama": 0.4,
+    "biz": 0.4
    },
    "confidence": {
-    "all": 0.8,
-    "code": 0.8,
-    "office": 0.8,
-    "drama": 0.8,
-    "biz": 0.8
+    "all": 0,
+    "code": 0,
+    "office": 0,
+    "drama": 0,
+    "biz": 0
    },
    "lowConfidence": {
     "all": false,
@@ -771,9 +758,9 @@
    },
    "metrics": {
     "avail7d": 100,
-    "checks": 12,
-    "ttft": 6386,
-    "ttftSamples": 6,
+    "checks": 1,
+    "ttft": null,
+    "ttftSamples": 0,
     "timeoutRate": 25,
     "bufferedRate": 0,
     "fingerprint": {
@@ -781,9 +768,9 @@
      "baseline": "aicost",
      "verdict": "pass"
     },
-    "inject": 3968,
+    "inject": 4858,
     "measuredGroup": {
-     "group": "GPT-企业级",
+     "group": null,
      "ratio": 0.18,
      "models": [
       "gpt-5.5",
@@ -1018,7 +1005,7 @@
      17.5,
      0.35,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1029,7 +1016,7 @@
      18,
      0.3,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1040,7 +1027,7 @@
      7.2,
      0.12,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1051,7 +1038,7 @@
      4.5,
      0.09,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1062,7 +1049,7 @@
      10.5,
      0.21,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1073,7 +1060,7 @@
      30,
      0.6,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1084,7 +1071,7 @@
      0.35,
      0.021,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1095,7 +1082,7 @@
      2.25,
      0.045,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1106,7 +1093,7 @@
      19.6,
      1.4,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1117,7 +1104,7 @@
      40,
      0.8,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1139,7 +1126,7 @@
      16,
      0.32,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1150,7 +1137,7 @@
      7.2,
      0.12,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1161,7 +1148,7 @@
      1.2,
      0.1,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1172,7 +1159,7 @@
      1.2,
      0.1,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1205,7 +1192,7 @@
      6,
      0.12,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1238,7 +1225,7 @@
      66,
      1.1,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1249,7 +1236,7 @@
      5.4,
      0.09,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1260,7 +1247,7 @@
      17.5,
      0.35,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1282,7 +1269,7 @@
      80,
      1.6,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1315,7 +1302,7 @@
      10,
      0.2,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1337,7 +1324,7 @@
      19.6,
      1.4,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1348,7 +1335,7 @@
      6,
      0.12,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1359,7 +1346,7 @@
      17.5,
      0.35,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1392,7 +1379,7 @@
      7.2,
      0.12,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1403,7 +1390,7 @@
      2.64,
      0.044,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1414,7 +1401,7 @@
      40,
      0.8,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1425,7 +1412,7 @@
      40,
      0.8,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1436,7 +1423,7 @@
      1.8,
      0.03,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1458,7 +1445,7 @@
      1.2,
      0.1,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1469,7 +1456,7 @@
      70,
      1.4,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"

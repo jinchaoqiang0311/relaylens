@@ -1061,6 +1061,13 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
     if (r) referenceSites.push(r);
   }
   const fx = pricingDisplay();
+  /* 上一版 sites.json 的 details:手工回填字段保护的数据源(文件不存在/损坏时为空,不阻塞重建) */
+  const prevDetails = (() => {
+    try { return JSON.parse(fs.readFileSync(path.join(DATA_DIR, "sites.json"), "utf8")).details ?? {}; }
+    catch { return {}; }
+  })();
+  /** 仅由回填脚本写入、sync 不产出的键(重建时原样保留) */
+  const HAND_KEYS = ["rounds", "roundsMeta", "prices", "pricesMeta"] as const;
   const out = {
     meta: {
       updated: new Date().toISOString(), weightsVersion: weightsVersion(),
@@ -1089,6 +1096,11 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
     recommendations: buildRecommendations(realSites, promo),
     // detail 页消费:每站的六桶分数+审计摘要(detail.html 的 DETAIL 结构兼容字段)
     details: Object.fromEntries(sites.map(s => {
+      /* 手工回填字段保护(2026-11-02):rounds/roundsMeta/prices/pricesMeta 只由回填脚本
+         (update-rounds.cjs 等)写入,sync 自身不产这些键 —— 重建时必须原样保留,否则会把首页
+         「实测详情」的逐笔明细与价目表冲掉。带 note 的 audit 是人工精修版(全量对账结论+口径
+         说明),同样不覆盖;删掉 note 即恢复 sync 自动口径。 */
+      const prev = (prevDetails as Record<string, any>)[s] || {};
       const m = assembleMetrics(s, { inject: inj(s) ?? undefined });
       const sc: Record<string, number | null> = {};
       const cov: Record<string, number> = {};
@@ -1102,27 +1114,32 @@ export function syncData(sites: string[], opts: { inject?: Record<string, number
       const rec = latestSummary(s, "%reconcile%");
       const perf = latestSummary(s, '%\"perf\"%');
       const h = siteHealth(s);
-      return [s, {
-        score: sc, coverage: cov, confidence: con, lowConfidence: low,
-        promo: pubPromo(promo[s]),
-        commerce: commerceInfo(cfgMap.get(s)),
-        audit: {
+      return [s, (() => {
+        const freshAudit = {
           matchPct: rec && (rec.matched + rec.mismatched) > 0 ? Math.round(rec.matched / (rec.matched + rec.mismatched) * 1000) / 10 : null,
           verified: rec ? rec.matched + rec.mismatched : 0,
           inject: inj(s),
           stream: perf ? streamDisplayRate(perf) : null,
           consistency: null,
           lastAt: rec ? rec._at.slice(0, 10) : "",
-        },
-        metrics: {
-          avail7d: h.avail7d, checks: h.checks,
-          ttft: m.PF.ttftMs, ttftSamples: m.PF.samples,
-          timeoutRate: m.ST.timeoutPct, bufferedRate: m.SR.bufferedRate,
-          fingerprint: fp ? { similarity: fp.similarity, baseline: fp.baseline, verdict: fp.verdict } : null,
-          inject: inj(s),
-          measuredGroup: measuredGroup(s),
-        },
-      }];
+        };
+        const block: Record<string, unknown> = {
+          score: sc, coverage: cov, confidence: con, lowConfidence: low,
+          promo: pubPromo(promo[s]),
+          commerce: commerceInfo(cfgMap.get(s)),
+          audit: prev.audit && prev.audit.note ? prev.audit : freshAudit,
+          metrics: {
+            avail7d: h.avail7d, checks: h.checks,
+            ttft: m.PF.ttftMs, ttftSamples: m.PF.samples,
+            timeoutRate: m.ST.timeoutPct, bufferedRate: m.SR.bufferedRate,
+            fingerprint: fp ? { similarity: fp.similarity, baseline: fp.baseline, verdict: fp.verdict } : null,
+            inject: inj(s),
+            measuredGroup: measuredGroup(s),
+          },
+        };
+        for (const k of HAND_KEYS) if ((prev as Record<string, unknown>)[k] !== undefined) block[k] = (prev as Record<string, unknown>)[k];
+        return block;
+      })()];
     })),
   };
   fs.mkdirSync(DATA_DIR, { recursive: true });

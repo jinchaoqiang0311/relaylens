@@ -2,7 +2,7 @@
  "slice": "details/hahacode.json",
  "site": "hahacode",
  "meta": {
-  "updated": "2026-11-01T13:42:47.036Z",
+  "updated": "2026-11-02T06:28:49.090Z",
   "weightsVersion": "2026-10-22.2",
   "license": "CC-BY-4.0",
   "source": "relaylens-probe",
@@ -78,16 +78,16 @@
    "sitesRegistered": 12,
    "sitesPaidMeasured": 2,
    "sitesMonitored": 7,
-   "priceLineItems": 535,
-   "distinctModels": 193,
-   "reconcileVerified": 5609,
+   "priceLineItems": 510,
+   "distinctModels": 199,
+   "reconcileVerified": 138,
    "reconcileMismatched": 0,
    "reconcileAmountUsd": 1.382,
    "reconcileAmountCny": 9.81,
    "maxSingleRequestTokens": 405338,
-   "batchesToday": 1,
-   "healthChecksTotal": 2958,
-   "batchesTotal": 3500,
+   "batchesToday": 36,
+   "healthChecksTotal": 2970,
+   "batchesTotal": 3536,
    "since": "2026-09-29",
    "referenceCount": 3
   }
@@ -145,7 +145,7 @@
     {
      "key": "ST",
      "label": "稳定性",
-     "n": 2,
+     "n": 1,
      "need": 12,
      "ok": false
     },
@@ -185,10 +185,23 @@
    "injectSplit": null,
    "timeout": null,
    "stream": null,
-   "tls": null,
+   "tls": {
+    "host": "hahacode.com",
+    "port": 443,
+    "checkedAt": "2026-11-02T05:00:31.645Z",
+    "handshakeOk": true,
+    "chainValid": true,
+    "errorCode": null,
+    "sanMatch": true,
+    "subject": "hahacode.com",
+    "issuer": "WE1 / Google Trust Services",
+    "notAfter": "2027-01-25T05:21:33.000Z",
+    "daysLeft": 84,
+    "protocol": "TLSv1.3"
+   },
    "tlsVerdict": {
-    "level": "none",
-    "label": "未采集"
+    "level": "ok",
+    "label": "证书有效 · 剩余 84 天 · TLSv1.3"
    },
    "context": null,
    "contextVerdict": {
@@ -196,16 +209,16 @@
     "label": "未测(标记码探针需显式触发,会产生真实 token 消耗)"
    },
    "fp": "pending",
-   "price": "¥2/M",
-   "priceV": 2,
+   "price": "¥0.39/M",
+   "priceV": 0.39,
    "priceSrc": {
     "src": "USD",
     "fxApplied": false
    },
-   "priceBase": 2,
+   "priceBase": 0.39,
    "priceBaseCur": "USD",
-   "priceGroup": "Grok-heavy",
-   "priceModel": "grok-4.7",
+   "priceGroup": "claude-kiro-高缓存",
+   "priceModel": "claude-sonnet-5",
    "priceCalib": "page",
    "priceCalibFactor": null,
    "models": [
@@ -235,62 +248,62 @@
    },
    "slaSeries": [
     {
-     "h": "10-20 18:00",
+     "h": "10-30 12:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 00:00",
+     "h": "10-30 18:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 06:00",
+     "h": "10-31 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-02 00:00",
      "pct": 100,
      "n": 1
     },
     {
-     "h": "10-21 12:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-21 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 12:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 12:00",
+     "h": "11-02 06:00",
      "pct": null,
      "n": 0
     }
@@ -313,7 +326,7 @@
     "at": null,
     "note": null
    },
-   "checks": 2,
+   "checks": 1,
    "commerce": {
     "pay": null,
     "ratio": "¥1 = 1 美元额度",
@@ -325,7 +338,7 @@
     "at": "2026-10-17"
    },
    "effRatio": 1,
-   "effPrice": 2
+   "effPrice": 0.39
   }
  ],
  "details": {
@@ -379,7 +392,7 @@
    },
    "metrics": {
     "avail7d": 100,
-    "checks": 2,
+    "checks": 1,
     "ttft": null,
     "ttftSamples": 0,
     "timeoutRate": null,

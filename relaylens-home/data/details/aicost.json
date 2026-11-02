@@ -2,7 +2,7 @@
  "slice": "details/aicost.json",
  "site": "aicost",
  "meta": {
-  "updated": "2026-11-01T13:42:47.036Z",
+  "updated": "2026-11-02T06:28:49.090Z",
   "weightsVersion": "2026-10-22.2",
   "license": "CC-BY-4.0",
   "source": "relaylens-probe",
@@ -78,16 +78,16 @@
    "sitesRegistered": 12,
    "sitesPaidMeasured": 2,
    "sitesMonitored": 7,
-   "priceLineItems": 535,
-   "distinctModels": 193,
-   "reconcileVerified": 5609,
+   "priceLineItems": 510,
+   "distinctModels": 199,
+   "reconcileVerified": 138,
    "reconcileMismatched": 0,
    "reconcileAmountUsd": 1.382,
    "reconcileAmountCny": 9.81,
    "maxSingleRequestTokens": 405338,
-   "batchesToday": 1,
-   "healthChecksTotal": 2958,
-   "batchesTotal": 3500,
+   "batchesToday": 36,
+   "healthChecksTotal": 2970,
+   "batchesTotal": 3536,
    "since": "2026-09-29",
    "referenceCount": 3
   }
@@ -100,10 +100,10 @@
    "status": "g",
    "level": "billing",
    "score": {
-    "all": 86,
-    "code": 84,
+    "all": 87,
+    "code": 85,
     "office": null,
-    "drama": 78,
+    "drama": 80,
     "biz": null
    },
    "coverage": {
@@ -145,14 +145,14 @@
     {
      "key": "ST",
      "label": "稳定性",
-     "n": 11,
+     "n": 1,
      "need": 12,
      "ok": false
     },
     {
      "key": "PF",
      "label": "首字延迟",
-     "n": 2,
+     "n": 0,
      "need": 6,
      "ok": false
     },
@@ -173,11 +173,11 @@
    ],
    "dev": 100,
    "avail": 100,
-   "ttft": 26.7,
-   "ttftMs": 26732,
+   "ttft": null,
+   "ttftMs": null,
    "ttftWorkMs": null,
-   "ttftOffMs": 26732,
-   "ttftPartialBucket": "off",
+   "ttftOffMs": null,
+   "ttftPartialBucket": null,
    "ttftReasoningMs": null,
    "ttftReasoningModel": null,
    "cache": null,
@@ -188,10 +188,23 @@
    },
    "timeout": 62.5,
    "stream": 0,
-   "tls": null,
+   "tls": {
+    "host": "www.aicost.me",
+    "port": 443,
+    "checkedAt": "2026-11-02T05:00:03.548Z",
+    "handshakeOk": true,
+    "chainValid": true,
+    "errorCode": null,
+    "sanMatch": true,
+    "subject": "aicost.me",
+    "issuer": "YR1 / Let's Encrypt",
+    "notAfter": "2026-12-24T14:25:23.000Z",
+    "daysLeft": 52,
+    "protocol": "TLSv1.3"
+   },
    "tlsVerdict": {
-    "level": "none",
-    "label": "未采集"
+    "level": "ok",
+    "label": "证书有效 · 剩余 52 天 · TLSv1.3"
    },
    "context": null,
    "contextVerdict": {
@@ -199,18 +212,18 @@
     "label": "未测(标记码探针需显式触发,会产生真实 token 消耗)"
    },
    "fp": "pass",
-   "price": "¥0.2/M",
-   "priceV": 0.2,
+   "price": "¥0.3/M",
+   "priceV": 0.3,
    "priceSrc": {
     "src": "USD",
     "fxApplied": false
    },
-   "priceBase": 0.2,
+   "priceBase": 0.3,
    "priceBaseCur": "USD",
-   "priceGroup": "depsek",
-   "priceModel": "deepseek-v4.1-flash",
-   "priceCalib": "page",
-   "priceCalibFactor": null,
+   "priceGroup": "grok语言",
+   "priceModel": "grok-4.7",
+   "priceCalib": "measured",
+   "priceCalibFactor": 0.4,
    "models": [
     "gpt",
     "deepseek",
@@ -298,27 +311,27 @@
      "models": [
       {
        "model": "gpt-5.5",
-       "inP": 4.25,
+       "inP": 1.25,
        "offIn": null,
        "ratioPct": null
       },
       {
        "model": "gpt-5.6-sol",
-       "inP": 1.5,
+       "inP": 1.25,
        "offIn": 4,
-       "ratioPct": 38
+       "ratioPct": 31
       },
       {
        "model": "gpt-5.6-terra",
-       "inP": 0.6,
+       "inP": 0.5,
        "offIn": 2,
-       "ratioPct": 30
+       "ratioPct": 25
       },
       {
        "model": "gpt-6-astra",
-       "inP": 3,
+       "inP": 2.5,
        "offIn": 10,
-       "ratioPct": 30
+       "ratioPct": 25
       }
      ]
     },
@@ -370,13 +383,13 @@
      "models": [
       {
        "model": "deepseek-v4.1-flash",
-       "inP": 0.2,
-       "offIn": 0.049,
-       "ratioPct": 408
+       "inP": 0.6,
+       "offIn": 0.045,
+       "ratioPct": 1333
       },
       {
        "model": "deepseek-v4.1-flash-hc",
-       "inP": null,
+       "inP": 0.6,
        "offIn": null,
        "ratioPct": null
       }
@@ -412,15 +425,15 @@
      "models": [
       {
        "model": "gpt-6-sol",
-       "inP": 0.6,
+       "inP": 0.5,
        "offIn": 2,
-       "ratioPct": 30
+       "ratioPct": 25
       }
      ]
     }
    ],
    "measuredGroup": {
-    "group": "gpt-pro大客户号池",
+    "group": "gpt-pro号池",
     "ratio": 0.1,
     "models": [
      "gpt-5.5",
@@ -552,62 +565,62 @@
    },
    "slaSeries": [
     {
-     "h": "10-20 18:00",
+     "h": "10-30 12:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 00:00",
+     "h": "10-30 18:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 06:00",
+     "h": "10-31 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-02 00:00",
      "pct": 100,
      "n": 1
     },
     {
-     "h": "10-21 12:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-21 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 12:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 12:00",
+     "h": "11-02 06:00",
      "pct": null,
      "n": 0
     }
@@ -638,7 +651,7 @@
     "at": "2026-10-02T10:00:38.640Z",
     "note": null
    },
-   "checks": 11,
+   "checks": 1,
    "commerce": {
     "pay": "卡密",
     "ratio": "¥1 = 1 美元额度",
@@ -650,16 +663,16 @@
     "at": "2026-10-17"
    },
    "effRatio": 1,
-   "effPrice": 0.2
+   "effPrice": 0.3
   }
  ],
  "details": {
   "aicost": {
    "score": {
-    "all": 86,
-    "code": 84,
+    "all": 87,
+    "code": 85,
     "office": null,
-    "drama": 78,
+    "drama": 80,
     "biz": null
    },
    "coverage": {
@@ -710,9 +723,9 @@
    },
    "metrics": {
     "avail7d": 100,
-    "checks": 11,
-    "ttft": 26732,
-    "ttftSamples": 2,
+    "checks": 1,
+    "ttft": null,
+    "ttftSamples": 0,
     "timeoutRate": 62.5,
     "bufferedRate": 0,
     "fingerprint": {
@@ -720,9 +733,9 @@
      "baseline": "aixoras",
      "verdict": "pass"
     },
-    "inject": 4224,
+    "inject": 3959,
     "measuredGroup": {
-     "group": "gpt-pro大客户号池",
+     "group": "gpt-pro号池",
      "ratio": 0.1,
      "models": [
       "gpt-5.5",
@@ -918,7 +931,7 @@
      21.6,
      0.36,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -929,7 +942,7 @@
      7.5,
      0.125,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -940,7 +953,7 @@
      12.5,
      0.25,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -951,7 +964,7 @@
      10,
      0.25,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -962,7 +975,7 @@
      12.5,
      0.25,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -973,7 +986,7 @@
      2.5,
      0.05,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -984,7 +997,7 @@
      0.15,
      0.003,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -995,7 +1008,7 @@
      12.5,
      0.25,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1006,7 +1019,7 @@
      0.9,
      0.075,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1017,7 +1030,7 @@
      18,
      0.36,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1028,7 +1041,7 @@
      60,
      1.2,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1039,7 +1052,7 @@
      1.8,
      0.03,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1050,7 +1063,7 @@
      12.5,
      0.25,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1072,7 +1085,7 @@
      0.391,
      0.008,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1083,7 +1096,7 @@
      2.52,
      0.18,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1094,7 +1107,7 @@
      0.252,
      0.021,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1105,7 +1118,7 @@
      2.52,
      0.18,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1127,7 +1140,7 @@
      0.9,
      0.075,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1138,7 +1151,7 @@
      1.65,
      0.66,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1149,7 +1162,7 @@
      0.9,
      0.075,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1160,7 +1173,7 @@
      12.5,
      0.25,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"
@@ -1171,7 +1184,7 @@
      3,
      0.05,
      "tm-g",
-     "✔ 达标",
+     "达标",
      "",
      "未测",
      "未测"

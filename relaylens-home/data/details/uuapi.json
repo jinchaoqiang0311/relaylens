@@ -2,7 +2,7 @@
  "slice": "details/uuapi.json",
  "site": "uuapi",
  "meta": {
-  "updated": "2026-11-01T13:42:47.036Z",
+  "updated": "2026-11-02T06:28:49.090Z",
   "weightsVersion": "2026-10-22.2",
   "license": "CC-BY-4.0",
   "source": "relaylens-probe",
@@ -78,16 +78,16 @@
    "sitesRegistered": 12,
    "sitesPaidMeasured": 2,
    "sitesMonitored": 7,
-   "priceLineItems": 535,
-   "distinctModels": 193,
-   "reconcileVerified": 5609,
+   "priceLineItems": 510,
+   "distinctModels": 199,
+   "reconcileVerified": 138,
    "reconcileMismatched": 0,
    "reconcileAmountUsd": 1.382,
    "reconcileAmountCny": 9.81,
    "maxSingleRequestTokens": 405338,
-   "batchesToday": 1,
-   "healthChecksTotal": 2958,
-   "batchesTotal": 3500,
+   "batchesToday": 36,
+   "healthChecksTotal": 2970,
+   "batchesTotal": 3536,
    "since": "2026-09-29",
    "referenceCount": 3
   }
@@ -97,7 +97,7 @@
    "name": "uuapi",
    "real": true,
    "dataLayer": "p2",
-   "status": "g",
+   "status": "r",
    "level": "passive",
    "score": {
     "all": null,
@@ -172,7 +172,7 @@
     }
    ],
    "dev": null,
-   "avail": 100,
+   "avail": 0,
    "ttft": null,
    "ttftMs": null,
    "ttftWorkMs": null,
@@ -185,10 +185,23 @@
    "injectSplit": null,
    "timeout": 0,
    "stream": 0,
-   "tls": null,
+   "tls": {
+    "host": "uuapi.io",
+    "port": 443,
+    "checkedAt": "2026-11-02T05:00:13.661Z",
+    "handshakeOk": true,
+    "chainValid": true,
+    "errorCode": null,
+    "sanMatch": true,
+    "subject": "uuapi.io",
+    "issuer": "WE1 / Google Trust Services",
+    "notAfter": "2027-01-09T06:22:09.000Z",
+    "daysLeft": 68,
+    "protocol": "TLSv1.3"
+   },
    "tlsVerdict": {
-    "level": "none",
-    "label": "未采集"
+    "level": "ok",
+    "label": "证书有效 · 剩余 68 天 · TLSv1.3"
    },
    "context": null,
    "contextVerdict": {
@@ -355,62 +368,62 @@
    },
    "slaSeries": [
     {
-     "h": "10-20 18:00",
+     "h": "10-30 12:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 00:00",
+     "h": "10-30 18:00",
      "pct": null,
      "n": 0
     },
     {
-     "h": "10-21 06:00",
-     "pct": 100,
+     "h": "10-31 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "10-31 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 00:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 06:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 12:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-01 18:00",
+     "pct": null,
+     "n": 0
+    },
+    {
+     "h": "11-02 00:00",
+     "pct": 0,
      "n": 1
     },
     {
-     "h": "10-21 12:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-21 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 12:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-22 18:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 00:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 06:00",
-     "pct": null,
-     "n": 0
-    },
-    {
-     "h": "10-23 12:00",
+     "h": "11-02 06:00",
      "pct": null,
      "n": 0
     }
@@ -506,7 +519,7 @@
     "lastAt": ""
    },
    "metrics": {
-    "avail7d": 100,
+    "avail7d": 0,
     "checks": 1,
     "ttft": null,
     "ttftSamples": 0,

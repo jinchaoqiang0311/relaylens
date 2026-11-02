@@ -126,8 +126,9 @@
  /* 口径标注 chip:标价(看板实时)与实测到手(探针快照)并存,谁是谁一目了然 */
  .src-chip{display:inline-block;font-size:8.5px;font-weight:600;padding:0 4px;border-radius:4px;background:var(--brand-soft);color:var(--brand-deep);vertical-align:1px;white-space:nowrap}
  .src-chip.src-audit{background:#eef2ef;color:var(--sub)}
- .grp-cell{min-width:96px}
- .grp-btn{font-size:9.5px;font-weight:600;color:var(--brand);background:var(--brand-soft);border:0;border-radius:5px;padding:1px 6px;cursor:pointer;font-family:inherit}
+.grp-cell{min-width:96px}
+.grp-note{font-size:8.5px;color:var(--warn);font-weight:600;margin-top:2px;white-space:nowrap;letter-spacing:.2px}
+.grp-btn{font-size:9.5px;font-weight:600;color:var(--brand);background:var(--brand-soft);border:0;border-radius:5px;padding:1px 6px;cursor:pointer;font-family:inherit}
  .grp-btn:hover{background:#d3e8de}
  .grp-drawer{display:none;margin-top:5px;padding:5px 8px;background:#fbfcfb;border:1px solid var(--line);border-radius:7px;min-width:190px}
  .grp-drawer.open{display:block}
@@ -135,6 +136,8 @@
  .grp-row .gn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
  .grp-row .gp{white-space:nowrap;font-variant-numeric:tabular-nums}
  .grp-row.cur{color:var(--brand-deep);font-weight:700}
+ .dash-health{display:inline-block;width:7px;height:7px;border-radius:50%;background:#46a580;margin-left:5px;vertical-align:1px}
+ .dash-health.bad{background:#e0a83f}
  .price-primary .unit{font-size:9px;color:#74817b;font-weight:500}
  .price-secondary{margin-top:3px;font-size:10px;color:var(--muted);white-space:nowrap}
  .metric-number{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -363,13 +366,44 @@
  for(var i=0;i<tab.rows.length;i++){if(tab.rows[i].site===site.name)return tab.rows[i];}
  return null;
  }
- /* 实测分组列:主口径组名 + 抽屉按钮(该模型其余分组价目,channels 全集) */
+ /* 实测分组列:主口径组名 + 抽屉按钮(该模型其余分组价目)
+    数据源看板优先(2026-11-02):compare 行全集 → 探针 channels 兜底。
+    探针采不到价的站(如 aixoras 定价接口 401)不再丢分组 —— 看板行照样展示。
+    主口径组非最低倍率分组时,组名下方标注「(非最低倍率分组)」—— 提醒到手价并非该模型最低分组价 */
+ function dashGroups(site){
+ var byRows=DASH.rows&&DASH.rows[state.model];
+ if(!byRows)return null;
+ var rows=byRows[String(site.name||"").toLowerCase()];
+ if(!rows||!rows.length)return null;
+ var seen={},out=[];
+ rows.forEach(function(r){
+ var g=String(r["分组"]||"");
+ if(!g||seen[g])return;seen[g]=1;
+ out.push({group:g,grpRatio:(typeof r["分组倍率"]==="number"?r["分组倍率"]:null),inP:r["实付输入(¥/M)"],outP:r["实付输出(¥/M)"]});
+ });
+ return out.length?out:null;
+ }
  function groupCellFor(site){
  var trow=tabRowFor(site);
- var cur=trow?trow.group:null;
- var chans=(trow&&trow.channels)||[];
+ var dg=dashGroups(site);
+ var cur,chans;
+ if(dg){
+ cur=(dashLookup(site)&&dashLookup(site)["分组"])||(trow&&trow.group)||null;
+ chans=dg;
+ }else{
+ cur=trow?trow.group:null;
+ chans=(trow&&trow.channels)||[];
+ }
  if(!cur&&!chans.length)return '<span style="color:var(--muted)">—</span>';
+ var ratios=chans.map(function(c){return c&&typeof c.grpRatio==='number'?c.grpRatio:null;}).filter(function(r){return r!==null;});
+ var minRatio=ratios.length?Math.min.apply(null,ratios):null;
+ var curRatio=null;
+ for(var i=0;i<chans.length;i++){if(chans[i]&&chans[i].group===cur&&typeof chans[i].grpRatio==='number'){curRatio=chans[i].grpRatio;break;}}
+ var notMin=minRatio!==null&&curRatio!==null&&curRatio!==minRatio;
  var h=esc(cur||"—");
+ if(notMin){
+ h+='<div class="grp-note">(非最低倍率分组)</div>';
+ }
  if(chans.length>1){
  h+=' <button class="grp-btn" type="button" data-n="'+chans.length+'">▾ '+chans.length+' 组</button>';
  h+='<div class="grp-drawer">'+chans.map(function(c){
@@ -386,7 +420,7 @@
  }
  /* 看板实时标价缓存:按模型缓存 compare 行(站点名/域名双键匹配),5 分钟新鲜期。
     标价口径 = 看板自采公示价;排序仍按实测到手价(审计口径),避免口径混用。 */
- var DASH={cache:{},ts:{}};
+ var DASH={cache:{},ts:{},rows:{},stations:null,stationsTs:0};
  function dashLookup(site){
  var bySite=DASH.cache[state.model];
  if(!bySite)return null;
@@ -415,16 +449,57 @@
  var pick=null;
  if(tab&&tab.rows){var tr=tab.rows.find(function(x){return x.site===nm;});
  if(tr&&tr.group)pick=rs.find(function(r){return String(r["分组"]||"")===String(tr.group);});}
- if(!pick)pick=rs[Math.floor(rs.length/2)];
+ if(!pick)pick=rs.find(function(r){return /^(default|默认|普通用户|normal)$/i.test(String(r["分组"]||""));});
+ /* 无探针对照行(如 aixoras 定价 401):默认组优先、否则最低可用组(用户实付口径,0de36d2 规则),
+    不再取中位 —— 中位会让 aixoras 显示外接组 ¥16 而非价格页特价 ¥4 */
+ if(!pick){pick=rs.slice().sort(function(a,b){return (parseFloat(a["实付输入(¥/M)"])||Infinity)-(parseFloat(b["实付输入(¥/M)"])||Infinity);})[0];}
  bySite[nm]=pick;
  var host="";try{host=String(pick["域名"]||"").replace(/^https?:\/\//,"").split("/")[0].replace(/^www\./,"");}catch(e){}
  if(host)bySite["host:"+host]=pick;
  });
  DASH.cache[key]=bySite;
+ DASH.rows[key]=byRows; /* 行全集:分组抽屉看板优先的数据源 */
  render();
  }).catch(function(){ /* 看板挂/无此模型:保持快照口径,不编数 */ });
  }
- function scoreFor(site){var sc=site.score&&site.score[state.scene];return (sc==null?null:sc);}
+ /* 站点健康状态:看板 /api/stations 实时核查(state/模型数/充值比例/最近核查)覆盖静态清单。
+    看板无此站或挂了 → 不画徽章不报数,保持探针快照口径(诚实原则,不编数)。 */
+ function dashHealth(site){
+ return DASH.stations&&DASH.stations[String(site.name||"").toLowerCase()]||null;
+ }
+ function dashHealthHTML(site){
+ var st=dashHealth(site);if(!st)return "";
+ var ok=st.state==="active";
+ var tip="看板自采核查:"+(ok?"正常":("异常"+(st.error?"("+String(st.error).slice(0,60)+")":"")))
+ +(st.last_check?" · "+String(st.last_check).replace("T"," ").slice(0,16)+" UTC":"")
+ +(st.models!=null?" · 模型 "+st.models:"")
+ +(st.recharge_rate!=null?" · 充值比例 ×"+st.recharge_rate:"");
+ return '<span class="dash-health'+(ok?"":" bad")+'" title="'+esc(tip)+'"></span>';
+ }
+ function dashMetaHTML(site){
+ var st=dashHealth(site);if(!st)return "";
+ var ok=st.state==="active";
+ return '<div class="provider-meta provider-sub">看板'+(ok?"核查正常":"核查异常")
+ +(st.models!=null?" · "+st.models+" 模型":"")
+ +(st.recharge_rate!=null?" · 充值 ×"+st.recharge_rate:"")
+ +'</div>';
+ }
+ function refreshDashStations(){
+ if(typeof RL==="undefined"||!RL.dashApi)return;
+ var now=Date.now();
+ if(DASH.stationsTs&&now-DASH.stationsTs<300000)return;
+ DASH.stationsTs=now;
+ RL.dashApi("/price/api/stations").then(function(j){
+ var byName={};
+ (j.stations||[]).forEach(function(s){
+ if(!s||!s.name)return;
+ byName[String(s.name).toLowerCase()]=s;
+ });
+ DASH.stations=byName;
+ render();
+ }).catch(function(){ DASH.stationsTs=0; /* 看板挂:保持静态清单,不编数 */ });
+ }
+function scoreFor(site){var sc=site.score&&site.score[state.scene];return (sc==null?null:sc);}
  function scoreTone(v){return v>=85?"high":v>=70?"mid":"low";}
  function fpTag(site){
  var fp=site.fp, d=site.fpDetail||{}, sim=(d.similarity!=null?d.similarity+"%":"");
@@ -493,6 +568,24 @@
  return (pay?'<div class="provider-meta">'+pay+'</div>':'')+(topUp?'<div class="provider-meta provider-sub">'+topUp+'</div>':'');
  }
 
+ /* 可用率双口径:看板 72h 探活(实时,compare 行)优先;看板无此站/无数据 → 回退探针 7 日快照。 */
+ function availCell(site){
+ var dsh=dashLookup(site);
+ var d=dsh&&dsh["72小时可用率"];
+ if(d&&typeof d.p==="number"&&isFinite(d.p)){
+ return '<div class="metric-number">'+d.p+'%</div><div class="metric-caption">看板72h · n='+(d.tot!=null?d.tot:"—")+'</div>';
+ }
+ return '<div class="metric-number">'+(site.avail==null?"—":site.avail+"%")+'</div><div class="metric-caption">'+(site.avail!=null?"探针7日 · ":"")+'n='+(site.checks==null?"—":site.checks)+'</div>';
+ }
+ /* 首字延迟双口径:看板 TTFT(ms)(实时)优先;无则回退探针 P50 快照。 */
+ function ttftCell(site){
+ var dsh=dashLookup(site);
+ var ms=dsh?dsh["TTFT(ms)"]:null;
+ if(typeof ms==="number"&&isFinite(ms)&&ms>0){
+ return '<div class="metric-number">'+(ms/1000).toFixed(2)+'s</div><div class="metric-caption">看板实测</div>';
+ }
+ return '<div class="metric-number">'+(site.ttft==null?"未测":site.ttft+"s")+'</div><div class="metric-caption">'+(site.ttft!=null?"探针P50":"")+'</div>';
+ }
  function row(site){
  var sc=scoreFor(site), scTone=sc==null?"":scoreTone(sc);
  var price=priceFor(site);
@@ -505,9 +598,7 @@
  var priceCell;
  if (dsh && isFinite(dsh["实付输入(¥/M)"])) {
  priceCell = '<div class="price-primary">¥'+fmtPrice(dsh["实付输入(¥/M)"])+' <span class="unit">/M 输入</span> <span class="src-chip" title="标价口径:看板自采公示价(分组倍率+充值比例后) · 分组 '+esc(String(dsh["分组"]||""))+' · 数据时间 '+esc(String(dsh["数据时间(UTC)"]||"").replace("T"," ").slice(0,16))+' UTC">标价</span></div>'
- + '<div class="price-secondary">输出 ¥'+fmtPrice(dsh["实付输出(¥/M)"])+'/M'
- + (price?' · <span class="src-chip src-audit" title="实测口径:本站探针三因子折算(公示额度价×分组倍率×充值比例),快照时点见页首 · 分组 "+esc(price.group||"—")+"">实测到手 ¥'+fmtPrice(price.in)+'</span>':'')
- + '</div>';
+	+ '<div class="price-secondary">输出 ¥'+fmtPrice(dsh["实付输出(¥/M)"])+'/M</div>';
  } else if (price) {
  priceCell = '<div class="price-primary">¥'+fmtPrice(price.in)+' <span class="unit">/M 输入</span> <span class="src-chip src-audit" title="实测口径:本站探针三因子折算,快照时点见页首">实测</span></div><div class="price-secondary">输出 ¥'+fmtPrice(price.out)+'/M</div>';
  } else {
@@ -515,13 +606,13 @@
  }
  return '<tr>'+
  '<td>'+levelDot(site.level)+'</td>'+
- '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+'</div>'+payMetaHTML(site)+'</div></div></td>'+
+ '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+dashHealthHTML(site)+'</div>'+payMetaHTML(site)+dashMetaHTML(site)+'</div></div></td>'+
  '<td class="score-cell">'+scoreCell+'</td>'+
  '<td class="truth-cell">'+fpTag(site)+'</td>'+
  '<td class="grp-cell">'+groupCellFor(site)+'</td>'+
  '<td>'+priceCell+'</td>'+
- '<td><div class="metric-number">'+(site.avail==null?"—":site.avail+"%")+'</div><div class="metric-caption">n='+(site.checks==null?"—":site.checks)+'</div></td>'+
- '<td><div class="metric-number">'+(site.ttft==null?"未测":site.ttft+"s")+'</div><div class="metric-caption">'+(site.ttft!=null?"P50":"")+'</div></td>'+
+ '<td>'+availCell(site)+'</td>'+
+ '<td>'+ttftCell(site)+'</td>'+
  '<td><div class="metric-number">'+(site.cache==null?"未测":site.cache+"%")+'</div><div class="metric-caption">'+(site.cache==null?"":"样本命中")+'</div></td>'+
  '<td>'+devTag(site.dev)+(site.dev!=null?'<div class="recon-toggle-wrap"><button class="recon-toggle" type="button" data-site="'+esc(site.name)+'">实测详情 ▾</button></div>':'')+'</td>'+
  '<td><div class="op-stack"><a class="detail-button" href="detail.html?site='+encodeURIComponent(site.name)+'">站点详情 →</a>'+probeBtnHTML(site)+'</div></td>'+
@@ -555,6 +646,7 @@
  '<tr><td colspan="11" style="padding:30px;text-align:center;color:#75817c">没有匹配的中转站,试试放宽搜索或取消「只看账单级实测」。</td></tr>');
  setTxt("result-count", "显示 "+list.length+" / "+SITES.length+" 家");
  refreshDashPrices(); /* 看板实时标价:有缓存先渲染,异步取新后重渲(演进:口径标注) */
+ refreshDashStations(); /* 看板站点健康:state/模型数/充值比例实时核查,失败静默降级 */
  }
 
  function renderRefs(){

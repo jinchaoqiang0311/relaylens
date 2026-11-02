@@ -1,16 +1,64 @@
 {
   "meta": {
-    "generatedAt": "2026-10-23T14:13:13.781Z",
+    "generatedAt": "2026-11-02T06:28:49.448Z",
     "weightsVersion": "2026-10-22.2",
     "policy": "哈希链式追加日志:每条记录包含前一条的哈希,任意改写或删除都会使链校验失败。",
     "verify": "本地校验:tsx cli.ts audit verify(探针仓库开源,任何人可重放)"
   },
   "chain": {
     "ok": true,
-    "total": 198,
-    "head": "506b7cd87ef83ff920c45b2d8ed7b64a81a8860bc7e38bb67985b082927b8d96"
+    "total": 201,
+    "head": "990adf33c3e1d7a8a7b385a37be49d4ff761a177ed582638615f4cdf086be368"
   },
   "entries": [
+    {
+      "seq": 201,
+      "at": "2026-11-02T06:28:49.250Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "17c49eab1b366cc609e09dfbed326914258e2b25c048f38b451ba64894d380b5"
+      },
+      "after": {
+        "hash": "48fd9b1814317e1392374c18a1451077448918e8a91f94529ff5f41012acb699",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "990adf33c3e1d7a8"
+    },
+    {
+      "seq": 200,
+      "at": "2026-11-02T05:20:46.650Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "60b510290f6e11e58ddc3fe7d1838b00a9726306d420bb0cb9d3579fec21b039"
+      },
+      "after": {
+        "hash": "17c49eab1b366cc609e09dfbed326914258e2b25c048f38b451ba64894d380b5",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "9a2b0fbbb5377fb8"
+    },
+    {
+      "seq": 199,
+      "at": "2026-11-02T05:08:25.217Z",
+      "actor": "probe",
+      "action": "data.publish",
+      "target": "data/sites.json",
+      "before": {
+        "hash": "19d8dfb4befed4d0ebdeacea9f6d6ff5673b17020f46e9c538d40a394a95c337"
+      },
+      "after": {
+        "hash": "60b510290f6e11e58ddc3fe7d1838b00a9726306d420bb0cb9d3579fec21b039",
+        "note": "9 实测站 + 3 参照系 · 权重 2026-10-22.2"
+      },
+      "reason": "前端数据发生变化并重新发布:9 实测站 + 3 参照系 · 权重 2026-10-22.2",
+      "hash": "b98eaa7d6cd355ce"
+    },
     {
       "seq": 198,
       "at": "2026-10-23T14:13:13.591Z",
@@ -2698,17 +2746,6 @@
       },
       "reason": "前端数据发生变化并重新发布:2 实测站 · 权重 2026-09-29.4",
       "hash": "eb3a2864066de0f8"
-    },
-    {
-      "seq": 1,
-      "at": "2026-09-30T01:09:59.381Z",
-      "actor": "human:lenskeeper",
-      "action": "chain.init",
-      "target": "audit",
-      "before": null,
-      "after": null,
-      "reason": "审计链初始化。发布前的 3 轮联调记录(含一次人为启停站点用于验证漂移检测、一次配置指纹重登记)已在此刻之前清空——链尚未对外,不存在需要保留的历史;自本条起不再删除任何记录,删除会使链校验失败。",
-      "hash": "2e59e881c339db25"
     }
   ]
 }

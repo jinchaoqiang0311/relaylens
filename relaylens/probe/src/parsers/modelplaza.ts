@@ -7,9 +7,11 @@
  * 两种载荷形态(按 data.groups[0].models 是否存在自动识别):
  *
  *   A 组内嵌(uuapi / hahacode):groups[].models[].pricing
- *     展示价 = 该组最终价。实测证据:同一模型在倍率 0.2 / 0.4 / 1 的组里展示价完全相同;
- *     若组倍率要在展示价上再乘,0.2 组的到手价会比官方直连还便宜 —— 不成立,故不再乘倍率。
- *     official_pricing = 官方锚价(EP 评分与比价基准);组倍率 = 展示价÷锚价(隐含加价,保证三因子可验算)。
+ *     pricing 是**不含分组折扣的基础价**(2026-11-02 修正,与看板口径对齐):
+ *     组最终价 = 基础价 × groups[].rate_multiplier(声明倍率)。
+ *     旧口径「展示价=最终价」(2026-10-17)已被推翻 —— 组间展示价相同而 rate_multiplier 各异,
+ *     恰说明它是基础价;看板「倍率推算」逐组吻合(¥10×1.7=¥17)。
+ *     official_pricing = 官方锚价(EP 评分与比价基准);铁律1 验算:锚 × 隐含倍率(=实付÷锚) = 实付。
  *
  *   B 扁平价表(fluxionai):data.pricing[](带 group_ids)+ data.groups[].rate_multiplier
  *     经典 new-api 口径:组价 = 基础价 × 组倍率。pricing[] 按 channel 去重(取首条)。
@@ -119,11 +121,13 @@ export async function parseModelPlaza(site: SiteConfig): Promise<PriceResult> {
   if (!variantA && !flatList.length) throw new Error("model-plaza 既无组内嵌 models 也无扁平 pricing 表");
 
   if (variantA) {
-    /* ---------- A 组内嵌:展示价即最终价,official_pricing 作锚 ---------- */
-    /* A 型组倍率口径(2026-10-17 定):声明的 rate_multiplier 不随展示价缩放(实测同模型跨
-       0.2/0.4/1 倍率组展示价完全相同),拿它当倍率会让「官方价×倍率=额度价」验算不成立
-       (铁律 1 要求三因子可验算)。故倍率取**隐含加价 = 该组展示价 ÷ 官方锚价**;
-       官方锚缺失时倍率记 1、base 退回展示价自身。 */
+    /* ---------- A 组内嵌:组价 = 基础价 × rate_multiplier ----------
+       2026-11-02 口径修正(与看板 parse_model_plaza 对齐):plaza 的 groups[].models[].pricing
+       是**不含分组折扣的基础价** —— 同模型各组展示价相同而 rate_multiplier 各异(0.5~1.9),
+       且看板「倍率推算」口径 = 基础价 × rate_multiplier(实证:fable CC满血MAX ¥10×1.7=¥17,
+       codex ¥2×0.2=¥0.4,均与看板 /api/compare 逐组吻合)。
+       旧口径(展示价=最终价)使首页「实测到手」与看板「标价」长期对不上(UUAPI ¥10 vs ¥17)。
+       铁律1 验算保持:base(官方锚) × grpRatio(隐含倍率) = 实付;官方锚缺失时 base=基础价、倍率=声明值。 */
     const raw = new Map<string, Array<{ group: string; declared: number; input: number | null; output: number | null; cacheRead: number | null; cacheWrite: number | null }>>();
     const official = new Map<string, { input: number | null; output: number | null; cacheRead: number | null }>();
     for (const g of groups) {
@@ -138,33 +142,45 @@ export async function parseModelPlaza(site: SiteConfig): Promise<PriceResult> {
         const pr = priceOf(p);
         if (pr.input == null) continue;   // 无有效价,宁缺毋错
         if (!raw.has(name)) raw.set(name, []);
-        raw.get(name)!.push({ group: gname, declared, input: pr.input, output: pr.output, cacheRead: pr.cacheRead, cacheWrite: pr.cacheWrite });
+        const rows = raw.get(name)!;
+        if (rows.some(x => x.group === gname)) continue;   // 同组重复条目:取首条
+        rows.push({ group: gname, declared, input: pr.input, output: pr.output, cacheRead: pr.cacheRead, cacheWrite: pr.cacheWrite });
         if (m.official_pricing && !official.has(name)) {
           const o = priceOf(m.official_pricing);
           if (o.input != null) official.set(name, { input: o.input, output: o.output, cacheRead: o.cacheRead });
         }
       }
     }
-    const implied = (v: number | null, b: number | null): number => (v != null && b != null && b > 0 ? round8(v / b) : 1);
     for (const [name, all] of raw) {
-      const { head, groupKind } = pickHead(all.map(x => ({ group: x.group, ratio: x.declared })));
-      const headRow = all.find(x => x.group === head.group)!;
-      const anchor = official.get(name);
+      const anchor = official.get(name) ?? null;
+      const fin = (v: number | null, d: number): number | null => (v != null ? round8(v * d) : null);
+      /* 组最终价 = 基础价 × 声明组倍率;隐含倍率 = 实付 ÷ 官方锚(锚缺失时退声明倍率) */
+      const rows = all
+        .map(x => {
+          const fIn = fin(x.input, x.declared);
+          if (fIn == null) return null;
+          const fOut = fin(x.output ?? x.input, x.declared) as number;
+          const fCr = x.cacheRead != null ? fin(x.cacheRead, x.declared) : null;
+          const fCw = x.cacheWrite != null ? fin(x.cacheWrite, x.declared) : null;
+          const anchorIn = anchor?.input ?? null;
+          const ratio = anchorIn != null && anchorIn > 0 ? round8(fIn / anchorIn) : x.declared;
+          return { group: x.group, ratio, input: fIn, output: fOut, cacheRead: fCr, cacheWrite: fCw };
+        })
+        .filter((x): x is NonNullable<typeof x> => x != null);
+      if (!rows.length) continue;
+      const { head, groupKind } = pickHead(rows);
+      const headRow = rows.find(x => x.group === head.group)!;
       const base = anchor
         ? { input: anchor.input as number, output: (anchor.output ?? anchor.input) as number, cacheRead: anchor.cacheRead }
-        : { input: headRow.input as number, output: (headRow.output ?? headRow.input) as number, cacheRead: headRow.cacheRead };
+        : { input: (all[0].input ?? headRow.input) as number, output: ((all[0].output ?? all[0].input) ?? headRow.output) as number, cacheRead: all[0].cacheRead };
       models.push({
         model: name,
-        input: headRow.input as number, output: (headRow.output ?? headRow.input) as number, cacheRead: headRow.cacheRead, cacheWrite: headRow.cacheWrite,
+        input: headRow.input, output: headRow.output, cacheRead: headRow.cacheRead, cacheWrite: headRow.cacheWrite,
         group: headRow.group, groupKind,
-        grpRatio: implied(headRow.input, anchor?.input ?? null),
+        grpRatio: headRow.ratio,
         base,
-        groups: all.map(x => ({
-          group: x.group,
-          ratio: implied(x.input, anchor?.input ?? null),
-          input: x.input as number, output: (x.output ?? x.input) as number, cacheRead: x.cacheRead,
-        })),
-        source: "model-plaza-api(A型:展示价=最终价,倍率=展示价÷官方锚价,声明倍率不缩放已核实)",
+        groups: rows.map(x => ({ group: x.group, ratio: x.ratio, input: x.input, output: x.output, cacheRead: x.cacheRead })),
+        source: "model-plaza-api(A型:组价=基础价×声明组倍率,与看板口径对齐 2026-11-02)",
       });
     }
   } else {
