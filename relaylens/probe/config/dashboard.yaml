@@ -1,0 +1,7 @@
+# 看板联动配置(2026-11-02 统一调度收口)
+# 由 cli.ts loadConfig() 合并进 ProbeConfig;price 轮(每6h)完成后 scheduler 异步执行
+# scrapeCmd 触发看板(renlay-ranking)抓取,两套数据同一时钟。
+# 未配置/本文件不存在 = 不启用(与 billing 双窗口同一兼容策略);失败不影响探针。
+dashboard:
+  cwd: "C:/Users/Administrator/CodeBuddy/20261017201226"
+  scrapeCmd: "python relay_scraper.py scrape"

@@ -43,6 +43,14 @@ function loadSecrets() {
 function loadConfig(): ProbeConfig {
   const file = path.join(import.meta.dirname, "config/sites.yaml");
   const cfg = YAML.parse(fs.readFileSync(file, "utf8")) as ProbeConfig;
+  /* 看板联动配置独立成 dashboard.yaml(2026-11-02):sites.yaml 存在未知的写回者
+     (两次注入 dashboard 段均成功后被冲掉,写入方未明),独立文件规避竞态;
+     文件不存在时安静跳过,即未配置看板联动。 */
+  const dashFile = path.join(import.meta.dirname, "config/dashboard.yaml");
+  try {
+    const dash = YAML.parse(fs.readFileSync(dashFile, "utf8")) as Partial<ProbeConfig>;
+    if (dash && typeof dash === "object") Object.assign(cfg, dash);
+  } catch { /* 未配置看板联动 */ }
   return cfg;
 }
 
