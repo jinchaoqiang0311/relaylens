@@ -5,7 +5,7 @@
       且它把 batchCap 覆写成硬编码演示批次号 RL-RC-0929-0114(applySyncDetail 刚写好的
       真实权重/更新时间立刻被盖掉);偏差百分比用 Math.random()*2+3 现编。
    ② ranking.html 页头写死「实测站点 47 / 累计检测批次 2,904」(同期真实值 12 / 3499),
-      「最后更新」直接取访客本机时钟 new Date()。
+      「最后更新」直接取访客本机时钟 new Date()。(该页已于 2026-11-02 整体移除,③ 检查随之删除)
    一个卖「计费诚实度」的站,自己的数字不能是假的 —— 这条比任何功能都重要(AGENTS.md 红线 10)。 */
 const fs = require("fs"), vm = require("vm");
 let pass = 0, fail = 0;
@@ -13,7 +13,6 @@ function ok(c, m) { if (c) { pass++; } else { fail++; console.log("FAIL " + m); 
 
 const HOME = __dirname + "/relaylens-home";
 const detail = fs.readFileSync(HOME + "/detail.html", "utf8");
-const ranking = fs.readFileSync(HOME + "/ranking.html", "utf8");
 const payload = JSON.parse(fs.readFileSync(HOME + "/data/sites.json", "utf8"));
 
 /* 抽真实函数源码跑,不复写逻辑(复写会漂) */
@@ -97,25 +96,7 @@ for (const f of fs.readdirSync(HOME).filter(x => x.endsWith(".html"))) {
   ok(bad.length === 0, f + " 内联脚本用 Math.random 造数字 → " + (bad[0] || "").trim().slice(0, 70));
 }
 
-/* —— ③ ranking 页头:数字必须由数据驱动,最后更新必须来自 meta —— */
-console.log("【ranking 页头门面数字】");
-ok(/id="ph-sites"/.test(ranking) && /id="ph-batches"/.test(ranking) && /id="ph-updated"/.test(ranking),
-   "三个门面数字都有 id(才可能被数据驱动)");
-ok(!/<div class="v num">47<\/div>/.test(ranking), "不再写死「实测站点 47」");
-ok(!/<div class="v num">2,904<\/div>/.test(ranking), "不再写死「累计检测批次 2,904」");
-ok(!/getElementById\("ph-updated"\)\.textContent=pad\(now/.test(ranking), "最后更新不再取访客本机时钟 new Date()");
-
-const fps = grab(ranking, "fillPhStats");
-ok(!!fps && /meta\.stats/.test(fps), "fillPhStats 从 meta.stats 取数");
-ok(fps && /batchesTotal/.test(fps), "累计批次取 meta.stats.batchesTotal(sync.ts 产出)");
-ok(fps && /sitesRegistered/.test(fps), "站点数取 meta.stats.sitesRegistered");
-ok(/fillPhStats\(payload\)/.test(ranking), "applyRealData 里调用了 fillPhStats");
-
-const ups = grab(ranking, "setPhUpdated");
-ok(!!ups && /meta\.updated/.test(ups), "setPhUpdated 取 meta.updated(探针落库时间)");
-ok(ups && !/new Date\(\)/.test(ups), "setPhUpdated 不用 new Date()");
-
-/* —— ④ 门面数字与证据源对账(有 batchesTotal 时才校验,避免 sync 未重跑时误报) —— */
+/* —— ③ 门面数字与证据源对账(有 batchesTotal 时才校验,避免 sync 未重跑时误报) —— */
 console.log("【门面数字与证据源对账】");
 const S = (payload.meta && payload.meta.stats) || {};
 if (S.batchesTotal != null) {
