@@ -117,7 +117,7 @@ footer a:hover{color:var(--brand)}
 <header>
  <div class="wrap nav">
  <a class="logo" href="index.html"><span class="mark">◎</span>RelayLens</a>
- <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html" class="active" aria-current="page">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html">选站比价</a><a href="/price/">模型比价</a><a href="selector.html" class="active" aria-current="page">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a></nav>
  <a class="btn btn-ghost btn-sm" href="onboarding.html">站长入驻</a>
  </div>
 </header>
@@ -216,7 +216,7 @@ footer a:hover{color:var(--brand)}
  <p><b>2. 不评价"哪个模型更强"。</b>我们没有跑过能力基准(LMSYS / SWE-bench 类),所以模型由你自己定,我们只回答"这个模型在哪家站买最靠谱划算"。任何声称能替你判断模型智力的选型工具,你都该多问一句它拿什么测的。</p>
  <p><b>3. 不覆盖未实测的站与分组。</b>一个 API Key 只能绑定一个分组,所以我们的数据只代表<b>该站被实测的那个分组</b>;同一站其他分组(尤其特价分组)价格与稳定性可能完全不同,结果页会明确标注这一点。</p>
  </div>
- <div class="note">数据是时点数据:渠道会换、倍率会调、号池会枯竭。充值前建议用<a href="tools.html" style="color:var(--brand);font-weight:600">工具箱自测</a>跑一次你自己的 Key,并用<a href="ranking.html" style="color:var(--brand);font-weight:600">榜单</a>核对最近审计日期。</div>
+ <div class="note">数据是时点数据:渠道会换、倍率会调、号池会枯竭。充值前建议用<a href="tools.html" style="color:var(--brand);font-weight:600">工具箱自测</a>跑一次你自己的 Key,并用核对最近审计日期。</div>
  </div>
  </section>
 
@@ -231,7 +231,7 @@ footer a:hover{color:var(--brand)}
  </div>
  <div>
  <h4>站点</h4>
- <a href="index.html">首页</a><a href="ranking.html">全站榜单</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="tools.html">自测工具箱</a><a href="blacklist.html">避雷黑名单</a>
+ <a href="index.html">首页</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="tools.html">自测工具箱</a><a href="blacklist.html">避雷黑名单</a>
  </div>
  <div>
  <h4>关于</h4>
@@ -314,7 +314,7 @@ function run(){
  cand.push({site:row.site,group:row.group,row:row,cost:c,month:month,s:s});
  });
  if(!cand.length){
- box.innerHTML='<div class="sk">没有满足你当前约束的选项 —— 试试放宽预算或延迟要求,或看 <a href="ranking.html" style="color:var(--brand)">完整榜单</a>。</div>'+renderRejected(rejected);
+ box.innerHTML='<div class="sk">没有满足你当前约束的选项 —— 试试放宽预算或延迟要求,或看 。</div>'+renderRejected(rejected);
  return;
  }
  /* 归一化打分:各维度 0–1 后再加权(美元/秒/百分制不能直接相减) */

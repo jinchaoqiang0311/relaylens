@@ -68,7 +68,7 @@ for (const file of pages) {
   //   (本地 preview-server 与生产 nginx 均反代到 8899,同源同窗口,无中间跳转)。
   //   "/price/" 不对应站内文件 → h===file 永不成立 → 自然无 active,无需特判。
   {
-    const NAV = [["index.html","选站比价"],["ranking.html","全站榜单"],["/price/","模型比价"],["selector.html","选型顾问"],["blacklist.html","避雷黑名单"],["pitfalls.html","避坑指南"],["method.html","方法论"],["tools.html","自测工具箱"]];
+    const NAV = [["index.html","选站比价"],["/price/","模型比价"],["selector.html","选型顾问"],["blacklist.html","避雷黑名单"],["pitfalls.html","避坑指南"],["method.html","方法论"],["tools.html","自测工具箱"]];
     const nav = '<nav class="nav-links" aria-label="主导航">' + NAV.map(([h,l]) => '<a href="'+h+'"'+(h===file?' class="active" aria-current="page"':'')+'>'+l+'</a>').join("") + '</nav>';
     html = html.replace(/<nav\b[^>]*>[\s\S]*?<\/nav>/, nav);
   }
@@ -278,7 +278,7 @@ node deploy/deploy.mjs --to=local:D:/tmp/relay-out            # 宝塔面板用�
 手动方式(等价):把 \`dist-relay/\` 内**除 DEPLOY.md / robots-snippet.txt 外**的所有文件,上传到 WordPress 站点根目录下的 \`relay/\`:
 \`\`\`
 /www/wwwroot/你的站点/relay/        # 宝塔/lnmp 典型路径
-  index.html  ranking.html  ...  data/sites.json  sitemap.xml
+  index.html ... data/sites.json  sitemap.xml
 \`\`\`
 > 必须是**站点根目录**(与 index.php、wp-content 同级),不是 wp-content 里。
 
