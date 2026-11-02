@@ -1,0 +1,22 @@
+name: dashboard-contract
+
+# 看板挂载与倍率口径契约校验(docs/dashboard-contract.md)。
+# 目的: 防止两仓库(主站 relaylens / 看板 renlay-ranking)口径再次漂移
+#       —— 如 UUAPI 分组倍率事件(2026-11-02): 探针没读全局倍率表导致与看板对不上。
+# CI 只校验主站侧;看板侧用 `node scripts/check-dashboard-contract.cjs --dashboard <路径>` 本地校验。
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 校验看板挂载与倍率口径契约
+        run: node scripts/check-dashboard-contract.cjs

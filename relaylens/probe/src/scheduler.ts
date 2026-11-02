@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import cron from "node-cron";
+import { spawn } from "node:child_process";
 import { runHealth } from "./probes/health.js";
 import { runPrice } from "./probes/price.js";
 import { runBilling, persistBilling, type BillingResult } from "./probes/billing.js";
@@ -114,6 +115,9 @@ export async function runRound(cfg: ProbeConfig, task: TaskName, sites?: SiteCon
   // 健康轮收尾:刷新 ops.json 并把新增 critical 告警推送到企微(未配置网关时安静跳过)
   // billing 轮同样刷新:对账超差(mismatch)等 critical 发现要能推出去
   if (task === "health" || task === "billing") await pushOpsAlerts(cfg);
+  // 看板联动刷新(2026-11-02 统一调度):price 轮完成后异步触发看板抓取,
+  // 让 renlay-ranking 与探针同一时钟;未配置 dashboard.scrapeCmd 时安静跳过。
+  if (task === "price") triggerDashboardScrape(cfg);
   if (task === "billing" && billing.length) await pushBillingRound(cfg, billing);
 }
 
@@ -195,6 +199,20 @@ export function startScheduler(cfg: ProbeConfig) {
     cron.schedule(cfg.schedules.tokens, () => { void runTokensRound(cfg); });
     console.log("⏱️ tokens 注入检测已启用:" + cfg.schedules.tokens);
   }
+}
+
+/** 触发看板抓取(异步,不阻塞探针):spawn 看板仓库的 scrape 命令,失败不传染探针。
+ *  统一调度收口(2026-11-02):price 轮(每6h)驱动看板同频刷新,两套数据同一时钟。 */
+function triggerDashboardScrape(cfg: ProbeConfig): void {
+  const dash = (cfg as { dashboard?: { cwd?: string; scrapeCmd?: string } }).dashboard;
+  if (!dash?.scrapeCmd) return;
+  try {
+    const [file, ...args] = dash.scrapeCmd.split(/\s+/);
+    const child = spawn(file, args, { cwd: dash.cwd, detached: true, stdio: "ignore" });
+    child.on("error", () => {});
+    child.unref();
+    console.log(`▸ 已触发看板抓取(异步): ${dash.scrapeCmd}`);
+  } catch { /* 看板刷新失败不传染探针 */ }
 }
 
 /** perf 轮:全站主模型 8 次 + 推理档加测(与 cli perf 同一套探针;单站失败不传染) */
