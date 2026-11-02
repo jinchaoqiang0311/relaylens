@@ -45,17 +45,36 @@ var RL = (function () {
 })();
 
 /* dashApi —— 读看板 JSON 接口(/price/api/*,同源反代)。
- * 看板死(探活失败)时 60s 内直接拒绝,不反复敲死端口;活时正常 fetch。 */
+ * 2026-11-02 收敛收口:看板实时不可达时,fallback 到构建期生成的静态快照
+ * /data/dashboard-snapshot.json —— 线上无反代也能显示看板数据,不再永远降级成旧探针快照。 */
+var DASH_SNAP = null; /* null=未加载, undefined=无快照 */
+function ensureSnapshot() {
+  if (DASH_SNAP !== null) return Promise.resolve(DASH_SNAP);
+  return fetch("/data/dashboard-snapshot.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : undefined; })
+    .then(function (j) { DASH_SNAP = j; return j; })
+    .catch(function () { DASH_SNAP = undefined; return undefined; });
+}
+function dashSnapshotFallback(p) {
+  return ensureSnapshot().then(function (s) {
+    if (!s) throw new Error("no snapshot");
+    if (/\/api\/stations/.test(p)) return s.stations;
+    if (/\/api\/summary/.test(p)) return s.summary;
+    var m = p.match(/[?&]model=([^&]+)/);
+    if (m && s.compare) return s.compare[decodeURIComponent(m[1])];
+    throw new Error("snapshot miss: " + p);
+  });
+}
 function dashApi(p) {
   return dashProbe().then(function (alive) {
-    if (!alive) throw new Error("dash down");
+    if (!alive) return dashSnapshotFallback(p); /* 探活死 → 直接静态快照 */
     var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 6000);
     return fetch(p, { cache: "no-store", signal: ctrl ? ctrl.signal : undefined }).then(function (r) {
       clearTimeout(timer);
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
-    });
+    }).catch(function () { return dashSnapshotFallback(p); }); /* 实时失败 → 快照兜底 */
   });
 }
 

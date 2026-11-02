@@ -150,6 +150,32 @@ if (fs.existsSync(path.join(SRC, "data"))) {
     recursive: true, filter: src => !INTERNAL.includes("data/" + path.basename(src)),
   });
 }
+// ⑥ 看板静态快照(2026-11-02 收敛收口):构建时连本地 8899,落 data/dashboard-snapshot.json。
+//    前端 dashApi 实时不可达时 fallback 到此,线上无反代也能显示看板数据;8899 不在则跳过。
+const DASH_URL = "http://127.0.0.1:8899";
+const buildDashboardSnapshot = async () => {
+  try {
+    const tabs = JSON.parse(fs.readFileSync(path.join(OUT, "data", "sites.json"), "utf8"));
+    const compare = {};
+    for (const t of (tabs.compare && tabs.compare.tabs) || []) {
+      if (!t.key) continue;
+      try {
+        const r = await fetch(DASH_URL + "/api/compare?model=" + encodeURIComponent(t.key));
+        if (r.ok) compare[t.key] = await r.json();
+      } catch (e) { /* 单模型失败不影响整体 */ }
+    }
+    let stations = null, summary = null;
+    try { const r = await fetch(DASH_URL + "/api/stations"); if (r.ok) stations = await r.json(); } catch (e) {}
+    try { const r = await fetch(DASH_URL + "/api/summary"); if (r.ok) summary = await r.json(); } catch (e) {}
+    const snap = { generatedAt: new Date().toISOString(), stations, summary, compare };
+    fs.mkdirSync(path.join(OUT, "data"), { recursive: true });
+    fs.writeFileSync(path.join(OUT, "data", "dashboard-snapshot.json"), JSON.stringify(snap));
+    console.log(`✓ 看板快照已生成: ${Object.keys(compare).length} 模型 · stations=${!!stations} · summary=${!!summary}`);
+  } catch (e) {
+    console.log("⚠ 看板快照跳过(8899 不可达): " + e.message);
+  }
+};
+const dashReady = buildDashboardSnapshot();
 if (fs.existsSync(path.join(SRC, "assets"))) {
   /* 手动递归拷贝:fs.cpSync 对本机 assets/fonts 目录会静默 127 退出(逐文件拷贝正常,2026-11-01) */
   const copyDir = (srcDir, destDir) => {
@@ -307,11 +333,17 @@ node build-relay.js                          # 重新构建
 - 静态包内所有引用均为相对路径,换子目录名(如 /relayLens/)只需同步改 base 并重构建。
 `);
 
-/* 换名发布:临时目录 → 正式目录(rm+rename 窗口极小;若 rename 失败,tmp 保留供手工恢复) */
-fs.rmSync(OUT_FINAL, { recursive: true, force: true });
-fs.renameSync(OUT, OUT_FINAL);
+/* 换名发布:临时目录 → 正式目录(rm+rename 窗口极小;若 rename 失败,tmp 保留供手工恢复)
+   2026-11-02 收敛收口:先等看板快照生成(无 8899 则跳过),再换名发布。 */
+dashReady.then(function () {
+  fs.rmSync(OUT_FINAL, { recursive: true, force: true });
+  fs.renameSync(OUT, OUT_FINAL);
 
-console.log(`✅ 构建完成 → dist-relay/`);
-console.log(`   页面 ${pages.length} 个进包(${NOINDEX_PAGES.length} 个 noindex 不注入 canonical/OG)${cfg.mainSite && !/YOUR-DOMAIN/.test(cfg.mainSite) ? " + 返回主站" : ""}${cfg.icp ? " + ICP" : ""}${cfg.analyticsHtml ? " + 统计" : ""}`);
-console.log(`   sitemap.xml / robots-snippet.txt / DEPLOY.md 已生成`);
-if (/YOUR-DOMAIN/.test(cfg.base)) console.log(`   ⚠ site.config.json 仍是占位域名,部署前请修改 base/mainSite/icp`);
+  console.log(`✅ 构建完成 → dist-relay/`);
+  console.log(`   页面 ${pages.length} 个进包(${NOINDEX_PAGES.length} 个 noindex 不注入 canonical/OG)${cfg.mainSite && !/YOUR-DOMAIN/.test(cfg.mainSite) ? " + 返回主站" : ""}${cfg.icp ? " + ICP" : ""}${cfg.analyticsHtml ? " + 统计" : ""}`);
+  console.log(`   sitemap.xml / robots-snippet.txt / DEPLOY.md 已生成`);
+  if (/YOUR-DOMAIN/.test(cfg.base)) console.log(`   ⚠ site.config.json 仍是占位域名,部署前请修改 base/mainSite/icp`);
+}).catch(function (e) {
+  console.error("✗ 构建收尾失败:", e && e.message);
+  process.exit(1);
+});
