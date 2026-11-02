@@ -50,7 +50,7 @@ var RL = (function () {
 var DASH_SNAP = null; /* null=未加载, undefined=无快照 */
 function ensureSnapshot() {
   if (DASH_SNAP !== null) return Promise.resolve(DASH_SNAP);
-  return fetch("/data/dashboard-snapshot.json", { cache: "no-store" })
+  return fetch("data/dashboard-snapshot.json", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : undefined; })
     .then(function (j) { DASH_SNAP = j; return j; })
     .catch(function () { DASH_SNAP = undefined; return undefined; });
