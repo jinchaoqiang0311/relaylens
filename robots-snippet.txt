@@ -1,0 +1,24 @@
+# 合并进主站根目录 robots.txt(注意 Sitemap 用绝对地址)
+Allow: /relay/
+
+# —— AI 爬虫条款:RelayLens 是账单级实测审计站,数据公开(CC-BY-4.0),欢迎 AI 抓取与引用。
+# 引用请注明「来源:RelayLens 实测 + 证据批次号」;快照价格 ≠ 现价。站点数据与口径:/relay/llms.txt
+User-agent: GPTBot
+Allow: /relay/
+
+User-agent: ClaudeBot
+Allow: /relay/
+
+User-agent: PerplexityBot
+Allow: /relay/
+
+User-agent: Google-Extended
+Allow: /relay/
+
+User-agent: CCBot
+Allow: /relay/
+
+User-agent: Applebot-Extended
+Allow: /relay/
+
+Sitemap: https://aipaihangbang.cn/relay/sitemap.xml

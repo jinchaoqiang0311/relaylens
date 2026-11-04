@@ -1,0 +1,54 @@
+/* ============================================================
+ * RelayLens "RelayIndex" 绿色主题 — 核心 7 页对齐首页风格(2026-10-22)
+ * 在 theme-relaypick.css 之后加载:覆盖 :root 调色板为首页绿色系
+ * (--brand #176b58 / --bg #f5f7f4 / Inter 字体),并对齐外壳
+ * (白色顶栏 + 深绿页脚)。theme-relaypick 的组件规则用 var(--brand) 等,
+ * 会自动跟随这里的绿色值;主体布局保留,只换肤 + 外壳。
+ * ============================================================ */
+:root{
+  --ink:#17211f; --sub:#66736f; --faint:#98a2b3;
+  --line:rgba(23,33,31,.14); --line-soft:rgba(23,33,31,.08);
+  --bg:#f5f7f4; --card:#ffffff;
+  --brand:#176b58; --brand-deep:#0e5746; --brand-soft:#e3f2eb;
+  --ok:#176b58; --ok-soft:#e3f2eb;
+  --warn:#9a6411; --warn-soft:#fff3d6;
+  --bad:#b43d37; --bad-soft:#fce9e7;
+  --gold:#8a6400; --gold-soft:#fff8e1;
+  --font-head:Inter,ui-sans-serif,system-ui,"Segoe UI","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-body:Inter,ui-sans-serif,system-ui,"Segoe UI","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+}
+/* 外壳:白色顶栏 + 深绿页脚,对齐首页 */
+header{background:rgba(255,255,255,.96)!important;border-bottom:1px solid var(--line)!important}
+footer{background:#202c27!important;color:#d5e1da!important;border-top:1px solid #202c27!important}
+footer h4,footer .logo{color:#fff!important}
+footer a{color:#d3e1d8!important}
+footer a:hover{color:#d6ed7a!important}
+footer .fine,footer small{color:#aab8b0!important}
+/* 工具提示与选区:深绿,对齐首页 */
+[data-tip]:hover::after{background:#18231f!important}
+[data-tip]:hover::before{border-top-color:#18231f!important}
+::selection{background:#a8d5bf;color:#0e5746}
+/* 统一导航(构建期注入的 .nav-links;!important 盖过 theme-relaypick 的 header nav a 规则) */
+/* 统一导航:几何锁定(2026-10-22)—— 按钮尺寸/位置不随 hover/active/点击/屏幕尺寸变化。
+   ①字重恒定 500(原 active 700 会让文字变宽、把同行按钮推走) ②flex:0 0 auto 不伸缩
+   ③nowrap + 横向滚动取代换行(换行会改变顶栏高度并造成位移) ④active 指示用 inset 阴影,不占布局空间 */
+.nav-links{display:flex!important;gap:2px!important;flex:1!important;flex-wrap:nowrap!important;align-items:center!important;overflow-x:auto!important;scrollbar-width:none!important;-ms-overflow-style:none!important}
+.nav-links::-webkit-scrollbar{display:none!important}
+.nav-links a{flex:0 0 auto!important;box-sizing:border-box!important;font-size:13px!important;font-weight:500!important;color:var(--sub)!important;padding:7px 11px!important;border-radius:6px!important;white-space:nowrap!important;transition:background-color .15s,color .15s!important}
+.nav-links a:hover{background:var(--brand-soft)!important;color:var(--brand)!important}
+.nav-links a.active{background:var(--brand-soft)!important;color:var(--brand-deep)!important;font-weight:500!important;box-shadow:inset 0 -2px 0 var(--brand)!important}
+/* 顶栏几何锁 v3(2026-10-28):导航居中,但切页零移位。
+   ① header 行统一 1560px 居中、同高 60px、同间距 22px——各页容器(1280/1560/1160)
+      与内联样式全部被 !important 压平,logo/菜单起点每页一致;
+   ② html 永久预留纵向滚动条槽位(scrollbar-gutter:stable)——滚动条出现/消失不再
+      让居中容器横跳,这是居中方案下唯一的横移源,已消除。 */
+html{scrollbar-gutter:stable}
+header{position:sticky!important;top:0!important;left:0!important;right:0!important;width:100%!important}
+header > .wrap,header > .nav,header > .shell,header > .topbar-inner{
+  max-width:1560px!important;width:auto!important;margin:0 auto!important;padding:0 20px!important;
+  min-height:60px!important;height:60px!important;
+  display:flex!important;align-items:center!important;gap:22px!important}
+header .logo,header .brand{flex:0 0 auto!important;min-width:150px!important;gap:10px!important;
+  font-size:17px!important;font-weight:700!important}
+header .logo .mark,header .brand-mark{width:30px!important;height:30px!important;flex:none!important;
+  border-radius:7px!important;font-size:15px!important}

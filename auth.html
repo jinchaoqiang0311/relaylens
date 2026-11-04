@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>登录跳转 · RelayLens</title>
+  <link rel="stylesheet" href="assets/theme-relaypick.css">
+<link rel="stylesheet" href="assets/theme-relayindex.css">
+</head>
+<body>
+<p style="font:14px system-ui;padding:40px;text-align:center;color:#667085">登录处理中,正在返回原页面……</p>
+<script>
+/* GitHub OAuth 回跳落地:存会话 → 返回来源页(localStorage.rl_return) */
+try {
+  var m = location.hash.match(/session=([a-f0-9]+)/);
+  if (!m) throw new Error("回跳缺少会话参数");
+  localStorage.setItem("rl_session", JSON.stringify({ token: m[1], expires_at: new Date(Date.now() + 30 * 86400e3).toISOString() }));
+  var back = localStorage.getItem("rl_return") || "index.html";
+  localStorage.removeItem("rl_return");
+  location.replace(back);
+} catch (e) {
+  document.body.innerHTML = '<p style="font:14px system-ui;padding:40px;text-align:center;color:#b42318">登录回跳异常:<br>' + e.message + '<br><a href="index.html">返回首页</a></p>';
+}
+</script>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>

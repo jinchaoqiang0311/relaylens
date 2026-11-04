@@ -1,0 +1,168 @@
+/* ============================================================
+ * RelayLens "RelayPick-style" theme override
+ * Loaded AFTER each page's inline <style> (injected before </head>).
+ * Design tokens reproduced from relaypick.com (2026-10):
+ *   bg #f2f2f3 / surface #e9e9ea / text #1d1f20 / accent #5980a6
+ *   headings Barlow Condensed, body Barlow + system CJK fallback
+ * ============================================================ */
+
+/* ---------- fonts (self-hosted, latin subset; CJK falls back) ---------- */
+@font-face{font-family:"Barlow";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/Barlow-400.woff2") format("woff2")}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:500;font-display:swap;src:url("fonts/Barlow-500.woff2") format("woff2")}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:600;font-display:swap;src:url("fonts/Barlow-600.woff2") format("woff2")}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/Barlow-700.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:500;font-display:swap;src:url("fonts/BarlowCondensed-500.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:600;font-display:swap;src:url("fonts/BarlowCondensed-600.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/BarlowCondensed-700.woff2") format("woff2")}
+
+/* ---------- design tokens (override each page's :root) ---------- */
+:root{
+  --ink:#1d1f20;
+  --sub:#5d5d60;
+  --faint:#b7b7ba;
+  --line:rgba(29,31,32,.14);
+  --line-soft:rgba(29,31,32,.08);
+  --bg:#f2f2f3;
+  --card:#f7f7f8;
+  --brand:#5980a6;
+  --brand-deep:#416180;
+  --brand-soft:#eef6ff;
+  --ok:#1d7a4f;
+  --ok-soft:#e8f3ec;
+  --warn:#a05a00;
+  --warn-soft:#faf1e0;
+  --bad:#b3402f;
+  --bad-soft:#f9ebe8;
+  --gold:#8a6400;
+  --gold-soft:#f7f1df;
+  --r:6px;
+  --font-head:"Barlow Condensed","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-body:"Barlow","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+
+/* ---------- base typography ---------- */
+body{font-family:var(--font-body)!important;color:var(--ink)!important;background:var(--bg)!important;line-height:1.55}
+h1,h2,h3,h4{font-family:var(--font-head)!important;font-weight:700!important;letter-spacing:.01em}
+h1{font-size:clamp(34px,5vw,52px)!important;line-height:1.12}
+h2{font-size:clamp(24px,3.2vw,34px)!important;line-height:1.18}
+h3{font-size:20px!important;line-height:1.3}
+.num,.mono,code,kbd{font-variant-numeric:tabular-nums}
+
+/* ---------- header / nav ---------- */
+header{background:rgba(242,242,243,.95)!important;border-bottom:1px solid var(--line-soft)!important;backdrop-filter:blur(8px)}
+.logo{font-family:var(--font-head)!important;font-weight:700!important;letter-spacing:.02em}
+.logo .mark{background:var(--brand)!important;border-radius:4px}
+.nav-links a{border-radius:4px!important;font-weight:500}
+.nav-links a:hover{background:#fff!important;color:var(--brand)!important}
+header .logo,header nav a{color:var(--ink)!important}
+header nav a:hover{color:var(--brand)!important}
+header .logo .mark{color:#fff!important}
+
+/* ---------- buttons: flat, square-ish ---------- */
+.btn{border-radius:4px!important;font-weight:600!important;letter-spacing:.01em}
+.btn-primary{background:var(--brand)!important;color:#fff!important}
+.btn-primary:hover{background:var(--brand-deep)!important}
+.btn-ghost{background:transparent!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+.btn-ghost:hover{border-color:var(--brand)!important;color:var(--brand)!important;background:transparent!important}
+
+/* ---------- hero: dark gradient -> flat light ---------- */
+.hero{background:var(--bg)!important;color:var(--ink)!important}
+.hero h1{font-size:clamp(34px,4.6vw,52px)!important;font-weight:700!important}
+.hero h1 em{background:none!important;-webkit-text-fill-color:currentColor;color:var(--brand)!important;font-style:normal}
+.hero .sub{color:var(--sub)!important;opacity:1!important}
+.trust-line{background:#fff!important;border:1px solid var(--line)!important;color:var(--ink)!important;border-radius:4px!important}
+.trust-line b{color:var(--brand-deep)!important}
+.hero-meta{color:var(--sub)!important;opacity:1!important}
+.btn-light{background:var(--brand)!important;color:#fff!important}
+.btn-light:hover{transform:none!important;background:var(--brand-deep)!important}
+.btn-outline{color:var(--ink)!important;border:1px solid var(--line)!important}
+.btn-outline:hover{background:rgba(29,31,32,.05)!important}
+
+/* ---------- scene cards & status board inside hero ---------- */
+.scene{background:#fff!important;border:1px solid var(--line-soft)!important;color:var(--ink)!important;border-radius:6px!important}
+.scene:hover{background:#fafafa!important;transform:none!important;border-color:var(--line)!important}
+.scene h3{font-size:16px!important}
+.scene p{color:var(--sub)!important;opacity:1!important}
+.scene .metric{background:var(--brand-soft)!important;border-radius:4px!important;color:var(--ink)}
+.scene .metric b{color:var(--brand-deep)!important}
+.scene.risk{border-color:rgba(179,64,47,.4)!important}
+.scene.risk .metric{background:var(--bad-soft)!important}
+.scene.risk .metric b{color:var(--bad)!important}
+.scene .arrow{color:var(--faint)!important}
+.status-board{background:#fff!important;border:1px solid var(--line-soft)!important;border-radius:6px!important}
+.sb-head{border-bottom:1px solid var(--line-soft)!important}
+.sb-item{border-right:1px solid var(--line-soft)!important}
+.sb-item:hover{background:rgba(29,31,32,.03)!important}
+.sb-item .k,.sb-item .t{color:var(--faint)!important}
+.tag-real{background:var(--ok)!important;color:#fff!important}
+.tag-demo{background:rgba(29,31,32,.08)!important;color:var(--sub)!important}
+.sb-item.real{background:rgba(29,122,79,.05)!important;box-shadow:inset 0 -2px 0 rgba(29,122,79,.45)}
+.price-up{color:var(--bad)!important}
+.price-dn{color:var(--ok)!important}
+
+/* ---------- cards / panels: flat gray, thin border, no glow ---------- */
+.evidence,.scene,.status-board{box-shadow:none!important}
+.evidence{border-radius:6px!important;background:var(--card)!important;border:1px solid var(--line-soft)!important}
+.panel{border-radius:6px!important;box-shadow:0 2px 10px rgba(29,31,32,.08)!important}
+.match{border-radius:4px!important}
+
+/* ---------- chips ---------- */
+.md-chip{border-radius:4px!important;background:#fff!important;border:1px solid var(--line-soft)!important}
+.md-chip:hover{border-color:var(--brand)!important;color:var(--brand)!important;background:#fff!important}
+.md-chip .from{color:var(--ok)!important}
+
+/* ---------- tables: relaypick data-table look ---------- */
+table{border-collapse:collapse!important;font-variant-numeric:tabular-nums}
+th{font-size:11.5px!important;font-weight:500!important;color:var(--sub)!important;letter-spacing:.03em;text-align:left}
+td{border-bottom:1px solid var(--line-soft)!important}
+tbody tr{transition:background-color .15s ease-out}
+tbody tr:hover{background:rgba(29,31,32,.03)!important}
+
+/* 注:原「全模型最低价」视图的表格样式已随该视图下线一并移除(2026-10-21) */
+
+/* ---------- badges / tags: outline pill, accent border ---------- */
+[class*="badge"]{border-radius:3px!important}
+[class*="badge"][data-variant],.tag-outline{border:1px solid var(--brand)!important;background:transparent!important;color:var(--brand)!important}
+
+/* ---------- subpage heroes: flatten to light ---------- */
+.page-hero,.site-hero{background:var(--bg)!important;color:var(--ink)!important}
+.page-hero .crumb,.site-hero .crumb{color:var(--sub)!important;opacity:1!important}
+.crumb a:hover{color:var(--brand)!important}
+.page-hero .sub,.site-hero .sub{color:var(--sub)!important;opacity:1!important}
+.ph-stats .s{border-left-color:var(--line-soft)!important}
+.ph-stats .v{color:var(--brand-deep)!important}
+.ph-stats .k{color:var(--sub)!important;opacity:1!important}
+
+/* ---------- CTA banners: light card with accent border ---------- */
+.real-banner,.subscribe{background:#fff!important;color:var(--ink)!important;border:1px solid var(--line-soft)!important;border-radius:6px!important;box-shadow:none!important}
+
+/* ---------- footer: light, divider only ---------- */
+footer{background:var(--bg)!important;color:var(--sub)!important;border-top:1px solid var(--line)!important}
+footer h4{color:var(--ink)!important}
+footer a{color:var(--sub)!important}
+footer a:hover{color:var(--brand)!important}
+footer .fine{color:var(--faint)!important}
+footer .logo{color:var(--ink)!important}
+footer .logo[style]{color:var(--ink)!important}
+
+/* ---------- inline legacy-brand colors injected by JS ---------- */
+[style*="2b5cf0"],[style*="2563eb"]{background:var(--brand)!important}
+
+/* ---------- hover tooltip (data-tip) ---------- */
+[data-tip]{position:relative;cursor:help;border-bottom:1px dashed var(--faint)}
+[data-tip]:hover::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:0;z-index:90;
+  width:max-content;max-width:340px;background:#1d2d3d;color:#fff;
+  font-size:12px;font-weight:400;line-height:1.6;letter-spacing:0;
+  padding:8px 11px;border-radius:4px;white-space:normal;text-align:left;
+  box-shadow:0 4px 16px rgba(29,31,32,.22)
+}
+[data-tip]:hover::before{
+  content:"";position:absolute;bottom:100%;left:14px;z-index:91;
+  border:5px solid transparent;border-top-color:#1d2d3d
+}
+[data-tip] b{color:inherit}
+
+/* ---------- generic accents ---------- */
+a:hover{color:var(--brand)}
+::selection{background:#b5d9fd;color:#1d2d3d}

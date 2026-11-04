@@ -1,0 +1,90 @@
+/* RelayLens 测速直达 · 样式
+   移植自「双视角真实探测」规格的视觉手法,适配本站浅色主题(原规格是深色栈):
+   ① 硬边栅格:容器 gap-px + 容器底色=发丝线色,间隙透出成为分隔线(不用 border 拼,避免双线)
+   ② 数字一律等宽 + tabular-nums,否则逐轮回填时数值左右抖动
+   ③ 全站唯一循环动画 = 当前进行中那颗指示灯的呼吸;其余静态,视线自然落到进度前沿
+   ④ prefers-reduced-motion 降级;弹窗内部不加滚动入场动画(无头浏览器不滚动会截出空白) */
+:root{
+  --sp-hairline:#e4e7ec; --sp-surface:#fff; --sp-sunken:#f7f9fc;
+  --sp-ink:#101828; --sp-sub:#475467; --sp-faint:#98a2b3;
+  --sp-radar:#0d9488; --sp-pass:#067647; --sp-amber:#b54708; --sp-alert:#b42318; --sp-brand:#2b5cf0;
+}
+/* 测速直达:主操作按钮(实心雷达青 + 白字),在表格里必须一眼可辨 ——
+   它是全站唯一"用户可自己复现我们结论"的入口,不该长得像个次要链接 */
+.sp-btn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12.5px;font-weight:800;letter-spacing:.02em;
+  padding:8px 15px;border:1px solid #0b7d72;border-radius:9px;background:#0d9488;color:#fff;
+  cursor:pointer;transition:.15s;white-space:nowrap;vertical-align:middle;box-shadow:0 2px 8px rgba(13,148,136,.28)}
+.sp-btn:hover{background:#0f7d74;border-color:#0b6d66;box-shadow:0 4px 14px rgba(13,148,136,.36);transform:translateY(-1px)}
+.sp-btn:active{transform:translateY(0)}
+.sp-btn:focus-visible{outline:2px solid #0d9488;outline-offset:2px}
+.sp-btn::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.45)}
+@media (prefers-reduced-motion: reduce){.sp-btn:hover{transform:none}}
+
+.sp-mask{position:fixed;inset:0;background:rgba(16,24,40,.42);backdrop-filter:blur(2px);z-index:900;
+  display:flex;align-items:center;justify-content:center;padding:18px}
+.sp-dlg{background:var(--sp-surface);border:1px solid var(--sp-hairline);border-radius:12px;width:min(560px,100%);
+  max-height:88vh;overflow-y:auto;padding:20px 22px;box-shadow:0 24px 60px rgba(16,24,40,.22)}
+.sp-eyebrow{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--sp-faint)}
+.sp-title{font-size:18px;font-weight:800;margin:5px 0 2px}
+.sp-sub{font-size:12px;color:var(--sp-sub);word-break:break-all}
+.sp-x{position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;line-height:1;color:var(--sp-faint);cursor:pointer}
+.sp-head{position:relative}
+
+/* 硬边栅格:gap-px + 父底色列分隔线 */
+.sp-band{display:grid;gap:1px;background:var(--sp-hairline);border:1px solid var(--sp-hairline);border-radius:8px;overflow:hidden;margin-top:10px}
+.sp-band.c2{grid-template-columns:1fr 1fr}
+.sp-band.c3{grid-template-columns:repeat(3,1fr)}
+.sp-cell{background:var(--sp-surface);padding:10px 12px}
+.sp-cell.sunken{background:var(--sp-sunken)}
+.sp-k{font-family:Consolas,monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--sp-faint)}
+.sp-v{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-variant-numeric:tabular-nums;font-size:17px;font-weight:700;margin-top:4px;color:var(--sp-radar)}
+.sp-v.mute{color:var(--sp-faint)}
+.sp-v.pass{color:var(--sp-pass)}.sp-v.amber{color:var(--sp-amber)}.sp-v.alert{color:var(--sp-alert)}
+.sp-note{font-family:Consolas,monospace;font-size:10px;color:var(--sp-faint);margin-top:3px}
+
+.sp-sec{font-family:Consolas,monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sp-faint);margin:14px 0 6px}
+.sp-rounds{list-style:none;margin:0;padding:0}
+.sp-rounds li{display:flex;align-items:center;gap:9px;font-family:Consolas,monospace;font-size:11px;padding:3px 0;font-variant-numeric:tabular-nums}
+.sp-rounds .lbl{color:var(--sp-sub)}
+.sp-rounds .val{margin-left:auto;color:var(--sp-ink)}
+.sp-rounds .val.alert{color:var(--sp-alert)}
+.sp-dot{width:6px;height:6px;border-radius:50%;background:var(--sp-hairline);flex:0 0 auto}
+.sp-dot.ok{background:var(--sp-pass)}
+.sp-dot.fail{background:var(--sp-alert)}
+.sp-dot.run{background:var(--sp-radar);animation:sp-pulse 2s ease-in-out infinite}   /* ★ 唯一循环动画 */
+.sp-dot.wait{background:var(--sp-hairline)}
+@keyframes sp-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.72)}}
+
+.sp-badge{display:inline-flex;align-items:center;font-family:Consolas,monospace;font-size:10px;letter-spacing:.06em;
+  border:1px solid;border-radius:4px;padding:2px 7px;white-space:nowrap}
+.sp-badge.pass{border-color:rgba(6,118,71,.35);background:rgba(6,118,71,.08);color:var(--sp-pass)}
+.sp-badge.radar{border-color:rgba(13,148,136,.35);background:rgba(13,148,136,.08);color:var(--sp-radar)}
+.sp-badge.amber{border-color:rgba(181,71,8,.35);background:rgba(181,71,8,.08);color:var(--sp-amber)}
+.sp-badge.alert{border-color:rgba(180,35,24,.4);background:rgba(180,35,24,.08);color:var(--sp-alert)}
+.sp-badge.mute{border-color:var(--sp-hairline);background:var(--sp-sunken);color:var(--sp-faint)}
+
+.sp-alert-box{border:1px solid rgba(181,71,8,.32);background:rgba(181,71,8,.06);color:var(--sp-amber);
+  border-radius:8px;padding:9px 12px;font-size:11.5px;line-height:1.65;margin-top:10px}
+.sp-alert-box.red{border-color:rgba(180,35,24,.32);background:rgba(180,35,24,.06);color:var(--sp-alert)}
+.sp-trend{display:flex;align-items:center;justify-content:gap;gap:12px;border:1px solid var(--sp-hairline);
+  border-radius:8px;padding:8px 12px;margin-top:12px;background:var(--sp-surface)}
+.sp-trend{justify-content:space-between}
+.sp-decl{font-size:11px;color:var(--sp-sub);line-height:1.75;margin-top:12px;padding-top:11px;border-top:1px solid var(--sp-hairline)}
+.sp-decl b{color:var(--sp-ink)}
+.sp-rowline{display:flex;align-items:center;gap:8px;font-family:Consolas,monospace;font-size:10.5px;padding:3px 0;font-variant-numeric:tabular-nums}
+.sp-rowline .val{margin-left:auto}
+@media (prefers-reduced-motion: reduce){
+  .sp-dot.run{animation:none;opacity:1;transform:none}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+
+/* ---- 自带 Key 实测(2026-10-03):key 输入行 ---- */
+.sp-keyrow{display:flex;gap:8px;margin-top:4px}
+.sp-keyrow input{flex:1;min-width:0;font:12px/1.4 inherit;color:inherit;background:var(--sp-sunken);
+  border:1px solid var(--sp-hairline);border-radius:6px;padding:7px 10px;outline:none}
+.sp-keyrow input:focus{border-color:var(--sp-radar)}
+.sp-keyrow #spModel{flex:0 0 34%}
+.sp-keyrow .sp-run{flex:0 0 auto;font-size:12px;letter-spacing:.02em;color:#fff;background:var(--sp-radar,#0d9488);
+  border:none;border-radius:6px;padding:7px 14px;cursor:pointer}
+.sp-keyrow .sp-run:disabled{opacity:.55;cursor:default}

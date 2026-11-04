@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f7f4">
+<title>RelayLens — AI 中转站选站与价格比较 · 账单级实测</title>
+<link rel="canonical" href="https://aipaihangbang.cn/relay/">
+<meta name="description" content="RelayLens:按模型和使用场景比较 AI API 中转站。标价、实测与证据分开展示,数据不足时明确标注。榜单、比价、黑名单数据同源,可溯源到证据批次。">
+<!-- 借用全站统一导航 .nav-links 的样式(几何与其余页面完全一致,避免切页时导航按钮移位)。
+     刻意放在本页 <style> **之前**:本页 :root 变量仍胜出,只取导航规则,不覆盖首页配色。 -->
+<link rel="stylesheet" href="assets/theme-relayindex.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+ :root{
+ color-scheme:light;
+ --ink:#17211f; --muted:#66736f; --soft:#eef2ef; --line:#dce4df;
+ --paper:#fff; --canvas:#f5f7f4;
+ --green:#176b58; --green-strong:#0e5746; --green-soft:#e3f2eb; --lime:#d6ed7a;
+ --amber:#9a6411; --amber-soft:#fff3d6; --red:#b43d37; --red-soft:#fce9e7;
+ --blue:#3266a3; --blue-soft:#eaf1fb;
+ --shadow:0 18px 48px rgba(20,42,34,.14);
+ font-family:Inter,ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei",sans-serif;
+ text-rendering:optimizeLegibility;
+ }
+ *{box-sizing:border-box}
+ body{margin:0;background:var(--canvas);color:var(--ink);font-size:14px;line-height:1.5}
+ button,input,select{font:inherit}
+ a{color:inherit;text-decoration:none}
+ .shell{width:min(1280px,calc(100% - 48px));margin:0 auto}
+ .topbar{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+ .topbar-inner{min-height:64px;display:flex;align-items:center;gap:28px}
+ .brand{display:inline-flex;align-items:center;gap:10px;min-width:150px}
+ .brand-mark{width:30px;height:30px;border-radius:7px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;position:relative}
+ .brand-mark::after{content:"";position:absolute;width:6px;height:6px;right:3px;top:3px;border-radius:50%;background:var(--lime)}
+ .brand-name{font-size:16px;font-weight:750}
+ .brand-name span{color:var(--green)}
+ /* 顶部导航几何锁定(2026-10-22):按钮尺寸与位置不随 hover/active/点击/窗口尺寸变化而移动。
+    ①字重全态恒定 500(原 active 650 会让文字变宽、把同行按钮推走)
+    ②flex:0 0 auto 不伸缩 ③nowrap + 横向滚动取代换行(换行会改变顶栏高度并造成位移)
+    ④active 指示改用 inset 阴影,不占任何布局空间 */
+ .top-actions{display:flex;align-items:center;gap:9px}
+ .primary-button{min-height:36px;display:inline-flex;align-items:center;gap:7px;border-radius:6px;padding:7px 13px;cursor:pointer;border:1px solid transparent;font-weight:650;font-size:13px;background:var(--green);color:#fff}
+ .primary-button:hover{background:var(--green-strong)}
+ .disclose{border-bottom:1px solid #d7e7be;background:#eff6de;color:#3c5423}
+ .disclose-inner{min-height:36px;display:flex;align-items:center;gap:9px;font-size:12px;flex-wrap:wrap}
+ .disclose b{font-weight:700}
+ .disclose .dot{width:7px;height:7px;border-radius:50%;background:#32a276;box-shadow:0 0 0 3px #e5f4ec}
+ .disclose a{color:#2f5131;font-weight:650;text-decoration:underline}
+ main{padding:26px 0 44px}
+ .intro{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;padding-bottom:18px;flex-wrap:wrap}
+ .eyebrow{text-transform:uppercase;color:var(--green);font-size:10px;font-weight:800;letter-spacing:1px;margin-bottom:5px}
+ h1{font-size:27px;line-height:1.25;margin:0 0 7px;font-weight:720}
+ .intro-copy{max-width:680px;color:var(--muted);margin:0;font-size:13px}
+ .freshness{text-align:right;color:var(--muted);font-size:11px;min-width:150px}
+ .freshness strong{color:var(--ink);font-size:12px;display:block;font-weight:650;margin-bottom:3px}
+ .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#32a276;margin-right:5px;box-shadow:0 0 0 3px #e5f4ec}
+ .metric-band{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:20px;background:rgba(255,255,255,.5)}
+ .metric{padding:13px 18px 14px;min-height:76px;border-right:1px solid var(--line)}
+ .metric:first-child{padding-left:2px}
+ .metric:last-child{border-right:0}
+ .metric-label{color:var(--muted);font-size:11px;margin-bottom:4px}
+ .metric-value{display:flex;align-items:baseline;gap:6px;font-size:21px;line-height:1.1;font-weight:710;font-variant-numeric:tabular-nums}
+ .metric-value small{font-size:11px;font-weight:550;color:var(--muted)}
+ .metric-trend{font-size:10px;color:var(--green);margin-left:auto;font-weight:650}
+ .workspace-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:11px;flex-wrap:wrap}
+ .section-title{display:flex;align-items:center;gap:9px}
+ .section-title h2{font-size:16px;margin:0;font-weight:700}
+ .count{color:var(--muted);font-size:11px}
+ .outline-link{border:0;background:transparent;color:var(--green);cursor:pointer;font-size:12px;font-weight:650;padding:6px 0}
+ .outline-link:hover{color:var(--green-strong);text-decoration:underline}
+ .filters{background:var(--paper);border:1px solid var(--line);border-bottom:0;padding:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+ .search-box{position:relative;min-width:180px;flex:1 1 220px}
+ .search-box .search-symbol{position:absolute;left:11px;top:8px;color:#7d8a84;font-size:15px}
+ .search-box input{width:100%;height:36px;border:1px solid var(--line);border-radius:5px;padding:0 12px 0 32px;outline:none;background:#fbfcfb}
+ input:focus,select:focus{border-color:#61a18d;box-shadow:0 0 0 3px rgba(23,107,88,.11)}
+ .select-wrap{position:relative}
+ .select-wrap select{appearance:none;height:36px;min-width:150px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink);padding:0 30px 0 10px;cursor:pointer;outline:none;font-size:12px}
+ .select-wrap::after{content:"⌄";position:absolute;top:6px;right:10px;pointer-events:none;color:#68766f;font-size:15px}
+ .segmented{display:inline-flex;border:1px solid var(--line);background:#f7f9f7;border-radius:5px;padding:3px;gap:2px;flex-wrap:wrap}
+ /* 分段控件同样锁定(2026-10-22):字重恒定 500,选中态不再加粗(否则文字变宽导致按钮位移) */
+ .segmented button{border:0;background:transparent;border-radius:3px;padding:5px 10px;min-height:26px;cursor:pointer;color:#68746f;font-size:11px;font-weight:500;flex:0 0 auto;white-space:nowrap}
+ .segmented button[aria-pressed="true"]{color:var(--green-strong);background:#fff;box-shadow:0 1px 3px rgba(19,48,37,.13);font-weight:500}
+ .filter-check{display:inline-flex;align-items:center;gap:7px;color:#51605a;font-size:11px;white-space:nowrap;cursor:pointer}
+ .filter-check input{accent-color:var(--green);width:14px;height:14px;margin:0}
+ .filter-spacer{flex:1}
+ .table-shell{background:var(--paper);border:1px solid var(--line);overflow:hidden}
+ .table-scroll{overflow-x:auto}
+ table{width:100%;border-collapse:collapse;text-align:left}
+ .comparison-table{min-width:1080px}
+ th{height:38px;color:#75817c;background:#f8faf8;border-bottom:1px solid var(--line);font-size:10px;font-weight:700;padding:0 12px;white-space:nowrap}
+ td{padding:11px 12px;border-bottom:1px solid #e8eeea;vertical-align:middle;font-size:12px}
+ tbody tr:last-child td{border-bottom:0}
+ tbody tr:hover{background:#f8fbf9}
+ .provider-cell{min-width:180px}
+ .score-cell{min-width:104px}
+ .score-value{display:block;font-size:15px;line-height:1.1;font-weight:760;font-variant-numeric:tabular-nums}
+ .score-high{color:var(--green-strong)}
+ .score-mid{color:var(--amber)}
+ .score-low{color:var(--red)}
+ .score-meter{width:64px;height:5px;margin-top:5px;border-radius:4px;background:#e7eeea;overflow:hidden}
+ .score-meter i{display:block;height:100%;border-radius:inherit;background:#4b9e7e}
+ .score-meter i.mid{background:#d59c3c}
+ .score-meter i.low{background:#c85d54}
+.model-basis{font-size:10px;line-height:1.3;margin-top:3px;color:var(--muted);cursor:help}
+.model-basis.model-basis-ok{color:var(--green-strong);font-weight:600}
+.score-toggle{cursor:pointer;border-bottom:1px dashed currentColor}
+.fx-btn{cursor:pointer;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.fx-btn[aria-expanded="true"]{background:var(--soft)}
+#fx-pop{position:fixed;z-index:60;max-width:min(560px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 34px rgba(23,33,31,.16);padding:12px 14px;max-height:70vh;overflow:auto}
+.fx-scene{color:var(--green-strong);font-weight:700;background:var(--soft);padding:1px 7px;border-radius:6px;margin-right:4px}
+ .truth-cell{min-width:104px}
+ .truth-tag,.status-tag{display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:3px 7px;font-size:10px;font-weight:700;white-space:nowrap}
+ .truth-consistent{color:var(--green-strong);background:var(--green-soft)}
+ .truth-review{color:var(--amber);background:var(--amber-soft)}
+ .truth-suspect{color:var(--red);background:var(--red-soft)}
+ .truth-unknown{color:#5f6b66;background:#edf1ef}
+ .status-good{color:var(--green-strong);background:var(--green-soft)}
+ .status-watch{color:var(--amber);background:var(--amber-soft)}
+ .status-unknown{color:#5f6b66;background:#edf1ef}
+ .health-col{text-align:center}
+ .model-avail{font-size:9px;line-height:1.15;color:#5f6b66;margin-top:3px;white-space:nowrap}
+ .provider-main{display:flex;align-items:center;gap:9px}
+ .provider-logo{width:31px;height:31px;border-radius:7px;flex:0 0 31px;display:grid;place-items:center;font-weight:800;font-size:12px;color:#184b3f;background:#deeee6}
+ .provider-logo.blue{background:#e3edf8;color:#2c5d8f}
+ .provider-logo.orange{background:#fbecda;color:#8a591b}
+ .provider-logo.violet{background:#efe8f7;color:#684e84}
+ .provider-name{font-size:12px;font-weight:700;line-height:1.2;margin-bottom:3px}
+ .provider-meta{color:var(--muted);font-size:10px}
+ .provider-meta+.provider-meta{margin-top:2px}
+ .pay-icon{height:13px;width:13px;vertical-align:-3px;margin-right:1px;border-radius:3px}
+ .price-primary{font-size:13px;font-weight:710;font-variant-numeric:tabular-nums;white-space:nowrap}
+ /* 口径标注 chip:标价(看板实时)与实测到手(探针快照)并存,谁是谁一目了然 */
+ .src-chip{display:inline-block;font-size:8.5px;font-weight:600;padding:0 4px;border-radius:4px;background:var(--brand-soft);color:var(--brand-deep);vertical-align:1px;white-space:nowrap}
+ .src-chip.src-audit{background:#eef2ef;color:var(--sub)}
+.grp-cell{min-width:96px}
+.grp-note{font-size:8.5px;color:var(--warn);font-weight:600;margin-top:2px;white-space:nowrap;letter-spacing:.2px}
+.grp-btn{font-size:9.5px;font-weight:600;color:var(--brand);background:var(--brand-soft);border:0;border-radius:5px;padding:1px 6px;cursor:pointer;font-family:inherit}
+ .grp-btn:hover{background:#d3e8de}
+ .grp-drawer{display:none;margin-top:5px;padding:5px 8px;background:#fbfcfb;border:1px solid var(--line);border-radius:7px;min-width:190px}
+ .grp-drawer.open{display:block}
+ .grp-row{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--sub);padding:2.5px 0}
+ .grp-row .gn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+ .grp-row .gp{white-space:nowrap;font-variant-numeric:tabular-nums}
+ .grp-row.cur{color:var(--brand-deep);font-weight:700}
+ .dash-health{display:inline-block;width:7px;height:7px;border-radius:50%;background:#46a580;margin-left:5px;vertical-align:1px}
+ .dash-health.bad{background:#e0a83f}
+ .price-primary .unit{font-size:9px;color:#74817b;font-weight:500}
+ .price-secondary{margin-top:3px;font-size:10px;color:var(--muted);white-space:nowrap}
+ .metric-number{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
+ .metric-caption{color:#89948f;font-size:10px;margin-top:2px;white-space:nowrap}
+ .detail-button{color:#53635c;cursor:pointer;font-size:11px;font-weight:650}
+ .detail-button:hover{color:var(--green);text-decoration:underline}
+ /* 操作列:详情 + 测速直达 竖排(与榜单页 op-col 同构,尺寸适配本页紧凑表) */
+ .op-stack{display:flex;flex-direction:column;gap:5px;align-items:stretch}
+ .op-stack .sp-btn{width:100%;justify-content:center;font-size:10px;padding:3px 8px;border-radius:7px}
+ .table-footer{min-height:42px;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;gap:14px;color:var(--muted);background:#fcfdfc;border-top:1px solid var(--line);font-size:10px;flex-wrap:wrap}
+ .table-footer strong{color:var(--ink)}
+ .legend{display:flex;gap:11px;align-items:center}
+ .legend span{display:inline-flex;align-items:center;gap:5px}
+ .legend-dot{width:7px;height:7px;border-radius:50%;background:#46a580}
+ .legend-dot.amber{background:#e0a83f}
+ .legend-dot.gray{background:#aab4af}
+ .level-text{font-size:11px;font-weight:600;margin-left:5px;white-space:nowrap;vertical-align:1px}
+ .level-text.ok{color:var(--green)}
+ .level-text.no{color:var(--muted)}
+ .recon-toggle-wrap{margin-top:4px}
+ .recon-toggle{font-size:10px;font-weight:600;color:var(--green);background:var(--green-soft);border:0;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit}
+ .recon-toggle:hover{background:#d3e8de}
+ .recon-row>td{background:#f7faf8;padding:12px 16px;border-top:1px dashed var(--line)}
+ .recon-panel{font-size:11px;color:var(--muted)}
+ .recon-head{margin-bottom:2px}
+ .recon-head b{color:var(--ink);font-variant-numeric:tabular-nums}
+ .recon-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin:8px 0 6px}
+ .recon-table th{font-size:10px;color:var(--muted);text-align:left;padding:4px 10px 4px 0;border-bottom:1px solid var(--line);white-space:nowrap;font-weight:600}
+ .recon-table td{padding:5px 10px 5px 0;border-bottom:1px solid var(--soft);color:var(--ink);white-space:nowrap}
+ .recon-bad{color:var(--red);font-weight:700}
+ .recon-note{font-size:10px;color:var(--muted)}
+ .official-strip{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 15px}
+.official-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.official-head h3{font-size:12px;margin:0;font-weight:700;color:#3d4a44}
+.official-head .of-model{font-size:11px;color:var(--muted)}
+.official-head .of-model b{color:var(--ink)}
+.official-body{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:11px;color:#4e5d56}
+.official-body .of-cell{display:inline-flex;align-items:baseline;gap:5px}
+.official-body .of-cell b{color:var(--ink);font-variant-numeric:tabular-nums;font-size:13px}
+.of-tag{font-size:9px;color:#5f6b66;background:#edf1ef;border-radius:3px;padding:1px 6px}
+.of-na{font-size:11px;color:var(--muted)}
+ .plain-section{border-top:1px solid var(--line);padding-top:14px}
+ .plain-section h2{font-size:15px;margin:0 0 12px;font-weight:700}
+       .signal-row{display:flex;align-items:center;gap:9px;margin:9px 0;font-size:10px;color:#596761}
+ .signal-row label{width:88px}
+ .signal-track{flex:1;height:6px;background:#e8eeea;border-radius:5px;overflow:hidden}
+ .signal-fill{height:100%;background:#4b9e7e;border-radius:5px}
+ .signal-fill.amber{background:#d59c3c}
+ .signal-row strong{width:52px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+ .method-note{border-left:3px solid var(--lime);padding:9px 12px;margin-top:14px;background:#f0f5e4;color:#526044;font-size:10px;line-height:1.6}
+ .method-note strong{color:#354324}
+ .method-note a{color:#2f5131;text-decoration:underline}
+ footer{background:#202c27;color:#d5e1da;padding:22px 0 26px}
+ .footer-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:26px;flex-wrap:wrap}
+ .footer-brand{color:#fff;font-weight:720;font-size:13px;margin-bottom:5px}
+ .footer-copy{color:#aab8b0;font-size:10px;max-width:720px;line-height:1.6}
+ .footer-links{display:flex;gap:14px;font-size:10px;flex-wrap:wrap}
+ .footer-links a{color:#d3e1d8}
+ .footer-links a:hover{color:var(--lime)}
+ .toast{position:fixed;z-index:30;left:50%;bottom:24px;transform:translate(-50%,18px);background:#18231f;color:#fff;border-radius:6px;padding:10px 14px;font-size:12px;opacity:0;pointer-events:none;transition:.18s;box-shadow:var(--shadow)}
+ .toast.show{opacity:1;transform:translate(-50%,0)}
+ @media (max-width:980px){
+ .shell{width:min(100% - 32px,760px)}
+ .topbar-inner{gap:12px;flex-wrap:wrap;padding:10px 0}
+  .metric-band{grid-template-columns:1fr 1fr}
+ }
+ @media (max-width:620px){
+ .metric:nth-child(2){border-right:0}
+ .metric:nth-child(3),.metric:nth-child(4){border-bottom:0}
+  .freshness{text-align:left}
+ }
+</style>
+<link rel="stylesheet" href="assets/speedprobe.css">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RelayLens">
+<meta property="og:title" content="RelayLens — AI 中转站选站与价格比较 · 账单级实测">
+<meta property="og:description" content="RelayLens:按模型和使用场景比较 AI API 中转站。标价、实测与证据分开展示,数据不足时明确标注。榜单、比价、黑名单数据同源,可溯源到证据批次。">
+<meta property="og:url" content="https://aipaihangbang.cn/relay/">
+<meta property="og:image" content="https://aipaihangbang.cn/relay/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<header class="topbar">
+ <div class="shell topbar-inner">
+ <a class="brand" href="index.html" aria-label="RelayLens 首页">
+ <span class="brand-mark">◎</span>
+ <span class="brand-name">Relay<span>Lens</span></span>
+ </a>
+ <nav class="nav-links" aria-label="主导航"><a href="index.html" class="active" aria-current="page">选站比价</a><a href="/price/">模型比价</a><a href="selector.html">选型顾问</a><a href="blacklist.html">避雷黑名单</a><a href="pitfalls.html">避坑指南</a><a href="method.html">方法论</a><a href="tools.html">自测工具箱</a>  <a href="https://aipaihangbang.cn" class="back-main">← 返回主站</a>
+    </nav>
+ <div class="top-actions">
+ <a class="primary-button" href="api.html">数据 API ↗</a>
+ </div>
+ </div>
+</header>
+
+<div class="disclose">
+ <div class="shell disclose-inner">
+ <span class="dot"></span>
+ <b>真实付费实测数据</b>
+ <span>每 6 小时刷新 · 每个数字可溯源到证据批次号 · 数据不足一律标注「未测 / 数据不足」,不用假数填充</span>
+ <a href="method.html">口径与证据等级 →</a>
+ </div>
+</div>
+
+<main class="shell">
+ <section>
+ <div class="intro">
+ <div>
+ <div class="eyebrow">AI 中转站选站工作台</div>
+ <h1>先看真实成本与状态,再决定接哪家</h1>
+ <p class="intro-copy">按模型和使用场景比较中转站。标价、实测与证据分开展示;样本不足的维度明确标注,不把缺失当作满分。</p>
+ </div>
+ <div class="freshness"><strong><i class="live-dot"></i>数据快照</strong><span id="fresh-time">加载中…</span></div>
+ </div>
+
+ <div class="metric-band" aria-label="数据摘要">
+ <div class="metric"><div class="metric-label">收录中转站</div><div class="metric-value"><span id="st-sites">—</span><small>家</small></div></div>
+ <div class="metric"><div class="metric-label">账单级实测</div><div class="metric-value"><span id="st-measured">—</span><small>家</small><span class="metric-trend" id="st-monitored">—</span></div></div>
+ <div class="metric"><div class="metric-label">逐笔核验</div><div class="metric-value"><span id="st-verified">—</span><small>笔</small><span class="metric-trend" id="st-mismatch">—</span></div></div>
+ <div class="metric"><div class="metric-label">数据更新</div><div class="metric-value" style="font-size:16px"><span id="st-upd">—</span></div></div>
+ </div>
+
+ <div class="workspace-head">
+ <div class="section-title"><h2>中转站价格与服务表现</h2><span class="count" id="result-count">加载中…</span></div>
+ <a class="outline-link" href="method.html">指标口径与证据等级 →</a>
+ </div>
+
+ <div class="filters" aria-label="筛选条件">
+ <label class="search-box"><span class="search-symbol" aria-hidden="true"></span><input id="search" type="search" placeholder="搜索中转站名" aria-label="搜索中转站名"></label>
+ <div class="select-wrap"><select id="model-select" aria-label="选择模型"><option>加载中…</option></select></div>
+ <div class="segmented" aria-label="使用场景" id="scene-seg">
+ <button type="button" data-scene="all" aria-pressed="true">综合</button>
+ <button type="button" data-scene="code" aria-pressed="false">编程</button>
+ <button type="button" data-scene="office" aria-pressed="false">办公</button>
+ <button type="button" data-scene="drama" aria-pressed="false">剧本创作</button>
+ <button type="button" data-scene="biz" aria-pressed="false">企业</button>
+ </div>
+ <button type="button" class="fx-btn" id="fx-btn" aria-expanded="false" aria-controls="fx-pop" title="展示当前场景的评分公式与各指标权重(数据来自 weights.json,与方法论页同源)">评分公式 ⓘ</button>
+ <div id="fx-pop" hidden></div>
+ <label class="filter-check"><input id="tested-only" type="checkbox"> 只看账单级实测</label>
+ <span class="filter-spacer"></span>
+ <div class="select-wrap"><select id="sort-select" aria-label="排序方式">
+ <option value="score">综合表现</option>
+ <option value="price">输入到手价</option>
+ <option value="avail">可用率</option>
+ <option value="ttft">首字延迟</option>
+ </select></div>
+ </div>
+
+ <div class="table-shell">
+ <div class="table-scroll">
+ <table class="comparison-table">
+ <thead><tr>
+ <th style="width:76px">测试状态</th>
+ <th>中转站</th>
+ <th title="评分按站点聚合(五类实测信号按场景权重汇总),衡量站点整体而非单个模型,因此不随所选模型变化;每个分数下的实测样本数可在单元格上悬停查看,并可按批次号回溯。">综合评分</th>
+ <th>模型真伪</th>
+ <th>实测分组</th>
+ <th id="price-heading">到手价 / 百万输入 Token</th>
+ <th>近 7 日可用率</th>
+ <th>首字延迟 P50</th>
+ <th>缓存命中</th>
+ <th>对账匹配</th>
+ <th>操作</th>
+ </tr></thead>
+ <tbody id="provider-rows"></tbody>
+ </table>
+ </div>
+ <div class="table-footer">
+ <div class="legend"><span><i class="legend-dot"></i>已实测</span><span><i class="legend-dot amber"></i>样本有限 / 需留意</span><span><i class="legend-dot gray"></i>仅监测</span></div>
+ <span id="price-note">到手价 = 站方公示额度价 × 分组倍率 × 站方声明充值比例(三因子);输出、缓存与充值比例请进详情核对。</span>
+
+ </div>
+ </div>
+
+ <div class="official-strip" id="official-strip">
+ <div class="official-head"><h3>官方直连价格参照</h3><span class="of-model">当前模型 <b id="of-model">—</b></span></div>
+ <div class="official-body" id="of-body"><span class="of-na">正在读取比价看板…</span></div>
+ </div>
+
+
+ <aside class="plain-section">
+ <h2>样本健康概览</h2>
+ <div class="signal-row"><label>账单级实测覆盖</label><div class="signal-track"><div class="signal-fill" id="bar-measured" style="width:0%"></div></div><strong id="val-measured">—</strong></div>
+ <div class="signal-row"><label>逐笔核验通过</label><div class="signal-track"><div class="signal-fill" id="bar-recon" style="width:0%"></div></div><strong id="val-recon">—</strong></div>
+ <div class="signal-row"><label>可用率中位数</label><div class="signal-track"><div class="signal-fill" id="bar-avail" style="width:0%"></div></div><strong id="val-avail">—</strong></div>
+ <div class="method-note"><strong>数据边界</strong><br>网关可达 ≠ 模型质量或上游身份已验证;指纹未过只作复核信号,非终局定论。每项指标都应结合样本数与检测时间查看,详见 <a href="method.html">方法论</a>。</div>
+ </aside>
+ </section>
+ </main>
+
+<footer>
+ <div class="shell footer-inner">
+ <div><div class="footer-brand">RelayLens · AI 中转站决策引擎</div><div class="footer-copy">账单级实测的 AI 中转站审计平台。所有数字来自付费实测,可溯源到证据批次;不售卖 API 转售,仅通过标注清晰的合作推荐位维持运营。价格反映检测时点,充值前请以站点实时公示为准。</div></div>
+ <div class="footer-links"><a href="/price/">模型比价</a><a href="blacklist.html">避雷黑名单</a><a href="method.html">方法论</a><a href="api.html">数据 API</a><a href="onboarding.html">站长入驻</a></div>
+ </div>
+  <div class="icp-line" style="text-align:center;padding-top:12px;font-size:12px;color:#5d6f92"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">冀ICP备2026033332号</a></div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/rl-common.js?v=202611011"></script>
+<script>
+(function(){
+ var SITES=[], TABS=[], DETAILS={}, EVID={}, DATA_VER='';
+ var state={query:"",model:null,scene:"all",testedOnly:false,sort:"score"};
+ var SCENE_LABEL={all:"综合",code:"编程",office:"办公",drama:"剧本创作",biz:"企业"};
+ var TONES=["","blue","orange","violet"];
+ function $(id){return document.getElementById(id);}
+ function setTxt(id,v){var e=$(id);if(e)e.textContent=v;}
+ function setHtml(id,v){var e=$(id);if(e)e.innerHTML=v;}
+ function toast(m){var t=$("toast");if(!t)return;t.textContent=m;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2400);}
+ function fmtTime(iso){if(!iso)return "—";var d=new Date(iso);if(isNaN(d))return "—";
+ function p(n){return (n<10?"0":"")+n;}return (d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());}
+ function fmtPrice(v){if(v==null||!isFinite(v))return "—";return v>=100?String(Math.round(v)):v>=10?(Math.round(v*10)/10):(Math.round(v*100)/100);}
+ function tone(name){var h=0;for(var i=0;i<String(name).length;i++)h=(h*31+String(name).charCodeAt(i))>>>0;return TONES[h%TONES.length];}
+ function abbr(name){name=String(name||"?");return name.length>2?name.slice(0,2):name;}
+
+ function curTab(){for(var i=0;i<TABS.length;i++)if(TABS[i].key===state.model)return TABS[i];return TABS[0]||null;}
+ function tabRowFor(site){
+ var tab=curTab();if(!tab||!tab.rows)return null;
+ for(var i=0;i<tab.rows.length;i++){if(tab.rows[i].site===site.name)return tab.rows[i];}
+ return null;
+ }
+ /* 实测分组列:主口径组名 + 抽屉按钮(该模型其余分组价目)
+    数据源看板优先(2026-11-02):compare 行全集 → 探针 channels 兜底。
+    探针采不到价的站(如 aixoras 定价接口 401)不再丢分组 —— 看板行照样展示。
+    主口径组非最低倍率分组时,组名下方标注「(非最低倍率分组)」—— 提醒到手价并非该模型最低分组价 */
+ function dashGroups(site){
+ var byRows=DASH.rows&&DASH.rows[state.model];
+ if(!byRows)return null;
+ var rows=byRows[String(site.name||"").toLowerCase()];
+ if(!rows||!rows.length)return null;
+ var seen={},out=[];
+ rows.forEach(function(r){
+ var g=String(r["分组"]||"");
+ if(!g||seen[g])return;seen[g]=1;
+ out.push({group:g,grpRatio:(typeof r["分组倍率"]==="number"?r["分组倍率"]:null),inP:r["实付输入(¥/M)"],outP:r["实付输出(¥/M)"]});
+ });
+ return out.length?out:null;
+ }
+ function groupCellFor(site){
+ var trow=tabRowFor(site);
+ var dg=dashGroups(site);
+ var cur,chans;
+ if(dg){
+ cur=(dashLookup(site)&&dashLookup(site)["分组"])||(trow&&trow.group)||null;
+ chans=dg;
+ }else{
+ cur=trow?trow.group:null;
+ chans=(trow&&trow.channels)||[];
+ }
+ if(!cur&&!chans.length)return '<span style="color:var(--muted)">—</span>';
+ var ratios=chans.map(function(c){return c&&typeof c.grpRatio==='number'?c.grpRatio:null;}).filter(function(r){return r!==null;});
+ var minRatio=ratios.length?Math.min.apply(null,ratios):null;
+ var curRatio=null;
+ for(var i=0;i<chans.length;i++){if(chans[i]&&chans[i].group===cur&&typeof chans[i].grpRatio==='number'){curRatio=chans[i].grpRatio;break;}}
+ var notMin=minRatio!==null&&curRatio!==null&&curRatio!==minRatio;
+ var h=esc(cur||"—");
+ if(notMin){
+ h+='<div class="grp-note">(非最低倍率分组)</div>';
+ }
+ if(chans.length>1){
+ h+=' <button class="grp-btn" type="button" data-n="'+chans.length+'">▾ '+chans.length+' 组</button>';
+ h+='<div class="grp-drawer">'+chans.map(function(c){
+ var isCur=c.group===cur;
+ return '<div class="grp-row'+(isCur?' cur':'')+'"><span class="gn">'+(isCur?'● ':'')+esc(c.group)+'</span><span class="gp">×'+c.grpRatio+' · ¥'+fmtPrice(c.inP)+'/¥'+fmtPrice(c.outP)+'</span></div>';
+ }).join("")+'</div>';
+ }
+ return h;
+ }
+ function priceFor(site){
+ var tab=curTab();if(!tab||!tab.rows)return null;
+ for(var i=0;i<tab.rows.length;i++){var r=tab.rows[i];if(r.site===site.name&&r.effIn!=null)return {in:r.effIn,out:r.effOut,group:r.group};}
+ return null;
+ }
+ /* 看板实时标价缓存:按模型缓存 compare 行(站点名/域名双键匹配),5 分钟新鲜期。
+    标价口径 = 看板自采公示价;排序仍按实测到手价(审计口径),避免口径混用。 */
+ var DASH={cache:{},ts:{},rows:{},stations:null,stationsTs:0};
+ function dashLookup(site){
+ var bySite=DASH.cache[state.model];
+ if(!bySite)return null;
+ var hit=bySite[String(site.name||"").toLowerCase()]||null;
+ if(!hit){var host="";try{host=String((site.probe&&site.probe.origin)||"").replace(/^https?:\/\//,"").split("/")[0].replace(/^www\./,"");}catch(e){}
+ if(host)hit=bySite["host:"+host]||null;}
+ return hit;
+ }
+ function refreshDashPrices(){
+ if(typeof RL==="undefined"||!RL.dashApi)return;
+ var key=state.model,now=Date.now();
+ if(DASH.ts[key]&&now-DASH.ts[key]<300000)return;
+ DASH.ts[key]=now;
+ RL.dashApi("/price/api/compare?model="+encodeURIComponent(key)).then(function(j){
+ var byRows={};
+ (j.rows||[]).forEach(function(r){
+ var nm=String(r["站点"]||"").toLowerCase();if(!nm)return;
+ (byRows[nm]=byRows[nm]||[]).push(r);
+ });
+ var bySite={};
+ var tab=curTab();
+ Object.keys(byRows).forEach(function(nm){
+ /* 标价叠加与实测到手「同组对照」:取实测行同名的分组(规则#3 中位组),两口径差 = 审计信号本身。
+    组名进 chip 提示;同组两源一致 → 互相印证,不一致 → 用户可见的发现 */
+ var rs=byRows[nm];
+ var pick=null;
+ if(tab&&tab.rows){var tr=tab.rows.find(function(x){return x.site===nm;});
+ if(tr&&tr.group)pick=rs.find(function(r){return String(r["分组"]||"")===String(tr.group);});}
+ if(!pick)pick=rs.find(function(r){return /^(default|默认|普通用户|normal)$/i.test(String(r["分组"]||""));});
+ /* 无探针对照行(如 aixoras 定价 401):默认组优先、否则最低可用组(用户实付口径,0de36d2 规则),
+    不再取中位 —— 中位会让 aixoras 显示外接组 ¥16 而非价格页特价 ¥4 */
+ if(!pick){pick=rs.slice().sort(function(a,b){return (parseFloat(a["实付输入(¥/M)"])||Infinity)-(parseFloat(b["实付输入(¥/M)"])||Infinity);})[0];}
+ bySite[nm]=pick;
+ var host="";try{host=String(pick["域名"]||"").replace(/^https?:\/\//,"").split("/")[0].replace(/^www\./,"");}catch(e){}
+ if(host)bySite["host:"+host]=pick;
+ });
+ DASH.cache[key]=bySite;
+ DASH.rows[key]=byRows; /* 行全集:分组抽屉看板优先的数据源 */
+ render();
+ }).catch(function(){ /* 看板挂/无此模型:保持快照口径,不编数 */ });
+ }
+ /* 站点健康状态:看板 /api/stations 实时核查(state/模型数/充值比例/最近核查)覆盖静态清单。
+    看板无此站或挂了 → 不画徽章不报数,保持探针快照口径(诚实原则,不编数)。 */
+ function dashHealth(site){
+ return DASH.stations&&DASH.stations[String(site.name||"").toLowerCase()]||null;
+ }
+ function dashHealthHTML(site){
+ var st=dashHealth(site);if(!st)return "";
+ var ok=st.state==="active";
+ var tip="看板自采核查:"+(ok?"正常":("异常"+(st.error?"("+String(st.error).slice(0,60)+")":"")))
+ +(st.last_check?" · "+String(st.last_check).replace("T"," ").slice(0,16)+" UTC":"")
+ +(st.models!=null?" · 模型 "+st.models:"")
+ +(st.recharge_rate!=null?" · 充值比例 ×"+st.recharge_rate:"");
+ return '<span class="dash-health'+(ok?"":" bad")+'" title="'+esc(tip)+'"></span>';
+ }
+ function dashMetaHTML(site){
+ var st=dashHealth(site);if(!st)return "";
+ var ok=st.state==="active";
+ return '<div class="provider-meta provider-sub">看板'+(ok?"核查正常":"核查异常")
+ +(st.models!=null?" · "+st.models+" 模型":"")
+ +(st.recharge_rate!=null?" · 充值 ×"+st.recharge_rate:"")
+ +'</div>';
+ }
+ function refreshDashStations(){
+ if(typeof RL==="undefined"||!RL.dashApi)return;
+ var now=Date.now();
+ if(DASH.stationsTs&&now-DASH.stationsTs<300000)return;
+ DASH.stationsTs=now;
+ RL.dashApi("/price/api/stations").then(function(j){
+ var byName={};
+ (j.stations||[]).forEach(function(s){
+ if(!s||!s.name)return;
+ byName[String(s.name).toLowerCase()]=s;
+ });
+ DASH.stations=byName;
+ render();
+ }).catch(function(){ DASH.stationsTs=0; /* 看板挂:保持静态清单,不编数 */ });
+ }
+ /* 官方直连价参照(2026-11-02):数据源 = 比价看板库 relay_data.db 的官方价基准,
+    经 /price/api/compare 每行自带的「官方输入/输出(¥/M) + 官方来源」下发,不另建口径。
+    官方价是官方直连报价(美元现金价 × 汇率折算),与站内「到手价」(站方额度价×倍率×充值比例)
+    是两把尺子 —— 只作参照,不参与评分/排序,也不与中转价横向比大小。 */
+ function officialOf(){
+  var bySite=DASH.rows&&DASH.rows[state.model];
+  if(!bySite)return null;
+  var out={inP:null,outP:null,src:""};
+  var names=Object.keys(bySite);
+  for(var i=0;i<names.length;i++){
+  var rs=bySite[names[i]]||[];
+  for(var j=0;j<rs.length;j++){
+  var r=rs[j];
+  var iv=r["官方输入(¥/M)"],ov=r["官方输出(¥/M)"];
+  var hasI=(iv!=null&&iv!==""&&isFinite(Number(iv))),hasO=(ov!=null&&ov!==""&&isFinite(Number(ov)));
+  if(out.inP==null&&hasI)out.inP=Number(iv);
+  if(out.outP==null&&hasO)out.outP=Number(ov);
+  if(!out.src&&(hasI||hasO))out.src=String(r["官方来源"]||"");
+  }
+  }
+  if(out.inP==null&&out.outP==null)return null;
+  return out;
+ }
+ function renderOfficial(){
+  var body=$("of-body"),nm=$("of-model");if(!body)return;
+  var tab=curTab();
+  if(nm)nm.textContent=(tab&&tab.name)||state.model||"—";
+  var rows=DASH.rows&&DASH.rows[state.model];
+  if(!rows){ /* 还没拿到看板行:区分「请求中」与「确实没有」,不写假数 */
+  body.innerHTML='<span class="of-na">'+(DASH.ts[state.model]?"比价看板未收录该模型的官方价基准,不臆测。":"正在读取比价看板…")+'</span>';
+  return;
+  }
+  var o=officialOf();
+  if(!o){ body.innerHTML='<span class="of-na">比价看板未收录该模型的官方价基准,不臆测。</span>'; return; }
+  var per=function(v){return v==null?"—":"¥"+fmtPrice(v)+"/M";};
+  body.innerHTML='<span class="of-cell"><span class="of-tag">官方</span>输入 <b>'+per(o.inP)+'</b></span>'
+  +'<span class="of-cell"><span class="of-tag">官方</span>输出 <b>'+per(o.outP)+'</b></span>'
+  +(o.src?'<span class="of-cell">来源 '+esc(o.src)+'</span>':'')
+  +'<span class="of-cell of-na">官方直连口径,与站内到手价(额度价×倍率×充值比例)不可横向比大小</span>';
+ }
+ function scoreFor(site){var sc=site.score&&site.score[state.scene];return (sc==null?null:sc);}
+/* 评分卡口径透明化(2026-11-03):hover 摊开五类实测信号样本数与站点级口径。
+   为什么:切模型分数不变曾被用户质疑"是否真做了实测"——评分衡量站点整体的扣费诚实度/
+   可用性/稳定性,本就不随所选模型变化;把实测构成(样本数/门槛)直接摊开,不变才有据可查。 */
+function scoreSignalTitle(site){
+  var sig=(site.signal||[]).map(function(s){return s.label+" "+s.n+"/"+s.need+(s.ok?"":" ✗未达标");}).join(" · ");
+  return "评分=站点级实测聚合,衡量站点整体(扣费诚实度/可用性/稳定性),不随上方所选模型变化;切换场景页签可看分场景评分。实测构成:"+sig+"。样本可按批次号回溯;点击分数可查看本场景加权构成。";
+}
+/* 实测基准模型摘要(2026-11-03):探针实测(首字延迟/流式/缓存命中/指纹)都是对每站一个基准模型
+   (site.perf.model)做的 —— 切到其他模型时如实告知"该模型未单独实测",而不是让分数乱动制造
+   实测假象。所选模型=基准模型时亮绿确认,用户能立刻看出页面在响应模型切换。 */
+function modelBasisHTML(site){
+  var base=site.perf&&site.perf.model;
+  var cur=state.model||"";
+  if(!base)return '<div class="model-basis" title="本站暂无探针实测样本,无实测基准模型。">未单独实测</div>';
+  var t="本行首字延迟/流式真伪/缓存命中/模型指纹等探针实测,均针对基准模型「"+esc(base)+"」进行(时点 "+esc(String(site.perf.at||"").slice(0,16)).replace("T"," ")+");评分与这些实测同为站点级口径。当前所选模型:「"+esc(cur)+"」"+(cur===base?" = 实测基准模型。":",未单独实测;其到手价与官方参照为该模型实时数据。");
+  if(cur===base)return '<div class="model-basis model-basis-ok" title="'+t+'">✓ 实测=当前模型</div>';
+  return '<div class="model-basis" title="'+t+'">实测基准:'+esc(base.length>14?base.slice(0,13)+"…":base)+'</div>';
+}
+ function scoreTone(v){return v>=85?"high":v>=70?"mid":"low";}
+ function fpTag(site){
+ var fp=site.fp, d=site.fpDetail||{}, sim=(d.similarity!=null?d.similarity+"%":"");
+ if(fp==="pass")return '<span class="truth-tag truth-consistent">✓ 指纹通过</span>'+(sim?'<div class="metric-caption">'+sim+'</div>':'');
+ if(fp==="suspect")return '<span class="truth-tag truth-review">~ 存疑</span>'+(sim?'<div class="metric-caption">'+sim+'</div>':'');
+ if(fp==="fail")return '<span class="truth-tag truth-suspect">✗ 未通过</span>'+(sim?'<div class="metric-caption">'+sim+'</div>':'');
+ return '<span class="truth-tag truth-unknown">未测</span><div class="metric-caption">无指纹样本</div>';
+ }
+ function devTag(dev){
+ if(dev==null)return '<span class="status-tag status-unknown">未对账</span>';
+ if(dev>=100)return '<span class="status-tag status-good">✓ 全过</span>';
+ return '<span class="status-tag status-watch">'+dev+'%</span>';
+ }
+ /* 测速直达按钮:与榜单页同款 sp-btn,仅给有真实域名与探针档案的站(示例站不给假测速) */
+ function probeBtnHTML(site){
+ var p=site.probe;
+ if(!p||!p.origin)return "";
+ var d={name:site.name,origin:p.origin,endpoint:p.endpoint,archived:p.archived||null};
+ return '<button class="sp-btn" type="button" data-probe="'+JSON.stringify(d).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")+'">测速直达</button>';
+ }
+ /* 对账详情:仅对对过账的站(dev!=null)出「实测详情」按钮,展开逐笔核验面板。
+    无明细归档的站如实说明,不虚构逐笔数据。 */
+ function fmtTok(n){return n==null?"—":String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+ function reconPanelHTML(site){
+ try{
+ var det=DETAILS[site.name]||{};
+ var a=det.audit||{};
+ var ev=EVID[site.name];
+ var h='<div class="recon-head">对账批次核验 <b>'+(a.verified!=null?fmtTok(a.verified):"—")+'</b> 笔 · 匹配率 <b>'+(a.matchPct!=null?a.matchPct+"%":"—")+'</b> · 注入开销 '+(a.inject!=null?fmtTok(a.inject)+" tok":"—")+' · 最近核验 '+(a.lastAt||"—")+'</div>';
+ /* 诊断行(2026-11-03):面板出现"空"时能直接看到页面实际拿到的数据状态,不再盲猜缓存/字段错位 */
+ h+='<div class="recon-note" style="opacity:.6">数据版本 '+esc(DATA_VER||"未知")+' · 详情条目 '+((det&&Object.keys(det).length)?"有":"无")+' · 逐笔轮次 '+((det.rounds||[]).length)+' · 证据条目 '+(ev?"有":"无")+'</div>';
+ /* 优先:管理面真实消费日志的逐轮明细(update-aicost-rounds.cjs 回填);偏差>1% 行红标 */
+ var rounds=det.rounds||[];
+ if(rounds.length){
+ h+='<table class="recon-table"><thead><tr><th>轮次 / 模型</th><th>输入(缓存命中)</th><th>输出</th><th>理论应扣</th><th>实扣</th></tr></thead>'+
+ rounds.map(function(r){
+ var bad=r.ok?"":' class="recon-bad"';
+ return '<tr><td>'+esc(r.model)+'</td><td>'+fmtTok(r.in)+'('+fmtTok(r.cached)+')</td><td>'+fmtTok(r.out)+'</td><td'+bad+'>'+esc(r.should)+'</td><td'+bad+'>'+esc(r.actual)+'</td></tr>';
+ }).join("")+'</table>';
+ var meta=det.roundsMeta||{};
+ h+='<div class="recon-note">逐笔来源:'+esc(meta.src||"管理面消费日志")+(meta.pulledAt?' · 拉取于 '+String(meta.pulledAt).slice(0,10):'')+' · 偏差 &gt;1% 行红标;完整溯源见站点详情页</div>';
+ }else if(ev&&ev.rows&&ev.rows.length){
+ /* 注意:嵌套表不可写显式 <tbody> —— table 上下文的 innerHTML 解析会把表头行复制进 tbody(实测怪癖),数据行走隐式 tbody 即可 */
+ h+='<table class="recon-table"><thead><tr><th>模型</th><th>输入 tok</th><th>缓存 tok</th><th>输出 tok</th><th>实扣额度</th><th>应扣额度</th><th>偏差</th><th>计费模式</th></tr></thead>'+
+ ev.rows.map(function(r){return '<tr><td>'+esc(r.model)+'</td><td>'+fmtTok(r.inTok)+'</td><td>'+fmtTok(r.cacheTok)+'</td><td>'+fmtTok(r.outTok)+'</td><td>'+r.actualQuota+'</td><td>'+r.expectedQuota+'</td><td'+(r.diffPct>1?' class="recon-bad"':'')+'>'+r.diffPct+'%</td><td>'+esc(r.mode||"—")+'</td></tr>';}).join("")+
+ '</table><div class="recon-note">批次 '+(ev.batchId||"—")+' · 全量逐笔 '+ev.matched+'/'+ev.total+' 通过 · 下方仅归档样本 '+ev.rows.length+' 条</div>';
+ }else{
+ h+='<div class="recon-note">该站暂无逐笔明细归档,仅汇总核验结论;不虚构明细。</div>';
+ }
+ return '<div class="recon-panel">'+h+'</div>';
+ }catch(e){
+ return '<div class="recon-panel"><div class="recon-note">面板渲染异常:'+esc((e&&e.message)||String(e))+'</div></div>';
+ }
+ }
+ function levelDot(level){
+ return level==="billing"
+ ?'<span class="legend-dot" title="已实测(账单级)"></span><span class="level-text ok" title="已实测(账单级)">已实测</span>'
+ :'<span class="legend-dot gray" title="仅免费监测"></span><span class="level-text no" title="仅免费监测">仅监测</span>';
+ }
+ /* 支付方式:解析 commerce.pay 关键词 → 品牌 logo。
+    关键词表与渲染收敛在 assets/rl-common.js(全站唯一实现,演进#3);
+    没命中关键词的文本(如「卡密」)原样保留,未声明 pay 的站不画假 logo(诚实口径)。 */
+ function payIconsOf(site){
+ return RL.payIcons((site.commerce&&site.commerce.pay)||"");
+ }
+ /* 第一行只放支付方式(logo/未匹配文本);起充价独立成行(等级徽章已在状态列,不重复)。 */
+ function payMetaHTML(site){
+ var c=site.commerce||{};
+ var pay=payIconsOf(site).html;
+ var topUp=c.minTopUp?("起充 "+esc(c.minTopUp)):"";
+ if(!pay&&!topUp)return '<div class="provider-meta">商业信息未声明</div>';
+ return (pay?'<div class="provider-meta">'+pay+'</div>':'')+(topUp?'<div class="provider-meta provider-sub">'+topUp+'</div>':'');
+ }
+
+ /* 可用率双口径:看板 72h 探活(实时,compare 行)优先;看板无此站/无数据 → 回退探针 7 日快照。 */
+ function availCell(site){
+ var dsh=dashLookup(site);
+ var d=dsh&&dsh["72小时可用率"];
+ if(d&&typeof d.p==="number"&&isFinite(d.p)){
+ return '<div class="metric-number">'+d.p+'%</div><div class="metric-caption">看板72h · n='+(d.tot!=null?d.tot:"—")+'</div>';
+ }
+ return '<div class="metric-number">'+(site.avail==null?"—":site.avail+"%")+'</div><div class="metric-caption">'+(site.avail!=null?"探针7日 · ":"")+'n='+(site.checks==null?"—":site.checks)+'</div>';
+ }
+ /* 首字延迟双口径:看板 TTFT(ms)(实时)优先;无则回退探针 P50 快照。 */
+ function ttftCell(site){
+ var dsh=dashLookup(site);
+ var ms=dsh?dsh["TTFT(ms)"]:null;
+ if(typeof ms==="number"&&isFinite(ms)&&ms>0){
+ return '<div class="metric-number">'+(ms/1000).toFixed(2)+'s</div><div class="metric-caption">看板实测</div>';
+ }
+ return '<div class="metric-number">'+(site.ttft==null?"未测":site.ttft+"s")+'</div><div class="metric-caption">'+(site.ttft!=null?"探针P50":"")+'</div>';
+ }
+ function row(site){
+ var sc=scoreFor(site), scTone=sc==null?"":scoreTone(sc);
+ var price=priceFor(site);
+ var scoreTitle=scoreSignalTitle(site);
+ var scoreCell = sc==null
+ ? '<strong class="score-value" style="color:var(--muted)" title="'+esc(scoreTitle)+'">—</strong><div class="metric-caption" title="'+esc(scoreTitle)+'">数据不足</div>'+modelBasisHTML(site)
+ : '<strong class="score-value score-'+scTone+' score-toggle" data-sitet="'+esc(site.name)+'" title="'+esc(scoreTitle)+'">'+sc+'</strong><div class="score-meter"><i class="'+scTone+'" style="width:'+sc+'%"></i></div><div class="metric-caption" title="'+esc(scoreTitle)+'">'+SCENE_LABEL[state.scene]+' · 站点级 · 点分数看构成</div>'+modelBasisHTML(site);
+ /* 价格列双口径:主行 = 看板实时标价(自采公示,小时级);副行 = 实测到手(探针三因子快照)。
+    看板无此站/挂了 → 回退纯快照口径,不编数。 */
+ var dsh = dashLookup(site);
+ var priceCell;
+ if (dsh && isFinite(dsh["实付输入(¥/M)"])) {
+ priceCell = '<div class="price-primary">¥'+fmtPrice(dsh["实付输入(¥/M)"])+' <span class="unit">/M 输入</span> <span class="src-chip" title="标价口径:看板自采公示价(分组倍率+充值比例后) · 分组 '+esc(String(dsh["分组"]||""))+' · 数据时间 '+esc(String(dsh["数据时间(UTC)"]||"").replace("T"," ").slice(0,16))+' UTC">标价</span></div>'
+	+ '<div class="price-secondary">输出 ¥'+fmtPrice(dsh["实付输出(¥/M)"])+'/M</div>';
+ } else if (price) {
+ priceCell = '<div class="price-primary">¥'+fmtPrice(price.in)+' <span class="unit">/M 输入</span> <span class="src-chip src-audit" title="实测口径:本站探针三因子折算,快照时点见页首">实测</span></div><div class="price-secondary">输出 ¥'+fmtPrice(price.out)+'/M</div>';
+ } else {
+ priceCell = '<div class="price-primary" style="color:var(--muted)">—</div><div class="price-secondary">该模型暂无报价</div>';
+ }
+ return '<tr>'+
+ '<td class="health-col">'+levelDot(site.level)+(site.modelsAvailable!=null&&site.modelsTotal!=null?'<div class="model-avail" title="全模型探活:可调用模型数 / 列表模型总数">'+site.modelsAvailable+'/'+site.modelsTotal+' 可用</div>':'')+'</td>'+
+ '<td class="provider-cell"><div class="provider-main"><span class="provider-logo '+tone(site.name)+'">'+esc(abbr(site.name))+'</span><div><div class="provider-name">'+esc(site.name)+dashHealthHTML(site)+'</div>'+payMetaHTML(site)+dashMetaHTML(site)+'</div></div></td>'+
+ '<td class="score-cell">'+scoreCell+'</td>'+
+ '<td class="truth-cell">'+fpTag(site)+'</td>'+
+ '<td class="grp-cell">'+groupCellFor(site)+'</td>'+
+ '<td>'+priceCell+'</td>'+
+ '<td>'+availCell(site)+'</td>'+
+ '<td>'+ttftCell(site)+'</td>'+
+ '<td><div class="metric-number">'+(site.cache==null?"未测":site.cache+"%")+'</div><div class="metric-caption">'+(site.cache==null?"":"样本命中")+'</div></td>'+
+ '<td>'+devTag(site.dev)+(site.dev!=null?'<div class="recon-toggle-wrap"><button class="recon-toggle" type="button" data-site="'+esc(site.name)+'">实测详情 ▾</button></div>':'')+'</td>'+
+ '<td><div class="op-stack"><a class="detail-button" href="detail.html?site='+encodeURIComponent(site.name)+'">站点详情 →</a>'+probeBtnHTML(site)+'</div></td>'+
+ '</tr>'+
+ (sc!=null?'<tr class="recon-row score-row" hidden data-scorecat="'+esc(site.name)+'"><td colspan="11"></td></tr>':'')+
+ (site.dev!=null?'<tr class="recon-row" hidden data-recon="'+esc(site.name)+'"><td colspan="11"></td></tr>':'');
+ }
+
+ function filtered(){
+ var q=state.query.trim().toLowerCase();
+ var list=SITES.filter(function(s){
+ if(state.testedOnly && s.level!=="billing")return false;
+ if(q && String(s.name).toLowerCase().indexOf(q)<0)return false;
+ return true;
+ });
+ var priceVal=function(s){var p=priceFor(s);return p?p.in:Infinity;};
+ list.sort(function(a,b){
+ if(state.sort==="price")return priceVal(a)-priceVal(b);
+ if(state.sort==="avail")return (b.avail==null?-1:b.avail)-(a.avail==null?-1:a.avail);
+ if(state.sort==="ttft")return (a.ttft==null?1e9:a.ttft)-(b.ttft==null?1e9:b.ttft);
+ var sa=scoreFor(a),sb=scoreFor(b);
+ return (sb==null?-1:sb)-(sa==null?-1:sa);
+ });
+ return list;
+ }
+
+ function render(){
+ var tab=curTab();
+ setHtml("price-heading", tab?("到手价 / 百万输入 Token<br><span style=\"font-weight:400\">"+esc(tab.name)+"</span>"):"到手价 / 百万输入 Token");
+ var list=filtered();
+ setHtml("provider-rows", list.length?list.map(row).join(""):
+ '<tr><td colspan="11" style="padding:30px;text-align:center;color:#75817c">没有匹配的中转站,试试放宽搜索或取消「只看账单级实测」。</td></tr>');
+ setTxt("result-count", "显示 "+list.length+" / "+SITES.length+" 家");
+ refreshDashPrices(); /* 看板实时标价:有缓存先渲染,异步取新后重渲(演进:口径标注) */
+ refreshDashStations(); /* 看板站点健康:state/模型数/充值比例实时核查,失败静默降级 */
+ renderOfficial(); /* 官方直连价参照:同一份看板行里自带官方锚,切模型即跟着变 */
+ }
+
+
+
+ function buildModelSelect(){
+ var sel=$("model-select");if(!sel)return;
+ if(!TABS.length){sel.innerHTML="<option>暂无报价数据</option>";return;}
+ sel.innerHTML=TABS.map(function(t){return '<option value="'+esc(t.key)+'">'+esc(t.name)+'</option>';}).join("");
+ if(!state.model||!TABS.some(function(t){return t.key===state.model;}))state.model=TABS[0].key;
+ sel.value=state.model;
+ }
+
+ function fillStats(j){
+ var S=(j.meta&&j.meta.stats)||{};
+ setTxt("st-sites", S.sitesRegistered==null?"—":S.sitesRegistered);
+ setTxt("st-measured", S.sitesPaidMeasured==null?"—":S.sitesPaidMeasured);
+ setTxt("st-monitored", S.sitesMonitored==null?"":"监测中 "+S.sitesMonitored);
+ setTxt("st-verified", S.reconcileVerified==null?"—":S.reconcileVerified);
+ setTxt("st-mismatch", (S.reconcileMismatched==null?"":(S.reconcileMismatched===0?"0 超差":S.reconcileMismatched+" 超差")));
+ setTxt("st-upd", fmtTime(j.meta&&j.meta.updated));
+ setTxt("fresh-time", "更新于 "+fmtTime(j.meta&&j.meta.updated));
+ // 样本健康概览(真实聚合,无样本则留「—」)
+ var total=SITES.length||1;
+ var measured=SITES.filter(function(s){return s.level==="billing";}).length;
+ setBar("bar-measured","val-measured", measured, total, measured+" / "+SITES.length+" 家");
+ var rv=S.reconcileVerified==null?0:S.reconcileVerified, rm=S.reconcileMismatched==null?0:S.reconcileMismatched;
+ setBar("bar-recon","val-recon", rv-rm, rv||1, rv?(Math.round((rv-rm)/rv*1000)/10)+"%":"—");
+ var avs=SITES.map(function(s){return s.avail;}).filter(function(v){return v!=null;}).sort(function(a,b){return a-b;});
+ var med=avs.length?avs[Math.floor(avs.length/2)]:null;
+ setBar("bar-avail","val-avail", med==null?0:med, 100, med==null?"—":med+"%");
+ }
+ function setBar(barId,valId,num,den,label){
+ var pct=den>0?Math.max(0,Math.min(100,Math.round(num/den*100))):0;
+ var b=$(barId);if(b)b.style.width=pct+"%";
+ setTxt(valId,label);
+ }
+
+ /* 详情面板延迟构建:嵌套 <table> 字符串直接走 tbody.innerHTML 解析不稳定(表头行偶发被复制进 tbody),
+    改为 div 上下文解析后搬运节点 —— 上下文隔离,确定性正确。 */
+ function ensureReconPanel(panelTr, siteName){
+ var td=panelTr.firstElementChild;
+ if(td.childNodes.length)return;
+ var site=null;
+ for(var i=0;i<SITES.length;i++){if(SITES[i].name===siteName){site=SITES[i];break;}}
+ if(!site)return;
+ var tmp=document.createElement("div");
+ tmp.innerHTML=reconPanelHTML(site);
+ while(tmp.firstChild)td.appendChild(tmp.firstChild);
+ }
+ /* 评分弹卡(2026-11-03):摊开「该站该场景的加权构成」。公式本体只在 method.html 维护一份,
+    这里只渲染 scoreComponents 数据——未测项如实标注「权重重归一化」,不重写第二份公式。 */
+ function scorePanelHTML(site){
+ var scene=state.scene,sc=scoreFor(site);
+ var comp=site.scoreComponents&&site.scoreComponents[scene];
+ var lm={};(site.signal||[]).forEach(function(s){lm[s.key]=s.label;});lm.EP="到手价";
+ var rows="";
+ if(comp)Object.keys(comp).forEach(function(k){
+ var c=comp[k],v=c.value,w=Math.round(c.weightUsed);
+ var scoreTxt=v==null?(w===0?'<span style="color:var(--muted)">本场景不考核</span>':'<span style="color:var(--amber)">未测 · 权重重归一化</span>'):v;
+ rows+='<tr><td>'+esc(lm[k]||k)+'</td><td>'+scoreTxt+'</td><td>'+w+'%</td><td>'+(v==null?"—":String(Math.round(v*w/10)/10))+'</td></tr>';
+ });
+ var cov=site.coverage?site.coverage[scene]:null,conf=site.confidence?site.confidence[scene]:null;
+ return '<div class="recon-head">'+esc(site.name)+' · '+esc(SCENE_LABEL[scene]||scene)+'场景评分构成 · 总分 <b>'+(sc==null?"—":sc)+'</b>'+(cov!=null?' · 覆盖率 '+Math.round(cov*100)+'%':'')+(conf!=null?' · 置信度 '+conf:'')+'</div>'
+ +'<table class="recon-table"><thead><tr><th>指标</th><th>归一化得分</th><th>场景权重</th><th>加权贡献</th></tr></thead>'+rows+'</table>'
+ +'<div class="recon-note">总分 = Σ(得分×权重) × 置信度因子;未测指标不惩罚,其权重由已测项重归一化;覆盖率&lt;60% 不出分。完整公式与权重表见 <a href="method.html#scores">方法论 ③</a> · 原始批次证据见 <a href="detail.html?site='+encodeURIComponent(site.name)+'">站点详情</a></div>';
+ }
+ function ensureScorePanel(panelTr, siteName){
+ var td=panelTr.firstElementChild;
+ if(td.childNodes.length)return;
+ var site=null;
+ for(var i=0;i<SITES.length;i++){if(SITES[i].name===siteName){site=SITES[i];break;}}
+ if(!site)return;
+ var tmp=document.createElement("div");
+ tmp.innerHTML=scorePanelHTML(site);
+ while(tmp.firstChild)td.appendChild(tmp.firstChild);
+ }
+ function bind(){
+ var pr=$("provider-rows");if(pr)pr.addEventListener("click",function(ev){
+ /* 分组抽屉:展开/收起该模型的其余分组价目 */
+ var gb=ev.target&&ev.target.closest?ev.target.closest(".grp-btn"):null;
+ if(gb){var gd=gb.parentNode.querySelector(".grp-drawer");if(gd){gd.classList.toggle("open");gb.textContent=(gd.classList.contains("open")?"▴ ":"▾ ")+gb.getAttribute("data-n")+" 组";}return;}
+ /* 评分弹卡:点击分数展开加权构成(须在 recon 分支前,recon 分支会提前 return) */
+var stg=ev.target&&ev.target.closest?ev.target.closest(".score-toggle"):null;
+if(stg){var str2=stg.closest("tr"),spanel=str2&&str2.nextElementSibling;
+if(spanel&&spanel.classList.contains("score-row")){ensureScorePanel(spanel,spanel.getAttribute("data-scorecat"));spanel.hidden=!spanel.hidden;}return;}
+var btn=ev.target&&ev.target.closest?ev.target.closest(".recon-toggle"):null;if(!btn)return;
+ /* 有评分的站,主行后面依次是 score-row(评分构成)与 recon-row(对账)——
+    必须按 data-recon 向后找到对账行;此前只取 nextElementSibling,
+    有分数的站会误开空白的评分行(2026-11-03 事故:实测详情点开是空白) */
+ var tr=btn.closest("tr"),panel=tr&&tr.nextElementSibling;
+ while(panel&&!(panel.classList&&panel.classList.contains("recon-row")&&panel.getAttribute("data-recon")))panel=panel.nextElementSibling;
+ if(panel){
+ ensureReconPanel(panel,panel.getAttribute("data-recon"));
+ panel.hidden=!panel.hidden;btn.textContent=panel.hidden?"实测详情 ▾":"收起 ▴";
+ }
+ });
+ var search=$("search");if(search)search.addEventListener("input",function(){state.query=this.value;render();});
+ var ms=$("model-select");if(ms)ms.addEventListener("change",function(){state.model=this.value;render();});
+ var ss=$("sort-select");if(ss)ss.addEventListener("change",function(){state.sort=this.value;render();});
+ var to=$("tested-only");if(to)to.addEventListener("change",function(){state.testedOnly=this.checked;render();});
+ var seg=$("scene-seg");
+ if(seg)seg.addEventListener("click",function(ev){
+ var btn=ev.target;while(btn&&btn!==seg&&!(btn.getAttribute&&btn.getAttribute("data-scene")))btn=btn.parentNode;
+ if(!btn||btn===seg)return;
+ state.scene=btn.getAttribute("data-scene");
+ Array.prototype.forEach.call(seg.querySelectorAll("button"),function(b){b.setAttribute("aria-pressed",String(b===btn));});
+ render();
+ var fpop0=$("fx-pop");if(fpop0&&!fpop0.hidden)fxRender(state.scene);   // 浮层开着时跟随切换场景
+ });
+ /* 场景公式浮层(2026-11-03):权重与指标口径唯一来自 data/weights.json(build 随包发布),
+    与 method.html 权重表/score.ts 同源 —— 页面不写死任何权重数值(防第二份公式脱节的铁律)。 */
+ var FXW=null;
+ function fxWeights(){
+ if(FXW)return Promise.resolve(FXW);
+ return fetch("data/weights.json",{cache:"reload"}).then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+r.status))}).then(function(j){FXW=j;return j;}).catch(function(){return null;});
+ }
+ function fxRows(j,scene){
+ var sc=j.scenes&&j.scenes[scene];if(!sc)return "";
+ var rows="";
+ Object.keys(sc).forEach(function(k){
+ if(k==="label"||k==="separate"||k==="note")return;
+ var w=sc[k],m=j.metrics&&j.metrics[k];
+ if(!m||typeof w!=="number")return;
+ var full=typeof m.normalize==="string"?m.normalize:(m.normalize?JSON.stringify(m.normalize):"");
+ var desc=m.data_source||(typeof full==="string"&&full?full.slice(0,42)+(full.length>42?"…":""):"");
+ rows+='<tr><th scope="row">'+esc(m.name)+'</th><td>'+w+'%</td><td title="'+esc(full||desc||"")+'">'+esc(desc||"—")+'</td></tr>';
+ });
+ return rows;
+ }
+ function fxRender(scene){
+ var pop=$("fx-pop");if(!pop)return;
+ fxWeights().then(function(j){
+ if(!j){pop.innerHTML='<div class="recon-note">权重数据加载失败。完整公式见 <a href="method.html#scores">方法论③</a></div>';return;}
+ var rows=fxRows(j,scene),sc=j.scenes&&j.scenes[scene]||{},sum=0;
+ Object.keys(sc).forEach(function(k){if(typeof sc[k]==="number")sum+=sc[k];});
+ pop.innerHTML='<div class="recon-head"><span class="fx-scene">'+esc(SCENE_LABEL[scene]||scene)+'</span>场景 · 评分公式(权重版本 '+esc(j.version)+')</div>'
+ +'<table class="recon-table"><thead><tr><th>指标</th><th>权重</th><th>口径摘要(悬停看全文)</th></tr></thead>'+rows+'</table>'
+ +'<div class="recon-note">总分 = Σ(归一化得分 × 权重) × 置信度因子;未测指标不惩罚,权重由已测项重归一化;覆盖率&lt;60% 不出分。权重合计 '+sum+'%。归一化规则与数据源见 <a href="method.html#scores">方法论③</a>,各站逐项得分见对应行的评分构成。</div>';
+ });
+ }
+ var fxb=$("fx-btn");
+ if(fxb){
+ fxb.addEventListener("click",function(ev){
+ ev.stopPropagation();
+ var pop=$("fx-pop");if(!pop)return;
+ if(pop.hidden){
+ var r=fxb.getBoundingClientRect(),lw=Math.min(560,window.innerWidth-24);
+ pop.style.top=(r.bottom+6)+"px";
+ pop.style.left=Math.max(12,Math.min(r.left,window.innerWidth-lw-12))+"px";
+ pop.style.width=lw+"px";
+ pop.hidden=false;fxb.setAttribute("aria-expanded","true");
+ fxRender(state.scene);
+ }else{pop.hidden=true;fxb.setAttribute("aria-expanded","false");}
+ });
+ document.addEventListener("click",function(ev){
+ var pop=$("fx-pop");
+ if(pop&&!pop.hidden&&!pop.contains(ev.target)&&ev.target!==fxb&&!fxb.contains(ev.target)){
+ /* 点场景页签不关浮层:seg 处理器(先触发)已刷新为该场景公式,让用户直接对照切场景 */
+ var sb2=ev.target&&ev.target.closest?ev.target.closest("[data-scene]"):null;
+ if(!sb2){pop.hidden=true;fxb.setAttribute("aria-expanded","false");}
+ }
+ });
+ document.addEventListener("keydown",function(ev){
+ if(ev.key==="Escape"){var pop=$("fx-pop");if(pop&&!pop.hidden){pop.hidden=true;fxb.setAttribute("aria-expanded","false");}}
+ });
+ }
+ }
+
+ fetch("data/sites.json?v="+Date.now(),{cache:"reload"}).then(function(r){return r.ok?r.json():Promise.reject(new Error("http "+(r.status||"?")));})
+ .then(function(j){
+ SITES=j.realSites||[];TABS=(j.compare&&j.compare.tabs)||[];
+ DETAILS=j.details||{};[].concat(j.evidence||[]).forEach(function(ev){if(ev&&ev.site)EVID[ev.site]=ev;});
+ DATA_VER=(j.meta&&j.meta.updated)||'';
+ buildModelSelect();fillStats(j);render();bind();
+ setTxt("last-check","");
+ })
+ .catch(function(e){
+ // 取不到数据:保持静态「—」,不写任何假数
+ setHtml("provider-rows",'<tr><td colspan="11" style="padding:30px;text-align:center;color:#75817c">数据加载失败,请稍后强刷重试。我们不展示编造的示例数据。</td></tr>');
+ setTxt("result-count","数据加载失败");
+ toast("数据加载失败");
+ });
+})();
+</script>
+<script src="assets/speedprobe.js"></script>
+<!-- analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?e11f6aed152fc2f65564437af1439cd1";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- /analytics -->
+</body>
+</html>
